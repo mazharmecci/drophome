@@ -39,5 +39,24 @@
       <li><a href="./dashboard.html">Dashboard</a></li>
     </ul>
   </nav>
+
+// Place this script before </body>
+<script>
+function toggleSection(sectionId) {
+  const list = document.getElementById(sectionId);
+  const arrow = sectionId === "formsSection" ? document.getElementById('arrowForms') : document.getElementById('arrowDashboard');
+  if(list.classList.contains('closed')) {
+    list.classList.remove('closed');
+    arrow.textContent = "▲";
+  } else {
+    list.classList.add('closed');
+    arrow.textContent = "▼";
+  }
+}
+// Initialize closed sections if needed
+document.getElementById("formsSection").classList.remove('closed');
+document.getElementById("dashboardSection").classList.remove('closed');
+</script>
+
 </body>
 </html>
