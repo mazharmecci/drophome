@@ -85,18 +85,20 @@
 
   <!-- Place this script before </body> -->
   <script>
-    function toggleSection(sectionId) {
-      const list = document.getElementById(sectionId);
-      // Arrow element: this works for all sections now  
-      const arrow = document.getElementById("arrow" + sectionId.replace("Section", ""));
-      if(list.classList.contains('closed')) {
-        list.classList.remove('closed');
-        arrow.textContent = "▲";
-      } else {
-        list.classList.add('closed');
-        arrow.textContent = "▼";
-      }
+    
+  function toggleSection(sectionId) {
+    const list = document.getElementById(sectionId);
+    const arrowId = "arrow" + sectionId.replace("Section", "");
+    const arrow = document.getElementById(arrowId);
+    if(list.classList.contains('closed')) {
+      list.classList.remove('closed');
+      if (arrow) arrow.textContent = "▲";
+    } else {
+      list.classList.add('closed');
+      if (arrow) arrow.textContent = "▼";
     }
+  }
+
     // Initialize open sections
     document.getElementById("formsSection").classList.remove('closed');
     document.getElementById("dashboardSection").classList.remove('closed');
