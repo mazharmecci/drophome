@@ -1,1 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Stock Availability</title>
+  <link rel="stylesheet" href="../styles/style.css" />
+</head>
+<body>
+  <h2>Stock Availability Form</h2>
+  <form id="stockForm">
+    <input type="text" name="sku" placeholder="SKU" required />
+    <input type="text" name="productName" placeholder="Product Name" required />
+    <input type="number" name="availableQuantity" placeholder="Available Quantity" required />
+    <input type="text" name="location" placeholder="Location" />
+    <input type="date" name="lastUpdated" required />
+    <input type="number" name="reorderThreshold" placeholder="Reorder Threshold" />
+    <button type="submit">Submit</button>
+  </form>
 
+  <script src="../firebase.js"></script>
+  <script src="../scripts/stock.js"></script>
+</body>
+</html>
