@@ -1,1 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Outbound Form</title>
+  <link rel="stylesheet" href="../styles/style.css" />
+</head>
+<body>
+  <h2>Outbound Order Form</h2>
+  <form id="outboundForm">
+    <input type="text" name="orderNumber" placeholder="Order Number" required />
+    <input type="date" name="date" required />
+    <input type="text" name="accountName" placeholder="Account Name" required />
+    <input type="text" name="sku" placeholder="SKU" required />
+    <input type="text" name="productName" placeholder="Product Name" required />
+    <input type="url" name="productPicture" placeholder="Product Picture URL" />
+    <input type="number" name="quantity" placeholder="Quantity" required />
+    <input type="url" name="labelLink" placeholder="Label Link" />
+    <input type="number" name="totalLabels" placeholder="Total Labels" />
+    <input type="number" name="costPerLabel" placeholder="Cost per Label" step="0.01" />
+    <input type="number" name="totalUnits" placeholder="Total Units" />
+    <input type="number" name="cost3PL" placeholder="3PL Cost" step="0.01" />
+    <select name="orderStatus">
+      <option value="">Select Status</option>
+      <option value="Pending">Pending</option>
+      <option value="Shipped">Shipped</option>
+      <option value="Delivered">Delivered</option>
+    </select>
+    <textarea name="comments" placeholder="Comments"></textarea>
+    <button type="submit">Submit</button>
+  </form>
 
+  <script src="../firebase.js"></script>
+  <script src="../scripts/outbound.js"></script>
+</body>
+</html>
