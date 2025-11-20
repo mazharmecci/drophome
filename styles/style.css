@@ -1,1 +1,100 @@
+/* Premium Sidebar CSS for Drophome Dashboard */
+body {
+  background: #f3f7fa;
+  font-family: "Segoe UI", "Roboto", Arial, sans-serif;
+  margin: 0;
+}
+
+.sidebar {
+  width: 290px;
+  background: linear-gradient(135deg, #272d3b 70%, #3e588f 100%);
+  color: #fff;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  box-shadow: 2px 0 16px #0002;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar h2 {
+  font-size: 1.3rem;
+  margin: 32px 0 12px 28px;
+  letter-spacing: 0.04em;
+  font-weight: 650;
+}
+
+.sidebar .toggle-header {
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0 28px 0 0;
+  color: inherit;
+  font: inherit;
+  outline: none;
+  display: flex;
+  align-items: center;
+  font-size: 1.06rem;
+  margin: 21px 0 8px 24px;
+  transition: color 0.15s;
+}
+
+.sidebar .toggle-header:hover {
+  color: #acd2f7;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0 24px 0 32px;
+  max-height: 800px;
+  overflow: hidden;
+  margin-bottom: 6px;
+  transition: max-height 0.3s cubic-bezier(.6,.04,.98,.34);
+}
+
+.sidebar ul.closed {
+  max-height: 0;
+  padding: 0 24px 0 32px;
+}
+
+.sidebar li {
+  margin: 12px 0;
+}
+
+.sidebar a {
+  color: #c5e6fb;
+  text-decoration: none;
+  font-size: 1.05rem;
+  padding: 7px 18px 7px 8px;
+  border-radius: 7px;
+  display: block;
+  transition: background 0.15s, color 0.07s;
+}
+
+.sidebar a:hover {
+  background: #dff2ff;
+  color: #274a7c;
+  box-shadow: 0 2px 8px #0001;
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 7px;
+  background: #242943;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: #374872;
+  border-radius: 4px;
+}
+
+/* Responsive for smaller screens */
+@media (max-width: 800px) {
+  .sidebar {
+    width: 100vw;
+    height: auto;
+    position: relative;
+    box-shadow: none;
+  }
+}
 
