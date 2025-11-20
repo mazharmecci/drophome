@@ -11,7 +11,7 @@
     <h2>DROPHOME</h2>
 
     <button class="toggle-header" onclick="toggleSection('formsSection')">
-      Forms <span id="arrowForms">&#9650;</span>
+      <span class="emoticon">📦</span> Forms <span id="arrowForms">▲</span>
     </button>
     <ul id="formsSection">
       <li><a href="./forms/inbound.html">Inbound Form</a></li>
@@ -20,21 +20,21 @@
     </ul>
 
     <button class="toggle-header" onclick="toggleSection('dashboardSection')">
-      Dashboard <span id="arrowDashboard">&#9650;</span>
+      <span class="emoticon">📊</span> Dashboard <span id="arrowDashboard">▲</span>
     </button>
     <ul id="dashboardSection">
       <li><a href="./dashboard.html">Dashboard Overview</a></li>
     </ul>
 
     <button class="toggle-header" onclick="toggleSection('trackingSection')">
-      USPS Tracking <span id="arrowTracking">&#9650;</span>
+      <span class="emoticon">🧭</span> USPS Tracking <span id="arrowTracking">▲</span>
     </button>
     <ul id="trackingSection" class="closed">
       <li><a href="#">Tracking Lookup</a></li>
     </ul>
 
     <button class="toggle-header" onclick="toggleSection('ordersSection')">
-      Orders <span id="arrowOrders">&#9650;</span>
+      <span class="emoticon">📝</span> Orders <span id="arrowOrders">▲</span>
     </button>
     <ul id="ordersSection" class="closed">
       <li><a href="#">Customer Orders</a></li>
@@ -43,7 +43,7 @@
     </ul>
 
     <button class="toggle-header" onclick="toggleSection('inventorySection')">
-      Inventory <span id="arrowInventory">&#9650;</span>
+      <span class="emoticon">🏦</span> Inventory <span id="arrowInventory">▲</span>
     </button>
     <ul id="inventorySection" class="closed">
       <li><a href="#">Stock Summary</a></li>
@@ -52,7 +52,7 @@
     </ul>
 
     <button class="toggle-header" onclick="toggleSection('shipmentsSection')">
-      Shipments <span id="arrowShipments">&#9650;</span>
+      <span class="emoticon">🚚</span> Shipments <span id="arrowShipments">▲</span>
     </button>
     <ul id="shipmentsSection" class="closed">
       <li><a href="#">Shipment Tracker</a></li>
@@ -61,7 +61,7 @@
     </ul>
 
     <button class="toggle-header" onclick="toggleSection('masterDataSection')">
-      Master Data <span id="arrowMaster">&#9650;</span>
+      <span class="emoticon">📇</span> Master Data <span id="arrowMaster">▲</span>
     </button>
     <ul id="masterDataSection" class="closed">
       <li><a href="#">Customer Master</a></li>
@@ -70,7 +70,7 @@
     </ul>
 
     <button class="toggle-header" onclick="toggleSection('auditSection')">
-      Audit Logs <span id="arrowAudit">&#9650;</span>
+      <span class="emoticon">🕵️‍♂️</span> Audit Logs <span id="arrowAudit">▲</span>
     </button>
     <ul id="auditSection" class="closed">
       <li><a href="#">System Logs</a></li>
@@ -83,23 +83,23 @@
     <p>Select a module from the sidebar to begin.</p>
   </div>
 
-    // Place this script before </body>
+  <!-- Place this script before </body> -->
   <script>
-  function toggleSection(sectionId) {
-    const list = document.getElementById(sectionId);
-    const arrow = sectionId === "formsSection" ? document.getElementById('arrowForms') : document.getElementById('arrowDashboard');
-    if(list.classList.contains('closed')) {
-      list.classList.remove('closed');
-      arrow.textContent = "▲";
-    } else {
-      list.classList.add('closed');
-      arrow.textContent = "▼";
+    function toggleSection(sectionId) {
+      const list = document.getElementById(sectionId);
+      // Arrow element: this works for all sections now  
+      const arrow = document.getElementById("arrow" + sectionId.replace("Section", ""));
+      if(list.classList.contains('closed')) {
+        list.classList.remove('closed');
+        arrow.textContent = "▲";
+      } else {
+        list.classList.add('closed');
+        arrow.textContent = "▼";
+      }
     }
-  }
-  // Initialize closed sections if needed
-  document.getElementById("formsSection").classList.remove('closed');
-  document.getElementById("dashboardSection").classList.remove('closed');
+    // Initialize open sections
+    document.getElementById("formsSection").classList.remove('closed');
+    document.getElementById("dashboardSection").classList.remove('closed');
   </script>
-
 </body>
 </html>
