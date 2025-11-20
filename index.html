@@ -6,6 +6,30 @@
   <link rel="stylesheet" href="./styles/style.css" />
 </head>
 <body>
+  <!-- Place this inside <body> BEFORE your main content -->
+
+<div class="sidebar">
+  <h2>Drophome Files</h2>
+
+  <button class="toggle-header" onclick="toggleSection('formsSection')">
+    Forms
+    <span id="arrowForms">&#9650;</span>
+  </button>
+  <ul id="formsSection">
+    <li><a href="./forms/inbound.html">Inbound Form</a></li>
+    <li><a href="./forms/outbound.html">Outbound Form</a></li>
+    <li><a href="./forms/stock.html">Stock Availability Form</a></li>
+  </ul>
+
+  <button class="toggle-header" onclick="toggleSection('dashboardSection')">
+    Dashboard
+    <span id="arrowDashboard">&#9650;</span>
+  </button>
+  <ul id="dashboardSection">
+    <li><a href="./dashboard.html">Dashboard Overview</a></li>
+  </ul>
+</div>
+
   <h1>Welcome to Drophome</h1>
   <nav>
     <ul>
