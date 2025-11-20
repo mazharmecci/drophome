@@ -1,6 +1,4 @@
 {
   "project": "drophome",
-  "version": "1.0",
-  "forms": ["inbound", "outbound", "stock"],
-  "author": "mazharmecci"
+  "version": "1.0"
 }
