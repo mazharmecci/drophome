@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Drophome Dashboard</title>
+  <link rel="stylesheet" href="../styles/style.css" />
+</head>
+<body>
+  <h2>Drophome Dashboard</h2>
+
+  <div>
+    <label for="collectionSelect">Select Collection:</label>
+    <select id="collectionSelect">
+      <option value="outboundOrders">Outbound Orders</option>
+      <option value="inboundInventory">Inbound Inventory</option>
+      <option value="stockAvailability">Stock Availability</option>
+    </select>
+
+    <input type="text" id="filterInput" placeholder="Filter by SKU or Name" />
+    <button onclick="loadData()">Load Records</button>
+  </div>
+
+  <table id="dataTable">
+    <thead><tr><th>Field</th><th>Value</th></tr></thead>
+    <tbody></tbody>
+  </table>
+
+  <script src="../firebase.js"></script>
+  <script src="../scripts/dashboard.js"></script>
+</body>
+</html>
