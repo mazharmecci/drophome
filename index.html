@@ -6,57 +6,101 @@
   <link rel="stylesheet" href="./styles/style.css" />
 </head>
 <body>
-  <!-- Place this inside <body> BEFORE your main content -->
+  <!-- Sidebar Navigation -->
+  <div class="sidebar">
+    <h2>DROPHOME</h2>
 
-<div class="sidebar">
-  <h2>Drophome Files</h2>
-
-  <button class="toggle-header" onclick="toggleSection('formsSection')">
-    Forms
-    <span id="arrowForms">&#9650;</span>
-  </button>
-  <ul id="formsSection">
-    <li><a href="./forms/inbound.html">Inbound Form</a></li>
-    <li><a href="./forms/outbound.html">Outbound Form</a></li>
-    <li><a href="./forms/stock.html">Stock Availability Form</a></li>
-  </ul>
-
-  <button class="toggle-header" onclick="toggleSection('dashboardSection')">
-    Dashboard
-    <span id="arrowDashboard">&#9650;</span>
-  </button>
-  <ul id="dashboardSection">
-    <li><a href="./dashboard.html">Dashboard Overview</a></li>
-  </ul>
-</div>
-
-  <h1>Welcome to Drophome</h1>
-  <nav>
-    <ul>
+    <button class="toggle-header" onclick="toggleSection('formsSection')">
+      Forms <span id="arrowForms">&#9650;</span>
+    </button>
+    <ul id="formsSection">
       <li><a href="./forms/inbound.html">Inbound Form</a></li>
       <li><a href="./forms/outbound.html">Outbound Form</a></li>
       <li><a href="./forms/stock.html">Stock Availability Form</a></li>
-      <li><a href="./dashboard.html">Dashboard</a></li>
     </ul>
-  </nav>
 
-// Place this script before </body>
-<script>
-function toggleSection(sectionId) {
-  const list = document.getElementById(sectionId);
-  const arrow = sectionId === "formsSection" ? document.getElementById('arrowForms') : document.getElementById('arrowDashboard');
-  if(list.classList.contains('closed')) {
-    list.classList.remove('closed');
-    arrow.textContent = "▲";
-  } else {
-    list.classList.add('closed');
-    arrow.textContent = "▼";
-  }
-}
-// Initialize closed sections if needed
-document.getElementById("formsSection").classList.remove('closed');
-document.getElementById("dashboardSection").classList.remove('closed');
-</script>
+    <button class="toggle-header" onclick="toggleSection('dashboardSection')">
+      Dashboard <span id="arrowDashboard">&#9650;</span>
+    </button>
+    <ul id="dashboardSection">
+      <li><a href="./dashboard.html">Dashboard Overview</a></li>
+    </ul>
 
+    <button class="toggle-header" onclick="toggleSection('trackingSection')">
+      USPS Tracking <span id="arrowTracking">&#9650;</span>
+    </button>
+    <ul id="trackingSection" class="closed">
+      <li><a href="#">Tracking Lookup</a></li>
+    </ul>
+
+    <button class="toggle-header" onclick="toggleSection('ordersSection')">
+      Orders <span id="arrowOrders">&#9650;</span>
+    </button>
+    <ul id="ordersSection" class="closed">
+      <li><a href="#">Customer Orders</a></li>
+      <li><a href="#">Order Status</a></li>
+      <li><a href="#">Returns & Cancellations</a></li>
+    </ul>
+
+    <button class="toggle-header" onclick="toggleSection('inventorySection')">
+      Inventory <span id="arrowInventory">&#9650;</span>
+    </button>
+    <ul id="inventorySection" class="closed">
+      <li><a href="#">Stock Summary</a></li>
+      <li><a href="#">Warehouse View</a></li>
+      <li><a href="#">Low Stock Alerts</a></li>
+    </ul>
+
+    <button class="toggle-header" onclick="toggleSection('shipmentsSection')">
+      Shipments <span id="arrowShipments">&#9650;</span>
+    </button>
+    <ul id="shipmentsSection" class="closed">
+      <li><a href="#">Shipment Tracker</a></li>
+      <li><a href="#">Carrier Status</a></li>
+      <li><a href="#">Delivery Logs</a></li>
+    </ul>
+
+    <button class="toggle-header" onclick="toggleSection('masterDataSection')">
+      Master Data <span id="arrowMaster">&#9650;</span>
+    </button>
+    <ul id="masterDataSection" class="closed">
+      <li><a href="#">Customer Master</a></li>
+      <li><a href="#">Vendor Master</a></li>
+      <li><a href="#">Warehouse Master</a></li>
+    </ul>
+
+    <button class="toggle-header" onclick="toggleSection('auditSection')">
+      Audit Logs <span id="arrowAudit">&#9650;</span>
+    </button>
+    <ul id="auditSection" class="closed">
+      <li><a href="#">System Logs</a></li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <div style="margin-left: 300px; padding: 40px;">
+    <h1>Welcome to Drophome</h1>
+    <p>Select a module from the sidebar to begin.</p>
+  </div>
+
+  <!-- Sidebar Toggle Script -->
+  <script>
+    function toggleSection(sectionId) {
+      const list = document.getElementById(sectionId);
+      const arrow = document.getElementById("arrow" + sectionId.replace("Section", ""));
+      if (list.classList.contains("closed")) {
+        list.classList.remove("closed");
+        arrow.textContent = "▲";
+      } else {
+        list.classList.add("closed");
+        arrow.textContent = "▼";
+      }
+    }
+
+    // Initialize all sections as open or closed
+    ["formsSection", "dashboardSection"].forEach(id => {
+      document.getElementById(id).classList.remove("closed");
+    });
+  </script>
 </body>
 </html>
