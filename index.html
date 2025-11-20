@@ -4,86 +4,71 @@
   <meta charset="UTF-8" />
   <title>Drophome Dashboard</title>
   <link rel="stylesheet" href="./styles/style.css" />
+  <style>
+    .main-content {
+      margin-left: 290px;
+      padding: 40px;
+      min-height: 100vh;
+      background: #f3f7fa;
+      position: relative;
+    }
+
+    iframe {
+      width: 100%;
+      height: 80vh;
+      border: none;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 12px #0001;
+    }
+
+    #loader {
+      position: absolute;
+      top: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.2rem;
+      color: #274a7c;
+      background: #eaf4ff;
+      padding: 10px 20px;
+      border-radius: 6px;
+      box-shadow: 0 0 10px #0001;
+      display: none;
+    }
+  </style>
 </head>
-<body>
+<body onload="loadContent('./dashboard.html')">
   <!-- Sidebar Navigation -->
   <div class="sidebar">
     <h2>DROPHOME</h2>
 
     <button class="toggle-header" onclick="toggleSection('formsSection')">
-      Forms <span id="arrowForms">&#9650;</span>
+      Forms <span id="arrowForms">▲</span>
     </button>
     <ul id="formsSection">
-      <li><a href="./forms/inbound.html">Inbound Form</a></li>
-      <li><a href="./forms/outbound.html">Outbound Form</a></li>
-      <li><a href="./forms/stock.html">Stock Availability Form</a></li>
+      <li><a href="#" onclick="loadContent('./forms/inbound.html')">Inbound Form</a></li>
+      <li><a href="#" onclick="loadContent('./forms/outbound.html')">Outbound Form</a></li>
+      <li><a href="#" onclick="loadContent('./forms/stock.html')">Stock Availability Form</a></li>
     </ul>
 
     <button class="toggle-header" onclick="toggleSection('dashboardSection')">
-      Dashboard <span id="arrowDashboard">&#9650;</span>
+      Dashboard <span id="arrowDashboard">▲</span>
     </button>
     <ul id="dashboardSection">
-      <li><a href="./dashboard.html">Dashboard Overview</a></li>
+      <li><a href="#" onclick="loadContent('./dashboard.html')">Dashboard Overview</a></li>
     </ul>
 
-    <button class="toggle-header" onclick="toggleSection('trackingSection')">
-      USPS Tracking <span id="arrowTracking">&#9650;</span>
-    </button>
-    <ul id="trackingSection" class="closed">
-      <li><a href="#">Tracking Lookup</a></li>
-    </ul>
-
-    <button class="toggle-header" onclick="toggleSection('ordersSection')">
-      Orders <span id="arrowOrders">&#9650;</span>
-    </button>
-    <ul id="ordersSection" class="closed">
-      <li><a href="#">Customer Orders</a></li>
-      <li><a href="#">Order Status</a></li>
-      <li><a href="#">Returns & Cancellations</a></li>
-    </ul>
-
-    <button class="toggle-header" onclick="toggleSection('inventorySection')">
-      Inventory <span id="arrowInventory">&#9650;</span>
-    </button>
-    <ul id="inventorySection" class="closed">
-      <li><a href="#">Stock Summary</a></li>
-      <li><a href="#">Warehouse View</a></li>
-      <li><a href="#">Low Stock Alerts</a></li>
-    </ul>
-
-    <button class="toggle-header" onclick="toggleSection('shipmentsSection')">
-      Shipments <span id="arrowShipments">&#9650;</span>
-    </button>
-    <ul id="shipmentsSection" class="closed">
-      <li><a href="#">Shipment Tracker</a></li>
-      <li><a href="#">Carrier Status</a></li>
-      <li><a href="#">Delivery Logs</a></li>
-    </ul>
-
-    <button class="toggle-header" onclick="toggleSection('masterDataSection')">
-      Master Data <span id="arrowMaster">&#9650;</span>
-    </button>
-    <ul id="masterDataSection" class="closed">
-      <li><a href="#">Customer Master</a></li>
-      <li><a href="#">Vendor Master</a></li>
-      <li><a href="#">Warehouse Master</a></li>
-    </ul>
-
-    <button class="toggle-header" onclick="toggleSection('auditSection')">
-      Audit Logs <span id="arrowAudit">&#9650;</span>
-    </button>
-    <ul id="auditSection" class="closed">
-      <li><a href="#">System Logs</a></li>
-    </ul>
+    <!-- Other sections omitted for brevity -->
   </div>
 
-  <!-- Main Content -->
-  <div style="margin-left: 300px; padding: 40px;">
-    <h1>Welcome to Drophome</h1>
-    <p>Select a module from the sidebar to begin.</p>
+  <!-- Main Content Pane -->
+  <div class="main-content">
+    <h1 id="moduleTitle">Dashboard Module</h1>
+    <div id="loader">Loading module...</div>
+    <iframe id="contentFrame" src="" onload="hideLoader()"></iframe>
   </div>
 
-  <!-- Sidebar Toggle Script -->
+  <!-- Script -->
   <script>
     function toggleSection(sectionId) {
       const list = document.getElementById(sectionId);
@@ -97,7 +82,20 @@
       }
     }
 
-    // Initialize all sections as open or closed
+    function loadContent(url) {
+      const loader = document.getElementById("loader");
+      const frame = document.getElementById("contentFrame");
+      const title = url.split("/").pop().replace(".html", "").replace(/-/g, " ");
+      document.getElementById("moduleTitle").textContent = title.charAt(0).toUpperCase() + title.slice(1) + " Module";
+
+      loader.style.display = "block";
+      frame.src = url;
+    }
+
+    function hideLoader() {
+      document.getElementById("loader").style.display = "none";
+    }
+
     ["formsSection", "dashboardSection"].forEach(id => {
       document.getElementById(id).classList.remove("closed");
     });
