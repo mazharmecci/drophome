@@ -3,7 +3,8 @@ import {
   collection,
   getDocs,
   doc,
-  updateDoc
+  updateDoc,
+  deleteDoc
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 import { app } from "../firebase.js";
 
@@ -30,7 +31,10 @@ async function loadData() {
         </select>
       </td>
       <td><input type="number" id="qty-${docId}" value="${data.quantity}" /></td>
-      <td><button onclick="saveChanges('${docId}')">Save</button></td>
+      <td>
+        <button onclick="saveChanges('${docId}')">Save</button>
+        <button onclick="deleteRecord('${docId}')">Delete</button>
+      </td>
     `;
 
     tbody.appendChild(row);
@@ -53,3 +57,18 @@ window.saveChanges = async function (docId) {
     alert("Failed to update record.");
   }
 };
+
+window.deleteRecord = async function (docId) {
+  if (!confirm("Are you sure you want to delete this outbound order?")) return;
+
+  try {
+    await deleteDoc(doc(db, "outboundOrders", docId));
+    alert("Record deleted.");
+    loadData(); // Refresh table
+  } catch (err) {
+    console.error("Delete failed:", err);
+    alert("Failed to delete record.");
+  }
+};
+
+loadData();
