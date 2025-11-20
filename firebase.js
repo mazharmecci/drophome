@@ -1,3 +1,9 @@
+<!-- Firebase App (the core Firebase SDK) -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+
+<!-- Add other Firebase SDKs as needed -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
+
 // Firebase v9 Modular SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
 import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
