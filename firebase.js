@@ -3,15 +3,13 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebas
 import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyDqFJ85euyPb4QV863AmBF9zHv34WIdmrg",
+  authDomain: "drophome-1cb76.firebaseapp.com",
+  projectId: "drophome-1cb76",
+  storageBucket: "drophome-1cb76.firebasestorage.app",
+  messagingSenderId: "268666785164",
+  appId: "1:268666785164:web:6b02f3242b9e21fad25aa9"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-export { db };
