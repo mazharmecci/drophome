@@ -5,6 +5,15 @@ body {
   margin: 0;
 }
 
+.sidebar-section {
+  background: #f9fbff;           /* subtle off-white box */
+  border: 1px solid #e3e8f0;     /* light border for definition */
+  border-radius: 8px;            /* rounded corners */
+  margin: 12px 20px;             /* spacing between boxes */
+  padding: 14px 12px;            /* inner padding */
+  box-shadow: 0 2px 6px rgba(220, 228, 239, 0.4); /* soft shadow */
+}
+
 .sidebar {
   width: 290px;
   background: #fff;
