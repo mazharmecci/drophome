@@ -1,4 +1,4 @@
-// src/services/main.js
+// main.js (root)
 
 // 🔍 Load meta.json for dashboard context
 fetch('drophome/meta.json')
@@ -11,7 +11,7 @@ fetch('drophome/meta.json')
   });
 
 // 📥 Load HTML content into the center pane
-export function loadContent(linkElement) {
+function loadContent(linkElement) {
   const path = linkElement.getAttribute("data-path");
   const container = document.getElementById("mainPane");
 
@@ -36,3 +36,6 @@ export function loadContent(linkElement) {
       console.error("❌ Load error:", err);
     });
 }
+
+// Expose globally so sidebar links can call it
+window.loadContent = loadContent;
