@@ -10,55 +10,68 @@
   <div class="sidebar">
     <h2>DROPHOME</h2>
 
-    <button class="toggle-header" onclick="toggleSection('formsSection')">
-      <span class="emoticon">📦</span> Forms <span id="arrowForms">▲</span>
-    </button>
-    <ul id="formsSection">
-      <li><a href="./forms/inbound.html">Inbound Form</a></li>
-      <li><a href="./forms/outbound.html">Outbound Form</a></li>
-      <li><a href="./forms/stock.html">Stock Availability Form</a></li>
-    </ul>
+    <div class="sidebar-section">
+      <button class="toggle-header" onclick="toggleSection('formsSection')">
+        <span class="emoticon">📦</span> Forms <span id="arrowForms">▲</span>
+      </button>
+      <ul id="formsSection">
+        <li><a href="./forms/inbound.html">Inbound Form</a></li>
+        <li><a href="./forms/outbound.html">Outbound Form</a></li>
+        <li><a href="./forms/stock.html">Stock Availability Form</a></li>
+      </ul>
+    </div>
 
-    <button class="toggle-header" onclick="toggleSection('dashboardSection')">
-      <span class="emoticon">📊</span> Dashboard <span id="arrowDashboard">▲</span>
-    </button>
-    <ul id="dashboardSection">
-      <li><a href="./dashboard.html">Dashboard Overview</a></li>
-    </ul>
+    <div class="sidebar-section">
+      <button class="toggle-header" onclick="toggleSection('dashboardSection')">
+        <span class="emoticon">📊</span> Dashboard <span id="arrowDashboard">▲</span>
+      </button>
+      <ul id="dashboardSection">
+        <li><a href="./dashboard.html">Dashboard Overview</a></li>
+      </ul>
+    </div>
 
-    <button class="toggle-header" onclick="toggleSection('trackingSection')">
-      <span class="emoticon">🧭</span> USPS Tracking <span id="arrowTracking">▲</span>
-    </button>
-    <ul id="trackingSection" class="closed">
-      <li><a href="#">Tracking Lookup</a></li>
-    </ul>
+    <div class="sidebar-section">
+      <button class="toggle-header" onclick="toggleSection('trackingSection')">
+        <span class="emoticon">🧭</span> USPS Tracking <span id="arrowTracking">▲</span>
+      </button>
+      <ul id="trackingSection" class="closed">
+        <li><a href="#">Tracking Lookup</a></li>
+      </ul>
+    </div>
 
-    <button class="toggle-header" onclick="toggleSection('ordersSection')">
-      <span class="emoticon">📝</span> Orders <span id="arrowOrders">▲</span>
-    </button>
-    <ul id="ordersSection" class="closed">
-      <li><a href="#">Customer Orders</a></li>
-      <li><a href="#">Order Status</a></li>
-      <li><a href="#">Returns & Cancellations</a></li>
-    </ul>
+    <div class="sidebar-section">
+      <button class="toggle-header" onclick="toggleSection('ordersSection')">
+        <span class="emoticon">📝</span> Orders <span id="arrowOrders">▲</span>
+      </button>
+      <ul id="ordersSection" class="closed">
+        <li><a href="#">Customer Orders</a></li>
+        <li><a href="#">Order Status</a></li>
+        <li><a href="#">Returns & Cancellations</a></li>
+      </ul>
+    </div>
 
-    <button class="toggle-header" onclick="toggleSection('inventorySection')">
-      <span class="emoticon">🏦</span> Inventory <span id="arrowInventory">▲</span>
-    </button>
-    <ul id="inventorySection" class="closed">
-      <li><a href="#">Stock Summary</a></li>
-      <li><a href="#">Warehouse View</a></li>
-      <li><a href="#">Low Stock Alerts</a></li>
-    </ul>
+    <div class="sidebar-section">
+      <button class="toggle-header" onclick="toggleSection('inventorySection')">
+        <span class="emoticon">🏦</span> Inventory <span id="arrowInventory">▲</span>
+      </button>
+      <ul id="inventorySection" class="closed">
+        <li><a href="#">Stock Summary</a></li>
+        <li><a href="#">Warehouse View</a></li>
+        <li><a href="#">Low Stock Alerts</a></li>
+      </ul>
+    </div>
 
-    <button class="toggle-header" onclick="toggleSection('shipmentsSection')">
-      <span class="emoticon">🚚</span> Shipments <span id="arrowShipments">▲</span>
-    </button>
-    <ul id="shipmentsSection" class="closed">
-      <li><a href="#">Shipment Tracker</a></li>
-      <li><a href="#">Carrier Status</a></li>
-      <li><a href="#">Delivery Logs</a></li>
-    </ul>
+    <div class="sidebar-section">
+      <button class="toggle-header" onclick="toggleSection('shipmentsSection')">
+        <span class="emoticon">🚚</span> Shipments <span id="arrowShipments">▲</span>
+      </button>
+      <ul id="shipmentsSection" class="closed">
+        <li><a href="#">Shipment Tracker</a></li>
+        <li><a href="#">Carrier Status</a></li>
+        <li><a href="#">Delivery Logs</a></li>
+      </ul>
+    </div>
+  </div>
 
   <!-- Main Content -->
   <div style="margin-left: 300px; padding: 40px;">
@@ -66,21 +79,20 @@
     <p>Select a module from the sidebar to begin.</p>
   </div>
 
-  <!-- Place this script before </body> -->
+  <!-- Toggle Script -->
   <script>
-    
-  function toggleSection(sectionId) {
-    const list = document.getElementById(sectionId);
-    const arrowId = "arrow" + sectionId.replace("Section", "");
-    const arrow = document.getElementById(arrowId);
-    if(list.classList.contains('closed')) {
-      list.classList.remove('closed');
-      if (arrow) arrow.textContent = "▲";
-    } else {
-      list.classList.add('closed');
-      if (arrow) arrow.textContent = "▼";
+    function toggleSection(sectionId) {
+      const list = document.getElementById(sectionId);
+      const arrowId = "arrow" + sectionId.replace("Section", "");
+      const arrow = document.getElementById(arrowId);
+      if (list.classList.contains('closed')) {
+        list.classList.remove('closed');
+        if (arrow) arrow.textContent = "▲";
+      } else {
+        list.classList.add('closed');
+        if (arrow) arrow.textContent = "▼";
+      }
     }
-  }
 
     // Initialize open sections
     document.getElementById("formsSection").classList.remove('closed');
