@@ -1,7 +1,7 @@
 // main.js (root)
 
 // 🔍 Load meta.json for dashboard context
-fetch('drophome/meta.json')
+fetch('./meta.json')
   .then(response => response.json())
   .then(data => {
     console.log('Meta loaded:', data);
