@@ -6,52 +6,55 @@
   <link rel="stylesheet" href="../styles/style.css" />
 </head>
 <body>
-<div class="form-container">
-  <h2>Inbound Inventory Form</h2>
-  <form>
-    <div class="form-group">
-      <label for="inboundId">Inbound ID</label>
-      <input type="text" id="inboundId" placeholder="Enter Inbound ID" />
-    </div>
+  <div id="inboundFormContent">
+    <div class="form-container">
+      <h2>Inbound Inventory Form</h2>
+      <form>
+        <div class="form-group">
+          <label for="inboundId">Inbound ID</label>
+          <input type="text" id="inboundId" placeholder="Enter Inbound ID" />
+        </div>
 
-    <div class="form-group">
-      <label for="date">Date</label>
-      <input type="date" id="date" />
-    </div>
+        <div class="form-group">
+          <label for="date">Date</label>
+          <input type="date" id="date" />
+        </div>
 
-    <div class="form-group">
-      <label for="supplier">Supplier Name</label>
-      <input type="text" id="supplier" placeholder="Enter Supplier Name" />
-    </div>
+        <div class="form-group">
+          <label for="supplier">Supplier Name</label>
+          <input type="text" id="supplier" placeholder="Enter Supplier Name" />
+        </div>
 
-    <div class="form-group">
-      <label for="sku">SKU</label>
-      <input type="text" id="sku" placeholder="Enter SKU" />
-    </div>
+        <div class="form-group">
+          <label for="sku">SKU</label>
+          <input type="text" id="sku" placeholder="Enter SKU" />
+        </div>
 
-    <div class="form-group">
-      <label for="product">Product Name</label>
-      <input type="text" id="product" placeholder="Enter Product Name" />
-    </div>
+        <div class="form-group">
+          <label for="product">Product Name</label>
+          <input type="text" id="product" placeholder="Enter Product Name" />
+        </div>
 
-    <div class="form-group">
-      <label for="quantity">Quantity Received</label>
-      <input type="number" id="quantity" placeholder="Enter Quantity" />
-    </div>
+        <div class="form-group">
+          <label for="quantity">Quantity Received</label>
+          <input type="number" id="quantity" placeholder="Enter Quantity" />
+        </div>
 
-    <div class="form-group">
-      <label for="location">Storage Location</label>
-      <input type="text" id="location" placeholder="Enter Storage Location" />
-    </div>
+        <div class="form-group">
+          <label for="location">Storage Location</label>
+          <input type="text" id="location" placeholder="Enter Storage Location" />
+        </div>
 
-    <div class="form-group">
-      <label for="notes">Receiving Notes</label>
-      <textarea id="notes" placeholder="Enter any notes"></textarea>
-    </div>
+        <div class="form-group">
+          <label for="notes">Receiving Notes</label>
+          <textarea id="notes" placeholder="Enter any notes"></textarea>
+        </div>
 
-    <button type="submit">Submit</button>
-  </form>
-</div>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  </div>
+
   <script src="../firebase.js"></script>
   <script src="../scripts/inbound.js"></script>
 </body>
