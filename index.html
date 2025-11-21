@@ -135,12 +135,14 @@
     <!-- Forms -->
     <div class="sidebar-section" id="formsBox">
       <button class="toggle-header" onclick="toggleBox('formsBox','arrowForms')">
-        <span class="emoticon">📦</span> Forms <span id="arrowForms">▼</span>
+        <span class="emoticon">📦</span>
+        <span class="section-title">Forms</span>
+        <span id="arrowForms" class="arrow">▼</span>
       </button>
-      <ul>
-        <li><a href="#" onclick="loadContent('./forms/inbound.html')">📥 Inbound</a></li>
-        <li><a href="#" onclick="loadContent('./forms/outbound.html')">📤 Outbound</a></li>
-        <li><a href="#" onclick="loadContent('./forms/stock.html')">📦 Stock</a></li>
+      <ul class="sidebar-links">
+        <li><a href="#" data-path="forms/inbound.html" onclick="loadContent(this)">📥 Inbound</a></li>
+        <li><a href="#" data-path="forms/outbound.html" onclick="loadContent(this)">📤 Outbound</a></li>
+        <li><a href="#" data-path="forms/stock.html" onclick="loadContent(this)">📦 Stock</a></li>
       </ul>
     </div>
 
