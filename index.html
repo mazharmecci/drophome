@@ -118,6 +118,12 @@
   </style>
 </head>
 <body>
+
+  <div id="mainContent" style="margin-left: 300px; padding: 40px;">
+  <h1>Welcome to Drophome</h1>
+  <p>Select a module from the sidebar to begin.</p>
+  </div>
+
   <!-- Sidebar -->
   <div class="sidebar">
     <h2>
@@ -131,9 +137,9 @@
         <span class="emoticon">📦</span> Forms <span id="arrowForms">▼</span>
       </button>
       <ul>
-        <li><a href="./forms/inbound.html">📥 Inbound</a></li>
-        <li><a href="./forms/outbound.html">📤 Outbound</a></li>
-        <li><a href="./forms/stock.html">📦 Stock</a></li>
+        <li><a href="#" onclick="loadContent('./forms/inbound.html')">📥 Inbound</a></li>
+        <li><a href="#" onclick="loadContent('./forms/outbound.html')">📤 Outbound</a></li>
+        <li><a href="#" onclick="loadContent('./forms/stock.html')">📦 Stock</a></li>
       </ul>
     </div>
 
@@ -224,12 +230,31 @@
     }
 
     // Collapse all sections on load
-    window.addEventListener("DOMContentLoaded", () => {
-      const allBoxes = document.querySelectorAll(".sidebar-section");
-      const allArrows = document.querySelectorAll("[id^='arrow']");
-      allBoxes.forEach(box => box.classList.remove("open"));
-      allArrows.forEach(arrow => arrow.textContent = "▼");
-    });
+    
+      window.addEventListener("DOMContentLoaded", () => {
+        const allBoxes = document.querySelectorAll(".sidebar-section");
+        const allArrows = document.querySelectorAll("[id^='arrow']");
+        allBoxes.forEach(box => box.classList.remove("open"));
+        allArrows.forEach(arrow => arrow.textContent = "▼");
+      });
+    </script>
+
+  
+    // Loader side pane
+  
+    <script>
+  function loadContent(url) {
+    fetch(url)
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById("mainContent").innerHTML = html;
+      })
+      .catch(err => {
+        document.getElementById("mainContent").innerHTML = "<p>Error loading content.</p>";
+        console.error("Load error:", err);
+      });
+  }
   </script>
+
 </body>
 </html>
