@@ -104,3 +104,15 @@ body {
       color: #0056c7;
       box-shadow: 0 2px 8px #dce4ef;
     }
+
+/* Bold main titles (toggle headers) */
+.sidebar .toggle-header {
+  font-weight: 700;        /* bold */
+  font-size: 1.1rem;       /* keep them slightly larger */
+}
+
+/* Smaller sub-items */
+.sidebar ul li a {
+  font-size: 0.95rem;      /* smaller than headers */
+  font-weight: 400;        /* normal weight */
+}
