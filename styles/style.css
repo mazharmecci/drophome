@@ -104,3 +104,8 @@
       color: #0056c7;
       box-shadow: 0 2px 8px #dce4ef;
     }
+
+.emoticon {
+  font-size: 1.2rem;   /* adjust size */
+  margin-right: 8px;   /* spacing */
+}
