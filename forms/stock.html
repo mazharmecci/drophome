@@ -6,16 +6,38 @@
   <link rel="stylesheet" href="../styles/style.css" />
 </head>
 <body>
-  <h2>Stock Availability Form</h2>
-  <form id="stockForm">
-    <input type="text" name="sku" placeholder="SKU" required />
-    <input type="text" name="productName" placeholder="Product Name" required />
-    <input type="number" name="availableQuantity" placeholder="Available Quantity" required />
-    <input type="text" name="location" placeholder="Location" />
-    <input type="date" name="lastUpdated" required />
-    <input type="number" name="reorderThreshold" placeholder="Reorder Threshold" />
-    <button type="submit">Submit</button>
-  </form>
+  <div id="stockFormContent">
+    <div class="form-container">
+      <h2>Stock Availability Form</h2>
+      <form id="stockForm">
+        <div class="form-group">
+          <input type="text" name="sku" placeholder="SKU" required />
+        </div>
+
+        <div class="form-group">
+          <input type="text" name="productName" placeholder="Product Name" required />
+        </div>
+
+        <div class="form-group">
+          <input type="number" name="availableQuantity" placeholder="Available Quantity" required />
+        </div>
+
+        <div class="form-group">
+          <input type="text" name="location" placeholder="Location" />
+        </div>
+
+        <div class="form-group">
+          <input type="date" name="lastUpdated" required />
+        </div>
+
+        <div class="form-group">
+          <input type="number" name="reorderThreshold" placeholder="Reorder Threshold" />
+        </div>
+
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  </div>
 
   <script src="../firebase.js"></script>
   <script src="../scripts/stock.js"></script>
