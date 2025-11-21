@@ -3,73 +3,190 @@
 <head>
   <meta charset="UTF-8" />
   <title>Drophome Dashboard</title>
-  <link rel="stylesheet" href="./styles/style.css" />
+  <style>
+    body {
+      background: #f7fbfe;
+      font-family: "Segoe UI", "Roboto", Arial, sans-serif;
+      margin: 0;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 290px;
+      background: #fff;
+      color: #233961;
+      height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      box-shadow: 2px 0 16px #dce4ef;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid #e3e8f0;
+      overflow-y: auto;
+      padding-top: 20px;
+    }
+
+    .sidebar h2 {
+      font-size: 1.3rem;
+      margin: 0 0 20px 28px;
+      letter-spacing: 0.04em;
+      font-weight: 650;
+      color: #294a6e;
+      display: flex;
+      align-items: center;
+    }
+
+    .brand-logo {
+      width: 22px;
+      height: auto;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    /* Section box */
+    .sidebar-section {
+      background: #dce4ef;
+      border: 1px solid #e3e8f0;
+      border-radius: 8px;
+      margin: 12px 18px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(220, 228, 239, 0.4);
+      transition: max-height 0.4s ease, background 0.2s ease;
+      max-height: 60px; /* collapsed */
+    }
+
+    .sidebar-section.open {
+      max-height: 500px; /* expanded */
+    }
+
+    /* Toggle header */
+    .toggle-header {
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0 24px 0 0;
+      color: #233961;
+      font: inherit;
+      outline: none;
+      display: flex;
+      align-items: center;
+      margin: 10px 0 8px 24px;
+      border-radius: 6px;
+      transition: background 0.14s, color 0.17s;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .toggle-header:hover {
+      color: #003e93;
+    }
+
+    .emoticon {
+      font-size: 1.24rem;
+      margin-right: 9px;
+      margin-top: 1px;
+    }
+
+    /* Lists */
+    .sidebar ul {
+      list-style: none;
+      padding: 0 27px 0 37px;
+      margin-bottom: 6px;
+    }
+
+    .sidebar li {
+      margin: 12px 0;
+    }
+
+    .sidebar a {
+      color: #233d6c;
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 400;
+      padding: 7px 18px 7px 8px;
+      border-radius: 7px;
+      display: block;
+      transition: background 0.15s, color 0.07s;
+    }
+
+    .sidebar a:hover {
+      background: #eaf1fa;
+      color: #0056c7;
+      box-shadow: 0 2px 8px #dce4ef;
+    }
+  </style>
 </head>
 <body>
-  <!-- Sidebar Navigation -->
-    <div class="sidebar">
-      <h2>
-        <img src="./images/DH-Black.png" alt="Drophome Logo" class="brand-logo">
-        DROPHOME
-      </h2>
-    </div>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>
+      <img src="./images/DH-Black.png" alt="Drophome Logo" class="brand-logo">
+      DROPHOME
+    </h2>
 
-    <div class="sidebar-section">
-      <button class="toggle-header" onclick="toggleSection('formsSection')">
-        <span class="emoticon">📦</span> Forms <span id="arrowForms">▲</span>
+    <!-- Forms -->
+    <div class="sidebar-section" id="formsBox">
+      <button class="toggle-header" onclick="toggleBox('formsBox','arrowForms')">
+        <span class="emoticon">📦</span> Forms <span id="arrowForms">▼</span>
       </button>
-      <ul id="formsSection">
-        <li><a href="./forms/inbound.html">📥Inbound</a></li>
-        <li><a href="./forms/outbound.html">📤Outbound</a></li>
-        <li><a href="./forms/stock.html">📦Stock</a></li>
+      <ul>
+        <li><a href="./forms/inbound.html">📥 Inbound</a></li>
+        <li><a href="./forms/outbound.html">📤 Outbound</a></li>
+        <li><a href="./forms/stock.html">📦 Stock</a></li>
       </ul>
     </div>
 
-    <div class="sidebar-section">
-      <button class="toggle-header" onclick="toggleSection('dashboardSection')">
-        <span class="emoticon">📊</span> Dashboard <span id="arrowDashboard">▲</span>
+    <!-- Dashboard -->
+    <div class="sidebar-section" id="dashboardBox">
+      <button class="toggle-header" onclick="toggleBox('dashboardBox','arrowDashboard')">
+        <span class="emoticon">📊</span> Dashboard <span id="arrowDashboard">▼</span>
       </button>
-      <ul id="dashboardSection">
-        <li><a href="./dashboard.html">Dashboard Overview</a></li>
+      <ul>
+        <li><a href="./dashboard.html">Overview</a></li>
       </ul>
     </div>
 
-    <div class="sidebar-section">
-      <button class="toggle-header" onclick="toggleSection('trackingSection')">
-        <span class="emoticon">🧭</span> USPS Tracking <span id="arrowTracking">▲</span>
+    <!-- Tracking -->
+    <div class="sidebar-section" id="trackingBox">
+      <button class="toggle-header" onclick="toggleBox('trackingBox','arrowTracking')">
+        <span class="emoticon">🧭</span> USPS Tracking <span id="arrowTracking">▼</span>
       </button>
-      <ul id="trackingSection" class="closed">
+      <ul>
         <li><a href="#">Tracking Lookup</a></li>
       </ul>
     </div>
 
-    <div class="sidebar-section">
-      <button class="toggle-header" onclick="toggleSection('ordersSection')">
-        <span class="emoticon">📝</span> Orders <span id="arrowOrders">▲</span>
+    <!-- Orders -->
+    <div class="sidebar-section" id="ordersBox">
+      <button class="toggle-header" onclick="toggleBox('ordersBox','arrowOrders')">
+        <span class="emoticon">📝</span> Orders <span id="arrowOrders">▼</span>
       </button>
-      <ul id="ordersSection" class="closed">
+      <ul>
         <li><a href="#">Customer Orders</a></li>
         <li><a href="#">Order Status</a></li>
         <li><a href="#">Returns & Cancellations</a></li>
       </ul>
     </div>
 
-    <div class="sidebar-section">
-      <button class="toggle-header" onclick="toggleSection('inventorySection')">
-        <span class="emoticon">🏦</span> Inventory <span id="arrowInventory">▲</span>
+    <!-- Inventory -->
+    <div class="sidebar-section" id="inventoryBox">
+      <button class="toggle-header" onclick="toggleBox('inventoryBox','arrowInventory')">
+        <span class="emoticon">🏦</span> Inventory <span id="arrowInventory">▼</span>
       </button>
-      <ul id="inventorySection" class="closed">
+      <ul>
         <li><a href="#">Stock Summary</a></li>
         <li><a href="#">Warehouse View</a></li>
         <li><a href="#">Low Stock Alerts</a></li>
       </ul>
     </div>
 
-    <div class="sidebar-section">
-      <button class="toggle-header" onclick="toggleSection('shipmentsSection')">
-        <span class="emoticon">🚚</span> Shipments <span id="arrowShipments">▲</span>
+    <!-- Shipments -->
+    <div class="sidebar-section" id="shipmentsBox">
+      <button class="toggle-header" onclick="toggleBox('shipmentsBox','arrowShipments')">
+        <span class="emoticon">🚚</span> Shipments <span id="arrowShipments">▼</span>
       </button>
-      <ul id="shipmentsSection" class="closed">
+      <ul>
         <li><a href="#">Shipment Tracker</a></li>
         <li><a href="#">Carrier Status</a></li>
         <li><a href="#">Delivery Logs</a></li>
@@ -83,34 +200,36 @@
     <p>Select a module from the sidebar to begin.</p>
   </div>
 
-  <!-- Toggle Script -->
-<script>
-  function toggleSection(sectionId) {
-    const list = document.getElementById(sectionId);
-    const arrowId = "arrow" + sectionId.replace("Section", "");
-    const arrow = document.getElementById(arrowId);
-    if (list.classList.contains('closed')) {
-      list.classList.remove('closed');
-      if (arrow) arrow.textContent = "▲";
-    } else {
-      list.classList.add('closed');
-      if (arrow) arrow.textContent = "▼";
+  <!-- Accordion Script -->
+  <script>
+    function toggleBox(boxId, arrowId) {
+      const allBoxes = document.querySelectorAll(".sidebar-section");
+      const allArrows = document.querySelectorAll("[id^='arrow']");
+
+      allBoxes.forEach((box, index) => {
+        const arrow = allArrows[index];
+        if (box.id === boxId) {
+          if (box.classList.contains("open")) {
+            box.classList.remove("open");
+            if (arrow) arrow.textContent = "▼";
+          } else {
+            box.classList.add("open");
+            if (arrow) arrow.textContent = "▲";
+          }
+        } else {
+          box.classList.remove("open");
+          if (arrow) arrow.textContent = "▼";
+        }
+      });
     }
-  }
 
-  // Collapse all sections on load
-  window.addEventListener("DOMContentLoaded", () => {
-    const allLists = document.querySelectorAll(".sidebar ul");
-    allLists.forEach(list => list.classList.add("closed"));
-
-    // Set all arrows to ▼
-    const allArrows = document.querySelectorAll("[id^='arrow']");
-    allArrows.forEach(arrow => arrow.textContent = "▼");
-  });
-
-    // Initialize open sections
-    document.getElementById("formsSection").classList.remove('closed');
-    document.getElementById("dashboardSection").classList.remove('closed');
+    // Collapse all sections on load
+    window.addEventListener("DOMContentLoaded", () => {
+      const allBoxes = document.querySelectorAll(".sidebar-section");
+      const allArrows = document.querySelectorAll("[id^='arrow']");
+      allBoxes.forEach(box => box.classList.remove("open"));
+      allArrows.forEach(arrow => arrow.textContent = "▼");
+    });
   </script>
 </body>
 </html>
