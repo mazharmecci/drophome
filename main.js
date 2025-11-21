@@ -13,10 +13,10 @@ fetch('./meta.json')
 // 📥 Load HTML content into the center pane
 function loadContent(linkElement) {
   const path = linkElement.getAttribute("data-path");
-  const container = document.getElementById("mainPane");
+  const container = document.getElementById("mainContent");
 
   if (!container) {
-    console.error("❌ mainPane not found");
+    console.error("❌ mainContent not found");
     return;
   }
 
