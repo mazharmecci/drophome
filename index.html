@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <title>Drophome Dashboard</title>
-  <style>
+  
+  <style>    
     body {
       background: #f7fbfe;
       font-family: "Segoe UI", "Roboto", Arial, sans-serif;
@@ -206,54 +207,31 @@
   </div>
 
   <!-- Accordion Script -->
+
   <script>
-    function toggleBox(boxId, arrowId) {
-      const allBoxes = document.querySelectorAll(".sidebar-section");
-      const allArrows = document.querySelectorAll("[id^='arrow']");
+  function toggleBox(boxId, arrowId) {
+    const allBoxes = document.querySelectorAll(".sidebar-section");
+    const allArrows = document.querySelectorAll("[id^='arrow']");
 
-      allBoxes.forEach((box, index) => {
-        const arrow = allArrows[index];
-        if (box.id === boxId) {
-          if (box.classList.contains("open")) {
-            box.classList.remove("open");
-            if (arrow) arrow.textContent = "▼";
-          } else {
-            box.classList.add("open");
-            if (arrow) arrow.textContent = "▲";
-          }
-        } else {
-          box.classList.remove("open");
-          if (arrow) arrow.textContent = "▼";
-        }
-      });
-    }
-
-    // Collapse all sections on load
-    
-      window.addEventListener("DOMContentLoaded", () => {
-        const allBoxes = document.querySelectorAll(".sidebar-section");
-        const allArrows = document.querySelectorAll("[id^='arrow']");
-        allBoxes.forEach(box => box.classList.remove("open"));
-        allArrows.forEach(arrow => arrow.textContent = "▼");
-      });
-    </script>
-
-  
-    // Loader side pane
-  
-    <script>
-  function loadContent(url) {
-    fetch(url)
-      .then(response => response.text())
-      .then(html => {
-        document.getElementById("mainContent").innerHTML = html;
-      })
-      .catch(err => {
-        document.getElementById("mainContent").innerHTML = "<p>Error loading content.</p>";
-        console.error("Load error:", err);
-      });
+    allBoxes.forEach((box) => {
+      const arrow = box.querySelector(`#${arrowId}`);
+      if (box.id === boxId) {
+        const isOpen = box.classList.toggle("open");
+        if (arrow) arrow.textContent = isOpen ? "▲" : "▼";
+      } else {
+        box.classList.remove("open");
+        const otherArrow = box.querySelector("[id^='arrow']");
+        if (otherArrow) otherArrow.textContent = "▼";
+      }
+    });
   }
-  </script>
 
+  // Collapse all sections on load
+  window.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".sidebar-section").forEach(box => box.classList.remove("open"));
+    document.querySelectorAll("[id^='arrow']").forEach(arrow => arrow.textContent = "▼");
+  });
+</script>
+  
 </body>
 </html>
