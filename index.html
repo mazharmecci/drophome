@@ -80,19 +80,29 @@
   </div>
 
   <!-- Toggle Script -->
-  <script>
-    function toggleSection(sectionId) {
-      const list = document.getElementById(sectionId);
-      const arrowId = "arrow" + sectionId.replace("Section", "");
-      const arrow = document.getElementById(arrowId);
-      if (list.classList.contains('closed')) {
-        list.classList.remove('closed');
-        if (arrow) arrow.textContent = "▲";
-      } else {
-        list.classList.add('closed');
-        if (arrow) arrow.textContent = "▼";
-      }
+<script>
+  function toggleSection(sectionId) {
+    const list = document.getElementById(sectionId);
+    const arrowId = "arrow" + sectionId.replace("Section", "");
+    const arrow = document.getElementById(arrowId);
+    if (list.classList.contains('closed')) {
+      list.classList.remove('closed');
+      if (arrow) arrow.textContent = "▲";
+    } else {
+      list.classList.add('closed');
+      if (arrow) arrow.textContent = "▼";
     }
+  }
+
+  // Collapse all sections on load
+  window.addEventListener("DOMContentLoaded", () => {
+    const allLists = document.querySelectorAll(".sidebar ul");
+    allLists.forEach(list => list.classList.add("closed"));
+
+    // Set all arrows to ▼
+    const allArrows = document.querySelectorAll("[id^='arrow']");
+    allArrows.forEach(arrow => arrow.textContent = "▼");
+  });
 
     // Initialize open sections
     document.getElementById("formsSection").classList.remove('closed');
