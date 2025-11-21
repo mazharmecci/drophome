@@ -1,22 +1,40 @@
-document.getElementById("stockForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const form = e.target;
-  const data = {
-    sku: form.sku.value,
-    productName: form.productName.value,
-    availableQuantity: Number(form.availableQuantity.value),
-    location: form.location.value,
-    lastUpdated: form.lastUpdated.value,
-    reorderThreshold: Number(form.reorderThreshold.value),
-    timestamp: new Date().toISOString()
-  };
+// stock.js
 
-  try {
-    await db.collection("stockAvailability").add(data);
-    alert("Stock record submitted!");
-    form.reset();
-  } catch (err) {
-    console.error("Error submitting stock record:", err);
-    alert("Failed to submit stock record.");
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("stockForm");
+  if (!form) {
+    console.error("❌ stockForm element not found.");
+    return;
   }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    // Collect form data safely
+    const data = {
+      sku: form.sku.value.trim(),
+      productName: form.productName.value.trim(),
+      availableQuantity: Number(form.availableQuantity.value) || 0,
+      location: form.location.value.trim(),
+      lastUpdated: form.lastUpdated.value,
+      reorderThreshold: Number(form.reorderThreshold.value) || 0,
+      timestamp: new Date().toISOString(),
+    };
+
+    try {
+      // Save to Firestore
+      await db.collection("stockAvailability").add(data);
+
+      // Audit log if available
+      if (typeof window.logAudit === "function") {
+        window.logAudit("stock_submitted", { sku: data.sku, qty: data.availableQuantity });
+      }
+
+      alert("✅ Stock record submitted!");
+      form.reset();
+    } catch (error) {
+      console.error("❌ Error submitting stock record:", error);
+      alert("Failed to submit stock record. Please try again.");
+    }
+  });
 });
