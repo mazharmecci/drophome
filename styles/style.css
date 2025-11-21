@@ -115,3 +115,10 @@ body {
   color: #0056c7;
   box-shadow: 0 2px 8px #dce4ef;
 }
+
+.brand-logo {
+  width: 24px;       /* fingertip size */
+  height: auto;      /* keep aspect ratio */
+  margin-right: 8px; /* spacing before text */
+  vertical-align: middle;
+}
