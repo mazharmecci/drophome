@@ -1,11 +1,23 @@
 // main.js (root)
 
+// 🔍 Utility: Safe fetch JSON
+async function fetchJSON(url) {
+  const response = await fetch(url, { cache: "no-cache" });
+  if (!response.ok) throw new Error(`Failed to load ${url} (${response.status})`);
+  return response.json();
+}
+
+// 🔍 Utility: Safe fetch HTML
+async function fetchHTML(url) {
+  const response = await fetch(url, { cache: "no-cache" });
+  if (!response.ok) throw new Error(`Failed to load ${url} (${response.status})`);
+  return response.text();
+}
+
 // 🔍 Load meta.json for dashboard context
 async function loadMeta() {
   try {
-    const response = await fetch("./meta.json");
-    if (!response.ok) throw new Error(`Failed to load meta.json (${response.status})`);
-    const data = await response.json();
+    const data = await fetchJSON("./meta.json");
     console.log("Meta loaded:", data);
   } catch (error) {
     console.error("Error loading meta.json:", error);
@@ -31,20 +43,20 @@ async function loadContent(linkElement) {
   container.innerHTML = '<p style="color:#666;">Loading…</p>';
 
   try {
-    const response = await fetch(path, { cache: "no-cache" });
-    if (!response.ok) throw new Error(`Failed to load ${path} (${response.status})`);
-
-    const html = await response.text();
+    const html = await fetchHTML(path);
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, "text/html");
 
-    // Try to find a wrapper (e.g. inboundFormContent, outboundFormContent, stockFormContent)
-    const wrapperId = path.includes("inbound") ? "inboundFormContent"
-                   : path.includes("outbound") ? "outboundFormContent"
-                   : path.includes("stock") ? "stockFormContent"
-                   : null;
+    // Map wrapper IDs by path keywords
+    const WRAPPER_MAP = {
+      inbound: "inboundFormContent",
+      outbound: "outboundFormContent",
+      stock: "stockFormContent",
+    };
 
-    const innerContent = (wrapperId && doc.getElementById(wrapperId)) || doc.body;
+    // Detect wrapper ID based on path
+    const wrapperId = Object.keys(WRAPPER_MAP).find(key => path.includes(key));
+    const innerContent = (wrapperId && doc.getElementById(WRAPPER_MAP[wrapperId])) || doc.body;
 
     container.innerHTML = innerContent.innerHTML;
 
