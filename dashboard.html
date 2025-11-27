@@ -3,97 +3,121 @@
 <head>
   <meta charset="UTF-8" />
   <title>📈 Drophome Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-  <div class="form-container">
-    <header style="display: flex; align-items: center; justify-content: center; gap: 12px;">
-      <img src="images/DH-white.png" alt="Drophome Logo" style="height: 32px; width: auto;" />
+  <main class="form-container">
+    <!-- Brand / Page Header -->
+    <header class="dashboard-header" style="display:flex;align-items:center;justify-content:center;gap:12px;">
+      <img src="images/DH-white.png" alt="Drophome Logo" style="height:32px;width:auto;" />
       <span>Dashboard</span>
     </header>
 
     <!-- Summary Cards -->
-    <div class="card-container">
-      <div class="card inbound-card">
+    <section class="card-container" aria-label="Summary metrics">
+      <article class="card inbound-card">
         <div class="emoji">📥</div>
         <h2>Inbound</h2>
         <p>Total received this week: 120</p>
-      </div>
+      </article>
 
-      <div class="card outbound-card">
+      <article class="card outbound-card">
         <div class="emoji">📤</div>
         <h2>Outbound</h2>
         <p>Total shipped this week: 95</p>
-      </div>
+      </article>
 
-      <div class="card stock-card">
+      <article class="card stock-card">
         <div class="emoji">📊</div>
         <h2>Stock Alerts</h2>
         <p>5 SKUs below threshold</p>
-      </div>
+      </article>
 
-      <div class="card audit-card">
+      <article class="card audit-card">
         <div class="emoji">📝</div>
         <h2>Audit Log</h2>
         <p>Latest updates and submissions</p>
-      </div>
-    </div>
+      </article>
+    </section>
 
-    <!-- Responsive Tables -->
-    <h3>Inbound Records</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th><th>Date</th><th>Supplier</th><th>SKU</th><th>Qty</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td data-label="ID">INB-001</td>
-          <td data-label="Date">2025-11-25</td>
-          <td data-label="Supplier">ABC Traders</td>
-          <td data-label="SKU">SKU123</td>
-          <td data-label="Qty">50</td>
-        </tr>
-      </tbody>
-    </table>
+    <!-- Inbound Records Table -->
+    <section aria-labelledby="inbound-heading">
+      <h3 id="inbound-heading">Inbound Records</h3>
+      <table>
+        <caption class="visually-hidden">Recent inbound inventory records</caption>
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Date</th>
+            <th scope="col">Supplier</th>
+            <th scope="col">SKU</th>
+            <th scope="col">Qty</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="ID">INB-001</td>
+            <td data-label="Date">2025-11-25</td>
+            <td data-label="Supplier">ABC Traders</td>
+            <td data-label="SKU">SKU123</td>
+            <td data-label="Qty">50</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
 
-    <h3>Outbound Orders</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Order ID</th><th>Date</th><th>Account</th><th>Status</th><th>Qty</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td data-label="Order ID">ORD-101</td>
-          <td data-label="Date">2025-11-26</td>
-          <td data-label="Account">XYZ Corp</td>
-          <td data-label="Status">Dispatched</td>
-          <td data-label="Qty">20</td>
-        </tr>
-      </tbody>
-    </table>
+    <!-- Outbound Orders Table -->
+    <section aria-labelledby="outbound-heading">
+      <h3 id="outbound-heading">Outbound Orders</h3>
+      <table>
+        <caption class="visually-hidden">Recent outbound orders</caption>
+        <thead>
+          <tr>
+            <th scope="col">Order ID</th>
+            <th scope="col">Date</th>
+            <th scope="col">Account</th>
+            <th scope="col">Status</th>
+            <th scope="col">Qty</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="Order ID">ORD-101</td>
+            <td data-label="Date">2025-11-26</td>
+            <td data-label="Account">XYZ Corp</td>
+            <td data-label="Status">Dispatched</td>
+            <td data-label="Qty">20</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
 
-    <h3>Stock Availability</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>SKU</th><th>Product</th><th>Available</th><th>Location</th><th>Threshold</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td data-label="SKU">SKU789</td>
-          <td data-label="Product">Widget Pro</td>
-          <td data-label="Available">12</td>
-          <td data-label="Location">Warehouse A</td>
-          <td data-label="Threshold">20</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+    <!-- Stock Availability Table -->
+    <section aria-labelledby="stock-heading">
+      <h3 id="stock-heading">Stock Availability</h3>
+      <table>
+        <caption class="visually-hidden">Current stock availability and thresholds</caption>
+        <thead>
+          <tr>
+            <th scope="col">SKU</th>
+            <th scope="col">Product</th>
+            <th scope="col">Available</th>
+            <th scope="col">Location</th>
+            <th scope="col">Threshold</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="SKU">SKU789</td>
+            <td data-label="Product">Widget Pro</td>
+            <td data-label="Available">12</td>
+            <td data-label="Location">Warehouse A</td>
+            <td data-label="Threshold">20</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
 </body>
 </html>
