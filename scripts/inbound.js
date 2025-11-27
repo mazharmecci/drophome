@@ -44,7 +44,13 @@ form.addEventListener('submit', async (e) => {
     // Refresh ID for next submission
     generateId('INB', 'inbound', 'inboundId');
 
+    // Show success toast
     showToast("Inbound record submitted successfully.");
+    
+    // Optionally reset form fields (except ID)
+    form.reset();
+    document.getElementById('inboundId').value = ""; 
+    generateId('INB', 'inbound', 'inboundId'); // regenerate ID after reset
   } catch (err) {
     console.error("Error adding inbound record:", err);
     showToast("❌ Failed to submit inbound record.");
