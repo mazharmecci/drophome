@@ -165,3 +165,106 @@ form button:hover {
 .popup-content button:hover {
   background: #005bb5;
 }
+
+/* ------------------------------
+   Table Styling (Dashboard)
+------------------------------ */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 30px auto;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+table th, table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+table th {
+  background: #0066cc;
+  color: #fff;
+  font-weight: 600;
+}
+
+table tr:hover {
+  background: #f1f7ff;
+}
+
+/* ------------------------------
+   Responsive Design
+------------------------------ */
+@media (max-width: 768px) {
+  .card-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .card {
+    width: 90%;
+    max-width: 320px;
+  }
+
+  .form-container {
+    width: 90%;
+    padding: 20px;
+  }
+
+  /* Responsive table: scroll horizontally */
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 480px) {
+  header {
+    font-size: 1.2em;
+    padding: 15px;
+  }
+
+  .card h2 {
+    font-size: 1em;
+  }
+
+  .card p {
+    font-size: 0.85em;
+  }
+
+  form button {
+    font-size: 0.9em;
+    padding: 10px;
+  }
+
+  /* Collapse table into stacked rows */
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
+
+  table tr {
+    margin-bottom: 15px;
+    border-bottom: 2px solid #eee;
+  }
+
+  table td {
+    text-align: right;
+    padding-left: 50%;
+    position: relative;
+  }
+
+  table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 15px;
+    width: 45%;
+    text-align: left;
+    font-weight: bold;
+    color: #333;
+  }
+}
