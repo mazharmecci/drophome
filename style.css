@@ -554,3 +554,35 @@ button.btn-secondary:hover {
 .btn-clear-ui:hover {
   background-color: #e6b800;
 }
+
+.breadcrumb-nav {
+  margin: 10px 0 20px;
+  font-size: 0.9rem;
+}
+
+.breadcrumb-list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+  content: "›";
+  margin: 0 4px;
+  color: #999;
+}
+
+.breadcrumb-item a {
+  color: #0066cc;
+  text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb-current {
+  font-weight: 600;
+  color: #333;
+}
