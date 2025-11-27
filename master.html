@@ -10,36 +10,54 @@
   <main class="form-container">
     <header class="dashboard-header">
       <img src="images/DH-white.png" alt="Drophome Logo" class="logo" />
-      <span>Master List Manager 🛠️</span>
+      <span>🛠️ Master List Manager</span>
     </header>
 
     <section id="master-sections">
       <!-- Suppliers -->
-      <div class="master-block">
-        <h3>Suppliers</h3>
-        <ul id="supplierList"></ul>
-        <input type="text" id="newSupplier" placeholder="Add new supplier" />
-        <button id="addSupplierBtn">Add Supplier</button>
+      <div class="form-block">
+        <label for="newSupplier">Suppliers</label>
+        <div class="input-row">
+          <input type="text" id="newSupplier" placeholder="Add new supplier" />
+          <button id="addSupplierBtn">Add Supplier</button>
+        </div>
+        <ul id="supplierList" class="list-display"></ul>
       </div>
 
       <!-- Products -->
-      <div class="master-block">
-        <h3>Products</h3>
-        <ul id="productList"></ul>
-        <input type="text" id="newProduct" placeholder="Add new product" />
-        <button id="addProductBtn">Add Product</button>
+      <div class="form-block">
+        <label for="newProduct">Products</label>
+        <div class="input-row">
+          <input type="text" id="newProduct" placeholder="Add new product" />
+          <button id="addProductBtn">Add Product</button>
+        </div>
+        <ul id="productList" class="list-display"></ul>
       </div>
 
       <!-- Locations -->
-      <div class="master-block">
-        <h3>Storage Locations</h3>
-        <ul id="locationList"></ul>
-        <input type="text" id="newLocation" placeholder="Add new location" />
-        <button id="addLocationBtn">Add Location</button>
+      <div class="form-block">
+        <label for="newLocation">Storage Locations</label>
+        <div class="input-row">
+          <input type="text" id="newLocation" placeholder="Add new location" />
+          <button id="addLocationBtn">Add Location</button>
+        </div>
+        <ul id="locationList" class="list-display"></ul>
+      </div>
+
+      <!-- Back Button -->
+      <div class="form-actions">
+        <button type="button" onclick="goBack()">🔙 Return to Form</button>
       </div>
     </section>
   </main>
 
   <script type="module" src="scripts/masterManager.js"></script>
+  <script>
+    function goBack() {
+      const params = new URLSearchParams(window.location.search);
+      const origin = params.get("origin") || "inbound";
+      window.location.href = `${origin}.html`;
+    }
+  </script>
 </body>
 </html>
