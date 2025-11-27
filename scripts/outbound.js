@@ -1,7 +1,13 @@
 import { generateId } from './idGenerator.js';
 import { db } from './firebase.js';
+import {
+  collection,
+  addDoc
+} from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 const form = document.getElementById('outboundForm');
+
+// Generate initial ID on load
 generateId('ORD', 'outbound', 'orderId');
 
 form.addEventListener('submit', async (e) => {
@@ -19,6 +25,11 @@ form.addEventListener('submit', async (e) => {
     timestamp: new Date()
   };
 
-  await db.collection('outbound').add(data);
-  generateId('ORD', 'outbound', 'orderId'); // refresh for next entry
+  try {
+    await addDoc(collection(db, 'outbound'), data);
+    // Refresh ID for next entry
+    generateId('ORD', 'outbound', 'orderId');
+  } catch (err) {
+    console.error("Error adding outbound record:", err);
+  }
 });
