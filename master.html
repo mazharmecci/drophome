@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>🛠️ Master List Manager</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="form-container">
+    <header class="dashboard-header">
+      <img src="images/DH-white.png" alt="Drophome Logo" class="logo" />
+      <span>🛠️ Master List Manager</span>
+    </header>
+
+    <section id="master-sections">
+      <!-- Suppliers -->
+      <div class="master-block">
+        <h3>Suppliers</h3>
+        <ul id="supplierList"></ul>
+        <input type="text" id="newSupplier" placeholder="Add new supplier" />
+        <button onclick="addItem('suppliers', 'newSupplier')">Add Supplier</button>
+      </div>
+
+      <!-- Products -->
+      <div class="master-block">
+        <h3>Products</h3>
+        <ul id="productList"></ul>
+        <input type="text" id="newProduct" placeholder="Add new product" />
+        <button onclick="addItem('products', 'newProduct')">Add Product</button>
+      </div>
+
+      <!-- Locations -->
+      <div class="master-block">
+        <h3>Storage Locations</h3>
+        <ul id="locationList"></ul>
+        <input type="text" id="newLocation" placeholder="Add new location" />
+        <button onclick="addItem('locations', 'newLocation')">Add Location</button>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="scripts/masterManager.js"></script>
+</body>
+</html>
