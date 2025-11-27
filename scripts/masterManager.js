@@ -142,5 +142,6 @@ document.addEventListener("DOMContentLoaded", () => {
     ?.addEventListener("click", () => addItem("locations", "newLocation"));
 
   document.getElementById("backToFormBtn")
-    ?.addEventListener("click", goBack); // optional manual return
+    ?.addEventListener("click", goBack);
 });
+
