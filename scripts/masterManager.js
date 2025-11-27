@@ -145,6 +145,17 @@ function goBack() {
   }
 }
 
+// will reset to clear - suppliers, products, location
+
+function clearUIOnly() {
+  document.getElementById("supplierList")?.innerHTML = "";
+  document.getElementById("productList")?.innerHTML = "";
+  document.getElementById("locationList")?.innerHTML = "";
+
+  showToast("🧹 UI cleared — backend data untouched.");
+}
+
+
 // Bind event listeners
 document.addEventListener("DOMContentLoaded", () => {
   loadMasterList();
