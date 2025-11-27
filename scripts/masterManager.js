@@ -39,12 +39,18 @@ async function addItem(field, inputId) {
   if (!newValue) return;
 
   const snapshot = await getDoc(docRef);
+  if (!snapshot.exists()) {
+    showToast("❌ Master list document not found.");
+    return;
+  }
+
   const current = snapshot.data()[field] || [];
   if (current.includes(newValue)) return;
 
   const updated = [...current, newValue];
   await updateDoc(docRef, { [field]: updated });
   input.value = "";
+  loadMasterList();
 
   // Redirect back to origin form
   redirectBack();
