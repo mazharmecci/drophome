@@ -494,3 +494,19 @@ button.btn-secondary {
 button.btn-secondary:hover {
   background-color: var(--secondary-hover, #5a6268);
 }
+
+.btn-orange {
+  padding: 10px 20px;
+  background-color: #FFA500; /* vibrant orange */
+  color: #000;               /* black text */
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-orange:hover {
+  background-color: #e69500; /* deeper orange on hover */
+}
+
