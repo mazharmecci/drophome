@@ -124,8 +124,25 @@ async function removeItem(field, value) {
 // Optional: Manual back button logic
 function goBack() {
   const params = new URLSearchParams(window.location.search);
-  const origin = params.get("origin") || "inbound";
-  window.location.href = `${origin}.html?updated=true`;
+  const origin = params.get("origin");
+
+  // Map origin keys to actual file paths
+  const originMap = {
+    inbound: "forms/inbound.html",
+    outbound: "forms/outbound.html",
+    stock: "forms/stock.html"
+  };
+
+  const targetPath = origin && originMap[origin];
+
+  if (targetPath) {
+    // Preserve ?updated=true for UI feedback
+    const url = new URL(targetPath, window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/'));
+    url.searchParams.set("updated", "true");
+    window.location.href = url.toString();
+  } else {
+    showToast("⚠️ No origin form detected. Please return manually.");
+  }
 }
 
 // Bind event listeners
