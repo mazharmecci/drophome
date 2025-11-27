@@ -1,287 +1,285 @@
 /* Card color themes */
 .inbound-card {
-  background: #e3f2fd; /* light blue */
+background: #e3f2fd;
 }
-
 .outbound-card {
-  background: #fce4ec; /* light pink */
+background: #fce4ec;
 }
-
 .stock-card {
-  background: #e8f5e9; /* light green */
+background: #e8f5e9;
 }
-
 .audit-card {
-  background: #fff3e0; /* light orange */
+background: #fff3e0;
 }
 
-/* ------------------------------
-   Global Reset & Typography
------------------------------- */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* Global Reset & Typography */
+
+{
+margin: 0;
+padding: 0;
+box-sizing: border-box;
 }
 
 body {
-  font-family: "Segoe UI", Arial, sans-serif;
-  background: #f9f9f9;
-  color: #333;
-  line-height: 1.5;
+font-family: "Segoe UI", Arial, sans-serif;
+background: #f9f9f9;
+color: #333;
+line-height: 1.5;
+padding: 10px;
 }
 
-/* ------------------------------
-   Header & Footer
------------------------------- */
+/* Header & Footer */
 header {
-  background: #0066cc;
-  color: #fff;
-  padding: 20px;
-  font-size: 1.5em;
-  font-weight: bold;
-  text-align: center;
+background: #0066cc;
+color: #fff;
+padding: 20px;
+font-size: 1.5em;
+font-weight: bold;
+text-align: center;
+border-radius: 8px;
 }
 
 footer {
-  margin-top: 60px;
-  font-size: 0.85em;
-  color: #888;
-  text-align: center;
+margin-top: 40px;
+font-size: 0.85em;
+color: #888;
+text-align: center;
 }
 
-/* ------------------------------
-   Landing Page Cards
------------------------------- */
+/* Landing Page Cards */
 .card-container {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  margin: 60px auto;
-  flex-wrap: wrap;
+display: flex;
+justify-content: center;
+gap: 30px;
+margin: 40px auto;
+flex-wrap: wrap;
+max-width: 1200px;
 }
 
 .card {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  width: 220px;
-  padding: 30px 20px;
-  text-align: center;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  cursor: pointer;
-  text-decoration: none;
-  color: inherit;
+background: #fff;
+border-radius: 12px;
+box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+width: 220px;
+max-width: 100%;
+padding: 30px 20px;
+text-align: center;
+transition: transform 0.2s ease, box-shadow 0.2s ease;
+cursor: pointer;
+text-decoration: none;
+color: inherit;
 }
 
 .card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+transform: translateY(-5px);
+box-shadow: 0 6px 12px rgba(0,0,0,0.15);
 }
 
 .card h2 {
-  margin: 15px 0 10px;
-  font-size: 1.2em;
+margin: 15px 0 10px;
+font-size: 1.2em;
 }
 
 .card p {
-  font-size: 0.9em;
-  color: #666;
+font-size: 0.9em;
+color: #666;
 }
 
 .emoji {
-  font-size: 2em;
+font-size: 2em;
 }
 
-/* ------------------------------
-   Form Layout
------------------------------- */
+/* Form Layout */
 .form-container {
-  max-width: 500px;
-  margin: 40px auto;
-  background: #fff;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+max-width: 500px;
+width: 100%;
+margin: 40px auto;
+background: #fff;
+padding: 30px;
+border-radius: 12px;
+box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 form label {
-  display: block;
-  margin-top: 15px;
-  font-weight: 600;
+display: block;
+margin-top: 15px;
+font-weight: 600;
 }
 
 form input,
 form select,
 form textarea {
-  width: 100%;
-  padding: 10px;
-  margin-top: 6px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 0.95em;
+width: 100%;
+padding: 10px;
+margin-top: 6px;
+border: 1px solid #ccc;
+border-radius: 6px;
+font-size: 0.95em;
 }
 
 form button {
-  margin-top: 20px;
-  width: 100%;
-  padding: 12px;
-  background: #0066cc;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  font-size: 1em;
-  cursor: pointer;
-  transition: background 0.2s ease;
+margin-top: 20px;
+width: 100%;
+padding: 12px;
+background: #0066cc;
+color: #fff;
+border: none;
+border-radius: 6px;
+font-size: 1em;
+cursor: pointer;
+transition: background 0.2s ease;
 }
 
 form button:hover {
-  background: #005bb5;
+background: #005bb5;
 }
 
-/* ------------------------------
-   Success Popup
------------------------------- */
+/* Success Popup */
 .popup {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+position: fixed;
+top: 0; left: 0;
+width: 100%; height: 100%;
+background: rgba(0,0,0,0.4);
+display: flex;
+align-items: center;
+justify-content: center;
+padding: 10px;
 }
 
 .popup.hidden {
-  display: none;
+display: none;
 }
 
 .popup-content {
-  background: #fff;
-  padding: 30px;
-  border-radius: 12px;
-  text-align: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+background: #fff;
+padding: 20px;
+max-width: 400px;
+width: 100%;
+border-radius: 12px;
+text-align: center;
+box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
 .popup-content h3 {
-  margin-bottom: 10px;
-  color: #0066cc;
+margin-bottom: 10px;
+color: #0066cc;
 }
 
 .popup-content button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  background: #0066cc;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+margin-top: 20px;
+padding: 10px 20px;
+background: #0066cc;
+color: #fff;
+border: none;
+border-radius: 6px;
+cursor: pointer;
 }
 
 .popup-content button:hover {
-  background: #005bb5;
+background: #005bb5;
 }
 
-/* ------------------------------
-   Table Styling (Dashboard)
------------------------------- */
+/* Table Styling (Dashboard) */
 table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 30px auto;
-  background: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+width: 100%;
+border-collapse: collapse;
+margin: 30px auto;
+background: #fff;
+border-radius: 8px;
+overflow: hidden;
+box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 table th, table td {
-  padding: 12px 15px;
-  text-align: left;
-  border-bottom: 1px solid #eee;
+padding: 12px 15px;
+text-align: left;
+border-bottom: 1px solid #eee;
 }
 
 table th {
-  background: #0066cc;
-  color: #fff;
-  font-weight: 600;
+background: #0066cc;
+color: #fff;
+font-weight: 600;
 }
 
 table tr:hover {
-  background: #f1f7ff;
+background: #f1f7ff;
 }
 
-/* ------------------------------
-   Responsive Design
------------------------------- */
+/* Responsive Design */
 @media (max-width: 768px) {
-  .card-container {
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-  }
+body {
+padding: 8px;
+}
 
-  .card {
-    width: 90%;
-    max-width: 320px;
-  }
+.card-container {
+flex-direction: column;
+align-items: stretch;
+gap: 20px;
+}
 
-  .form-container {
-    width: 90%;
-    padding: 20px;
-  }
+.card {
+width: 100%;
+max-width: 100%;
+}
 
-  /* Responsive table: scroll horizontally */
-  table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
+.form-container {
+width: 100%;
+padding: 20px;
+}
+
+table {
+display: block;
+overflow-x: auto;
+white-space: nowrap;
+}
 }
 
 @media (max-width: 480px) {
-  header {
-    font-size: 1.2em;
-    padding: 15px;
-  }
+header {
+font-size: 1.2em;
+padding: 15px;
+}
 
-  .card h2 {
-    font-size: 1em;
-  }
+.card h2 {
+font-size: 1em;
+}
 
-  .card p {
-    font-size: 0.85em;
-  }
+.card p {
+font-size: 0.85em;
+}
 
-  form button {
-    font-size: 0.9em;
-    padding: 10px;
-  }
+form button {
+font-size: 0.9em;
+padding: 10px;
+}
 
-  /* Collapse table into stacked rows */
-  table, thead, tbody, th, td, tr {
-    display: block;
-  }
+.popup-content {
+padding: 15px;
+}
 
-  table tr {
-    margin-bottom: 15px;
-    border-bottom: 2px solid #eee;
-  }
+table, thead, tbody, th, td, tr {
+display: block;
+}
 
-  table td {
-    text-align: right;
-    padding-left: 50%;
-    position: relative;
-  }
+table tr {
+margin-bottom: 15px;
+border-bottom: 2px solid #eee;
+}
 
-  table td::before {
-    content: attr(data-label);
-    position: absolute;
-    left: 15px;
-    width: 45%;
-    text-align: left;
-    font-weight: bold;
-    color: #333;
-  }
+table td {
+text-align: right;
+padding-left: 50%;
+position: relative;
+}
+
+table td::before {
+content: attr(data-label);
+position: absolute;
+left: 15px;
+width: 45%;
+text-align: left;
+font-weight: bold;
+color: #333;
+}
 }
