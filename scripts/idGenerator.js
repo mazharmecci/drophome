@@ -1,5 +1,5 @@
 // scripts/idGenerator.js
-import { db } from './firebaseInit.js';
+import { db } from './firebase.js';
 
 export async function generateId(prefix, collectionName, fieldId) {
   const field = document.getElementById(fieldId);
