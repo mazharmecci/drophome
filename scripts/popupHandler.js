@@ -21,3 +21,19 @@ export function initPopupClose() {
     document.getElementById("successPopup").classList.add("hidden");
   });
 }
+
+export function showToast(message) {
+  const toast = document.createElement("div");
+  toast.className = "toast";
+  toast.textContent = message;
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add("visible");
+  }, 100);
+
+  setTimeout(() => {
+    toast.classList.remove("visible");
+    setTimeout(() => toast.remove(), 500);
+  }, 3000);
+}
