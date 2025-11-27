@@ -1,10 +1,10 @@
-import { db } from './firebase.js';
-import { showToast, showPopup } from './popupHandler.js';
+import { db } from "./firebase.js";
+import { showToast, showPopup } from "./popupHandler.js";
 import {
   doc,
   getDoc,
   setDoc,
-  updateDoc
+  updateDoc,
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 const docRef = doc(db, "masterList", "VwsEuQNJgfo5TXM6A0DA");
@@ -37,7 +37,7 @@ function renderList(listId, items = [], fieldName) {
   }
 
   ul.innerHTML = "";
-  items.forEach(item => {
+  items.forEach((item) => {
     const li = document.createElement("li");
     li.textContent = item;
 
@@ -71,10 +71,10 @@ async function addItem(field, inputId) {
       await setDoc(docRef, {
         suppliers: [],
         products: [],
-        locations: []
+        locations: [],
       });
       showToast("✅ Master list initialized.");
-      // No need to re-fetch; we know the structure
+
       await updateDoc(docRef, { [field]: [newValue] });
       input.value = "";
       await loadMasterList();
@@ -106,7 +106,7 @@ async function removeItem(field, value) {
     title: "Confirm Removal",
     message: `Are you sure you want to remove "${value}" from ${field}?`,
     confirmText: "Yes, remove it",
-    cancelText: "Cancel"
+    cancelText: "Cancel",
   });
 
   if (!confirmed) return;
@@ -119,7 +119,7 @@ async function removeItem(field, value) {
     }
 
     const current = snapshot.data()[field] || [];
-    const updated = current.filter(item => item !== value);
+    const updated = current.filter((item) => item !== value);
 
     await updateDoc(docRef, { [field]: updated });
     await loadMasterList();
@@ -136,7 +136,7 @@ async function clearField(field) {
     title: "Clear All Items",
     message: `Are you sure you want to remove ALL items from ${field}? This cannot be undone.`,
     confirmText: "Yes, clear all",
-    cancelText: "Cancel"
+    cancelText: "Cancel",
   });
 
   if (!confirmed) return;
@@ -153,9 +153,14 @@ async function clearField(field) {
 
 // Clear UI only (does not touch backend)
 function clearUIOnly() {
-  document.getElementById("supplierList")?.innerHTML = "";
-  document.getElementById("productList")?.innerHTML = "";
-  document.getElementById("locationList")?.innerHTML = "";
+  const supplierList = document.getElementById("supplierList");
+  const productList = document.getElementById("productList");
+  const locationList = document.getElementById("locationList");
+
+  if (supplierList) supplierList.innerHTML = "";
+  if (productList) productList.innerHTML = "";
+  if (locationList) locationList.innerHTML = "";
+
   showToast("🧹 UI cleared — backend data untouched.");
 }
 
@@ -167,7 +172,7 @@ function goBack() {
   const originMap = {
     inbound: "forms/inbound.html",
     outbound: "forms/outbound.html",
-    stock: "forms/stock.html"
+    stock: "forms/stock.html",
   };
 
   const targetFile =
@@ -190,7 +195,7 @@ document.addEventListener("DOMContentLoaded", () => {
     { id: "removeAllSuppliersBtn", handler: () => clearField("suppliers") },
     { id: "removeAllProductsBtn", handler: () => clearField("products") },
     { id: "removeAllLocationsBtn", handler: () => clearField("locations") },
-    { id: "backToFormBtn", handler: goBack }
+    { id: "backToFormBtn", handler: goBack },
   ];
 
   bindings.forEach(({ id, handler }) => {
