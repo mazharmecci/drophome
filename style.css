@@ -445,3 +445,20 @@ table tr:hover {
   cursor: pointer;
   padding: 0 6px;
 }
+
+.input-row button,
+.form-actions button {
+  padding: 10px 16px;
+  background-color: var(--accent-color, #007bff);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.input-row button:hover,
+.form-actions button:hover {
+  background-color: var(--accent-hover, #0056b3); /* Deep blue hover */
+}
