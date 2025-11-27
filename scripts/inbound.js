@@ -1,11 +1,24 @@
 import { generateId } from './idGenerator.js';
+import { db } from './firebaseInit.js'; // assuming you modularized Firebase
+
+const form = document.getElementById('inboundForm');
 generateId('INB', 'inbound', 'inboundId');
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
-  // ...submit logic...
-  await db.collection('inbound').add({ /* data */ });
-  generateId('INB', 'inbound', 'inboundId'); // refresh ID
+
+  const data = {
+    inboundId: document.getElementById('inboundId').value,
+    dateReceived: document.getElementById('dateReceived').value,
+    supplierName: document.getElementById('supplierName').value,
+    sku: document.getElementById('sku').value,
+    productName: document.getElementById('productName').value,
+    quantityReceived: parseInt(document.getElementById('quantityReceived').value),
+    storageLocation: document.getElementById('storageLocation').value,
+    receivingNotes: document.getElementById('receivingNotes').value,
+    timestamp: new Date()
+  };
+
+  await db.collection('inbound').add(data);
+  generateId('INB', 'inbound', 'inboundId'); // refresh for next entry
 });
-
-
