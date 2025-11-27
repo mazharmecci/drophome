@@ -1,1 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>📊 Stock Availability Form</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>📊 Stock Availability</header>
+
+  <div class="form-container">
+    <form id="stockForm">
+      <label for="sku">SKU</label>
+      <input type="text" id="sku" name="sku" required />
+
+      <label for="productName">Product Name</label>
+      <input type="text" id="productName" name="productName" required />
+
+      <label for="availableQuantity">Available Quantity</label>
+      <input type="number" id="availableQuantity" name="availableQuantity" required />
+
+      <label for="location">Location</label>
+      <input type="text" id="location" name="location" required />
+
+      <label for="reorderThreshold">Reorder Threshold</label>
+      <input type="number" id="reorderThreshold" name="reorderThreshold" required />
+
+      <label for="lastUpdated">Last Updated</label>
+      <input type="date" id="lastUpdated" name="lastUpdated" required />
+
+      <button type="submit">Update Stock</button>
+    </form>
+  </div>
+
+  <!-- Shared Success Popup -->
+  <div id="successPopup" class="popup hidden">
+    <div class="popup-content">
+      <h3>✅ Success</h3>
+      <p>Your stock record has been updated!</p>
+      <button id="closePopup">OK</button>
+    </div>
+  </div>
+
+  <script type="module" src="scripts/stock.js"></script>
+  <script type="module" src="scripts/popupHandler.js"></script>
+</body>
+</html>
 
