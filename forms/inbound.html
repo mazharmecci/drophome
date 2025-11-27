@@ -1,1 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>📥 Inbound Inventory Form</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>📥 Inbound Inventory</header>
 
+  <div class="form-container">
+    <form id="inboundForm">
+      <label for="inboundId">Inbound ID</label>
+      <input type="text" id="inboundId" name="inboundId" required />
+
+      <label for="dateReceived">Date Received</label>
+      <input type="date" id="dateReceived" name="dateReceived" required />
+
+      <label for="supplierName">Supplier Name</label>
+      <input type="text" id="supplierName" name="supplierName" required />
+
+      <label for="sku">SKU</label>
+      <input type="text" id="sku" name="sku" required />
+
+      <label for="productName">Product Name</label>
+      <input type="text" id="productName" name="productName" required />
+
+      <label for="quantityReceived">Quantity Received</label>
+      <input type="number" id="quantityReceived" name="quantityReceived" required />
+
+      <label for="storageLocation">Storage Location</label>
+      <input type="text" id="storageLocation" name="storageLocation" required />
+
+      <label for="receivingNotes">Receiving Notes</label>
+      <textarea id="receivingNotes" name="receivingNotes"></textarea>
+
+      <button type="submit">Submit Inbound</button>
+    </form>
+  </div>
+
+  <!-- Shared Success Popup -->
+  <div id="successPopup" class="popup hidden">
+    <div class="popup-content">
+      <h3>✅ Success</h3>
+      <p>Your inbound record has been submitted!</p>
+      <button id="closePopup">OK</button>
+    </div>
+  </div>
+
+  <script type="module" src="scripts/inbound.js"></script>
+  <script type="module" src="scripts/popupHandler.js"></script>
+</body>
+</html>
