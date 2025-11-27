@@ -1,10 +1,27 @@
 import { generateId } from './idGenerator.js';
 import { db } from './firebase.js';
+import { loadDropdowns } from './dropdownLoader.js';
+import { showToast } from './popupHandler.js';
+import {
+  collection,
+  addDoc
+} from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 const form = document.getElementById('inboundForm');
 
-// Generate ID on load
-generateId('INB', 'inbound', 'inboundId');
+document.addEventListener("DOMContentLoaded", () => {
+  // Generate ID on load
+  generateId('INB', 'inbound', 'inboundId');
+
+  // Load dropdowns from master list
+  loadDropdowns();
+
+  // If redirected from master.html, show toast
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("updated") === "true") {
+    showToast("Master list updated successfully.");
+  }
+});
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -21,8 +38,15 @@ form.addEventListener('submit', async (e) => {
     timestamp: new Date()
   };
 
-  await db.collection('inbound').add(data);
+  try {
+    await addDoc(collection(db, 'inbound'), data);
 
-  // Refresh ID for next submission
-  generateId('INB', 'inbound', 'inboundId');
+    // Refresh ID for next submission
+    generateId('INB', 'inbound', 'inboundId');
+
+    showToast("Inbound record submitted successfully.");
+  } catch (err) {
+    console.error("Error adding inbound record:", err);
+    showToast("❌ Failed to submit inbound record.");
+  }
 });
