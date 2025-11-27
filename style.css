@@ -510,3 +510,18 @@ button.btn-secondary:hover {
   background-color: #e69500; /* deeper orange on hover */
 }
 
+.btn-clear-ui {
+  background-color: #ffcc00;
+  color: #000;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-clear-ui:hover {
+  background-color: #e6b800;
+}
+
