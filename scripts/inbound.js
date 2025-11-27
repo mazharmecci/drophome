@@ -1,7 +1,9 @@
 import { generateId } from './idGenerator.js';
-import { db } from './firebaseInit.js'; // assuming you modularized Firebase
+import { db } from './firebaseInit.js';
 
 const form = document.getElementById('inboundForm');
+
+// Generate ID on load
 generateId('INB', 'inbound', 'inboundId');
 
 form.addEventListener('submit', async (e) => {
@@ -20,5 +22,7 @@ form.addEventListener('submit', async (e) => {
   };
 
   await db.collection('inbound').add(data);
-  generateId('INB', 'inbound', 'inboundId'); // refresh for next entry
+
+  // Refresh ID for next submission
+  generateId('INB', 'inbound', 'inboundId');
 });
