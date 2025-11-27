@@ -1,3 +1,20 @@
+/* Card color themes */
+.inbound-card {
+  background: #e3f2fd; /* light blue */
+}
+
+.outbound-card {
+  background: #fce4ec; /* light pink */
+}
+
+.stock-card {
+  background: #e8f5e9; /* light green */
+}
+
+.audit-card {
+  background: #fff3e0; /* light orange */
+}
+
 /* ------------------------------
    Global Reset & Typography
 ------------------------------ */
