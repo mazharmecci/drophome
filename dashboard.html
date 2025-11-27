@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>📈 Drophome Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="form-container">
+    <header style="display: flex; align-items: center; justify-content: center; gap: 12px;">
+      <img src="images/drophome-logo.png" alt="Drophome Logo" style="height: 32px; width: auto;" />
+      <span>📈 Dashboard</span>
+    </header>
+
+    <!-- Summary Cards -->
+    <div class="card-container">
+      <div class="card inbound-card">
+        <div class="emoji">📥</div>
+        <h2>Inbound</h2>
+        <p>Total received this week: 120</p>
+      </div>
+
+      <div class="card outbound-card">
+        <div class="emoji">📤</div>
+        <h2>Outbound</h2>
+        <p>Total shipped this week: 95</p>
+      </div>
+
+      <div class="card stock-card">
+        <div class="emoji">📊</div>
+        <h2>Stock Alerts</h2>
+        <p>5 SKUs below threshold</p>
+      </div>
+
+      <div class="card audit-card">
+        <div class="emoji">📝</div>
+        <h2>Audit Log</h2>
+        <p>Latest updates and submissions</p>
+      </div>
+    </div>
+
+    <!-- Responsive Tables -->
+    <h3>Inbound Records</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th><th>Date</th><th>Supplier</th><th>SKU</th><th>Qty</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-label="ID">INB-001</td>
+          <td data-label="Date">2025-11-25</td>
+          <td data-label="Supplier">ABC Traders</td>
+          <td data-label="SKU">SKU123</td>
+          <td data-label="Qty">50</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Outbound Orders</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Order ID</th><th>Date</th><th>Account</th><th>Status</th><th>Qty</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-label="Order ID">ORD-101</td>
+          <td data-label="Date">2025-11-26</td>
+          <td data-label="Account">XYZ Corp</td>
+          <td data-label="Status">Dispatched</td>
+          <td data-label="Qty">20</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Stock Availability</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>SKU</th><th>Product</th><th>Available</th><th>Location</th><th>Threshold</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-label="SKU">SKU789</td>
+          <td data-label="Product">Widget Pro</td>
+          <td data-label="Available">12</td>
+          <td data-label="Location">Warehouse A</td>
+          <td data-label="Threshold">20</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
