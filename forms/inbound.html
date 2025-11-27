@@ -38,9 +38,14 @@
       <label for="receivingNotes">Receiving Notes</label>
       <textarea id="receivingNotes" name="receivingNotes"></textarea>
 
-      <div style="display: flex; gap: 12px; margin-top: 16px;">
-        <button type="submit">Submit Inbound</button>
-        <button type="button" onclick="window.location.href='../master.html'">Manage Master List</button>
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">📥 Submit Inbound</button>
+        <button 
+          type="button" 
+          class="btn-secondary" 
+          onclick="window.location.href='../master.html?origin=inbound'">
+          🛠️ Manage Master List
+        </button>
       </div>
     </form>
   </div>
