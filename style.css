@@ -525,3 +525,32 @@ button.btn-secondary:hover {
   background-color: #e6b800;
 }
 
+#backToFormBtn,
+.btn-clear-ui {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Return to Form button styling */
+#backToFormBtn {
+  background-color: #007bff;
+  color: #fff;
+}
+
+#backToFormBtn:hover {
+  background-color: #0056b3;
+}
+
+/* Clear UI button styling */
+.btn-clear-ui {
+  background-color: #ffcc00;
+  color: #000;
+}
+
+.btn-clear-ui:hover {
+  background-color: #e6b800;
+}
