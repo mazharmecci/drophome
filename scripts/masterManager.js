@@ -47,6 +47,15 @@ export async function addItem(field, inputId) {
 }
 
 async function removeItem(field, value) {
+  const confirmed = await showPopup({
+    title: "Confirm Removal",
+    message: `Are you sure you want to remove "${value}" from ${field}?`,
+    confirmText: "Yes, remove it",
+    cancelText: "Cancel"
+  });
+
+  if (!confirmed) return;
+
   const snapshot = await getDoc(docRef);
   const current = snapshot.data()[field] || [];
   const updated = current.filter(item => item !== value);
