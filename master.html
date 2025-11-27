@@ -20,43 +20,41 @@
         <div class="input-row">
           <span class="emoji">🏢</span>
           <input type="text" id="newSupplier" placeholder="Add new supplier" />
-          <button id="addSupplierBtn">Add Supplier</button>
+          <button type="button" id="addSupplierBtn">Add Supplier</button>
         </div>
         <ul id="supplierList" class="list-display"></ul>
       </div>
-    
+
       <!-- Products -->
       <div class="form-block">
         <h4><strong>Products:</strong></h4>
         <div class="input-row">
           <span class="emoji">📦</span>
           <input type="text" id="newProduct" placeholder="Add new product" />
-          <button id="addProductBtn">Add Product</button>
+          <button type="button" id="addProductBtn">Add Product</button>
         </div>
         <ul id="productList" class="list-display"></ul>
       </div>
-    
+
       <!-- Locations -->
       <div class="form-block">
         <h4><strong>Storage Locations:</strong></h4>
         <div class="input-row">
           <span class="emoji">🏬</span>
           <input type="text" id="newLocation" placeholder="Add new location" />
-          <button id="addLocationBtn">Add Location</button>
+          <button type="button" id="addLocationBtn">Add Location</button>
         </div>
         <ul id="locationList" class="list-display"></ul>
       </div>
     </section>
 
-      <!-- Back Button -->
-      <div class="form-actions">
-         <div class="form-actions">
-        <button type="button" onclick="clearUIOnly()" class="btn-clear-ui">
-          🧹 Clear UI Only
-        </button>
-      </div>
-     </div>
-    </section>
+    <!-- Actions -->
+    <div class="form-actions">
+      <button type="button" id="backToFormBtn">🔙 Return to Form</button>
+      <button type="button" onclick="clearUIOnly()" class="btn-clear-ui">
+        🧹 Clear UI Only
+      </button>
+    </div>
   </main>
 
   <script type="module" src="scripts/masterManager.js"></script>
