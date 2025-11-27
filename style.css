@@ -388,6 +388,11 @@ table tr:hover {
   align-items: center;
 }
 
+.input-row .emoji {
+  font-size: 1.4em;
+  margin-right: 6px;
+}
+
 .input-row input {
   flex: 1;
   padding: 10px;
