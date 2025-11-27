@@ -1,5 +1,7 @@
 import { generateId } from './idGenerator.js';
 import { db } from './firebase.js';
+import { loadDropdowns } from './dropdownLoader.js';
+import { showToast } from './popupHandler.js';
 import {
   collection,
   addDoc
@@ -7,8 +9,19 @@ import {
 
 const form = document.getElementById('outboundForm');
 
-// Generate initial ID on load
-generateId('ORD', 'outbound', 'orderId');
+document.addEventListener("DOMContentLoaded", () => {
+  // Generate initial ID on load
+  generateId('ORD', 'outbound', 'orderId');
+
+  // Load dropdowns from master list
+  loadDropdowns();
+
+  // If redirected from master.html, show toast
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("updated") === "true") {
+    showToast("Master list updated successfully.");
+  }
+});
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -27,9 +40,19 @@ form.addEventListener('submit', async (e) => {
 
   try {
     await addDoc(collection(db, 'outbound'), data);
+
     // Refresh ID for next entry
     generateId('ORD', 'outbound', 'orderId');
+
+    // Show success toast
+    showToast("Outbound record submitted successfully.");
+
+    // Reset form fields (except ID)
+    form.reset();
+    document.getElementById('orderId').value = "";
+    generateId('ORD', 'outbound', 'orderId'); // regenerate ID after reset
   } catch (err) {
     console.error("Error adding outbound record:", err);
+    showToast("❌ Failed to submit outbound record.");
   }
 });
