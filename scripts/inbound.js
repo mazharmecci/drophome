@@ -1,5 +1,5 @@
 import { generateId } from './idGenerator.js';
-import { db } from './firebaseInit.js';
+import { db } from './firebase.js';
 
 const form = document.getElementById('inboundForm');
 
