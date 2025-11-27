@@ -6,10 +6,12 @@
   <link rel="stylesheet" href="../style.css" />
 </head>
 <body>
-  <header>📊 Stock Availability</header>
-
-  <!-- Form Container -->
   <div class="form-container">
+    <header style="display: flex; align-items: center; justify-content: center; gap: 12px;">
+      <img src="../images/DH-white.png" alt="Drophome Logo" style="height: 32px; width: auto;" />
+      <span>📊 Stock Availability</span>
+    </header>
+
     <form id="stockForm">
       <label for="sku">SKU</label>
       <input type="text" id="sku" name="sku" required />
@@ -33,7 +35,6 @@
     </form>
   </div>
 
-  <!-- Shared Success Popup -->
   <div id="successPopup" class="popup hidden">
     <div class="popup-content">
       <h3>✅ Success</h3>
@@ -42,7 +43,6 @@
     </div>
   </div>
 
-  <!-- Scripts -->
   <script type="module" src="../scripts/stock.js"></script>
   <script type="module" src="../scripts/popupHandler.js"></script>
 </body>
