@@ -19,9 +19,9 @@ async function loadMasterList() {
     }
 
     const data = snapshot.data();
-    renderList("supplierList", data.suppliers, "suppliers");
-    renderList("productList", data.products, "products");
-    renderList("locationList", data.locations, "locations");
+    renderList("supplierList", data.suppliers ?? [], "suppliers");
+    renderList("productList", data.products ?? [], "products");
+    renderList("locationList", data.locations ?? [], "locations");
   } catch (error) {
     console.error("Error loading master list:", error);
     showToast("❌ Failed to load master list.");
@@ -44,6 +44,7 @@ function renderList(listId, items = [], fieldName) {
     const removeBtn = document.createElement("button");
     removeBtn.type = "button";
     removeBtn.textContent = "❌";
+    removeBtn.setAttribute("aria-label", `Remove ${item}`);
     removeBtn.addEventListener("click", () => removeItem(fieldName, item));
 
     li.appendChild(removeBtn);
@@ -57,10 +58,13 @@ async function addItem(field, inputId) {
   if (!input) return;
 
   const newValue = input.value.trim();
-  if (!newValue) return;
+  if (!newValue) {
+    showToast("⚠️ Please enter a value.");
+    return;
+  }
 
   try {
-    let snapshot = await getDoc(docRef);
+    const snapshot = await getDoc(docRef);
 
     // Auto-create document if missing
     if (!snapshot.exists()) {
@@ -70,7 +74,12 @@ async function addItem(field, inputId) {
         locations: []
       });
       showToast("✅ Master list initialized.");
-      snapshot = await getDoc(docRef);
+      // No need to re-fetch; we know the structure
+      await updateDoc(docRef, { [field]: [newValue] });
+      input.value = "";
+      await loadMasterList();
+      showToast(`✅ "${newValue}" added to ${field}.`);
+      return;
     }
 
     const current = snapshot.data()[field] || [];
@@ -121,40 +130,52 @@ async function removeItem(field, value) {
   }
 }
 
-// Optional: Manual back button logic
+// Clear entire field with confirmation
+async function clearField(field) {
+  const confirmed = await showPopup({
+    title: "Clear All Items",
+    message: `Are you sure you want to remove ALL items from ${field}? This cannot be undone.`,
+    confirmText: "Yes, clear all",
+    cancelText: "Cancel"
+  });
+
+  if (!confirmed) return;
+
+  try {
+    await updateDoc(docRef, { [field]: [] });
+    await loadMasterList();
+    showToast(`✅ All items cleared from ${field}.`);
+  } catch (error) {
+    console.error("Error clearing field:", error);
+    showToast("❌ Failed to clear field.");
+  }
+}
+
+// Clear UI only (does not touch backend)
+function clearUIOnly() {
+  document.getElementById("supplierList").innerHTML = "";
+  document.getElementById("productList").innerHTML = "";
+  document.getElementById("locationList").innerHTML = "";
+  showToast("🧹 UI cleared — backend data untouched.");
+}
+
+// Navigate back to origin form
 function goBack() {
   const params = new URLSearchParams(window.location.search);
   const origin = params.get("origin");
 
-  // Map origin keys to actual file paths
   const originMap = {
-    inbound: "forms/inbound.html",
-    outbound: "forms/outbound.html",
-    stock: "forms/stock.html"
+    inbound: "inbound.html",
+    outbound: "outbound.html",
+    stock: "stock.html"
   };
 
-  const targetPath = origin && originMap[origin];
-
-  if (targetPath) {
-    // Preserve ?updated=true for UI feedback
-    const url = new URL(targetPath, window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/'));
-    url.searchParams.set("updated", "true");
-    window.location.href = url.toString();
-  } else {
-    showToast("⚠️ No origin form detected. Please return manually.");
-  }
+  const targetFile = origin && originMap[origin] ? originMap[origin] : "inbound.html";
+  window.location.href = `${targetFile}?updated=true`;
 }
 
-// will reset to clear - suppliers, products, location
-
-function clearUIOnly() {
-  document.getElementById("supplierList")?.innerHTML = "";
-  document.getElementById("productList")?.innerHTML = "";
-  document.getElementById("locationList")?.innerHTML = "";
-
-  showToast("🧹 UI cleared — backend data untouched.");
-}
-
+// Make clearUIOnly available globally for inline onclick
+window.clearUIOnly = clearUIOnly;
 
 // Bind event listeners
 document.addEventListener("DOMContentLoaded", () => {
@@ -167,11 +188,13 @@ document.addEventListener("DOMContentLoaded", () => {
     { id: "removeAllSuppliersBtn", handler: () => clearField("suppliers") },
     { id: "removeAllProductsBtn", handler: () => clearField("products") },
     { id: "removeAllLocationsBtn", handler: () => clearField("locations") },
-    { id: "backToFormBtn", handler: goBack },
-    { id: "clearUIBtn", handler: clearUIOnly }
+    { id: "backToFormBtn", handler: goBack }
   ];
 
   bindings.forEach(({ id, handler }) => {
-    document.getElementById(id)?.addEventListener("click", handler);
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener("click", handler);
+    }
   });
 });
