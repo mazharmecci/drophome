@@ -3,45 +3,52 @@
 <head>
   <meta charset="UTF-8" />
   <title>Drophome Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-  <header></header>
-
-<!-- Form Container -->
-<div class="form-container">
-  <header style="display: flex; align-items: center; justify-content: center; gap: 12px;">
-    <img src="images/DH-white.png" alt="Drophome Logo" style="height: 32px; width: auto;" />
-    <span>Drophome</span>
+  <!-- Top App Header -->
+  <header class="site-header">
+    <h1>Drophome Dashboard</h1>
   </header>
 
-  <div class="card-container">
-    <a href="forms/inbound.html" class="card">
-      <div class="emoji">📥</div>
-      <h2>Inbound Inventory</h2>
-      <p>Record incoming stock from suppliers.</p>
-    </a>
+  <main>
+    <!-- Form Container / Landing Section -->
+    <section class="form-container">
+      <!-- Logo + Brand -->
+      <header class="brand-header" style="display:flex;align-items:center;justify-content:center;gap:12px;">
+        <img src="images/DH-white.png" alt="Drophome Logo" style="height: 32px; width: auto;" />
+        <span>Drophome</span>
+      </header>
 
-    <a href="forms/outbound.html" class="card">
-      <div class="emoji">📤</div>
-      <h2>Outbound Orders</h2>
-      <p>Submit outbound shipments and track status.</p>
-    </a>
+      <!-- Card Grid -->
+      <section class="card-container" aria-label="Navigation cards">
+        <a href="forms/inbound.html" class="card inbound-card">
+          <div class="emoji">📥</div>
+          <h2>Inbound Inventory</h2>
+          <p>Record incoming stock from suppliers.</p>
+        </a>
 
-    <a href="forms/stock.html" class="card">
-      <div class="emoji">📊</div>
-      <h2>Stock Availability</h2>
-      <p>Update and monitor current stock levels.</p>
-    </a>
+        <a href="forms/outbound.html" class="card outbound-card">
+          <div class="emoji">📤</div>
+          <h2>Outbound Orders</h2>
+          <p>Submit outbound shipments and track status.</p>
+        </a>
 
-    <a href="dashboard.html" class="card">
-      <div class="emoji">📈</div>
-      <h2>Dashboard</h2>
-      <p>View summary metrics and reports.</p>
-    </a>
-  </div>
-</div>
+        <a href="forms/stock.html" class="card stock-card">
+          <div class="emoji">📊</div>
+          <h2>Stock Availability</h2>
+          <p>Update and monitor current stock levels.</p>
+        </a>
+
+        <a href="dashboard.html" class="card audit-card">
+          <div class="emoji">📈</div>
+          <h2>Dashboard</h2>
+          <p>View summary metrics and reports.</p>
+        </a>
+      </section>
+    </section>
+  </main>
 
   <footer>
     © 2025 Drophome — Leader in E-commerce business
