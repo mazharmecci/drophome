@@ -1,23 +1,27 @@
-import { showPopup } from "./popupHandler.js";
-import { showToast } from "./toast.js"; // make sure this exists
-import { db } from "./firebase.js";
-import { doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+import { db } from './firebase.js';
+import { showToast, showPopup } from './popupHandler.js';
+import {
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc
+} from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 const docRef = doc(db, "masterList", "VwsEuQNJgfo5TXM6A0DA");
 
-// Load master list data and render UI
+// Load and render master list
 async function loadMasterList() {
   try {
     const snapshot = await getDoc(docRef);
     if (!snapshot.exists()) {
-      showToast("❌ Master list document not found.");
+      showToast("⚠️ Master list not initialized.");
       return;
     }
 
     const data = snapshot.data();
-    renderList("supplierList", data.suppliers ?? [], "suppliers");
-    renderList("productList", data.products ?? [], "products");
-    renderList("locationList", data.locations ?? [], "locations");
+    renderList("supplierList", data.suppliers, "suppliers");
+    renderList("productList", data.products, "products");
+    renderList("locationList", data.locations, "locations");
   } catch (error) {
     console.error("Error loading master list:", error);
     showToast("❌ Failed to load master list.");
@@ -25,7 +29,7 @@ async function loadMasterList() {
 }
 
 // Render list items with remove buttons
-function renderList(listId, items, fieldName) {
+function renderList(listId, items = [], fieldName) {
   const ul = document.getElementById(listId);
   if (!ul) {
     console.warn(`Element with id "${listId}" not found.`);
@@ -56,10 +60,17 @@ async function addItem(field, inputId) {
   if (!newValue) return;
 
   try {
-    const snapshot = await getDoc(docRef);
+    let snapshot = await getDoc(docRef);
+
+    // Auto-create document if missing
     if (!snapshot.exists()) {
-      showToast("❌ Master list document not found.");
-      return;
+      await setDoc(docRef, {
+        suppliers: [],
+        products: [],
+        locations: []
+      });
+      showToast("✅ Master list initialized.");
+      snapshot = await getDoc(docRef);
     }
 
     const current = snapshot.data()[field] || [];
@@ -73,7 +84,6 @@ async function addItem(field, inputId) {
 
     input.value = "";
     await loadMasterList();
-
     redirectBack();
   } catch (error) {
     console.error("Error adding item:", error);
@@ -103,7 +113,6 @@ async function removeItem(field, value) {
     const updated = current.filter(item => item !== value);
 
     await updateDoc(docRef, { [field]: updated });
-
     await loadMasterList();
     redirectBack();
   } catch (error) {
@@ -115,7 +124,7 @@ async function removeItem(field, value) {
 // Redirect back to the form user came from
 function redirectBack() {
   const params = new URLSearchParams(window.location.search);
-  const origin = params.get("origin") || "inbound"; // default inbound
+  const origin = params.get("origin") || "inbound";
   window.location.href = `${origin}.html?updated=true`;
 }
 
