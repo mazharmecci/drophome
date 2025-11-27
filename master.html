@@ -13,6 +13,21 @@
       <span>Master List Manager ⚙️</span>
     </header>
 
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+      <ol class="breadcrumb-list">
+        <li class="breadcrumb-item">
+          <a href="index.html">Home</a>
+        </li>
+        <li class="breadcrumb-item" id="breadcrumb-origin">
+          <!-- filled by JS, e.g. “Inbound Form” -->
+        </li>
+        <li class="breadcrumb-item breadcrumb-current" aria-current="page">
+          Master List Manager
+        </li>
+      </ol>
+    </nav>
+
     <section id="master-sections">
       <!-- Suppliers -->
       <div class="form-block">
@@ -59,11 +74,47 @@
 
   <script type="module" src="scripts/masterManager.js"></script>
   <script>
-    function goBack() {
+    // Build breadcrumb and back link based on ?origin=
+    document.addEventListener("DOMContentLoaded", () => {
       const params = new URLSearchParams(window.location.search);
       const origin = params.get("origin") || "inbound";
-      window.location.href = `${origin}.html`;
-    }
+
+      const originMap = {
+        inbound: {
+          label: "Inbound Form",
+          href: "forms/inbound.html"
+        },
+        outbound: {
+          label: "Outbound Form",
+          href: "forms/outbound.html"
+        },
+        stock: {
+          label: "Stock Form",
+          href: "forms/stock.html"
+        }
+      };
+
+      const fallback = {
+        label: "Inbound Form",
+        href: "forms/inbound.html"
+      };
+
+      const originConfig = originMap[origin] || fallback;
+
+      // Fill breadcrumb middle item
+      const originLi = document.getElementById("breadcrumb-origin");
+      if (originLi) {
+        originLi.innerHTML = `<a href="${originConfig.href}">${originConfig.label}</a>`;
+      }
+
+      // Wire Return to Form button to same target
+      const backBtn = document.getElementById("backToFormBtn");
+      if (backBtn) {
+        backBtn.addEventListener("click", () => {
+          window.location.href = `${originConfig.href}?updated=true`;
+        });
+      }
+    });
   </script>
 </body>
 </html>
