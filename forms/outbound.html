@@ -1,1 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>📤 Outbound Orders Form</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>📤 Outbound Orders</header>
+
+  <div class="form-container">
+    <form id="outboundForm">
+      <label for="orderId">Order ID</label>
+      <input type="text" id="orderId" name="orderId" required />
+
+      <label for="date">Date</label>
+      <input type="date" id="date" name="date" required />
+
+      <label for="accountName">Account Name</label>
+      <input type="text" id="accountName" name="accountName" required />
+
+      <label for="sku">SKU</label>
+      <input type="text" id="sku" name="sku" required />
+
+      <label for="productName">Product Name</label>
+      <input type="text" id="productName" name="productName" required />
+
+      <label for="quantity">Quantity</label>
+      <input type="number" id="quantity" name="quantity" required />
+
+      <label for="status">Status</label>
+      <select id="status" name="status" required>
+        <option value="">Select Status</option>
+        <option value="Pending">Pending</option>
+        <option value="Dispatched">Dispatched</option>
+        <option value="Delivered">Delivered</option>
+      </select>
+
+      <label for="notes">Notes</label>
+      <textarea id="notes" name="notes"></textarea>
+
+      <button type="submit">Submit Outbound</button>
+    </form>
+  </div>
+
+  <!-- Shared Success Popup -->
+  <div id="successPopup" class="popup hidden">
+    <div class="popup-content">
+      <h3>✅ Success</h3>
+      <p>Your outbound order has been submitted!</p>
+      <button id="closePopup">OK</button>
+    </div>
+  </div>
+
+  <script type="module" src="scripts/outbound.js"></script>
+  <script type="module" src="scripts/popupHandler.js"></script>
+</body>
+</html>
 
