@@ -363,8 +363,10 @@ table tr:hover {
 }
 
 .form-actions {
-  margin-top: 32px;
-  text-align: center;
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  justify-content: center;
 }
 
 .form-actions button {
@@ -461,4 +463,34 @@ table tr:hover {
 .input-row button:hover,
 .form-actions button:hover {
   background-color: var(--accent-hover, #0056b3); /* Deep blue hover */
+}
+
+button.btn-primary {
+  padding: 10px 20px;
+  background-color: var(--accent-color, #007bff);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button.btn-primary:hover {
+  background-color: var(--accent-hover, #0056b3);
+}
+
+button.btn-secondary {
+  padding: 10px 20px;
+  background-color: var(--secondary-color, #6c757d);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button.btn-secondary:hover {
+  background-color: var(--secondary-hover, #5a6268);
 }
