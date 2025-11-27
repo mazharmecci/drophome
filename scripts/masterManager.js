@@ -84,7 +84,7 @@ async function addItem(field, inputId) {
 
     input.value = "";
     await loadMasterList();
-    redirectBack();
+    showToast(`✅ "${newValue}" added to ${field}.`);
   } catch (error) {
     console.error("Error adding item:", error);
     showToast("❌ Failed to add item.");
@@ -114,15 +114,15 @@ async function removeItem(field, value) {
 
     await updateDoc(docRef, { [field]: updated });
     await loadMasterList();
-    redirectBack();
+    showToast(`✅ "${value}" removed from ${field}.`);
   } catch (error) {
     console.error("Error removing item:", error);
     showToast("❌ Failed to remove item.");
   }
 }
 
-// Redirect back to the form user came from
-function redirectBack() {
+// Optional: Manual back button logic
+function goBack() {
   const params = new URLSearchParams(window.location.search);
   const origin = params.get("origin") || "inbound";
   window.location.href = `${origin}.html?updated=true`;
@@ -140,4 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("addLocationBtn")
     ?.addEventListener("click", () => addItem("locations", "newLocation"));
+
+  document.getElementById("backToFormBtn")
+    ?.addEventListener("click", goBack); // optional manual return
 });
