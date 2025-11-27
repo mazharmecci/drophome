@@ -22,6 +22,36 @@ export function initPopupClose() {
   });
 }
 
+export async function showPopup({ title, message, confirmText, cancelText }) {
+  return new Promise(resolve => {
+    const popup = document.createElement("div");
+    popup.className = "popup-overlay";
+
+    popup.innerHTML = `
+      <div class="popup-content">
+        <h3>${title}</h3>
+        <p>${message}</p>
+        <div class="popup-actions">
+          <button id="confirmBtn">${confirmText}</button>
+          <button id="cancelBtn">${cancelText}</button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(popup);
+
+    document.getElementById("confirmBtn").addEventListener("click", () => {
+      popup.remove();
+      resolve(true);
+    });
+
+    document.getElementById("cancelBtn").addEventListener("click", () => {
+      popup.remove();
+      resolve(false);
+    });
+  });
+}
+
 export function showToast(message) {
   const toast = document.createElement("div");
   toast.className = "toast";
@@ -37,3 +67,5 @@ export function showToast(message) {
     setTimeout(() => toast.remove(), 500);
   }, 3000);
 }
+
+
