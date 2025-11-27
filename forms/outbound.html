@@ -6,10 +6,12 @@
   <link rel="stylesheet" href="../style.css" />
 </head>
 <body>
-  <header>📤 Outbound Orders</header>
-
-  <!-- Form Container -->
   <div class="form-container">
+    <header style="display: flex; align-items: center; justify-content: center; gap: 12px;">
+      <img src="../images/DH-white.png" alt="Drophome Logo" style="height: 32px; width: auto;" />
+      <span>📤 Outbound Orders</span>
+    </header>
+
     <form id="outboundForm">
       <label for="orderId">Order ID</label>
       <input type="text" id="orderId" name="orderId" required />
@@ -44,7 +46,6 @@
     </form>
   </div>
 
-  <!-- Shared Success Popup -->
   <div id="successPopup" class="popup hidden">
     <div class="popup-content">
       <h3>✅ Success</h3>
@@ -53,7 +54,6 @@
     </div>
   </div>
 
-  <!-- Scripts -->
   <script type="module" src="../scripts/outbound.js"></script>
   <script type="module" src="../scripts/popupHandler.js"></script>
 </body>
