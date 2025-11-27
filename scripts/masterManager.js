@@ -1,6 +1,6 @@
+import { showPopup } from './popupHandler.js';
 import { db } from './firebase.js';
 import { doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
-import { showPopup } from './popupHandler.js';
 
 const docRef = doc(db, "masterList", "VwsEuQNJgfo5TXM6A0DA");
 
