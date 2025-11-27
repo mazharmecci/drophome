@@ -160,16 +160,18 @@ function clearUIOnly() {
 document.addEventListener("DOMContentLoaded", () => {
   loadMasterList();
 
-  document.getElementById("addSupplierBtn")
-    ?.addEventListener("click", () => addItem("suppliers", "newSupplier"));
+  const bindings = [
+    { id: "addSupplierBtn", handler: () => addItem("suppliers", "newSupplier") },
+    { id: "addProductBtn", handler: () => addItem("products", "newProduct") },
+    { id: "addLocationBtn", handler: () => addItem("locations", "newLocation") },
+    { id: "removeAllSuppliersBtn", handler: () => clearField("suppliers") },
+    { id: "removeAllProductsBtn", handler: () => clearField("products") },
+    { id: "removeAllLocationsBtn", handler: () => clearField("locations") },
+    { id: "backToFormBtn", handler: goBack },
+    { id: "clearUIBtn", handler: clearUIOnly }
+  ];
 
-  document.getElementById("addProductBtn")
-    ?.addEventListener("click", () => addItem("products", "newProduct"));
-
-  document.getElementById("addLocationBtn")
-    ?.addEventListener("click", () => addItem("locations", "newLocation"));
-
-  document.getElementById("backToFormBtn")
-    ?.addEventListener("click", goBack);
+  bindings.forEach(({ id, handler }) => {
+    document.getElementById(id)?.addEventListener("click", handler);
+  });
 });
-
