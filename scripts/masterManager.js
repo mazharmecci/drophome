@@ -153,9 +153,9 @@ async function clearField(field) {
 
 // Clear UI only (does not touch backend)
 function clearUIOnly() {
-  document.getElementById("supplierList").innerHTML = "";
-  document.getElementById("productList").innerHTML = "";
-  document.getElementById("locationList").innerHTML = "";
+  document.getElementById("supplierList")?.innerHTML = "";
+  document.getElementById("productList")?.innerHTML = "";
+  document.getElementById("locationList")?.innerHTML = "";
   showToast("🧹 UI cleared — backend data untouched.");
 }
 
@@ -165,12 +165,14 @@ function goBack() {
   const origin = params.get("origin");
 
   const originMap = {
-    inbound: "inbound.html",
-    outbound: "outbound.html",
-    stock: "stock.html"
+    inbound: "forms/inbound.html",
+    outbound: "forms/outbound.html",
+    stock: "forms/stock.html"
   };
 
-  const targetFile = origin && originMap[origin] ? originMap[origin] : "inbound.html";
+  const targetFile =
+    origin && originMap[origin] ? originMap[origin] : "forms/inbound.html";
+
   window.location.href = `${targetFile}?updated=true`;
 }
 
