@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const productDropdown = document.getElementById('productName');
 
   // Generate initial ID on load
-  generateId('ORD', 'outbound', 'orderId');
+  generateId('ORD', 'outbound_orders', 'orderId');
 
   // Load products into dropdown
   await loadProducts(productDropdown);
@@ -56,10 +56,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
 
     try {
-      await addDoc(collection(db, 'outbound'), data);
-
-      // Refresh ID for next entry
-      generateId('ORD', 'outbound', 'orderId');
+      const docRef = await addDoc(collection(db, 'outbound_orders'), data);
+      console.log("✅ Outbound record submitted with ID:", docRef.id);
 
       // Show success toast
       showToast("Outbound record submitted successfully.");
@@ -67,9 +65,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       // Reset form fields (except ID)
       form.reset();
       document.getElementById('orderId').value = "";
-      generateId('ORD', 'outbound', 'orderId'); // regenerate ID after reset
+      generateId('ORD', 'outbound_orders', 'orderId'); // regenerate ID after reset
     } catch (err) {
-      console.error("Error adding outbound record:", err);
+      console.error("❌ Error adding outbound record:", err);
       showToast("❌ Failed to submit outbound record.");
     }
   });
