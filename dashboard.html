@@ -9,10 +9,11 @@
 </head>
 <body>
   <main class="form-container">
+    
     <!-- Header -->
     <header class="dashboard-header">
-      <img src="images/DH-Black.png" alt="Drophome Logo" class="logo-img">
-      <span>📦 Stock Summary Dashboard</span>
+      <img src="images/DH-white.png" alt="Drophome Logo" class="logo-img">
+      <h3>📦 Stock Summary Dashboard</h3>
     </header>
 
     <!-- Breadcrumb -->
@@ -32,13 +33,15 @@
 
     <!-- Summary Section -->
     <section class="summary-container">
-      <header class="summary-header">
-        <h2>📊 Stock Summary</h2>
-        <div class="filters">
-          <select id="filterProduct"></select>
-          <select id="filterLocation"></select>
-        </div>
-      </header>
+      <!-- Filters directly above table -->
+      <div class="filters" style="display: flex; gap: 16px; margin-bottom: 16px;">
+        <select id="filterProduct" style="width: 220px; height: 40px; font-size: 16px;">
+          <option value="" disabled selected>Choose your product</option>
+        </select>
+        <select id="filterLocation" style="width: 220px; height: 40px; font-size: 16px;">
+          <option value="" disabled selected>Choose your location</option>
+        </select>
+      </div>
 
       <!-- Responsive Table -->
       <table class="summary-table">
@@ -58,7 +61,6 @@
     </section>
   </main>
 
-  <script src="scripts/dashboard.js"></script>
   <script>
     // Fill breadcrumb origin dynamically
     document.addEventListener("DOMContentLoaded", () => {
@@ -81,6 +83,5 @@
   </script>
 
   <script type="module" src="scripts/dashboard.js"></script>
-
 </body>
 </html>
