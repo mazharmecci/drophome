@@ -11,12 +11,13 @@ import {
 document.addEventListener("DOMContentLoaded", async () => {
   const form = document.getElementById('outboundForm');
   const productDropdown = document.getElementById('productName');
+  const locationDropdown = document.getElementById('storageLocation'); // ✅ new
 
   // Generate initial ID on load
   generateId('ORD', 'outbound_orders', 'orderId');
 
-  // Load products into dropdown
-  await loadProducts(productDropdown);
+  // Load products + locations into dropdowns
+  await loadMasterList(productDropdown, locationDropdown);
 
   // Show toast if redirected from master.html
   const params = new URLSearchParams(window.location.search);
@@ -33,12 +34,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     const accountName = document.getElementById('accountName')?.value?.trim();
     const sku = document.getElementById('sku')?.value?.trim();
     const productName = productDropdown?.value?.trim();
+    const storageLocation = locationDropdown?.value?.trim(); // ✅ new
     const quantity = parseInt(document.getElementById('quantity')?.value);
     const status = document.getElementById('status')?.value?.trim();
     const notes = document.getElementById('notes')?.value?.trim();
 
     // Basic validation
-    if (!orderId || !date || !accountName || !sku || !productName || !quantity || !status) {
+    if (!orderId || !date || !accountName || !sku || !productName || !storageLocation || !quantity || !status) {
       showToast("❌ Please fill all required fields.");
       return;
     }
@@ -49,6 +51,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       accountName,
       sku,
       productName,
+      storageLocation, // ✅ included
       quantity,
       status,
       notes,
@@ -73,10 +76,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 });
 
-// Helper: Load products from masterList
-async function loadProducts(productDropdown) {
+// Helper: Load products + locations from masterList
+async function loadMasterList(productDropdown, locationDropdown) {
   try {
-    const masterRef = doc(db, "masterList", "VwsEuQNJgfo5TXM6A0DA"); // your actual doc ID
+    const masterRef = doc(db, "masterList", "VwsEuQNJgfo5TXM6A0DA");
     const masterSnap = await getDoc(masterRef);
 
     if (!masterSnap.exists()) {
@@ -85,14 +88,27 @@ async function loadProducts(productDropdown) {
     }
 
     const data = masterSnap.data();
+
+    // Populate product dropdown
     data.products.forEach(product => {
       const opt = document.createElement("option");
       opt.value = product;
       opt.textContent = product;
       productDropdown.appendChild(opt);
     });
+
+    // Populate location dropdown
+    data.locations.forEach(location => {
+      const opt = document.createElement("option");
+      opt.value = location;
+      opt.textContent = location;
+      locationDropdown.appendChild(opt);
+    });
+
+    console.log("✅ Master list loaded:", { products: data.products.length, locations: data.locations.length });
+
   } catch (err) {
-    console.error("Error loading products:", err);
-    showToast("❌ Failed to load product list.");
+    console.error("❌ Error loading masterList:", err);
+    showToast("❌ Failed to load master data.");
   }
 }
