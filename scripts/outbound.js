@@ -8,20 +8,60 @@ import {
   getDoc
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-const form = document.getElementById('outboundForm');
-const productDropdown = document.getElementById('productName');
-
 document.addEventListener("DOMContentLoaded", async () => {
-  generateId('ORD', 'outbound', 'orderId');
-  await loadProducts();
+  const form = document.getElementById('outboundForm');
+  const productDropdown = document.getElementById('productName');
 
+  // Generate initial ID on load
+  generateId('ORD', 'outbound', 'orderId');
+
+  // Load products into dropdown
+  await loadProducts(productDropdown);
+
+  // Show toast if redirected from master.html
   const params = new URLSearchParams(window.location.search);
   if (params.get("updated") === "true") {
     showToast("Master list updated successfully.");
   }
+
+  // Handle form submission
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const data = {
+      orderId: document.getElementById('orderId').value,
+      date: document.getElementById('date').value,
+      accountName: document.getElementById('accountName').value,
+      sku: document.getElementById('sku').value,
+      productName: productDropdown.value,
+      quantity: parseInt(document.getElementById('quantity').value),
+      status: document.getElementById('status').value,
+      notes: document.getElementById('notes').value,
+      timestamp: new Date()
+    };
+
+    try {
+      await addDoc(collection(db, 'outbound'), data);
+
+      // Refresh ID for next entry
+      generateId('ORD', 'outbound', 'orderId');
+
+      // Show success toast
+      showToast("Outbound record submitted successfully.");
+
+      // Reset form fields (except ID)
+      form.reset();
+      document.getElementById('orderId').value = "";
+      generateId('ORD', 'outbound', 'orderId'); // regenerate ID after reset
+    } catch (err) {
+      console.error("Error adding outbound record:", err);
+      showToast("❌ Failed to submit outbound record.");
+    }
+  });
 });
 
-async function loadProducts() {
+// Helper: Load products from masterList
+async function loadProducts(productDropdown) {
   try {
     const masterRef = doc(db, "masterList", "VwsEuQNJgfo5TXM6A0DA"); // your actual doc ID
     const masterSnap = await getDoc(masterRef);
@@ -43,31 +83,3 @@ async function loadProducts() {
     showToast("❌ Failed to load product list.");
   }
 }
-
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  const data = {
-    orderId: document.getElementById('orderId').value,
-    date: document.getElementById('date').value,
-    accountName: document.getElementById('accountName').value,
-    sku: document.getElementById('sku').value,
-    productName: productDropdown.value,
-    quantity: parseInt(document.getElementById('quantity').value),
-    status: document.getElementById('status').value,
-    notes: document.getElementById('notes').value,
-    timestamp: new Date()
-  };
-
-  try {
-    await addDoc(collection(db, 'outbound'), data);
-    generateId('ORD', 'outbound', 'orderId');
-    showToast("Outbound record submitted successfully.");
-    form.reset();
-    document.getElementById('orderId').value = "";
-    generateId('ORD', 'outbound', 'orderId');
-  } catch (err) {
-    console.error("Error adding outbound record:", err);
-    showToast("❌ Failed to submit outbound record.");
-  }
-});
