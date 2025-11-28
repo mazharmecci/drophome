@@ -11,6 +11,14 @@ import {
 
 const docRef = doc(db, "masterList", "VwsEuQNJgfo5TXM6A0DA");
 
+const productIcons = {
+  Ballpen: "🖊️",
+  umbrella: "🌂",
+  Laptop: "💻",
+  "Music system": "🎵",
+  default: "📦"
+};
+
 // Compute inbound totals
 async function computeInbound(product, location) {
   const q = query(
