@@ -96,14 +96,13 @@ async function computeStock() {
       return;
     }
 
-    // Fetch outbound records
+    // Fetch outbound records (fallback for missing storageLocation)
     let outboundTotal = 0;
     try {
-      console.log("📤 Querying outbound collection:", "outbound_orders"); // adjust if using 'outbound'
+      console.log("📤 Querying outbound collection:", "outbound_orders");
       const outboundQuery = query(
-        collection(db, "outbound_orders"), // ✅ use correct collection name
-        where("productName", "==", product),
-        where("storageLocation", "==", location)
+        collection(db, "outbound_orders"),
+        where("productName", "==", product)
       );
       console.log("📤 Outbound query object:", outboundQuery);
 
@@ -111,8 +110,19 @@ async function computeStock() {
       console.log("📤 Outbound records found:", outboundSnapshot.size);
 
       outboundSnapshot.forEach(doc => {
-        console.log("📤 Outbound record:", doc.id, doc.data());
-        outboundTotal += parseInt(doc.data().quantity || 0);
+        const data = doc.data();
+        console.log("📤 Outbound record:", doc.id, data);
+
+        if (data.storageLocation) {
+          if (data.storageLocation === location) {
+            outboundTotal += parseInt(data.quantity || 0);
+          } else {
+            console.log(`⚠️ Skipped outbound record at different location: ${data.storageLocation}`);
+          }
+        } else {
+          console.warn("⚠️ Outbound record missing storageLocation, counting anyway:", doc.id);
+          outboundTotal += parseInt(data.quantity || 0);
+        }
       });
     } catch (outboundErr) {
       console.error("❌ Error fetching outbound records:", outboundErr);
