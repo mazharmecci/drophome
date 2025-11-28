@@ -28,15 +28,30 @@ document.addEventListener("DOMContentLoaded", async () => {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
+    const orderId = document.getElementById('orderId')?.value?.trim();
+    const date = document.getElementById('date')?.value?.trim();
+    const accountName = document.getElementById('accountName')?.value?.trim();
+    const sku = document.getElementById('sku')?.value?.trim();
+    const productName = productDropdown?.value?.trim();
+    const quantity = parseInt(document.getElementById('quantity')?.value);
+    const status = document.getElementById('status')?.value?.trim();
+    const notes = document.getElementById('notes')?.value?.trim();
+
+    // Basic validation
+    if (!orderId || !date || !accountName || !sku || !productName || !quantity || !status) {
+      showToast("❌ Please fill all required fields.");
+      return;
+    }
+
     const data = {
-      orderId: document.getElementById('orderId').value,
-      date: document.getElementById('date').value,
-      accountName: document.getElementById('accountName').value,
-      sku: document.getElementById('sku').value,
-      productName: productDropdown.value,
-      quantity: parseInt(document.getElementById('quantity').value),
-      status: document.getElementById('status').value,
-      notes: document.getElementById('notes').value,
+      orderId,
+      date,
+      accountName,
+      sku,
+      productName,
+      quantity,
+      status,
+      notes,
       timestamp: new Date()
     };
 
