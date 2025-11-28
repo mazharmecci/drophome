@@ -8,38 +8,76 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="dashboard-container">
-    <!-- Logo -->
-    <div class="logo-container">
+  <main class="form-container">
+    <!-- Header -->
+    <header class="dashboard-header">
       <img src="images/DH-Black.png" alt="Drophome Logo" class="logo-img">
-    </div>
+      <span>📦 Stock Summary Dashboard</span>
+    </header>
 
-<section class="summary-container">
-  <header class="summary-header">
-    <h2>📊 Stock Summary</h2>
-    <div class="filters">
-      <select id="filterProduct"></select>
-      <select id="filterLocation"></select>
-    </div>
-  </header>
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+      <ol class="breadcrumb-list">
+        <li class="breadcrumb-item">
+          <a href="index.html">Home</a>
+        </li>
+        <li class="breadcrumb-item" id="breadcrumb-origin">
+          <!-- Filled by JS: e.g. “Inbound Form” -->
+        </li>
+        <li class="breadcrumb-item breadcrumb-current" aria-current="page">
+          Stock Summary
+        </li>
+      </ol>
+    </nav>
 
-  <!-- Responsive Table -->
-  <table class="summary-table">
-    <thead>
-      <tr>
-        <th>Product</th>
-        <th>Location</th>
-        <th>Inbound</th>
-        <th>Outbound</th>
-        <th>Available</th>
-      </tr>
-    </thead>
-    <tbody id="summaryBody">
-      <!-- Rows injected dynamically -->
-    </tbody>
-  </table>
-</section>
+    <!-- Summary Section -->
+    <section class="summary-container">
+      <header class="summary-header">
+        <h2>📊 Stock Summary</h2>
+        <div class="filters">
+          <select id="filterProduct"></select>
+          <select id="filterLocation"></select>
+        </div>
+      </header>
+
+      <!-- Responsive Table -->
+      <table class="summary-table">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Location</th>
+            <th>Inbound</th>
+            <th>Outbound</th>
+            <th>Available</th>
+          </tr>
+        </thead>
+        <tbody id="summaryBody">
+          <!-- Rows injected dynamically -->
+        </tbody>
+      </table>
+    </section>
+  </main>
 
   <script src="scripts/dashboard.js"></script>
+  <script>
+    // Fill breadcrumb origin dynamically
+    document.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const origin = params.get("origin");
+
+      const originMap = {
+        inbound: "Inbound Form",
+        outbound: "Outbound Form",
+        stock: "Stock Form",
+        master: "Master List Manager"
+      };
+
+      const originLabel = originMap[origin] || "Dashboard";
+      const breadcrumbOrigin = document.getElementById("breadcrumb-origin");
+      if (breadcrumbOrigin) {
+        breadcrumbOrigin.textContent = originLabel;
+      }
+    });
+  </script>
 </body>
 </html>
