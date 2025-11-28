@@ -1,59 +1,99 @@
-import { generateId } from './idGenerator.js';
 import { db } from './firebase.js';
-import { loadDropdowns } from './dropdownLoader.js';
 import { showToast } from './popupHandler.js';
 import {
   collection,
-  addDoc
+  getDocs,
+  query,
+  where
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-const form = document.getElementById('stockForm');
+const productSelector = document.getElementById('productName');
+const locationFilter = document.getElementById('location');
+const availableQty = document.getElementById('availableQuantity');
 
-document.addEventListener("DOMContentLoaded", () => {
-  // Generate initial ID on load
-  generateId('STK', 'stock', 'stockId');
+// Load dropdowns on page load
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadProducts();
+  await loadLocations();
 
-  // Load dropdowns from master list
-  loadDropdowns();
-
-  // If redirected from master.html, show toast
-  const params = new URLSearchParams(window.location.search);
-  if (params.get("updated") === "true") {
-    showToast("Master list updated successfully.");
-  }
+  // Auto-compute when filters change
+  productSelector.addEventListener("change", computeStock);
+  locationFilter.addEventListener("change", computeStock);
 });
 
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
+// Load product list from master collection
+async function loadProducts() {
+  try {
+    const snapshot = await getDocs(collection(db, "products"));
+    snapshot.forEach(doc => {
+      const opt = document.createElement("option");
+      opt.value = doc.data().name;
+      opt.textContent = doc.data().name;
+      productSelector.appendChild(opt);
+    });
+  } catch (err) {
+    console.error("Error loading products:", err);
+    showToast("❌ Failed to load products.");
+  }
+}
 
-  const data = {
-    stockId: document.getElementById('stockId').value,
-    date: document.getElementById('date').value,
-    supplierName: document.getElementById('supplierName').value,
-    sku: document.getElementById('sku').value,
-    productName: document.getElementById('productName').value,
-    quantityAvailable: parseInt(document.getElementById('quantityAvailable').value),
-    storageLocation: document.getElementById('storageLocation').value,
-    notes: document.getElementById('notes').value,
-    timestamp: new Date()
-  };
+// Load location list from master collection
+async function loadLocations() {
+  try {
+    const snapshot = await getDocs(collection(db, "locations"));
+    snapshot.forEach(doc => {
+      const opt = document.createElement("option");
+      opt.value = doc.data().name;
+      opt.textContent = doc.data().name;
+      locationFilter.appendChild(opt);
+    });
+  } catch (err) {
+    console.error("Error loading locations:", err);
+    showToast("❌ Failed to load locations.");
+  }
+}
+
+// Compute stock = inbound - outbound
+async function computeStock() {
+  const product = productSelector.value;
+  const location = locationFilter.value;
+
+  if (!product) {
+    availableQty.value = "";
+    return;
+  }
 
   try {
-    await addDoc(collection(db, 'stock'), data);
+    // Fetch inbound records
+    let inboundTotal = 0;
+    const inboundQuery = query(
+      collection(db, "inbound"),
+      where("productName", "==", product),
+      ...(location ? [where("location", "==", location)] : [])
+    );
+    const inboundSnapshot = await getDocs(inboundQuery);
+    inboundSnapshot.forEach(doc => {
+      inboundTotal += parseInt(doc.data().quantity || 0);
+    });
 
-    // Refresh ID for next entry
-    generateId('STK', 'stock', 'stockId');
+    // Fetch outbound records
+    let outboundTotal = 0;
+    const outboundQuery = query(
+      collection(db, "outbound"),
+      where("productName", "==", product),
+      ...(location ? [where("location", "==", location)] : [])
+    );
+    const outboundSnapshot = await getDocs(outboundQuery);
+    outboundSnapshot.forEach(doc => {
+      outboundTotal += parseInt(doc.data().quantity || 0);
+    });
 
-    // Show success toast
-    showToast("Stock record submitted successfully.");
+    // Compute available stock
+    const stock = inboundTotal - outboundTotal;
+    availableQty.value = stock >= 0 ? stock : 0;
 
-    // Reset form fields (except ID)
-    form.reset();
-    document.getElementById('stockId').value = "";
-    generateId('STK', 'stock', 'stockId'); // regenerate ID after reset
   } catch (err) {
-    console.error("Error adding stock record:", err);
-    showToast("❌ Failed to submit stock record.");
+    console.error("Error computing stock:", err);
+    showToast("❌ Failed to compute stock.");
   }
-});
-
+}
