@@ -26,7 +26,7 @@ async function computeInbound(product, location) {
   return total;
 }
 
-// Compute outbound totals (with fallback for missing storageLocation)
+// Compute outbound totals
 async function computeOutbound(product, location) {
   const q = query(
     collection(db, "outbound_orders"),
@@ -43,23 +43,30 @@ async function computeOutbound(product, location) {
   return total;
 }
 
-// Load summary table
+// Animate table refresh
+function animateTable() {
+  const table = document.querySelector(".summary-table");
+  table.style.opacity = "0.3";
+  setTimeout(() => {
+    table.style.opacity = "1";
+  }, 300);
+}
+
+// Load full summary
 async function loadSummary() {
   const summaryBody = document.getElementById("summaryBody");
   summaryBody.innerHTML = "";
+  animateTable();
 
   try {
     const snapshot = await getDoc(docRef);
     const { products, locations } = snapshot.data();
-
-    // Sort products alphabetically
     const sortedProducts = [...products].sort();
 
     for (const product of sortedProducts) {
       let inboundSubtotal = 0;
       let outboundSubtotal = 0;
 
-      // Group header row
       const groupHeader = `
         <tr style="background-color:#f0f0f0; font-weight:bold;">
           <td colspan="5">${product}</td>
@@ -87,27 +94,26 @@ async function loadSummary() {
         summaryBody.insertAdjacentHTML("beforeend", row);
       }
 
-      const availableSubtotal = inboundSubtotal - outboundSubtotal;
       const subtotalRow = `
         <tr style="background-color:#ffe6e6; font-weight:bold;">
           <td></td>
           <td>➤ Subtotal</td>
           <td>${inboundSubtotal}</td>
           <td>${outboundSubtotal}</td>
-          <td>${availableSubtotal >= 0 ? availableSubtotal : 0}</td>
+          <td>${inboundSubtotal - outboundSubtotal}</td>
         </tr>
       `;
       summaryBody.insertAdjacentHTML("beforeend", subtotalRow);
     }
 
-    console.log("✅ Summary with subtotals loaded.");
+    console.log("✅ Full summary loaded.");
   } catch (err) {
     console.error("❌ Error loading summary:", err);
     showToast("❌ Failed to load summary.");
   }
 }
 
-// Populate filters
+// Load dropdown filters
 async function loadFilters() {
   const productFilter = document.getElementById("filterProduct");
   const locationFilter = document.getElementById("filterLocation");
@@ -136,57 +142,65 @@ async function loadFilters() {
   }
 }
 
-// Filtered summary
+// Apply filters with subtotal
 async function applyFilters() {
   const product = document.getElementById("filterProduct").value;
   const location = document.getElementById("filterLocation").value;
   const summaryBody = document.getElementById("summaryBody");
   summaryBody.innerHTML = "";
-
-  if (!product || !location) return;
+  animateTable();
 
   try {
-    let inboundSubtotal = 0;
-    let outboundSubtotal = 0;
+    const snapshot = await getDoc(docRef);
+    const { products, locations } = snapshot.data();
 
-    // Group header
-    const groupHeader = `
-      <tr style="background-color:#f0f0f0; font-weight:bold;">
-        <td colspan="5">${product}</td>
-      </tr>
-    `;
-    summaryBody.insertAdjacentHTML("beforeend", groupHeader);
+    const filteredProducts = product ? [product] : products;
+    const filteredLocations = location ? [location] : locations;
 
-    const inboundTotal = await computeInbound(product, location);
-    const outboundTotal = await computeOutbound(product, location);
-    const available = inboundTotal - outboundTotal;
+    for (const p of filteredProducts) {
+      let inboundSubtotal = 0;
+      let outboundSubtotal = 0;
 
-    inboundSubtotal += inboundTotal;
-    outboundSubtotal += outboundTotal;
+      const groupHeader = `
+        <tr style="background-color:#f0f0f0; font-weight:bold;">
+          <td colspan="5">${p}</td>
+        </tr>
+      `;
+      summaryBody.insertAdjacentHTML("beforeend", groupHeader);
 
-    const row = `
-      <tr>
-        <td></td>
-        <td>${location}</td>
-        <td>${inboundTotal}</td>
-        <td>${outboundTotal}</td>
-        <td>${available >= 0 ? available : 0}</td>
-      </tr>
-    `;
-    summaryBody.insertAdjacentHTML("beforeend", row);
+      for (const loc of filteredLocations) {
+        const inboundTotal = await computeInbound(p, loc);
+        const outboundTotal = await computeOutbound(p, loc);
+        const available = inboundTotal - outboundTotal;
 
-    const subtotalRow = `
-      <tr style="background-color:#ffe6e6; font-weight:bold;">
-        <td></td>
-        <td>➤ Subtotal</td>
-        <td>${inboundSubtotal}</td>
-        <td>${outboundSubtotal}</td>
-        <td>${inboundSubtotal - outboundSubtotal}</td>
-      </tr>
-    `;
-    summaryBody.insertAdjacentHTML("beforeend", subtotalRow);
+        inboundSubtotal += inboundTotal;
+        outboundSubtotal += outboundTotal;
 
-    console.log("✅ Filtered summary with subtotal loaded.");
+        const row = `
+          <tr>
+            <td></td>
+            <td>${loc}</td>
+            <td>${inboundTotal}</td>
+            <td>${outboundTotal}</td>
+            <td>${available >= 0 ? available : 0}</td>
+          </tr>
+        `;
+        summaryBody.insertAdjacentHTML("beforeend", row);
+      }
+
+      const subtotalRow = `
+        <tr style="background-color:#ffe6e6; font-weight:bold;">
+          <td></td>
+          <td>➤ Subtotal</td>
+          <td>${inboundSubtotal}</td>
+          <td>${outboundSubtotal}</td>
+          <td>${inboundSubtotal - outboundSubtotal}</td>
+        </tr>
+      `;
+      summaryBody.insertAdjacentHTML("beforeend", subtotalRow);
+    }
+
+    console.log("✅ Filtered summary loaded.");
   } catch (err) {
     console.error("❌ Error applying filters:", err);
     showToast("❌ Failed to apply filters.");
@@ -198,9 +212,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadSummary();
   await loadFilters();
 
-  const productFilter = document.getElementById("filterProduct");
-  const locationFilter = document.getElementById("filterLocation");
+  document.getElementById("filterProduct").addEventListener("change", applyFilters);
+  document.getElementById("filterLocation").addEventListener("change", applyFilters);
 
-  productFilter.addEventListener("change", applyFilters);
-  locationFilter.addEventListener("change", applyFilters);
+  document.getElementById("resetFiltersBtn").addEventListener("click", () => {
+    document.getElementById("filterProduct").selectedIndex = 0;
+    document.getElementById("filterLocation").selectedIndex = 0;
+    loadSummary();
+    showToast("🔄 Filters reset — full summary restored.");
+  });
 });
