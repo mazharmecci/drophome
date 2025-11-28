@@ -191,6 +191,7 @@ document.addEventListener("DOMContentLoaded", () => {
     { id: "removeAllProductsBtn", handler: () => clearField("products") },
     { id: "removeAllLocationsBtn", handler: () => clearField("locations") },
     { id: "backToFormBtn", handler: goBack },
+    { id: "clearUIBtn", handler: clearUIOnly }
   ];
 
   bindings.forEach(({ id, handler }) => {
