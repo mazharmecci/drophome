@@ -1,6 +1,8 @@
 import { db } from './firebase.js';
 import { showToast } from './popupHandler.js';
 import {
+  doc,
+  getDoc,
   collection,
   getDocs,
   query,
@@ -13,49 +15,45 @@ const availableQty = document.getElementById('availableQuantity');
 
 // Load dropdowns on page load
 document.addEventListener("DOMContentLoaded", async () => {
-  await loadProducts();
-  await loadLocations();
+  await loadMasterList();
 
   // Auto-compute when filters change
   productSelector.addEventListener("change", computeStock);
   locationFilter.addEventListener("change", computeStock);
 });
 
-// Load product list from masterList
-async function loadProducts() {
+// Load products and locations from masterList document
+async function loadMasterList() {
   try {
-    const snapshot = await getDocs(collection(db, "masterList"));
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      if (data.type === "product") {   // filter only product entries
-        const opt = document.createElement("option");
-        opt.value = data.name;
-        opt.textContent = data.name;
-        productSelector.appendChild(opt);
-      }
-    });
-  } catch (err) {
-    console.error("Error loading products:", err);
-    showToast("❌ Failed to load products.");
-  }
-}
+    const masterRef = doc(db, "masterList", "VwsEuQNJgfo5TXM6A0DA"); // your actual doc ID
+    const masterSnap = await getDoc(masterRef);
 
-// Load location list from masterList
-async function loadLocations() {
-  try {
-    const snapshot = await getDocs(collection(db, "masterList"));
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      if (data.type === "location") {  // filter only location entries
-        const opt = document.createElement("option");
-        opt.value = data.name;
-        opt.textContent = data.name;
-        locationFilter.appendChild(opt);
-      }
+    if (!masterSnap.exists()) {
+      showToast("❌ masterList document not found.");
+      return;
+    }
+
+    const data = masterSnap.data();
+
+    // Populate product dropdown
+    data.products.forEach(product => {
+      const opt = document.createElement("option");
+      opt.value = product;
+      opt.textContent = product;
+      productSelector.appendChild(opt);
     });
+
+    // Populate location dropdown
+    data.locations.forEach(location => {
+      const opt = document.createElement("option");
+      opt.value = location;
+      opt.textContent = location;
+      locationFilter.appendChild(opt);
+    });
+
   } catch (err) {
-    console.error("Error loading locations:", err);
-    showToast("❌ Failed to load locations.");
+    console.error("Error loading masterList:", err);
+    showToast("❌ Failed to load master data.");
   }
 }
 
@@ -64,7 +62,7 @@ async function computeStock() {
   const product = productSelector.value;
   const location = locationFilter.value;
 
-  if (!product) {
+  if (!product || !location) {
     availableQty.value = "";
     return;
   }
@@ -75,7 +73,7 @@ async function computeStock() {
     const inboundQuery = query(
       collection(db, "inbound"),
       where("productName", "==", product),
-      ...(location ? [where("storageLocation", "==", location)] : [])
+      where("storageLocation", "==", location)
     );
     const inboundSnapshot = await getDocs(inboundQuery);
     inboundSnapshot.forEach(doc => {
@@ -87,7 +85,7 @@ async function computeStock() {
     const outboundQuery = query(
       collection(db, "outbound"),
       where("productName", "==", product),
-      ...(location ? [where("storageLocation", "==", location)] : [])
+      where("storageLocation", "==", location)
     );
     const outboundSnapshot = await getDocs(outboundQuery);
     outboundSnapshot.forEach(doc => {
