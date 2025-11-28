@@ -62,24 +62,21 @@
   </main>
 
   <script>
-    // Fill breadcrumb origin dynamically
-    document.addEventListener("DOMContentLoaded", () => {
-      const params = new URLSearchParams(window.location.search);
-      const origin = params.get("origin");
-
-      const originMap = {
-        inbound: "Inbound Form",
-        outbound: "Outbound Form",
-        stock: "Stock Form",
-        master: "Master List Manager"
-      };
-
-      const originLabel = originMap[origin] || "Dashboard";
-      const breadcrumbOrigin = document.getElementById("breadcrumb-origin");
-      if (breadcrumbOrigin) {
-        breadcrumbOrigin.textContent = originLabel;
-      }
-    });
+    const originMap = {
+      inbound: { label: "Inbound Form", href: "forms/inbound.html" },
+      outbound: { label: "Outbound Form", href: "forms/outbound.html" },
+      stock: { label: "Stock Form", href: "forms/stock.html" },
+      master: { label: "Master List Manager", href: "master.html" },
+      dashboard: { label: "Dashboard", href: "dashboard.html" }
+    };
+    
+    const originLabel = originMap[origin]?.label || "Dashboard";
+    const originHref = originMap[origin]?.href || "dashboard.html";
+    
+    const breadcrumbOrigin = document.getElementById("breadcrumb-origin");
+    if (breadcrumbOrigin) {
+      breadcrumbOrigin.innerHTML = `<a href="${originHref}">${originLabel}</a>`;
+    }
   </script>
 
   <script type="module" src="scripts/dashboard.js"></script>
