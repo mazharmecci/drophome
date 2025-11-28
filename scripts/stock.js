@@ -21,15 +21,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   locationFilter.addEventListener("change", computeStock);
 });
 
-// Load product list from master collection
+// Load product list from masterList
 async function loadProducts() {
   try {
-    const snapshot = await getDocs(collection(db, "products"));
+    const snapshot = await getDocs(collection(db, "masterList"));
     snapshot.forEach(doc => {
-      const opt = document.createElement("option");
-      opt.value = doc.data().name;
-      opt.textContent = doc.data().name;
-      productSelector.appendChild(opt);
+      const data = doc.data();
+      if (data.type === "product") {   // filter only product entries
+        const opt = document.createElement("option");
+        opt.value = data.name;
+        opt.textContent = data.name;
+        productSelector.appendChild(opt);
+      }
     });
   } catch (err) {
     console.error("Error loading products:", err);
@@ -37,15 +40,18 @@ async function loadProducts() {
   }
 }
 
-// Load location list from master collection
+// Load location list from masterList
 async function loadLocations() {
   try {
-    const snapshot = await getDocs(collection(db, "locations"));
+    const snapshot = await getDocs(collection(db, "masterList"));
     snapshot.forEach(doc => {
-      const opt = document.createElement("option");
-      opt.value = doc.data().name;
-      opt.textContent = doc.data().name;
-      locationFilter.appendChild(opt);
+      const data = doc.data();
+      if (data.type === "location") {  // filter only location entries
+        const opt = document.createElement("option");
+        opt.value = data.name;
+        opt.textContent = data.name;
+        locationFilter.appendChild(opt);
+      }
     });
   } catch (err) {
     console.error("Error loading locations:", err);
@@ -69,11 +75,11 @@ async function computeStock() {
     const inboundQuery = query(
       collection(db, "inbound"),
       where("productName", "==", product),
-      ...(location ? [where("location", "==", location)] : [])
+      ...(location ? [where("storageLocation", "==", location)] : [])
     );
     const inboundSnapshot = await getDocs(inboundQuery);
     inboundSnapshot.forEach(doc => {
-      inboundTotal += parseInt(doc.data().quantity || 0);
+      inboundTotal += parseInt(doc.data().quantityReceived || 0);
     });
 
     // Fetch outbound records
@@ -81,7 +87,7 @@ async function computeStock() {
     const outboundQuery = query(
       collection(db, "outbound"),
       where("productName", "==", product),
-      ...(location ? [where("location", "==", location)] : [])
+      ...(location ? [where("storageLocation", "==", location)] : [])
     );
     const outboundSnapshot = await getDocs(outboundQuery);
     outboundSnapshot.forEach(doc => {
