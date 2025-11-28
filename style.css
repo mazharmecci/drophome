@@ -685,3 +685,43 @@ button.btn-secondary:hover {
   }
 }
 
+/* Mobile-first table container */
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  overflow-x: auto;
+  display: block;
+}
+
+/* Sticky header for mobile */
+.summary-table thead {
+  position: sticky;
+  top: 0;
+  background-color: #007bff; /* match your header blue */
+  color: white;
+  z-index: 2;
+}
+
+/* Table cells */
+.summary-table th,
+.summary-table td {
+  padding: 12px;
+  text-align: left;
+  min-width: 120px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .summary-table th,
+  .summary-table td {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .summary-table {
+    font-size: 14px;
+  }
+}
+
+
