@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 // Load products and locations from masterList document
 async function loadMasterList() {
   try {
-    const masterRef = doc(db, "masterList", "VwsEuQNJgfo5TXM6A0DA"); // your actual doc ID
+    const masterRef = doc(db, "masterList", "VwsEuQNJgfo5TXM6A0DA");
     const masterSnap = await getDoc(masterRef);
 
     if (!masterSnap.exists()) {
@@ -52,7 +52,7 @@ async function loadMasterList() {
     });
 
   } catch (err) {
-    console.error("Error loading masterList:", err);
+    console.error("❌ Error loading masterList:", err);
     showToast("❌ Failed to load master data.");
   }
 }
@@ -68,36 +68,57 @@ async function computeStock() {
   }
 
   try {
+    console.log("🔍 Computing stock for:", { product, location });
+
     // Fetch inbound records
     let inboundTotal = 0;
-    const inboundQuery = query(
-      collection(db, "inbound"),
-      where("productName", "==", product),
-      where("storageLocation", "==", location)
-    );
-    const inboundSnapshot = await getDocs(inboundQuery);
-    inboundSnapshot.forEach(doc => {
-      inboundTotal += parseInt(doc.data().quantityReceived || 0);
-    });
+    try {
+      const inboundQuery = query(
+        collection(db, "inbound"),
+        where("productName", "==", product),
+        where("storageLocation", "==", location)
+      );
+      console.log("📥 Inbound query:", inboundQuery);
+      const inboundSnapshot = await getDocs(inboundQuery);
+      console.log("📥 Inbound records found:", inboundSnapshot.size);
+
+      inboundSnapshot.forEach(doc => {
+        inboundTotal += parseInt(doc.data().quantityReceived || 0);
+      });
+    } catch (inboundErr) {
+      console.error("❌ Error fetching inbound records:", inboundErr);
+      showToast("❌ Failed to fetch inbound data.");
+      return;
+    }
 
     // Fetch outbound records
     let outboundTotal = 0;
-    const outboundQuery = query(
-      collection(db, "outbound"),
-      where("productName", "==", product),
-      where("storageLocation", "==", location)
-    );
-    const outboundSnapshot = await getDocs(outboundQuery);
-    outboundSnapshot.forEach(doc => {
-      outboundTotal += parseInt(doc.data().quantity || 0);
-    });
+    try {
+      const outboundQuery = query(
+        collection(db, "outbound"),
+        where("productName", "==", product),
+        where("storageLocation", "==", location)
+      );
+      console.log("📤 Outbound query:", outboundQuery);
+      const outboundSnapshot = await getDocs(outboundQuery);
+      console.log("📤 Outbound records found:", outboundSnapshot.size);
+
+      outboundSnapshot.forEach(doc => {
+        outboundTotal += parseInt(doc.data().quantity || 0);
+      });
+    } catch (outboundErr) {
+      console.error("❌ Error fetching outbound records:", outboundErr);
+      showToast("❌ Failed to fetch outbound data.");
+      return;
+    }
 
     // Compute available stock
     const stock = inboundTotal - outboundTotal;
+    console.log("✅ Computed stock:", stock);
     availableQty.value = stock >= 0 ? stock : 0;
 
   } catch (err) {
-    console.error("Error computing stock:", err);
+    console.error("❌ Error computing stock:", err);
     showToast("❌ Failed to compute stock.");
   }
 }
