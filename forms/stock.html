@@ -2,14 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>📊 Stock Availability Form</title>
+  <title>📊 Stock Viewer</title>
   <link rel="stylesheet" href="../style.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
   <div class="form-container">
-    <header style="display: flex; align-items: center; justify-content: center; gap: 12px;">
-      <img src="../images/DH-white.png" alt="Drophome Logo" style="height: 32px; width: auto;" />
+    <!-- Header -->
+    <header class="dashboard-header">
+      <img src="../images/DH-white.png" alt="Drophome Logo" class="logo" />
       <span>Stock Availability 📊</span>
     </header>
 
@@ -25,29 +26,29 @@
       </ol>
     </nav>
 
+    <!-- Stock Viewer Form -->
     <form id="stockForm">
-      <label for="sku">SKU</label>
-      <input type="text" id="sku" name="sku" required />
-
-      <label for="productName">Product Name</label>
-      <input type="text" id="productName" name="productName" required />
-
-      <label for="availableQuantity">Available Quantity</label>
-      <input type="number" id="availableQuantity" name="availableQuantity" required />
-
+      <!-- Location Filter -->
       <label for="location">Location</label>
-      <input type="text" id="location" name="location" required />
+      <select id="location" name="location" required>
+        <option value="">Select Location</option>
+        <!-- Populate dynamically -->
+      </select>
 
-      <label for="reorderThreshold">Reorder Threshold</label>
-      <input type="number" id="reorderThreshold" name="reorderThreshold" required />
+      <!-- Product Name Dropdown -->
+      <label for="productName">Product Name</label>
+      <select id="productName" name="productName" required>
+        <option value="">Select Product</option>
+        <!-- Populate dynamically -->
+      </select>
 
-      <label for="lastUpdated">Last Updated</label>
-      <input type="date" id="lastUpdated" name="lastUpdated" required />
-
-      <button type="submit">Update Stock</button>
+      <!-- Available Quantity (readonly) -->
+      <label for="availableQuantity">Available Quantity</label>
+      <input type="number" id="availableQuantity" name="availableQuantity" readonly placeholder="Auto-calculated" />
     </form>
   </div>
 
+  <!-- Success Popup -->
   <div id="successPopup" class="popup hidden">
     <div class="popup-content">
       <h3>✅ Success</h3>
