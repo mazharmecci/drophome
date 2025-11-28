@@ -5,13 +5,17 @@ import {
   collection,
   addDoc,
   doc,
-  getDoc
+  getDoc,
+  getDocs,
+  query,
+  where
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const form = document.getElementById('outboundForm');
   const productDropdown = document.getElementById('productName');
-  const locationDropdown = document.getElementById('storageLocation'); // ✅ new
+  const locationDropdown = document.getElementById('storageLocation');
+  const availableQtyField = document.getElementById('availableQuantity');
 
   // Generate initial ID on load
   generateId('ORD', 'outbound_orders', 'orderId');
@@ -25,6 +29,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     showToast("Master list updated successfully.");
   }
 
+  // Auto-compute stock when dropdowns change
+  productDropdown.addEventListener("change", computeStock);
+  locationDropdown.addEventListener("change", computeStock);
+
   // Handle form submission
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -34,12 +42,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     const accountName = document.getElementById('accountName')?.value?.trim();
     const sku = document.getElementById('sku')?.value?.trim();
     const productName = productDropdown?.value?.trim();
-    const storageLocation = locationDropdown?.value?.trim(); // ✅ new
+    const storageLocation = locationDropdown?.value?.trim();
     const quantity = parseInt(document.getElementById('quantity')?.value);
     const status = document.getElementById('status')?.value?.trim();
     const notes = document.getElementById('notes')?.value?.trim();
 
-    // Basic validation
     if (!orderId || !date || !accountName || !sku || !productName || !storageLocation || !quantity || !status) {
       showToast("❌ Please fill all required fields.");
       return;
@@ -51,7 +58,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       accountName,
       sku,
       productName,
-      storageLocation, // ✅ included
+      storageLocation,
       quantity,
       status,
       notes,
@@ -61,14 +68,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
       const docRef = await addDoc(collection(db, 'outbound_orders'), data);
       console.log("✅ Outbound record submitted with ID:", docRef.id);
-
-      // Show success toast
       showToast("Outbound record submitted successfully.");
 
-      // Reset form fields (except ID)
       form.reset();
       document.getElementById('orderId').value = "";
-      generateId('ORD', 'outbound_orders', 'orderId'); // regenerate ID after reset
+      availableQtyField.value = "";
+      generateId('ORD', 'outbound_orders', 'orderId');
     } catch (err) {
       console.error("❌ Error adding outbound record:", err);
       showToast("❌ Failed to submit outbound record.");
@@ -76,7 +81,51 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 });
 
-// Helper: Load products + locations from masterList
+// Compute stock based on selected product and location
+async function computeStock() {
+  const product = document.getElementById('productName')?.value;
+  const location = document.getElementById('storageLocation')?.value;
+  const availableQtyField = document.getElementById('availableQuantity');
+
+  if (!product || !location) {
+    availableQtyField.value = "";
+    return;
+  }
+
+  try {
+    let inboundTotal = 0;
+    const inboundQuery = query(
+      collection(db, "inbound"),
+      where("productName", "==", product),
+      where("storageLocation", "==", location)
+    );
+    const inboundSnapshot = await getDocs(inboundQuery);
+    inboundSnapshot.forEach(doc => {
+      inboundTotal += parseInt(doc.data().quantityReceived || 0);
+    });
+
+    let outboundTotal = 0;
+    const outboundQuery = query(
+      collection(db, "outbound_orders"),
+      where("productName", "==", product)
+    );
+    const outboundSnapshot = await getDocs(outboundQuery);
+    outboundSnapshot.forEach(doc => {
+      const data = doc.data();
+      if (data.storageLocation === location || !data.storageLocation) {
+        outboundTotal += parseInt(data.quantity || 0);
+      }
+    });
+
+    const available = inboundTotal - outboundTotal;
+    availableQtyField.value = available >= 0 ? available : 0;
+  } catch (err) {
+    console.error("❌ Error computing stock:", err);
+    availableQtyField.value = "";
+  }
+}
+
+// Load products + locations from masterList
 async function loadMasterList(productDropdown, locationDropdown) {
   try {
     const masterRef = doc(db, "masterList", "VwsEuQNJgfo5TXM6A0DA");
@@ -89,7 +138,6 @@ async function loadMasterList(productDropdown, locationDropdown) {
 
     const data = masterSnap.data();
 
-    // Populate product dropdown
     data.products.forEach(product => {
       const opt = document.createElement("option");
       opt.value = product;
@@ -97,7 +145,6 @@ async function loadMasterList(productDropdown, locationDropdown) {
       productDropdown.appendChild(opt);
     });
 
-    // Populate location dropdown
     data.locations.forEach(location => {
       const opt = document.createElement("option");
       opt.value = location;
