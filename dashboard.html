@@ -1,123 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>📈 Drophome Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>Drophome Dashboard</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="form-container">
-    <!-- Brand / Page Header -->
-    <header class="dashboard-header">
-      <img src="images/DH-white.png" alt="Drophome Logo" class="logo" />
-      <span>Dashboard 📈</span>
-    </header>
+  <div class="dashboard-container">
+    <!-- Logo -->
+    <div class="logo-container">
+      <img src="assets/DH-Black.png" alt="Drophome Logo" class="logo-img">
+    </div>
 
-    <!-- Summary Cards Grid -->
-    <section class="summary-grid" aria-label="Summary metrics">
-      <article class="card inbound-card">
-        <div class="emoji">📥</div>
-        <h2>Inbound</h2>
-        <p>Total received this week: 120</p>
-      </article>
+    <!-- Filters -->
+    <div class="filters">
+      <select id="monthFilter" class="filter-select">
+        <option value="">Filter by Month</option>
+        <option>November</option>
+        <option>December</option>        
+        <!-- Add dynamically -->
+      </select>
+      <select id="productFilter" class="filter-select">
+        <option value="">Filter by Product</option>
+        <!-- Populate dynamically -->
+      </select>
+    </div>
 
-      <article class="card outbound-card">
-        <div class="emoji">📤</div>
-        <h2>Outbound</h2>
-        <p>Total shipped this week: 95</p>
-      </article>
-
-      <article class="card stock-card">
-        <div class="emoji">📊</div>
-        <h2>Stock Alerts</h2>
-        <p>5 SKUs below threshold</p>
-      </article>
-
-      <article class="card audit-card">
-        <div class="emoji">📝</div>
-        <h2>Audit Log</h2>
-        <p>Latest updates and submissions</p>
-      </article>
-    </section>
-
-    <!-- Inbound Records Table -->
-    <section aria-labelledby="inbound-heading">
-      <h3 id="inbound-heading">Inbound Records</h3>
+    <!-- Inbound Table -->
+    <div class="table-section">
+      <h2>Inbound</h2>
       <table>
-        <caption class="visually-hidden">Recent inbound inventory records</caption>
         <thead>
           <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Date</th>
-            <th scope="col">Supplier</th>
-            <th scope="col">SKU</th>
-            <th scope="col">Qty</th>
+            <th>ID</th>
+            <th>Supplier</th>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Date</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td data-label="ID">INB-001</td>
-            <td data-label="Date">2025-11-25</td>
-            <td data-label="Supplier">ABC Traders</td>
-            <td data-label="SKU">SKU123</td>
-            <td data-label="Qty">50</td>
-          </tr>
-        </tbody>
+        <tbody id="inboundTable"></tbody>
       </table>
-    </section>
+    </div>
 
-    <!-- Outbound Orders Table -->
-    <section aria-labelledby="outbound-heading">
-      <h3 id="outbound-heading">Outbound Orders</h3>
+    <!-- Outbound Table -->
+    <div class="table-section">
+      <h2>Outbound</h2>
       <table>
-        <caption class="visually-hidden">Recent outbound orders</caption>
         <thead>
           <tr>
-            <th scope="col">Order ID</th>
-            <th scope="col">Date</th>
-            <th scope="col">Account</th>
-            <th scope="col">Status</th>
-            <th scope="col">Qty</th>
+            <th>ID</th>
+            <th>Customer</th>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Date</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td data-label="Order ID">ORD-101</td>
-            <td data-label="Date">2025-11-26</td>
-            <td data-label="Account">XYZ Corp</td>
-            <td data-label="Status">Dispatched</td>
-            <td data-label="Qty">20</td>
-          </tr>
-        </tbody>
+        <tbody id="outboundTable"></tbody>
       </table>
-    </section>
+    </div>
 
-    <!-- Stock Availability Table -->
-    <section aria-labelledby="stock-heading">
-      <h3 id="stock-heading">Stock Availability</h3>
+    <!-- Stock Table -->
+    <div class="table-section">
+      <h2>Stock</h2>
       <table>
-        <caption class="visually-hidden">Current stock availability and thresholds</caption>
         <thead>
           <tr>
-            <th scope="col">SKU</th>
-            <th scope="col">Product</th>
-            <th scope="col">Available</th>
-            <th scope="col">Location</th>
-            <th scope="col">Threshold</th>
+            <th>SKU</th>
+            <th>Product</th>
+            <th>Available Qty</th>
+            <th>Location</th>
+            <th>Last Updated</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td data-label="SKU">SKU789</td>
-            <td data-label="Product">Widget Pro</td>
-            <td data-label="Available">12</td>
-            <td data-label="Location">Warehouse A</td>
-            <td data-label="Threshold">20</td>
-          </tr>
-        </tbody>
+        <tbody id="stockTable"></tbody>
       </table>
-    </section>
-  </main>
+    </div>
+  </div>
+
+  <script src="scripts/dashboard.js"></script>
 </body>
 </html>
