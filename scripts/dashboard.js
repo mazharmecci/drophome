@@ -46,31 +46,38 @@ async function computeOutbound(product, location) {
 // Load summary table
 async function loadSummary() {
   const summaryBody = document.getElementById("summaryBody");
-  if (!summaryBody) {
-    console.warn("⚠️ Summary table body not found.");
-    return;
-  }
-
   summaryBody.innerHTML = "";
 
   try {
     const snapshot = await getDoc(docRef);
-    if (!snapshot.exists()) {
-      showToast("❌ Master list not found.");
-      return;
-    }
-
     const { products, locations } = snapshot.data();
 
-    for (const product of products) {
+    // Sort products alphabetically
+    const sortedProducts = [...products].sort();
+
+    for (const product of sortedProducts) {
+      let inboundSubtotal = 0;
+      let outboundSubtotal = 0;
+
+      // Group header row
+      const groupHeader = `
+        <tr style="background-color:#f0f0f0; font-weight:bold;">
+          <td colspan="5">${product}</td>
+        </tr>
+      `;
+      summaryBody.insertAdjacentHTML("beforeend", groupHeader);
+
       for (const location of locations) {
         const inboundTotal = await computeInbound(product, location);
         const outboundTotal = await computeOutbound(product, location);
         const available = inboundTotal - outboundTotal;
 
+        inboundSubtotal += inboundTotal;
+        outboundSubtotal += outboundTotal;
+
         const row = `
           <tr>
-            <td>${product}</td>
+            <td></td>
             <td>${location}</td>
             <td>${inboundTotal}</td>
             <td>${outboundTotal}</td>
@@ -79,9 +86,21 @@ async function loadSummary() {
         `;
         summaryBody.insertAdjacentHTML("beforeend", row);
       }
+
+      const availableSubtotal = inboundSubtotal - outboundSubtotal;
+      const subtotalRow = `
+        <tr style="background-color:#ffe6e6; font-weight:bold;">
+          <td></td>
+          <td>➤ Subtotal</td>
+          <td>${inboundSubtotal}</td>
+          <td>${outboundSubtotal}</td>
+          <td>${availableSubtotal >= 0 ? availableSubtotal : 0}</td>
+        </tr>
+      `;
+      summaryBody.insertAdjacentHTML("beforeend", subtotalRow);
     }
 
-    console.log("✅ Summary loaded successfully.");
+    console.log("✅ Summary with subtotals loaded.");
   } catch (err) {
     console.error("❌ Error loading summary:", err);
     showToast("❌ Failed to load summary.");
