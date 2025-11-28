@@ -4,11 +4,7 @@ import {
   doc,
   getDoc,
   setDoc,
-  updateDoc,
-  collection,
-  getDocs,
-  query,
-  where
+  updateDoc
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 const docRef = doc(db, "masterList", "VwsEuQNJgfo5TXM6A0DA");
@@ -183,83 +179,9 @@ function goBack() {
   window.location.href = `${targetFile}?updated=true`;
 }
 
-// Summary helpers
-async function computeInbound(product, location) {
-  const q = query(
-    collection(db, "inbound"),
-    where("productName", "==", product),
-    where("storageLocation", "==", location)
-  );
-  const snapshot = await getDocs(q);
-  let total = 0;
-  snapshot.forEach(doc => {
-    total += parseInt(doc.data().quantityReceived || 0);
-  });
-  return total;
-}
-
-async function computeOutbound(product, location) {
-  const q = query(
-    collection(db, "outbound_orders"),
-    where("productName", "==", product)
-  );
-  const snapshot = await getDocs(q);
-  let total = 0;
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    if (data.storageLocation === location || !data.storageLocation) {
-      total += parseInt(data.quantity || 0);
-    }
-  });
-  return total;
-}
-
-async function loadSummary() {
-  const summaryBody = document.getElementById('summaryBody');
-  if (!summaryBody) {
-    console.warn("⚠️ Summary table body not found.");
-    return;
-  }
-
-  summaryBody.innerHTML = "";
-
-  try {
-    const snapshot = await getDoc(docRef);
-    const { products, locations } = snapshot.data();
-
-    for (const product of products) {
-      for (const location of locations) {
-        const inboundTotal = await computeInbound(product, location);
-        const outboundTotal = await computeOutbound(product, location);
-        const available = inboundTotal - outboundTotal;
-
-        const row = `
-          <tr>
-            <td>${product}</td>
-            <td>${location}</td>
-            <td>${inboundTotal}</td>
-            <td>${outboundTotal}</td>
-            <td>${available >= 0 ? available : 0}</td>
-          </tr>
-        `;
-        summaryBody.insertAdjacentHTML("beforeend", row);
-      }
-    }
-
-    console.log("✅ Summary loaded successfully.");
-  } catch (err) {
-    console.error("❌ Error loading summary:", err);
-    showToast("❌ Failed to load summary.");
-  }
-}
-
 // Bind event listeners
 document.addEventListener("DOMContentLoaded", () => {
   loadMasterList();
-
-  if (document.getElementById('summaryBody')) {
-    loadSummary();
-  }
 
   const bindings = [
     { id: "addSupplierBtn", handler: () => addItem("suppliers", "newSupplier") },
