@@ -77,12 +77,25 @@ header {
   border-radius: 8px;
 }
 
-footer {
+/* ------------------------------
+   Footer with Logo
+------------------------------ */
+.footer-with-logo {
   margin-top: 40px;
   font-size: 0.85em;
   color: #888;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }
+
+.footer-logo {
+  height: 32px;
+  width: auto;
+}
+
 
 /* ------------------------------
    Landing Page Cards
