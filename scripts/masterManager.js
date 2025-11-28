@@ -5,6 +5,10 @@ import {
   getDoc,
   setDoc,
   updateDoc,
+  collection,
+  getDocs,
+  query,
+  where
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 const docRef = doc(db, "masterList", "VwsEuQNJgfo5TXM6A0DA");
@@ -22,6 +26,12 @@ async function loadMasterList() {
     renderList("supplierList", data.suppliers ?? [], "suppliers");
     renderList("productList", data.products ?? [], "products");
     renderList("locationList", data.locations ?? [], "locations");
+
+    console.log("✅ Master list loaded:", {
+      suppliers: data.suppliers?.length,
+      products: data.products?.length,
+      locations: data.locations?.length
+    });
   } catch (error) {
     console.error("Error loading master list:", error);
     showToast("❌ Failed to load master list.");
@@ -66,7 +76,6 @@ async function addItem(field, inputId) {
   try {
     const snapshot = await getDoc(docRef);
 
-    // Auto-create document if missing
     if (!snapshot.exists()) {
       await setDoc(docRef, {
         suppliers: [],
@@ -74,7 +83,6 @@ async function addItem(field, inputId) {
         locations: [],
       });
       showToast("✅ Master list initialized.");
-
       await updateDoc(docRef, { [field]: [newValue] });
       input.value = "";
       await loadMasterList();
@@ -153,14 +161,10 @@ async function clearField(field) {
 
 // Clear UI only (does not touch backend)
 function clearUIOnly() {
-  const supplierList = document.getElementById("supplierList");
-  const productList = document.getElementById("productList");
-  const locationList = document.getElementById("locationList");
-
-  if (supplierList) supplierList.innerHTML = "";
-  if (productList) productList.innerHTML = "";
-  if (locationList) locationList.innerHTML = "";
-
+  ["supplierList", "productList", "locationList"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = "";
+  });
   showToast("🧹 UI cleared — backend data untouched.");
 }
 
@@ -175,18 +179,87 @@ function goBack() {
     stock: "forms/stock.html",
   };
 
-  const targetFile =
-    origin && originMap[origin] ? originMap[origin] : "forms/inbound.html";
-
+  const targetFile = origin && originMap[origin] ? originMap[origin] : "forms/inbound.html";
   window.location.href = `${targetFile}?updated=true`;
 }
 
-// Make clearUIOnly available globally for inline onclick
-window.clearUIOnly = clearUIOnly;
+// Summary helpers
+async function computeInbound(product, location) {
+  const q = query(
+    collection(db, "inbound"),
+    where("productName", "==", product),
+    where("storageLocation", "==", location)
+  );
+  const snapshot = await getDocs(q);
+  let total = 0;
+  snapshot.forEach(doc => {
+    total += parseInt(doc.data().quantityReceived || 0);
+  });
+  return total;
+}
+
+async function computeOutbound(product, location) {
+  const q = query(
+    collection(db, "outbound_orders"),
+    where("productName", "==", product)
+  );
+  const snapshot = await getDocs(q);
+  let total = 0;
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    if (data.storageLocation === location || !data.storageLocation) {
+      total += parseInt(data.quantity || 0);
+    }
+  });
+  return total;
+}
+
+async function loadSummary() {
+  const summaryBody = document.getElementById('summaryBody');
+  if (!summaryBody) {
+    console.warn("⚠️ Summary table body not found.");
+    return;
+  }
+
+  summaryBody.innerHTML = "";
+
+  try {
+    const snapshot = await getDoc(docRef);
+    const { products, locations } = snapshot.data();
+
+    for (const product of products) {
+      for (const location of locations) {
+        const inboundTotal = await computeInbound(product, location);
+        const outboundTotal = await computeOutbound(product, location);
+        const available = inboundTotal - outboundTotal;
+
+        const row = `
+          <tr>
+            <td>${product}</td>
+            <td>${location}</td>
+            <td>${inboundTotal}</td>
+            <td>${outboundTotal}</td>
+            <td>${available >= 0 ? available : 0}</td>
+          </tr>
+        `;
+        summaryBody.insertAdjacentHTML("beforeend", row);
+      }
+    }
+
+    console.log("✅ Summary loaded successfully.");
+  } catch (err) {
+    console.error("❌ Error loading summary:", err);
+    showToast("❌ Failed to load summary.");
+  }
+}
 
 // Bind event listeners
 document.addEventListener("DOMContentLoaded", () => {
   loadMasterList();
+
+  if (document.getElementById('summaryBody')) {
+    loadSummary();
+  }
 
   const bindings = [
     { id: "addSupplierBtn", handler: () => addItem("suppliers", "newSupplier") },
@@ -200,8 +273,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   bindings.forEach(({ id, handler }) => {
     const el = document.getElementById(id);
-    if (el) {
-      el.addEventListener("click", handler);
-    }
+    if (el) el.addEventListener("click", handler);
   });
 });
