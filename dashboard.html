@@ -34,13 +34,19 @@
     <!-- Summary Section -->
     <section class="summary-container">
       <!-- Filters directly above table -->
-      <div class="filters" style="display: flex; gap: 16px; margin-bottom: 16px;">
+      <div class="filters" style="display: flex; gap: 16px; margin-bottom: 16px; align-items: center;">
         <select id="filterProduct" style="width: 220px; height: 40px; font-size: 16px;">
           <option value="" disabled selected>Choose your product</option>
         </select>
+    
         <select id="filterLocation" style="width: 220px; height: 40px; font-size: 16px;">
           <option value="" disabled selected>Choose your location</option>
         </select>
+    
+        <button id="resetFiltersBtn"
+          style="height: 40px; padding: 0 16px; font-size: 16px; background-color: #e0e0e0; border: none; border-radius: 4px; cursor: pointer;">
+          🔄 Reset Filters
+        </button>
       </div>
 
       <!-- Responsive Table -->
