@@ -138,27 +138,55 @@ async function loadFilters() {
 
 // Filtered summary
 async function applyFilters() {
-  const productFilter = document.getElementById("filterProduct").value;
-  const locationFilter = document.getElementById("filterLocation").value;
-
+  const product = document.getElementById("filterProduct").value;
+  const location = document.getElementById("filterLocation").value;
   const summaryBody = document.getElementById("summaryBody");
   summaryBody.innerHTML = "";
 
+  if (!product || !location) return;
+
   try {
-    const inboundTotal = await computeInbound(productFilter, locationFilter);
-    const outboundTotal = await computeOutbound(productFilter, locationFilter);
+    let inboundSubtotal = 0;
+    let outboundSubtotal = 0;
+
+    // Group header
+    const groupHeader = `
+      <tr style="background-color:#f0f0f0; font-weight:bold;">
+        <td colspan="5">${product}</td>
+      </tr>
+    `;
+    summaryBody.insertAdjacentHTML("beforeend", groupHeader);
+
+    const inboundTotal = await computeInbound(product, location);
+    const outboundTotal = await computeOutbound(product, location);
     const available = inboundTotal - outboundTotal;
+
+    inboundSubtotal += inboundTotal;
+    outboundSubtotal += outboundTotal;
 
     const row = `
       <tr>
-        <td>${productFilter}</td>
-        <td>${locationFilter}</td>
+        <td></td>
+        <td>${location}</td>
         <td>${inboundTotal}</td>
         <td>${outboundTotal}</td>
         <td>${available >= 0 ? available : 0}</td>
       </tr>
     `;
     summaryBody.insertAdjacentHTML("beforeend", row);
+
+    const subtotalRow = `
+      <tr style="background-color:#ffe6e6; font-weight:bold;">
+        <td></td>
+        <td>➤ Subtotal</td>
+        <td>${inboundSubtotal}</td>
+        <td>${outboundSubtotal}</td>
+        <td>${inboundSubtotal - outboundSubtotal}</td>
+      </tr>
+    `;
+    summaryBody.insertAdjacentHTML("beforeend", subtotalRow);
+
+    console.log("✅ Filtered summary with subtotal loaded.");
   } catch (err) {
     console.error("❌ Error applying filters:", err);
     showToast("❌ Failed to apply filters.");
