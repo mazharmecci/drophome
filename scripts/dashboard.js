@@ -75,9 +75,10 @@ async function loadSummary() {
       let inboundSubtotal = 0;
       let outboundSubtotal = 0;
 
+      const icon = productIcons[product] || productIcons.default;
       const groupHeader = `
         <tr style="background-color:#f0f0f0; font-weight:bold;">
-          <td colspan="5">${product}</td>
+          <td colspan="5">${icon} ${product}</td>
         </tr>
       `;
       summaryBody.insertAdjacentHTML("beforeend", groupHeader);
