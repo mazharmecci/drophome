@@ -51,6 +51,8 @@ async function loadMasterList() {
       locationFilter.appendChild(opt);
     });
 
+    console.log("✅ Master list loaded:", { products: data.products.length, locations: data.locations.length });
+
   } catch (err) {
     console.error("❌ Error loading masterList:", err);
     showToast("❌ Failed to load master data.");
@@ -73,16 +75,19 @@ async function computeStock() {
     // Fetch inbound records
     let inboundTotal = 0;
     try {
+      console.log("📥 Querying inbound collection:", "inbound");
       const inboundQuery = query(
         collection(db, "inbound"),
         where("productName", "==", product),
         where("storageLocation", "==", location)
       );
-      console.log("📥 Inbound query:", inboundQuery);
+      console.log("📥 Inbound query object:", inboundQuery);
+
       const inboundSnapshot = await getDocs(inboundQuery);
       console.log("📥 Inbound records found:", inboundSnapshot.size);
 
       inboundSnapshot.forEach(doc => {
+        console.log("📥 Inbound record:", doc.id, doc.data());
         inboundTotal += parseInt(doc.data().quantityReceived || 0);
       });
     } catch (inboundErr) {
@@ -94,16 +99,19 @@ async function computeStock() {
     // Fetch outbound records
     let outboundTotal = 0;
     try {
+      console.log("📤 Querying outbound collection:", "outbound_orders"); // adjust if using 'outbound'
       const outboundQuery = query(
-        collection(db, "outbound"),
+        collection(db, "outbound_orders"), // ✅ use correct collection name
         where("productName", "==", product),
         where("storageLocation", "==", location)
       );
-      console.log("📤 Outbound query:", outboundQuery);
+      console.log("📤 Outbound query object:", outboundQuery);
+
       const outboundSnapshot = await getDocs(outboundQuery);
       console.log("📤 Outbound records found:", outboundSnapshot.size);
 
       outboundSnapshot.forEach(doc => {
+        console.log("📤 Outbound record:", doc.id, doc.data());
         outboundTotal += parseInt(doc.data().quantity || 0);
       });
     } catch (outboundErr) {
@@ -114,7 +122,7 @@ async function computeStock() {
 
     // Compute available stock
     const stock = inboundTotal - outboundTotal;
-    console.log("✅ Computed stock:", stock);
+    console.log("✅ Computed stock:", { inboundTotal, outboundTotal, stock });
     availableQty.value = stock >= 0 ? stock : 0;
 
   } catch (err) {
