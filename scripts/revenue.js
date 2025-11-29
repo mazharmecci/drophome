@@ -20,6 +20,9 @@ async function loadAccountDropdown() {
         opt.textContent = account;
         dropdown.appendChild(opt);
       });
+      console.log("✅ Account dropdown loaded:", accounts);
+    } else {
+      console.warn("⚠️ masterList document not found.");
     }
   } catch (err) {
     console.error("❌ Error loading accounts:", err);
@@ -48,12 +51,14 @@ async function loadRevenueSummary() {
 
   try {
     const snapshot = await getDocs(collection(db, "revenue_summary"));
+    let matchCount = 0;
+
     snapshot.forEach(docSnap => {
       const data = docSnap.data();
       const accountName = data.accountName || "Unknown";
       const products = parseInt(data.totalProducts || 0);
-      const labelCost = parseFloat(data.labelCost || 0);
-      const threePLCost = parseFloat(data.threePLCost || 0);
+      const labelCost = parseFloat(data.labelcost || 0);
+      const threePLCost = parseFloat(data.threePLcost || 0);
 
       const timestamp = data.timestamp;
       const monthStr = timestamp
@@ -64,7 +69,14 @@ async function loadRevenueSummary() {
       const matchMonth = !selectedMonth || monthStr === selectedMonth;
 
       if (matchAccount && matchMonth) {
-        console.log("✅ Matched record:", { accountName, products, labelCost, threePLCost, monthStr });
+        matchCount++;
+        console.log("✅ Matched record:", {
+          accountName,
+          products,
+          labelCost,
+          threePLCost,
+          monthStr
+        });
 
         const row = document.createElement("tr");
         row.innerHTML = `
@@ -78,12 +90,21 @@ async function loadRevenueSummary() {
         totalProducts += products;
         totalLabel += labelCost;
         total3PL += threePLCost;
+      } else {
+        console.log("⏭️ Skipped record:", {
+          accountName,
+          monthStr,
+          matchAccount,
+          matchMonth
+        });
       }
     });
 
     totalProductsCell.textContent = totalProducts;
     totalLabelCostCell.textContent = `₹${totalLabel.toFixed(2)}`;
     total3PLCostCell.textContent = `₹${total3PL.toFixed(2)}`;
+
+    console.log(`📊 Summary loaded: ${matchCount} matched records`);
   } catch (err) {
     console.error("❌ Failed to load revenue summary:", err);
   }
