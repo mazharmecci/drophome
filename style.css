@@ -828,7 +828,7 @@ button.btn-secondary:hover {
   left: 0;
   right: 0;
   bottom: 0; /* ✅ Ensures full vertical coverage */
-  background: rgba(255,255,255,0.6); /* Adjust opacity as needed */
+  background: rgba(255,255,255,0.3); /* Adjust opacity as needed */
   border-radius: 12px;
   z-index: 0;
 }
