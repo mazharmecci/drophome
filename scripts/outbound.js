@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Format dollar inputs
   setupDollarInput(document.getElementById("labelcost"));
-  setupDollarInput(document.getElementById("3PLcost"));
+  setupDollarInput(document.getElementById("threePLcost")); // updated id
 
   // Generate initial ID on load
   generateId('ORD', 'outbound_orders', 'orderId');
@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Dollar fields: sanitize and parse
     const labelCostRaw = document.getElementById('labelcost')?.value?.replace(/[^0-9.]/g, "");
-    const threePLCostRaw = document.getElementById('3PLcost')?.value?.replace(/[^0-9.]/g, "");
+    const threePLCostRaw = document.getElementById('threePLcost')?.value?.replace(/[^0-9.]/g, "");
 
     const labelcost = parseFloat(labelCostRaw) || 0;
     const threePLcost = parseFloat(threePLCostRaw) || 0;
@@ -105,17 +105,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 // 🔄 Format dollar inputs
 function setupDollarInput(input) {
   if (!input) return;
+
   input.addEventListener("focus", () => {
     const raw = input.value.replace(/[^0-9.]/g, "");
     input.value = raw;
   });
+
   input.addEventListener("input", () => {
     let raw = input.value.replace(/[^0-9.]/g, "");
     const parts = raw.split(".");
     let sanitized = parts[0];
-    if (parts.length > 1) sanitized += "." + parts[1].slice(0, 2);
+    if (parts.length > 1) {
+      sanitized += "." + parts[1].slice(0, 2);
+    }
     input.value = sanitized;
   });
+
   input.addEventListener("blur", () => {
     const raw = input.value.replace(/[^0-9.]/g, "");
     const num = parseFloat(raw);
@@ -142,8 +147,8 @@ async function computeStock() {
       where("storageLocation", "==", location)
     );
     const inboundSnapshot = await getDocs(inboundQuery);
-    inboundSnapshot.forEach(doc => {
-      inboundTotal += parseInt(doc.data().quantityReceived || 0);
+    inboundSnapshot.forEach(d => {
+      inboundTotal += parseInt(d.data().quantityReceived || 0);
     });
 
     let outboundTotal = 0;
@@ -152,10 +157,10 @@ async function computeStock() {
       where("productName", "==", product)
     );
     const outboundSnapshot = await getDocs(outboundQuery);
-    outboundSnapshot.forEach(doc => {
-      const data = doc.data();
-      if (data.storageLocation === location || !data.storageLocation) {
-        outboundTotal += parseInt(data.quantity || 0);
+    outboundSnapshot.forEach(d => {
+      const row = d.data();
+      if (row.storageLocation === location || !row.storageLocation) {
+        outboundTotal += parseInt(row.quantity || 0);
       }
     });
 
@@ -248,4 +253,8 @@ async function loadMasterList({ productDropdown, locationDropdown, accountDropdo
       locations: data.locations.length,
       accounts: data.accounts.length
     });
-
+  } catch (err) {
+    console.error("❌ Error loading master list:", err);
+    showToast("❌ Failed to load master list.");
+  }
+}
