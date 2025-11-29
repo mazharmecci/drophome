@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>📋 Manage Outbound Orders</title>
+  <link rel="stylesheet" href="../style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+  <div class="form-container">
+    <header style="display:flex; align-items:center; justify-content:center; gap:12px;">
+      <img src="../images/DH-white.png" alt="Drophome Logo" style="height:32px; width:auto;" />
+      <span>Manage Outbound Orders 📋</span>
+    </header>
+
+    <!-- Filters -->
+    <section class="filters">
+      <input type="text" id="searchOrderId" placeholder="Search Order ID" />
+      <select id="filterStatus">
+        <option value="">All Statuses</option>
+        <option value="OrderPending">Order-Pending</option>
+        <option value="OrderDelivered">Order-Delivered</option>
+        <option value="OrderCompleted">Order-Completed</option>
+        <option value="CancelCompleted">Cancel-Completed</option>
+        <option value="Refunded">Refunded</option>
+        <option value="Shipped">Shipped</option>
+        <option value="LabelsPrinted">LabelsPrinted</option>
+      </select>
+      <button id="applyFilters">Apply Filters</button>
+    </section>
+
+    <!-- Orders Table -->
+    <table id="ordersTable">
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Date</th>
+          <th>Account</th>
+          <th>Product</th>
+          <th>Location</th>
+          <th>Quantity</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Rows injected dynamically -->
+      </tbody>
+    </table>
+  </div>
+
+  <script type="module" src="../scripts/manage-outbound.js"></script>
+</body>
+</html>
