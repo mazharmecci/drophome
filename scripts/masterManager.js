@@ -19,11 +19,13 @@ async function loadMasterList() {
     }
 
     const data = snapshot.data();
+    renderList("accountList", data.accounts ?? [], "accounts"); // ✅ Add this line
     renderList("supplierList", data.suppliers ?? [], "suppliers");
     renderList("productList", data.products ?? [], "products");
     renderList("locationList", data.locations ?? [], "locations");
 
     console.log("✅ Master list loaded:", {
+      accounts: data.accounts?.length,
       suppliers: data.suppliers?.length,
       products: data.products?.length,
       locations: data.locations?.length
@@ -74,6 +76,7 @@ async function addItem(field, inputId) {
 
     if (!snapshot.exists()) {
       await setDoc(docRef, {
+        accounts: [],
         suppliers: [],
         products: [],
         locations: [],
@@ -188,6 +191,7 @@ document.addEventListener("DOMContentLoaded", () => {
     { id: "addSupplierBtn", handler: () => addItem("suppliers", "newSupplier") },
     { id: "addProductBtn", handler: () => addItem("products", "newProduct") },
     { id: "addLocationBtn", handler: () => addItem("locations", "newLocation") },
+    { id: "removeAllaccountsBtn", handler: () => clearField("accounts") },
     { id: "removeAllSuppliersBtn", handler: () => clearField("suppliers") },
     { id: "removeAllProductsBtn", handler: () => clearField("products") },
     { id: "removeAllLocationsBtn", handler: () => clearField("locations") },
