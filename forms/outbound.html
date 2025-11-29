@@ -27,55 +27,129 @@
 
     <form id="outboundForm">
       <label for="orderId">Order ID (Auto-generated)</label>
-      <input type="text" id="orderId" name="orderId" readonly style="background-color: #ffe6e6;" />
+      <input
+        type="text"
+        id="orderId"
+        name="orderId"
+        readonly
+        style="background-color: #ffe6e6;"
+      />
 
       <label for="date">Date</label>
-      <input type="date" id="date" name="date" required />
+      <input
+        type="date"
+        id="date"
+        name="date"
+        required
+      />
 
       <label for="accountName">Account Name</label>
-      <select id="accountName" name="accountName" required>
+      <select
+        id="accountName"
+        name="accountName"
+        required
+      >
         <option value="" disabled selected>Choose account name</option>
       </select>
 
       <label for="sku">SKU</label>
-      <input type="text" id="sku" name="sku" required />
+      <input
+        type="text"
+        id="sku"
+        name="sku"
+        required
+      />
 
       <label for="storageLocation">Storage Location</label>
-      <select id="storageLocation" name="storageLocation" required>
+      <select
+        id="storageLocation"
+        name="storageLocation"
+        required
+      >
         <option value="" disabled selected>Choose storage location</option>
       </select>
 
       <label for="productName">Product Name</label>
-      <select id="productName" name="productName" required>
+      <select
+        id="productName"
+        name="productName"
+        required
+      >
         <option value="" disabled selected>Choose product name</option>
       </select>
 
       <label for="availableQuantity">Stock Available (Auto-calculated)</label>
-      <input type="text" id="availableQuantity" name="availableQuantity" readonly style="background-color: #ffe6e6;" />
+      <input
+        type="text"
+        id="availableQuantity"
+        name="availableQuantity"
+        readonly
+        style="background-color: #ffe6e6;"
+      />
 
       <label for="quantity">Quantity to Dispatch</label>
-      <input type="number" id="quantity" name="quantity" required />
+      <input
+        type="number"
+        id="quantity"
+        name="quantity"
+        required
+      />
 
       <label for="prodpic">Product Picture URL</label>
-      <input type="text" id="prodpic" name="prodpic" style="background-color: #c7E4EE;" />
+      <input
+        type="text"
+        id="prodpic"
+        name="prodpic"
+        style="background-color: #c7E4EE;"
+      />
 
       <label for="labellink">Label Link URL</label>
-      <input type="text" id="labellink" name="labellink" style="background-color: #c7E4EE;" />
+      <input
+        type="text"
+        id="labellink"
+        name="labellink"
+        style="background-color: #c7E4EE;"
+      />
 
       <label for="labelqty">Total Labels</label>
-      <input type="number" id="labelqty" name="labelqty" required />
+      <input
+        type="number"
+        id="labelqty"
+        name="labelqty"
+        required
+      />
 
       <label for="labelcost">Label Cost</label>
-      <input type="text" id="labelcost" name="labelcost" placeholder="$00.00" required />
-      
-      <label for="3PLcost">3PL Cost</label>
-      <input type="text" id="3PLcost" name="3PLcost" placeholder="$00.00" required />
+      <input
+        type="text"
+        id="labelcost"
+        name="labelcost"
+        placeholder="$00.00"
+        required
+      />
+
+      <label for="threePLcost">3PL Cost</label>
+      <input
+        type="text"
+        id="threePLcost"
+        name="threePLcost"
+        placeholder="$00.00"
+        required
+      />
 
       <label for="notes">Additional Notes</label>
-      <textarea id="notes" name="notes" placeholder="Optional notes or remarks..."></textarea>
+      <textarea
+        id="notes"
+        name="notes"
+        placeholder="Optional notes or remarks..."
+      ></textarea>
 
       <label for="status">Order Status</label>
-      <select id="status" name="status" required>
+      <select
+        id="status"
+        name="status"
+        required
+      >
         <option value="">Select status</option>
         <option value="OrderPending">Order-Pending</option>
         <option value="OrderDelivered">Order-Delivered</option>
