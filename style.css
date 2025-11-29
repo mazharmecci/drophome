@@ -743,6 +743,32 @@ button.btn-secondary:hover {
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   text-align: center;
-  max-width
+  max-width: 320px;
+  width: 90%;
+}
+
+.modal-actions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.modal-actions button {
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+}
+
+#confirmYesBtn {
+  background-color: #d9534f;
+  color: white;
+}
+
+#confirmCancelBtn {
+  background-color: #ccc;
+}
+
 
 
