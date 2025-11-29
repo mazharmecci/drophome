@@ -105,19 +105,6 @@ textarea {
 .form-container {
   max-width: 600px;
   margin: 20px auto;
-}
-
-.form-container form input,
-.form-container form select,
-.form-container form textarea {
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* ------------------------------
-   Form Layout
------------------------------- */
-.form-container {
   border: 2px solid transparent; /* Base border */
   border-radius: 12px;
   background: #fff;
@@ -129,6 +116,17 @@ textarea {
   border-image-slice: 1;
 }
 
+/* Fields inside the main form */
+.form-container form input,
+.form-container form select,
+.form-container form textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ------------------------------
+   Form elements
+------------------------------ */
 form label {
   display: block;
   margin-top: 15px;
