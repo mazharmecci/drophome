@@ -69,10 +69,12 @@
       <input type="number" id="units" name="units" required />
 
       <label for="labelcost">Label Cost</label>
-      <input type="number" id="labelcost" name="labelcost" required />
-
+      <input type="number" id="labelcost" name="labelcost" required
+        placeholder="$0.00" step="0.01" min="0" style="text-indent: 4px;" />
+      
       <label for="3PLcost">3PL Cost</label>
-      <input type="number" id="3PLcost" name="3PLcost" required />
+      <input type="number" id="3PLcost" name="3PLcost" required
+        placeholder="$0.00" step="0.01" min="0" style="text-indent: 4px;" />
 
       <label for="notes">Additional Notes</label>
       <textarea id="notes" name="notes" placeholder="Optional notes or remarks..."></textarea>
