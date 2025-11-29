@@ -9,7 +9,11 @@ import {
   where
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-const docRef = doc(db, "masterList", "VwsEuQNJgfo5TXM6A0DA");
+const masterDocRef = doc(db, "masterList", "VwsEuQNJgfo5TXM6A0DA");
+
+/* ==========================
+   STOCK SUMMARY (PRODUCT / LOCATION)
+   ========================== */
 
 // 🔢 Compute inbound totals
 async function computeInbound(product, location) {
@@ -20,8 +24,8 @@ async function computeInbound(product, location) {
   );
   const snapshot = await getDocs(q);
   let total = 0;
-  snapshot.forEach(doc => {
-    total += parseInt(doc.data().quantityReceived || 0);
+  snapshot.forEach(d => {
+    total += parseInt(d.data().quantityReceived || 0, 10);
   });
   return total;
 }
@@ -34,17 +38,17 @@ async function computeOutbound(product, location) {
   );
   const snapshot = await getDocs(q);
   let total = 0;
-  snapshot.forEach(doc => {
-    const data = doc.data();
+  snapshot.forEach(d => {
+    const data = d.data();
     if (data.storageLocation === location || !data.storageLocation) {
-      total += parseInt(data.quantity || 0);
+      total += parseInt(data.quantity || 0, 10);
     }
   });
   return total;
 }
 
-// ✨ Animate table refresh
-function animateTable() {
+// ✨ Animate stock summary table
+function animateStockTable() {
   const table = document.querySelector(".summary-table");
   if (table) {
     table.style.opacity = "0.3";
@@ -54,8 +58,8 @@ function animateTable() {
   }
 }
 
-// 📊 Render summary rows
-async function renderSummary(products, locations, summaryBody) {
+// 📊 Render stock summary rows
+async function renderStockSummary(products, locations, summaryBody) {
   for (const product of products) {
     let inboundSubtotal = 0;
     let outboundSubtotal = 0;
@@ -97,39 +101,45 @@ async function renderSummary(products, locations, summaryBody) {
   }
 }
 
-// 📦 Load full summary
-async function loadSummary() {
+// 📦 Load full stock summary
+async function loadStockSummary() {
   const summaryBody = document.getElementById("summaryBody");
   if (!summaryBody) return;
 
   summaryBody.innerHTML = "";
-  animateTable();
+  animateStockTable();
 
   try {
-    const snapshot = await getDoc(docRef);
+    const snapshot = await getDoc(masterDocRef);
+    if (!snapshot.exists()) {
+      showToast("❌ masterList document not found.");
+      return;
+    }
+
     const { products, locations } = snapshot.data();
     const sortedProducts = [...products].sort();
-    await renderSummary(sortedProducts, locations, summaryBody);
-    console.log("✅ Full summary loaded.");
+    await renderStockSummary(sortedProducts, locations, summaryBody);
+    console.log("✅ Stock summary loaded.");
   } catch (err) {
-    console.error("❌ Error loading summary:", err);
-    showToast("❌ Failed to load summary.");
+    console.error("❌ Error loading stock summary:", err);
+    showToast("❌ Failed to load stock summary.");
   }
 }
 
-// 🔍 Load dropdown filters
-async function loadFilters() {
+// 🔍 Load product/location filters
+async function loadStockFilters() {
   const productFilter = document.getElementById("filterProduct");
   const locationFilter = document.getElementById("filterLocation");
+  if (!productFilter || !locationFilter) return;
 
   try {
-    const snapshot = await getDoc(docRef);
+    const snapshot = await getDoc(masterDocRef);
     if (!snapshot.exists()) return;
 
     const { products, locations } = snapshot.data();
 
-    productFilter.innerHTML = `<option value="" disabled selected>Choose your product</option>`;
-    locationFilter.innerHTML = `<option value="" disabled selected>Choose your location</option>`;
+    productFilter.innerHTML = `<option value="" disabled selected>Choose your product 📦</option>`;
+    locationFilter.innerHTML = `<option value="" disabled selected>Choose your location 📍</option>`;
 
     products.forEach(product => {
       const opt = document.createElement("option");
@@ -145,47 +155,232 @@ async function loadFilters() {
       locationFilter.appendChild(opt);
     });
   } catch (err) {
-    console.error("❌ Error loading filters:", err);
+    console.error("❌ Error loading stock filters:", err);
   }
 }
 
-// 🧮 Apply filters
-async function applyFilters() {
-  const product = document.getElementById("filterProduct").value;
-  const location = document.getElementById("filterLocation").value;
+// 🧮 Apply stock filters
+async function applyStockFilters() {
+  const productFilter = document.getElementById("filterProduct");
+  const locationFilter = document.getElementById("filterLocation");
   const summaryBody = document.getElementById("summaryBody");
-  if (!summaryBody) return;
+  if (!productFilter || !locationFilter || !summaryBody) return;
+
+  const product = productFilter.value;
+  const location = locationFilter.value;
 
   summaryBody.innerHTML = "";
-  animateTable();
+  animateStockTable();
 
   try {
-    const snapshot = await getDoc(docRef);
-    const { products, locations } = snapshot.data();
+    const snapshot = await getDoc(masterDocRef);
+    if (!snapshot.exists()) {
+      showToast("❌ masterList document not found.");
+      return;
+    }
 
+    const { products, locations } = snapshot.data();
     const filteredProducts = product ? [product] : products;
     const filteredLocations = location ? [location] : locations;
 
-    await renderSummary(filteredProducts, filteredLocations, summaryBody);
-    console.log("✅ Filtered summary loaded.");
+    await renderStockSummary(filteredProducts, filteredLocations, summaryBody);
+    console.log("✅ Filtered stock summary loaded.");
   } catch (err) {
-    console.error("❌ Error applying filters:", err);
-    showToast("❌ Failed to apply filters.");
+    console.error("❌ Error applying stock filters:", err);
+    showToast("❌ Failed to apply stock filters.");
   }
 }
 
-// 🚀 Init
+/* ==========================
+   REVENUE SUMMARY (ACCOUNT)
+   ========================== */
+
+// 💰 Load revenue summary (per account)
+async function loadRevenueSummary() {
+  const tbody = document.getElementById("revenueSummaryBody");
+  const totalProductsCell = document.getElementById("totalProductsCell");
+  const totalLabelCostCell = document.getElementById("totalLabelCostCell");
+  const total3PLCostCell = document.getElementById("total3PLCostCell");
+
+  if (!tbody || !totalProductsCell || !totalLabelCostCell || !total3PLCostCell) return;
+
+  tbody.innerHTML = "";
+
+  let totalProducts = 0;
+  let totalLabelCost = 0;
+  let total3PLCost = 0;
+
+  try {
+    const snapshot = await getDocs(collection(db, "revenue_summary"));
+
+    snapshot.forEach(d => {
+      const data = d.data();
+      const accountName = data.accountName || "-";
+      const products = parseInt(data.totalProducts || 0, 10);
+      const labelCost = parseFloat(data.labelCost || 0);
+      const threePLCost = parseFloat(data.threePLCost || 0);
+
+      totalProducts += products;
+      totalLabelCost += labelCost;
+      total3PLCost += threePLCost;
+
+      tbody.insertAdjacentHTML("beforeend", `
+        <tr>
+          <td>${accountName}</td>
+          <td>${products}</td>
+          <td>₹${labelCost.toFixed(2)}</td>
+          <td>₹${threePLCost.toFixed(2)}</td>
+        </tr>
+      `);
+    });
+
+    totalProductsCell.textContent = totalProducts;
+    totalLabelCostCell.textContent = `₹${totalLabelCost.toFixed(2)}`;
+    total3PLCostCell.textContent = `₹${total3PLCost.toFixed(2)}`;
+
+    console.log("✅ Revenue summary loaded.");
+  } catch (err) {
+    console.error("❌ Error loading revenue summary:", err);
+    showToast("❌ Failed to load revenue summary.");
+  }
+}
+
+// 🎯 Load revenue filters (accounts + months)
+async function loadRevenueFilters() {
+  const accountFilter = document.getElementById("filterAccount");
+  const monthFilter = document.getElementById("filterMonth");
+  if (!accountFilter || !monthFilter) return;
+
+  try {
+    // Accounts from revenue_summary
+    const snapshot = await getDocs(collection(db, "revenue_summary"));
+
+    const accountsSet = new Set();
+    snapshot.forEach(d => {
+      const data = d.data();
+      if (data.accountName) accountsSet.add(data.accountName);
+    });
+
+    accountFilter.innerHTML = `<option value="" disabled selected>Choose account 👤</option>`;
+    accountsSet.forEach(acc => {
+      const opt = document.createElement("option");
+      opt.value = acc;
+      opt.textContent = acc;
+      accountFilter.appendChild(opt);
+    });
+  } catch (err) {
+    console.error("❌ Error loading revenue filters:", err);
+  }
+}
+
+// 💰 Apply revenue filters
+async function applyRevenueFilters() {
+  const accountFilter = document.getElementById("filterAccount");
+  const monthFilter = document.getElementById("filterMonth");
+  const tbody = document.getElementById("revenueSummaryBody");
+  const totalProductsCell = document.getElementById("totalProductsCell");
+  const totalLabelCostCell = document.getElementById("totalLabelCostCell");
+  const total3PLCostCell = document.getElementById("total3PLCostCell");
+
+  if (!accountFilter || !monthFilter || !tbody) return;
+
+  const account = accountFilter.value;
+  const month = monthFilter.value; // expecting "01".."12" or ""
+
+  tbody.innerHTML = "";
+
+  let totalProducts = 0;
+  let totalLabelCost = 0;
+  let total3PLCost = 0;
+
+  try {
+    // Basic query: all revenue_summary docs
+    let q = collection(db, "revenue_summary");
+
+    // If account filter used, we can narrow down via where
+    if (account) {
+      q = query(q, where("accountName", "==", account));
+    }
+
+    const snapshot = await getDocs(q);
+
+    snapshot.forEach(d => {
+      const data = d.data();
+
+      // If you store month in the doc (e.g. data.month = "11"), you can filter:
+      if (month && data.month && data.month !== month) {
+        return; // skip this row if month filter doesn't match
+      }
+
+      const accountName = data.accountName || "-";
+      const products = parseInt(data.totalProducts || 0, 10);
+      const labelCost = parseFloat(data.labelCost || 0);
+      const threePLCost = parseFloat(data.threePLCost || 0);
+
+      totalProducts += products;
+      totalLabelCost += labelCost;
+      total3PLCost += threePLCost;
+
+      tbody.insertAdjacentHTML("beforeend", `
+        <tr>
+          <td>${accountName}</td>
+          <td>${products}</td>
+          <td>₹${labelCost.toFixed(2)}</td>
+          <td>₹${threePLCost.toFixed(2)}</td>
+        </tr>
+      `);
+    });
+
+    totalProductsCell.textContent = totalProducts;
+    totalLabelCostCell.textContent = `₹${totalLabelCost.toFixed(2)}`;
+    total3PLCostCell.textContent = `₹${total3PLCost.toFixed(2)}`;
+
+    console.log("✅ Filtered revenue summary loaded.");
+  } catch (err) {
+    console.error("❌ Error applying revenue filters:", err);
+    showToast("❌ Failed to apply revenue filters.");
+  }
+}
+
+/* ==========================
+   INIT
+   ========================== */
+
 document.addEventListener("DOMContentLoaded", async () => {
-  await loadSummary();
-  await loadFilters();
+  // Stock summary
+  await loadStockSummary();
+  await loadStockFilters();
 
-  document.getElementById("filterProduct").addEventListener("change", applyFilters);
-  document.getElementById("filterLocation").addEventListener("change", applyFilters);
+  const productFilter = document.getElementById("filterProduct");
+  const locationFilter = document.getElementById("filterLocation");
+  const resetStockBtn = document.getElementById("resetFiltersBtn");
 
-  document.getElementById("resetFiltersBtn").addEventListener("click", () => {
-    document.getElementById("filterProduct").selectedIndex = 0;
-    document.getElementById("filterLocation").selectedIndex = 0;
-    loadSummary();
-    showToast("🔄 Filters reset — full summary restored.");
-  });
+  if (productFilter) {
+    productFilter.addEventListener("change", applyStockFilters);
+  }
+  if (locationFilter) {
+    locationFilter.addEventListener("change", applyStockFilters);
+  }
+  if (resetStockBtn) {
+    resetStockBtn.addEventListener("click", () => {
+      if (productFilter) productFilter.selectedIndex = 0;
+      if (locationFilter) locationFilter.selectedIndex = 0;
+      loadStockSummary();
+      showToast("🔄 Filters reset — full stock summary restored.");
+    });
+  }
+
+  // Revenue summary
+  await loadRevenueSummary();
+  await loadRevenueFilters();
+
+  const accountFilter = document.getElementById("filterAccount");
+  const monthFilter = document.getElementById("filterMonth");
+
+  if (accountFilter) {
+    accountFilter.addEventListener("change", applyRevenueFilters);
+  }
+  if (monthFilter) {
+    monthFilter.addEventListener("change", applyRevenueFilters);
+  }
 });
