@@ -36,7 +36,7 @@ async function loadRevenueSummary() {
   const totalLabelCostCell = document.getElementById("totalLabelCostCell");
   const total3PLCostCell = document.getElementById("total3PLCostCell");
 
-  const selectedAccount = document.getElementById("filterAccount")?.value;
+  const selectedAccount = document.getElementById("filterAccount")?.value?.toLowerCase();
   const selectedMonth = document.getElementById("filterMonth")?.value;
 
   if (!tbody || !totalProductsCell || !totalLabelCostCell || !total3PLCostCell) {
@@ -48,11 +48,11 @@ async function loadRevenueSummary() {
   let totalProducts = 0;
   let totalLabel = 0;
   let total3PL = 0;
+  let matchCount = 0;
+  let skipCount = 0;
 
   try {
     const snapshot = await getDocs(collection(db, "revenue_summary"));
-    let matchCount = 0;
-
     snapshot.forEach(docSnap => {
       const data = docSnap.data();
       const accountName = data.accountName || "Unknown";
@@ -65,7 +65,7 @@ async function loadRevenueSummary() {
         ? String(new Date(timestamp.toDate()).getMonth() + 1).padStart(2, "0")
         : null;
 
-      const matchAccount = !selectedAccount || accountName === selectedAccount;
+      const matchAccount = !selectedAccount || accountName.toLowerCase() === selectedAccount;
       const matchMonth = !selectedMonth || monthStr === selectedMonth;
 
       if (matchAccount && matchMonth) {
@@ -91,6 +91,7 @@ async function loadRevenueSummary() {
         totalLabel += labelCost;
         total3PL += threePLCost;
       } else {
+        skipCount++;
         console.log("⏭️ Skipped record:", {
           accountName,
           monthStr,
@@ -104,7 +105,7 @@ async function loadRevenueSummary() {
     totalLabelCostCell.textContent = `₹${totalLabel.toFixed(2)}`;
     total3PLCostCell.textContent = `₹${total3PL.toFixed(2)}`;
 
-    console.log(`📊 Summary loaded: ${matchCount} matched records`);
+    console.log(`📊 Summary loaded: ${matchCount} matched, ${skipCount} skipped`);
   } catch (err) {
     console.error("❌ Failed to load revenue summary:", err);
   }
