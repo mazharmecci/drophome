@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Revenue Summary – Drophome</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="images/DH-Black.png">
+  <link rel="apple-touch-icon" href="images/DH-Black.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <section class="form-container">
+
+      <!-- Logo + Brand -->
+      <header class="brand-header" style="display:flex;align-items:center;justify-content:center;gap:12px;">
+        <img src="images/DH-white.png" alt="Drophome Logo" class="logo-img">
+        <span>Revenue Summary</span>
+      </header>
+
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+        <ol class="breadcrumb-list">
+          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item"><a href="dashboard.html">Dashboard</a></li>
+          <li class="breadcrumb-item breadcrumb-current" aria-current="page">Revenue Summary</li>
+        </ol>
+      </nav>
+
+      <!-- Filters -->
+      <div class="filters" style="display: flex; gap: 16px; margin-bottom: 16px; justify-content: center;">
+        <select id="filterAccount" style="width: 220px; height: 40px; font-size: 16px;">
+          <option value="" disabled selected>Choose account 👤</option>
+        </select>
+        <select id="filterMonth" style="width: 220px; height: 40px; font-size: 16px;">
+          <option value="" disabled selected>Choose month 📅</option>
+          <option value="01">January</option>
+          <option value="02">February</option>
+          <option value="03">March</option>
+          <option value="04">April</option>
+          <option value="05">May</option>
+          <option value="06">June</option>
+          <option value="07">July</option>
+          <option value="08">August</option>
+          <option value="09">September</option>
+          <option value="10">October</option>
+          <option value="11">November</option>
+          <option value="12">December</option>
+        </select>
+      </div>
+
+      <!-- Revenue Table -->
+      <div class="table-scroll-wrapper" style="border: 2px solid #d0d0d0; border-radius: 8px; padding: 12px; background-color: #f9f9f9;">
+        <table class="summary-table" style="border-collapse: collapse; width: 100%;">
+          <thead style="background-color: #e8f0fe; position: sticky; top: 0; z-index: 1;">
+            <tr>
+              <th style="padding: 12px;">👤 Account</th>
+              <th style="padding: 12px;">📦 Total Products</th>
+              <th style="padding: 12px;">🏷️ Label Cost</th>
+              <th style="padding: 12px;">🚚 3PL Cost</th>
+            </tr>
+          </thead>
+          <tbody id="revenueSummaryBody">
+            <!-- Rows injected dynamically -->
+          </tbody>
+          <tfoot style="background-color: #fff8e1; font-weight: bold;">
+            <tr>
+              <td style="padding: 12px;">Total</td>
+              <td style="padding: 12px;" id="totalProductsCell">0</td>
+              <td style="padding: 12px;" id="totalLabelCostCell">₹0.00</td>
+              <td style="padding: 12px;" id="total3PLCostCell">₹0.00</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="scripts/revenue.js"></script>
+</body>
+</html>
