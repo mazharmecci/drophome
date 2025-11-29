@@ -84,16 +84,67 @@ label {
   font-size: 15px;
 }
 
+/* Global defaults: no forced full width */
 input,
 select,
 textarea {
-  width: 100%;
   padding: 10px;
   font-size: 16px;
   border-radius: 4px;
   border: 1px solid #ccc;
   margin-bottom: 16px;
   background-color: #fff;
+}
+
+/* Only the main form gets a controlled width */
+.form-container form {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.form-container form input,
+.form-container form select,
+.form-container form textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ------------------------------
+   Form Layout
+------------------------------ */
+.form-container {
+  border: 2px solid transparent; /* Base border */
+  border-radius: 12px;
+  background: #fff;
+  padding: 30px;
+  box-shadow: 0 0 0 2px rgba(160, 196, 255, 0.4); /* Soft blue glow */
+
+  /* Gradient border */
+  border-image: linear-gradient(to right, #a0c4ff, #bde0fe);
+  border-image-slice: 1;
+}
+
+form label {
+  display: block;
+  margin-top: 15px;
+  font-weight: 600;
+}
+
+form button {
+  margin-top: 20px;
+  width: 100%;
+  padding: 12px;
+  background: #0066cc;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+form button:hover {
+  background: #005bb5;
 }
 
 select option[hidden] {
@@ -163,51 +214,6 @@ select option[hidden] {
 
 .emoji {
   font-size: 2em;
-}
-
-/* ------------------------------
-   Form Layout
------------------------------- */
-.form-container {
-  border: 2px solid transparent; /* Base border */
-  border-radius: 12px;
-  background: #fff;
-  padding: 30px;
-  box-shadow: 0 0 0 2px rgba(160, 196, 255, 0.4); /* Soft blue glow */
-
-  /* Gradient border */
-  border-image: linear-gradient(to right, #a0c4ff, #bde0fe);
-  border-image-slice: 1;
-}
-
-form label {
-  display: block;
-  margin-top: 15px;
-  font-weight: 600;
-}
-
-.form-container form .form-field,
-.form-container form .form-field input,
-.form-container form .form-field select,
-.form-container form .form-field textarea {
-  width: 50%;
-}
-
-form button {
-  margin-top: 20px;
-  width: 100%;
-  padding: 12px;
-  background: #0066cc;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  font-size: 1em;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-form button:hover {
-  background: #005bb5;
 }
 
 /* ------------------------------
