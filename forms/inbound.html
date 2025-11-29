@@ -26,35 +26,36 @@
     </nav>
 
     <form id="inboundForm">
-      <label for="inboundId">Inbound ID</label>
+      <label for="inboundId">Inbound ID (Auto-generated)</label>
       <input type="text" id="inboundId" name="inboundId" readonly style="background-color: #ffe6e6;" />
-
+    
       <label for="dateReceived">Date Received</label>
       <input type="date" id="dateReceived" name="dateReceived" required />
-
-      <label for="supplierName">Supplier</label>
-      <select id="supplierName" name="supplierName" required>
-        <option value="" disabled selected>Choose Supplier</option>
+    
+      <label for="supplierName">Supplier Name</label>
+      <select id="supplierName" name="supplierName" required style="height: 40px; font-size: 16px;">
+        <option value="" disabled selected>Choose supplier</option>
       </select>
-
+    
       <label for="sku">SKU</label>
       <input type="text" id="sku" name="sku" required />
-
-      <label for="productName">Product</label>
-      <select id="productName" name="productName" required>
-        <option value="" disabled selected>Choose Product</option>
+    
+      <label for="productName">Product Name</label>
+      <select id="productName" name="productName" required style="height: 40px; font-size: 16px;">
+        <option value="" disabled selected>Choose product</option>
       </select>
-     
+    
       <label for="quantityReceived">Quantity Received</label>
       <input type="number" id="quantityReceived" name="quantityReceived" required />
-
+    
       <label for="storageLocation">Storage Location</label>
-      <select id="storageLocation" name="storageLocation" required>
+      <select id="storageLocation" name="storageLocation" required style="height: 40px; font-size: 16px;">
         <option value="" disabled selected>Choose location</option>
-      </select>      
-
+      </select>
+    
       <label for="receivingNotes">Receiving Notes</label>
-      <textarea id="receivingNotes" name="receivingNotes"></textarea>
+      <textarea id="receivingNotes" name="receivingNotes" placeholder="Optional notes or remarks..." style="height: 80px;"></textarea>
+    </form>
 
       <div class="form-actions">
         <button type="submit" class="btn-primary">Submit</button>
