@@ -132,18 +132,6 @@ async function loadRevenueSummary() {
   }
 }
 
-
-// Reset month to current month (01–12)
-if (monthSelect) {
-  const now = new Date();
-  const currentMonth = String(now.getMonth() + 1).padStart(2, "0");
-  monthSelect.value = currentMonth;
-}
-
-// Reload table with reset filters
-loadRevenueSummary();
-
-
 /* ==========================
    INIT
    ========================== */
@@ -153,6 +141,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const accountSelect = document.getElementById("filterAccount");
   const monthSelect = document.getElementById("filterMonth");
+  const resetBtn = document.getElementById("resetFiltersBtn");
 
   // Set month to current month (01–12)
   const now = new Date();
@@ -170,4 +159,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   accountSelect?.addEventListener("change", loadRevenueSummary);
   monthSelect?.addEventListener("change", loadRevenueSummary);
+
+  // 🔄 Reset filters button
+  if (resetBtn) {
+    resetBtn.addEventListener("click", () => {
+      if (accountSelect) {
+        accountSelect.value = "__all__";
+      }
+      if (monthSelect) {
+        const now2 = new Date();
+        const currentMonth2 = String(now2.getMonth() + 1).padStart(2, "0");
+        monthSelect.value = currentMonth2;
+      }
+      loadRevenueSummary();
+    });
+  }
 });
