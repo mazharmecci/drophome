@@ -653,7 +653,7 @@ button.btn-secondary:hover {
 
 .filter-select {
   flex: 1 1 180px; /* shrinkable, minimum width */
-  max-width: 220px;
+  max-width: 200px;
   padding: 8px;
   font-size: 15px;
   border-radius: 4px;
@@ -800,6 +800,3 @@ button.btn-secondary:hover {
 #confirmCancelBtn {
   background-color: #ccc;
 }
-
-
-
