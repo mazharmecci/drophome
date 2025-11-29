@@ -642,7 +642,7 @@ button.btn-secondary:hover {
   background: #fff;
   border-radius: 8px;
   padding: 16px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .summary-header {
@@ -652,40 +652,9 @@ button.btn-secondary:hover {
   margin-bottom: 12px;
 }
 
-.summary-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.summary-table th, .summary-table td {
-  padding: 8px 12px;
-  border-bottom: 1px solid #ddd;
-  text-align: center;
-}
-
-.summary-table th {
-  background: #007bff;
-  color: #fff;
-}
-
-@media (max-width: 600px) {
-  .summary-table, .summary-table thead, .summary-table tbody, .summary-table th, .summary-table td, .summary-table tr {
-    display: block;
-  }
-  .summary-table tr {
-    margin-bottom: 12px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    padding: 8px;
-  }
-  .summary-table td {
-    text-align: left;
-    display: flex;
-    justify-content: space-between;
-  }
-}
-
-/* Mobile-first table container */
+/* ------------------------------
+   Summary Table
+------------------------------ */
 .summary-table {
   width: 100%;
   border-collapse: collapse;
@@ -693,16 +662,14 @@ button.btn-secondary:hover {
   display: block;
 }
 
-/* Sticky header for mobile */
 .summary-table thead {
   position: sticky;
   top: 0;
-  background-color: #007bff; /* match your header blue */
+  background-color: #007bff;
   color: white;
   z-index: 2;
 }
 
-/* Table cells */
 .summary-table th,
 .summary-table td {
   padding: 12px;
@@ -711,17 +678,42 @@ button.btn-secondary:hover {
   border-bottom: 1px solid #ddd;
 }
 
-/* Responsive tweaks */
-@media (max-width: 768px) {
+/* ------------------------------
+   Mobile Responsive
+------------------------------ */
+@media (max-width: 600px) {
+  .summary-table,
+  .summary-table thead,
+  .summary-table tbody,
   .summary-table th,
-  .summary-table td {
-    font-size: 14px;
+  .summary-table td,
+  .summary-table tr {
+    display: block;
+  }
+
+  .summary-table tr {
+    margin-bottom: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
     padding: 8px;
   }
 
-  .summary-table {
-    font-size: 14px;
+  .summary-table td {
+    display: flex;
+    justify-content: space-between;
+    text-align: left;
   }
+
+  .summary-table th {
+    text-align: left;
+  }
+}
+
+.table-scroll-wrapper {
+  overflow-x: auto;
+  max-width: 100%;
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1px #eee;
 }
 
 .modal-overlay {
