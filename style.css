@@ -622,11 +622,7 @@ button.btn-secondary:hover {
   text-decoration: underline;
 }
 
-.breadcrumb-current {
-  font-weight: 600;
-  color: #333;
-}
-
+/* Unified active state */
 .breadcrumb-item.active a {
   font-weight: bold;
   color: #ff5722 !important; /* Highlight color */
