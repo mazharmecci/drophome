@@ -605,6 +605,8 @@ button.btn-secondary:hover {
 ------------------------------ */
 .dashboard-container {
   padding: 20px;
+  max-width: 1200px;      /* give more space for wide tables */
+  margin: 0 auto;         /* center the dashboard */
 }
 
 .logo-container {
@@ -618,6 +620,7 @@ button.btn-secondary:hover {
 
 .filters {
   display: flex;
+  flex-wrap: wrap;        /* allow filters to wrap on smaller screens */
   gap: 10px;
   margin-bottom: 20px;
 }
@@ -638,7 +641,7 @@ button.btn-secondary:hover {
 
 .summary-container {
   margin: 20px auto;
-  max-width: 900px;
+  max-width: 100%;        /* let it use full dashboard width */
   background: #fff;
   border-radius: 8px;
   padding: 16px;
@@ -651,6 +654,7 @@ button.btn-secondary:hover {
   align-items: center;
   margin-bottom: 12px;
 }
+
 
 /* ------------------------------
    Table Scroll Wrapper
@@ -668,7 +672,19 @@ button.btn-secondary:hover {
 .summary-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 600px;
+  /* Removed hard min-width so it can shrink more */
+  /* min-width: 600px; */
+}
+
+/* Let cell text wrap so columns can be narrower */
+.summary-table th,
+.summary-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  white-space: normal;      /* allow wrapping */  /* [web:21][web:27] */
+  word-wrap: break-word;    /* break long words */ /* [web:22][web:25] */
+  font-size: 0.9rem;        /* slightly smaller text to fit more */
 }
 
 .summary-table thead {
@@ -677,13 +693,6 @@ button.btn-secondary:hover {
   background-color: #007bff;
   color: white;
   z-index: 2;
-}
-
-.summary-table th,
-.summary-table td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
 }
 
 /* ------------------------------
