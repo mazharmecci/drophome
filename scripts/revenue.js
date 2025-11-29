@@ -50,6 +50,8 @@ async function loadRevenueSummary() {
   const selectedAccount = document.getElementById("filterAccount")?.value?.toLowerCase() || "";
   const selectedMonth = document.getElementById("filterMonth")?.value || "";
 
+  console.log("🎛 Current filters:", { selectedAccount, selectedMonth });
+
   if (!tbody || !totalProductsCell || !totalLabelCostCell || !total3PLCostCell) {
     console.warn("⚠️ Missing table elements");
     return;
@@ -60,6 +62,7 @@ async function loadRevenueSummary() {
   let totalLabel = 0;
   let total3PL = 0;
   let matchCount = 0;
+  let skipCount = 0;
 
   try {
     const snapshot = await getDocs(collection(db, "revenue_summary"));
@@ -68,29 +71,46 @@ async function loadRevenueSummary() {
       const data = docSnap.data();
       const accountName = data.accountName || "Unknown";
       const products = parseInt(data.totalProducts || 0, 10);
-      const labelCost = parseFloat(data.labelCost ?? data.labelcost ?? 0);
-      const threePLCost = parseFloat(data.threePLCost ?? data.threePLcost ?? 0);
+
+      // Read both possible casings, prefer camelCase if present
+      const labelCost = parseFloat(
+        data.labelCost ?? data.labelcost ?? 0
+      );
+      const threePLCost = parseFloat(
+        data.threePLCost ?? data.threePLcost ?? 0
+      );
 
       const timestamp = data.timestamp;
-      const monthStr = timestamp
-        ? String(new Date(timestamp.toDate()).getMonth() + 1).padStart(2, "0")
+      const convertedTs = timestamp ? timestamp.toDate() : null;
+      const monthStr = convertedTs
+        ? String(convertedTs.getMonth() + 1).padStart(2, "0")
         : null;
 
-      const matchAccount = !selectedAccount || accountName.toLowerCase() === selectedAccount;
-      const matchMonth = !selectedMonth || (monthStr && monthStr === selectedMonth);
+      const matchAccount =
+        !selectedAccount || accountName.toLowerCase() === selectedAccount;
 
-      console.log("🔍 Record check:", {
-        accountName,
-        products,
-        labelCost,
-        threePLCost,
-        monthStr,
+      // Allow records with no timestamp to pass when no month is selected
+      const matchMonth =
+        !selectedMonth || (monthStr ? monthStr === selectedMonth : true);
+
+      console.log("🕒 Timestamp check:", {
+        raw: timestamp,
+        converted: convertedTs,
+        monthStr
+      });
+
+      console.log("🔍 Filter vs Record:", {
+        selectedAccount,
+        selectedMonth,
+        recordAccount: accountName,
+        recordMonth: monthStr,
         matchAccount,
         matchMonth
       });
 
       if (matchAccount && matchMonth) {
         matchCount++;
+        console.log("✅ MATCHED");
 
         const row = document.createElement("tr");
         row.innerHTML = `
@@ -104,6 +124,9 @@ async function loadRevenueSummary() {
         totalProducts += products;
         totalLabel += labelCost;
         total3PL += threePLCost;
+      } else {
+        skipCount++;
+        console.log("⏭️ SKIPPED");
       }
     });
 
@@ -113,9 +136,9 @@ async function loadRevenueSummary() {
 
     if (matchCount === 0) {
       showToast("⚠️ No matching records found.");
-      console.warn("⚠️ No records matched filters.");
+      console.warn(`⚠️ No records matched filters. Skipped: ${skipCount}`);
     } else {
-      console.log(`📊 Revenue summary loaded: ${matchCount} matched records`);
+      console.log(`📊 Revenue summary loaded: ${matchCount} matched, ${skipCount} skipped`);
     }
   } catch (err) {
     console.error("❌ Failed to load revenue summary:", err);
@@ -140,7 +163,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     monthSelect.value = currentMonth;
   }
 
-  // 2) Select first real account option (index 1, because 0 is "Choose account 👤")
+  // 2) Select first real account option (index 1)
   if (accountSelect && accountSelect.options.length > 1) {
     accountSelect.selectedIndex = 1;
   }
