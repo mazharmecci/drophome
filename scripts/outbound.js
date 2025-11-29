@@ -18,6 +18,24 @@ document.addEventListener("DOMContentLoaded", async () => {
   const accountDropdown = document.getElementById('accountName');
   const availableQtyField = document.getElementById('availableQuantity');
 
+  // Format dollar inputs
+  function formatDollarInput(input) {
+    input.addEventListener("input", () => {
+      let raw = input.value.replace(/[^0-9.]/g, "");
+      let num = parseFloat(raw);
+      input.value = isNaN(num) ? "" : `$${num.toFixed(2)}`;
+    });
+
+    input.addEventListener("blur", () => {
+      if (!input.value || input.value === "$") {
+        input.value = "$0.00";
+      }
+    });
+  }
+
+  formatDollarInput(document.getElementById("labelcost"));
+  formatDollarInput(document.getElementById("3PLcost"));
+
   // Generate initial ID on load
   generateId('ORD', 'outbound_orders', 'orderId');
 
@@ -48,6 +66,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     const status = document.getElementById('status')?.value?.trim();
     const notes = document.getElementById('notes')?.value?.trim();
 
+    // Dollar fields: sanitize and parse
+    const labelCostRaw = document.getElementById('labelcost')?.value?.replace(/[^0-9.]/g, "");
+    const threePLCostRaw = document.getElementById('3PLcost')?.value?.replace(/[^0-9.]/g, "");
+
+    const labelcost = parseFloat(labelCostRaw) || 0;
+    const threePLcost = parseFloat(threePLCostRaw) || 0;
+
     if (!orderId || !date || !accountName || !sku || !productName || !storageLocation || !quantity || !status) {
       showToast("❌ Please fill all required fields.");
       return;
@@ -63,6 +88,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       quantity,
       status,
       notes,
+      labelcost,
+      threePLcost,
       timestamp: new Date()
     };
 
