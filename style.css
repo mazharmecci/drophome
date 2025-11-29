@@ -623,6 +623,13 @@ button.btn-secondary:hover {
   color: #333;
 }
 
+.breadcrumb-item.active a {
+  font-weight: bold;
+  color: #ff5722 !important; /* Highlight color */
+  border-bottom: 2px solid #ff5722; /* Underline effect */
+  padding-bottom: 2px;
+}
+
 /* ------------------------------
    Dashboard Layout
 ------------------------------ */
