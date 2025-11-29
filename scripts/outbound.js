@@ -8,7 +8,8 @@ import {
   getDoc,
   getDocs,
   query,
-  where
+  where,
+  updateDoc
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -19,35 +20,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const availableQtyField = document.getElementById('availableQuantity');
 
   // Format dollar inputs
-  function setupDollarInput(input) {
-    // On focus: show raw number (no $)
-    input.addEventListener("focus", () => {
-      const raw = input.value.replace(/[^0-9.]/g, "");
-      input.value = raw;
-    });
-  
-    // On input: just clean invalid chars and limit to one decimal + 2 digits
-    input.addEventListener("input", () => {
-      let raw = input.value.replace(/[^0-9.]/g, "");
-  
-      const parts = raw.split(".");
-      let sanitized = parts[0];
-  
-      if (parts.length > 1) {
-        sanitized += "." + parts[1].slice(0, 2); // keep 2 decimals max
-      }
-  
-      input.value = sanitized;
-    });
-  
-    // On blur: format as currency
-    input.addEventListener("blur", () => {
-      const raw = input.value.replace(/[^0-9.]/g, "");
-      const num = parseFloat(raw);
-      input.value = isNaN(num) ? "$0.00" : `$${num.toFixed(2)}`;
-    });
-  }
-  
   setupDollarInput(document.getElementById("labelcost"));
   setupDollarInput(document.getElementById("3PLcost"));
 
@@ -109,10 +81,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
 
     try {
+      // 1. Add outbound record
       const docRef = await addDoc(collection(db, 'outbound_orders'), data);
       console.log("✅ Outbound record submitted with ID:", docRef.id);
+
+      // 2. Update revenue summary
+      await updateRevenueSummary(accountName, productName, labelcost, threePLcost);
+
       showToast("Outbound record submitted successfully.");
 
+      // Reset form
       form.reset();
       document.getElementById('orderId').value = "";
       availableQtyField.value = "";
@@ -124,7 +102,28 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 });
 
-// Compute stock based on selected product and location
+// 🔄 Format dollar inputs
+function setupDollarInput(input) {
+  if (!input) return;
+  input.addEventListener("focus", () => {
+    const raw = input.value.replace(/[^0-9.]/g, "");
+    input.value = raw;
+  });
+  input.addEventListener("input", () => {
+    let raw = input.value.replace(/[^0-9.]/g, "");
+    const parts = raw.split(".");
+    let sanitized = parts[0];
+    if (parts.length > 1) sanitized += "." + parts[1].slice(0, 2);
+    input.value = sanitized;
+  });
+  input.addEventListener("blur", () => {
+    const raw = input.value.replace(/[^0-9.]/g, "");
+    const num = parseFloat(raw);
+    input.value = isNaN(num) ? "$0.00" : `$${num.toFixed(2)}`;
+  });
+}
+
+// 📦 Compute stock
 async function computeStock() {
   const product = document.getElementById('productName')?.value;
   const location = document.getElementById('storageLocation')?.value;
@@ -168,7 +167,43 @@ async function computeStock() {
   }
 }
 
-// Load products, locations, and accounts from masterList
+// 📊 Update revenue summary
+async function updateRevenueSummary(accountName, productName, labelcost, threePLcost) {
+  try {
+    const revenueQuery = query(
+      collection(db, "revenue_summary"),
+      where("accountName", "==", accountName)
+    );
+    const snapshot = await getDocs(revenueQuery);
+
+    if (!snapshot.empty) {
+      // Update existing account record
+      const revenueDoc = snapshot.docs[0];
+      const current = revenueDoc.data();
+      await updateDoc(doc(db, "revenue_summary", revenueDoc.id), {
+        totalProducts: (current.totalProducts || 0) + 1,
+        labelCost: (current.labelCost || 0) + labelcost,
+        threePLCost: (current.threePLCost || 0) + threePLcost,
+        timestamp: new Date()
+      });
+    } else {
+      // Create new account record
+      await addDoc(collection(db, "revenue_summary"), {
+        accountName,
+        totalProducts: 1,
+        labelCost: labelcost,
+        threePLCost: threePLcost,
+        timestamp: new Date()
+      });
+    }
+    console.log("✅ Revenue summary updated for account:", accountName);
+  } catch (err) {
+    console.error("❌ Error updating revenue summary:", err);
+    showToast("❌ Failed to update revenue summary.");
+  }
+}
+
+// 📋 Load master list
 async function loadMasterList({ productDropdown, locationDropdown, accountDropdown }) {
   try {
     const masterRef = doc(db, "masterList", "VwsEuQNJgfo5TXM6A0DA");
@@ -214,8 +249,3 @@ async function loadMasterList({ productDropdown, locationDropdown, accountDropdo
       accounts: data.accounts.length
     });
 
-  } catch (err) {
-    console.error("❌ Error loading masterList:", err);
-    showToast("❌ Failed to load master data.");
-  }
-}
