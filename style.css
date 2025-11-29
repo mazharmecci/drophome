@@ -102,6 +102,11 @@ textarea {
   margin: 0 auto;
 }
 
+.form-container {
+  max-width: 600px;
+  margin: 20px auto;
+}
+
 .form-container form input,
 .form-container form select,
 .form-container form textarea {
