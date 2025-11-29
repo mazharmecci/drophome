@@ -7,12 +7,25 @@ import {
   getDocs
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-export async function generateId(prefix, collectionName, fieldId) {
+/**
+ * Generates a unique ID based on the latest document in a Firestore collection.
+ * @param {string} prefix - Prefix for the ID (e.g., "INB", "OUT").
+ * @param {string} collectionName - Firestore collection to scan.
+ * @param {string} fieldId - DOM input field ID to populate.
+ * @param {boolean} verbose - Optional: enable console logging.
+ * @param {function} onComplete - Optional: callback after ID is set.
+ */
+export async function generateId(prefix, collectionName, fieldId, verbose = true, onComplete = null) {
   const field = document.getElementById(fieldId);
+  if (!field) {
+    console.warn(`⚠️ Field with ID "${fieldId}" not found.`);
+    return;
+  }
+
   field.readOnly = true;
 
   try {
-    console.log(`🔍 Generating ID from collection: ${collectionName}`);
+    if (verbose) console.log(`🔍 Generating ID from collection: ${collectionName}`);
 
     const q = query(
       collection(db, collectionName),
@@ -21,25 +34,31 @@ export async function generateId(prefix, collectionName, fieldId) {
     );
 
     const snapshot = await getDocs(q);
-    console.log(`📦 Documents found: ${snapshot.size}`);
+    if (verbose) console.log(`📦 Documents found: ${snapshot.size}`);
 
     let nextId = 1;
 
     if (!snapshot.empty) {
       const lastDocData = snapshot.docs[0].data();
-      console.log("🧾 Last document data:", lastDocData);
+      if (verbose) console.log("🧾 Last document data:", lastDocData);
 
-      // Try to extract ID from known field
       const lastIdField = Object.keys(lastDocData).find(key =>
         key.toLowerCase().includes("id")
       );
-      const lastIdValue = lastDocData[lastIdField];
 
+      const lastIdValue = lastDocData[lastIdField];
       const match = lastIdValue?.match(/\d+$/);
+
       if (match) nextId = parseInt(match[0]) + 1;
     }
 
-    field.value = `${prefix}-${String(nextId).padStart(3, '0')}`;
+    const finalId = `${prefix}-${String(nextId).padStart(3, '0')}`;
+    field.value = finalId;
+
+    if (typeof onComplete === "function") {
+      onComplete(finalId);
+    }
+
   } catch (err) {
     console.error("❌ Error generating ID:", err);
     field.value = `${prefix}-001`; // fallback
