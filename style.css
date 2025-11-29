@@ -809,6 +809,16 @@ button.btn-secondary:hover {
   background-color: #ccc;
 }
 
+.outlayer-bg {
+  background-image: url("images/abstract.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.1);
+}
+
 .outlayer-bg::before {
   content: "";
   position: absolute;
