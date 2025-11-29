@@ -809,3 +809,16 @@ button.btn-secondary:hover {
   background-color: #ccc;
 }
 
+.outlayer-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.6);
+  border-radius: 12px;
+  z-index: 0;
+}
+.outlayer-bg > * {
+  position: relative;
+  z-index: 1;
+}
+
