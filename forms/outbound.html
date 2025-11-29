@@ -33,7 +33,7 @@
       <input type="date" id="date" name="date" required />
 
       <label for="date">Account Name</label>
-      <select id="accountName" required style="width: 100%; height: 40px; font-size: 16px;">
+      <select id="accountName" required</select>
         <option value="" disabled selected>Choose account name</option>
       </select>
 
@@ -41,11 +41,14 @@
       <input type="text" id="sku" name="sku" required />
       
       <label for="storageLocation">Storage Location</label>
-      <select id="storageLocation" name="storageLocation" required></select>      
+      <select id="storageLocation" name="storageLocation" required>
+        <option value="" disabled selected>Choose storage location</option>
+      </select>      
 
       <label for="productName">Product Name</label>
       <select id="productName" name="productName" required>     
-      <option value="">Select product</option></select>
+        <option value="" disabled selected>Choose product name</option>
+      </select>
 
       <label for="availableQuantity">Stock Available</label>
       <input type="text" id="availableQuantity" name="availableQuantity" readonly style="background-color: #ffe6e6;" />
