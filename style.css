@@ -638,7 +638,9 @@ button.btn-secondary:hover {
 }
 
 .logo-img {
-  height: 60px;
+  height: 40px; /* match index file */
+  max-width: 160px;
+  object-fit: contain;
 }
 
 .filters {
