@@ -643,13 +643,17 @@ button.btn-secondary:hover {
 
 .filters {
   display: flex;
-  flex-wrap: wrap;        /* allow filters to wrap on smaller screens */
+  flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 20px;
+  justify-content: center;
 }
 
 .filter-select {
+  flex: 1 1 180px; /* shrinkable, minimum width */
+  max-width: 220px;
   padding: 8px;
+  font-size: 15px;
   border-radius: 4px;
   border: 1px solid #ccc;
 }
