@@ -810,6 +810,7 @@ button.btn-secondary:hover {
 }
 
 .outlayer-bg {
+  position: relative; /* Required for overlay to anchor */
   background-image: url("images/abstract.png");
   background-size: cover;
   background-position: center;
@@ -817,18 +818,22 @@ button.btn-secondary:hover {
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 0 12px rgba(0,0,0,0.1);
+  overflow: hidden; /* Prevent content from spilling outside */
 }
 
 .outlayer-bg::before {
   content: "";
   position: absolute;
-  inset: 0;
-  background: rgba(255,255,255,0.6);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0; /* ✅ Ensures full vertical coverage */
+  background: rgba(255,255,255,0.6); /* Adjust opacity as needed */
   border-radius: 12px;
   z-index: 0;
 }
+
 .outlayer-bg > * {
   position: relative;
   z-index: 1;
 }
-
