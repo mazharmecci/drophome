@@ -652,8 +652,8 @@ button.btn-secondary:hover {
 }
 
 .filter-select {
-  flex: 1 1 180px; /* shrinkable, minimum width */
-  max-width: 200px;
+  flex: 1 1 160px; /* shrinkable, minimum width */
+  max-width: 180px;
   padding: 8px;
   font-size: 15px;
   border-radius: 4px;
