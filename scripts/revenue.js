@@ -1,7 +1,7 @@
 import { db } from "./firebase.js";
 import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-// Load account dropdown from masterList
+// 🔽 Load account dropdown from masterList
 async function loadAccountDropdown() {
   const dropdown = document.getElementById("filterAccount");
   if (!dropdown) return;
@@ -26,15 +26,20 @@ async function loadAccountDropdown() {
   }
 }
 
-// Load revenue summary with filters
+// 📊 Load revenue summary with filters
 async function loadRevenueSummary() {
   const tbody = document.getElementById("revenueSummaryBody");
   const totalProductsCell = document.getElementById("totalProductsCell");
   const totalLabelCostCell = document.getElementById("totalLabelCostCell");
   const total3PLCostCell = document.getElementById("total3PLCostCell");
 
-  const selectedAccount = document.getElementById("filterAccount").value;
-  const selectedMonth = document.getElementById("filterMonth").value;
+  const selectedAccount = document.getElementById("filterAccount")?.value;
+  const selectedMonth = document.getElementById("filterMonth")?.value;
+
+  if (!tbody || !totalProductsCell || !totalLabelCostCell || !total3PLCostCell) {
+    console.warn("⚠️ Missing table elements");
+    return;
+  }
 
   tbody.innerHTML = "";
   let totalProducts = 0;
@@ -43,27 +48,36 @@ async function loadRevenueSummary() {
 
   try {
     const snapshot = await getDocs(collection(db, "revenue_summary"));
-    snapshot.forEach(doc => {
-      const { accountName, totalProducts: products, labelCost, threePLCost, timestamp } = doc.data();
-      const month = timestamp ? new Date(timestamp).getMonth() + 1 : null;
-      const monthStr = month ? String(month).padStart(2, "0") : null;
+    snapshot.forEach(docSnap => {
+      const data = docSnap.data();
+      const accountName = data.accountName || "Unknown";
+      const products = parseInt(data.totalProducts || 0);
+      const labelCost = parseFloat(data.labelCost || 0);
+      const threePLCost = parseFloat(data.threePLCost || 0);
+
+      const timestamp = data.timestamp;
+      const monthStr = timestamp
+        ? String(new Date(timestamp.toDate()).getMonth() + 1).padStart(2, "0")
+        : null;
 
       const matchAccount = !selectedAccount || accountName === selectedAccount;
       const matchMonth = !selectedMonth || monthStr === selectedMonth;
 
       if (matchAccount && matchMonth) {
+        console.log("✅ Matched record:", { accountName, products, labelCost, threePLCost, monthStr });
+
         const row = document.createElement("tr");
         row.innerHTML = `
           <td style="padding: 12px;">${accountName}</td>
-          <td style="padding: 12px;">${products || 0}</td>
-          <td style="padding: 12px;">₹${(labelCost || 0).toFixed(2)}</td>
-          <td style="padding: 12px;">₹${(threePLCost || 0).toFixed(2)}</td>
+          <td style="padding: 12px;">${products}</td>
+          <td style="padding: 12px;">₹${labelCost.toFixed(2)}</td>
+          <td style="padding: 12px;">₹${threePLCost.toFixed(2)}</td>
         `;
         tbody.appendChild(row);
 
-        totalProducts += parseInt(products || 0);
-        totalLabel += parseFloat(labelCost || 0);
-        total3PL += parseFloat(threePLCost || 0);
+        totalProducts += products;
+        totalLabel += labelCost;
+        total3PL += threePLCost;
       }
     });
 
@@ -75,9 +89,11 @@ async function loadRevenueSummary() {
   }
 }
 
+// 🚀 Init
 document.addEventListener("DOMContentLoaded", () => {
   loadAccountDropdown();
   loadRevenueSummary();
-  document.getElementById("filterAccount").addEventListener("change", loadRevenueSummary);
-  document.getElementById("filterMonth").addEventListener("change", loadRevenueSummary);
+
+  document.getElementById("filterAccount")?.addEventListener("change", loadRevenueSummary);
+  document.getElementById("filterMonth")?.addEventListener("change", loadRevenueSummary);
 });
