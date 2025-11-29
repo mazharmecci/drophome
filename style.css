@@ -695,6 +695,7 @@ button.btn-secondary:hover {
   box-shadow: inset 0 0 0 1px #eee;
 }
 
+
 /* ------------------------------
    Summary Table
 ------------------------------ */
@@ -799,26 +800,5 @@ button.btn-secondary:hover {
 
 #confirmCancelBtn {
   background-color: #ccc;
-}
-
-.table-scroll-wrapper {
-  overflow-x: auto;
-  max-width: 100%;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
-
-.summary-table th {
-  position: sticky;
-  top: 0;
-  background-color: #f8f8f8;
-  z-index: 1;
-  text-align: left;
-  font-weight: bold;
-}
-
-.summary-table td, .summary-table th {
-  padding: 12px;
-  white-space: nowrap;
 }
 
