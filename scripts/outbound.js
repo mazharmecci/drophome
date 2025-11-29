@@ -19,34 +19,37 @@ document.addEventListener("DOMContentLoaded", async () => {
   const availableQtyField = document.getElementById('availableQuantity');
 
   // Format dollar inputs
-  function formatDollarInput(input) {
-    input.addEventListener("input", () => {
+  function setupDollarInput(input) {
+    // On focus: show raw number (no $)
+    input.addEventListener("focus", () => {
       const raw = input.value.replace(/[^0-9.]/g, "");
-  
-      // Allow only one decimal point
-      const parts = raw.split(".");
-      let sanitized = parts[0];
-      if (parts.length > 1) {
-        sanitized += "." + parts[1].slice(0, 2); // limit to 2 decimal places
-      }
-  
-      const num = parseFloat(sanitized);
-      input.value = isNaN(num) ? "" : `$${num.toFixed(2)}`;
+      input.value = raw;
     });
   
+    // On input: just clean invalid chars and limit to one decimal + 2 digits
+    input.addEventListener("input", () => {
+      let raw = input.value.replace(/[^0-9.]/g, "");
+  
+      const parts = raw.split(".");
+      let sanitized = parts[0];
+  
+      if (parts.length > 1) {
+        sanitized += "." + parts[1].slice(0, 2); // keep 2 decimals max
+      }
+  
+      input.value = sanitized;
+    });
+  
+    // On blur: format as currency
     input.addEventListener("blur", () => {
       const raw = input.value.replace(/[^0-9.]/g, "");
       const num = parseFloat(raw);
       input.value = isNaN(num) ? "$0.00" : `$${num.toFixed(2)}`;
     });
-  
-    input.addEventListener("focus", () => {
-      input.value = input.value.replace("$", "");
-    });
   }
-
-  formatDollarInput(document.getElementById("labelcost"));
-  formatDollarInput(document.getElementById("3PLcost"));
+  
+  setupDollarInput(document.getElementById("labelcost"));
+  setupDollarInput(document.getElementById("3PLcost"));
 
   // Generate initial ID on load
   generateId('ORD', 'outbound_orders', 'orderId');
