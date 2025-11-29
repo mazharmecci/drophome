@@ -11,14 +11,6 @@ import {
 
 const docRef = doc(db, "masterList", "VwsEuQNJgfo5TXM6A0DA");
 
-const productIcons = {
-  Ballpen: "🖊️",
-  umbrella: "🌂",
-  Laptop: "💻",
-  "Music system": "🎵",
-  default: "📦"
-};
-
 // 🔢 Compute inbound totals
 async function computeInbound(product, location) {
   const q = query(
@@ -67,11 +59,10 @@ async function renderSummary(products, locations, summaryBody) {
   for (const product of products) {
     let inboundSubtotal = 0;
     let outboundSubtotal = 0;
-    const icon = productIcons[product] || productIcons.default;
 
     summaryBody.insertAdjacentHTML("beforeend", `
       <tr style="background-color:#f0f0f0; font-weight:bold;">
-        <td colspan="5">${icon} ${product}</td>
+        <td colspan="5">${product}</td>
       </tr>
     `);
 
@@ -137,8 +128,8 @@ async function loadFilters() {
 
     const { products, locations } = snapshot.data();
 
-    productFilter.innerHTML = `<option value="" disabled selected>Choose your product 📦</option>`;
-    locationFilter.innerHTML = `<option value="" disabled selected>Choose your location 📍</option>`;
+    productFilter.innerHTML = `<option value="" disabled selected>Choose your product</option>`;
+    locationFilter.innerHTML = `<option value="" disabled selected>Choose your location</option>`;
 
     products.forEach(product => {
       const opt = document.createElement("option");
