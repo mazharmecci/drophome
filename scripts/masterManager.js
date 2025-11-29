@@ -184,6 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadMasterList();
 
   const bindings = [
+    { id: "addAccountBtn", handler: () => addItem("accounts", "newAccount") }
     { id: "addSupplierBtn", handler: () => addItem("suppliers", "newSupplier") },
     { id: "addProductBtn", handler: () => addItem("products", "newProduct") },
     { id: "addLocationBtn", handler: () => addItem("locations", "newLocation") },
