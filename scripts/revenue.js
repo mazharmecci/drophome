@@ -132,6 +132,18 @@ async function loadRevenueSummary() {
   }
 }
 
+
+// Reset month to current month (01–12)
+if (monthSelect) {
+  const now = new Date();
+  const currentMonth = String(now.getMonth() + 1).padStart(2, "0");
+  monthSelect.value = currentMonth;
+}
+
+// Reload table with reset filters
+loadRevenueSummary();
+
+
 /* ==========================
    INIT
    ========================== */
