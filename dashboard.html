@@ -19,59 +19,77 @@
         <span>Sales Summary</span>
       </header>
 
-    <!-- Breadcrumb -->
-    <nav class="breadcrumb-nav" aria-label="Breadcrumb">
-      <ol class="breadcrumb-list">
-        <li class="breadcrumb-item">
-          <a href="index.html">Home</a>
-        </li>
-        <li class="breadcrumb-item" id="breadcrumb-origin">
-          <!-- Filled by JS: e.g. “Inbound Form” -->
-        </li>
-        <li class="breadcrumb-item breadcrumb-current" aria-current="page">
-          Stock Summary
-        </li>
-      </ol>
-    </nav>
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+        <ol class="breadcrumb-list">
+          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item" id="breadcrumb-origin"><!-- Filled by JS --></li>
+          <li class="breadcrumb-item breadcrumb-current" aria-current="page">Stock Summary</li>
+        </ol>
+      </nav>
 
-    <!-- Summary Section -->
-    <section class="summary-container">
-      <!-- Filters directly above table -->
-      <div class="filters" style="display: flex; gap: 16px; margin-bottom: 8px; justify-content: center;">
-        <select id="filterProduct" style="width: 220px; height: 40px; font-size: 16px;">
-          <option value="" disabled selected>Choose your product 📦</option>
-        </select>
-    
-        <select id="filterLocation" style="width: 220px; height: 40px; font-size: 16px;">
-          <option value="" disabled selected>Choose your location 📍</option>
-        </select>
-      </div>
-    
-      <!-- Reset button centered below filters -->
-      <div style="text-align: center; margin-bottom: 16px;">
-        <button id="resetFiltersBtn"
-          style="height: 40px; padding: 0 24px; font-size: 16px; background-color: #e0e0e0; border: none; border-radius: 6px; cursor: pointer;">
-          🔄 Reset Filters
-        </button>
-      </div>
+      <!-- Stock Summary Section -->
+      <section class="summary-container">
+        <div class="filters" style="display: flex; gap: 16px; margin-bottom: 8px; justify-content: center;">
+          <select id="filterProduct" style="width: 220px; height: 40px; font-size: 16px;">
+            <option value="" disabled selected>Choose your product 📦</option>
+          </select>
+          <select id="filterLocation" style="width: 220px; height: 40px; font-size: 16px;">
+            <option value="" disabled selected>Choose your location 📍</option>
+          </select>
+        </div>
 
-      <!-- Responsive Table -->
-      <div class="table-scroll-wrapper">
-        <table class="summary-table">
-          <thead>
-            <tr>
-              <th>📦Product</th>
-              <th>📍 Location</th>
-              <th>📥Inbd</th>
-              <th>📤Outd</th>
-              <th>🧮Quantity</th>
-            </tr>
-          </thead>
-          <tbody id="summaryBody">
-            <!-- Rows injected dynamically -->
-          </tbody>
-        </table>
-      </div>
+        <div style="text-align: center; margin-bottom: 16px;">
+          <button id="resetFiltersBtn"
+            style="height: 40px; padding: 0 24px; font-size: 16px; background-color: #e0e0e0; border: none; border-radius: 6px; cursor: pointer;">
+            🔄 Reset Filters
+          </button>
+        </div>
+
+        <div class="table-scroll-wrapper">
+          <table class="summary-table">
+            <thead>
+              <tr>
+                <th>📦Product</th>
+                <th>📍 Location</th>
+                <th>📥Inbd</th>
+                <th>📤Outd</th>
+                <th>🧮Quantity</th>
+              </tr>
+            </thead>
+            <tbody id="summaryBody">
+              <!-- Rows injected dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ✅ Revenue Summary Section -->
+      <section class="summary-container">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+          <ol class="breadcrumb-list">
+            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item">Dashboard</li>
+            <li class="breadcrumb-item breadcrumb-current" aria-current="page">Revenue Summary</li>
+          </ol>
+        </nav>
+
+        <div class="table-scroll-wrapper">
+          <table class="summary-table">
+            <thead>
+              <tr>
+                <th>👤 Account</th>
+                <th>📦 Total Products</th>
+                <th>🏷️ Label Cost</th>
+                <th>🚚 3PL Cost</th>
+              </tr>
+            </thead>
+            <tbody id="revenueSummaryBody">
+              <!-- Rows injected dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </section>
     </section>
   </main>
 
@@ -83,10 +101,10 @@
       master: { label: "Master List Manager", href: "master.html" },
       dashboard: { label: "Dashboard", href: "dashboard.html" }
     };
-    
+
     const originLabel = originMap[origin]?.label || "Dashboard";
     const originHref = originMap[origin]?.href || "dashboard.html";
-    
+
     const breadcrumbOrigin = document.getElementById("breadcrumb-origin");
     if (breadcrumbOrigin) {
       breadcrumbOrigin.innerHTML = `<a href="${originHref}">${originLabel}</a>`;
