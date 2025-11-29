@@ -48,23 +48,6 @@
 }
 
 /* ------------------------------
-   Global Reset & Typography
------------------------------- */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: "Segoe UI", Arial, sans-serif;
-  background: #f9f9f9;
-  color: #333;
-  line-height: 1.5;
-  padding: 10px;
-}
-
-/* ------------------------------
    Header & Footer
 ------------------------------ */
 header {
@@ -84,7 +67,35 @@ label {
   font-size: 15px;
 }
 
-/* Global defaults: no forced full width */
+/* ------------------------------
+   Global Reset & Typography
+------------------------------ */
+.form-container {
+  max-width: 480px; /* reduced from 600px */
+  margin: 20px auto;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  background: #fff;
+  padding: 30px;
+  box-shadow: 0 0 0 2px rgba(160, 196, 255, 0.4);
+  border-image: linear-gradient(to right, #a0c4ff, #bde0fe);
+  border-image-slice: 1;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #f9f9f9;
+  color: #333;
+  line-height: 1.5;
+  padding: 10px;
+}
+
 input,
 select,
 textarea {
@@ -100,20 +111,6 @@ textarea {
 .form-container form {
   max-width: 480px;
   margin: 0 auto;
-}
-
-.form-container {
-  max-width: 600px;
-  margin: 20px auto;
-  border: 2px solid transparent; /* Base border */
-  border-radius: 12px;
-  background: #fff;
-  padding: 30px;
-  box-shadow: 0 0 0 2px rgba(160, 196, 255, 0.4); /* Soft blue glow */
-
-  /* Gradient border */
-  border-image: linear-gradient(to right, #a0c4ff, #bde0fe);
-  border-image-slice: 1;
 }
 
 /* Fields inside the main form */
