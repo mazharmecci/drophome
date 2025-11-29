@@ -15,13 +15,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   const form = document.getElementById('outboundForm');
   const productDropdown = document.getElementById('productName');
   const locationDropdown = document.getElementById('storageLocation');
+  const accountDropdown = document.getElementById('accountName');
   const availableQtyField = document.getElementById('availableQuantity');
 
   // Generate initial ID on load
   generateId('ORD', 'outbound_orders', 'orderId');
 
-  // Load products + locations into dropdowns
-  await loadMasterList(productDropdown, locationDropdown);
+  // Load dropdowns from master list
+  await loadMasterList({ productDropdown, locationDropdown, accountDropdown });
 
   // Show toast if redirected from master.html
   const params = new URLSearchParams(window.location.search);
@@ -39,7 +40,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const orderId = document.getElementById('orderId')?.value?.trim();
     const date = document.getElementById('date')?.value?.trim();
-    const accountName = document.getElementById('accountName')?.value?.trim();
+    const accountName = accountDropdown?.value?.trim();
     const sku = document.getElementById('sku')?.value?.trim();
     const productName = productDropdown?.value?.trim();
     const storageLocation = locationDropdown?.value?.trim();
@@ -125,8 +126,8 @@ async function computeStock() {
   }
 }
 
-// Load products + locations from masterList
-async function loadMasterList(productDropdown, locationDropdown) {
+// Load products, locations, and accounts from masterList
+async function loadMasterList({ productDropdown, locationDropdown, accountDropdown }) {
   try {
     const masterRef = doc(db, "masterList", "VwsEuQNJgfo5TXM6A0DA");
     const masterSnap = await getDoc(masterRef);
@@ -138,6 +139,8 @@ async function loadMasterList(productDropdown, locationDropdown) {
 
     const data = masterSnap.data();
 
+    // Products
+    productDropdown.innerHTML = `<option value="" disabled selected>Choose your product</option>`;
     data.products.forEach(product => {
       const opt = document.createElement("option");
       opt.value = product;
@@ -145,6 +148,8 @@ async function loadMasterList(productDropdown, locationDropdown) {
       productDropdown.appendChild(opt);
     });
 
+    // Locations
+    locationDropdown.innerHTML = `<option value="" disabled selected>Choose your location</option>`;
     data.locations.forEach(location => {
       const opt = document.createElement("option");
       opt.value = location;
@@ -152,7 +157,20 @@ async function loadMasterList(productDropdown, locationDropdown) {
       locationDropdown.appendChild(opt);
     });
 
-    console.log("✅ Master list loaded:", { products: data.products.length, locations: data.locations.length });
+    // Accounts
+    accountDropdown.innerHTML = `<option value="" disabled selected>Choose account name</option>`;
+    data.accounts.forEach(account => {
+      const opt = document.createElement("option");
+      opt.value = account;
+      opt.textContent = account;
+      accountDropdown.appendChild(opt);
+    });
+
+    console.log("✅ Master list loaded:", {
+      products: data.products.length,
+      locations: data.locations.length,
+      accounts: data.accounts.length
+    });
 
   } catch (err) {
     console.error("❌ Error loading masterList:", err);
