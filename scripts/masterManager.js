@@ -188,7 +188,7 @@ async function clearField(field) {
 
 // Clear UI only (does not touch backend)
 function clearUIOnly() {
-  ["supplierList", "productList", "locationList"].forEach(id => {
+  ["accountList", "supplierList", "productList", "locationList"].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.innerHTML = "";
   });
