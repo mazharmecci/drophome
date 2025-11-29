@@ -46,15 +46,16 @@
           </button>
         </div>
 
-        <div class="table-scroll-wrapper">
-          <table class="summary-table">
-            <thead>
+        <!-- Responsive Scroll Wrapper -->
+        <div class="table-scroll-wrapper" style="overflow-x: auto; max-width: 100%; border-radius: 8px; border: 1px solid #ccc;">
+          <table class="summary-table" style="width: 100%; border-collapse: collapse;">
+            <thead style="position: sticky; top: 0; background-color: #f8f8f8; z-index: 1;">
               <tr>
-                <th>📦Product</th>
-                <th>📍 Location</th>
-                <th>📥Inbd</th>
-                <th>📤Outd</th>
-                <th>🧮Quantity</th>
+                <th style="padding: 12px;">📦 Product</th>
+                <th style="padding: 12px;">📍 Location</th>
+                <th style="padding: 12px;">📥 Inbd</th>
+                <th style="padding: 12px;">📤 Outd</th>
+                <th style="padding: 12px;">🧮 Quantity</th>
               </tr>
             </thead>
             <tbody id="summaryBody">
