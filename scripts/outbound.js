@@ -21,15 +21,27 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Format dollar inputs
   function formatDollarInput(input) {
     input.addEventListener("input", () => {
-      let raw = input.value.replace(/[^0-9.]/g, "");
-      let num = parseFloat(raw);
+      const raw = input.value.replace(/[^0-9.]/g, "");
+  
+      // Allow only one decimal point
+      const parts = raw.split(".");
+      let sanitized = parts[0];
+      if (parts.length > 1) {
+        sanitized += "." + parts[1].slice(0, 2); // limit to 2 decimal places
+      }
+  
+      const num = parseFloat(sanitized);
       input.value = isNaN(num) ? "" : `$${num.toFixed(2)}`;
     });
-
+  
     input.addEventListener("blur", () => {
-      if (!input.value || input.value === "$") {
-        input.value = "$0.00";
-      }
+      const raw = input.value.replace(/[^0-9.]/g, "");
+      const num = parseFloat(raw);
+      input.value = isNaN(num) ? "$0.00" : `$${num.toFixed(2)}`;
+    });
+  
+    input.addEventListener("focus", () => {
+      input.value = input.value.replace("$", "");
     });
   }
 
