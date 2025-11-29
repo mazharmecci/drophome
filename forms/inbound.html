@@ -33,19 +33,25 @@
       <input type="date" id="dateReceived" name="dateReceived" required />
 
       <label for="supplierName">Supplier</label>
-      <select id="supplierName" name="supplierName" required></select>      
+      <select id="supplierName" name="supplierName" required>
+        <option value="" disabled selected>Choose Supplier</option>
+      </select>
 
       <label for="sku">SKU</label>
       <input type="text" id="sku" name="sku" required />
 
       <label for="productName">Product</label>
-      <select id="productName" name="productName" required></select>      
+      <select id="productName" name="productName" required>
+        <option value="" disabled selected>Choose Product</option>
+      </select>
      
       <label for="quantityReceived">Quantity Received</label>
       <input type="number" id="quantityReceived" name="quantityReceived" required />
 
       <label for="storageLocation">Storage Location</label>
-      <select id="storageLocation" name="storageLocation" required></select>      
+      <select id="storageLocation" name="storageLocation" required>
+        <option value="" disabled selected>Choose location</option>
+      </select>      
 
       <label for="receivingNotes">Receiving Notes</label>
       <textarea id="receivingNotes" name="receivingNotes"></textarea>
