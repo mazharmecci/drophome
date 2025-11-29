@@ -115,8 +115,27 @@ async function loadRevenueSummary() {
 
 document.addEventListener("DOMContentLoaded", async () => {
   await loadAccountDropdown();
+
+  const accountSelect = document.getElementById("filterAccount");
+  const monthSelect = document.getElementById("filterMonth");
+
+  // 1) Set month to current month (01–12)
+  const now = new Date();
+  const currentMonth = String(now.getMonth() + 1).padStart(2, "0"); // e.g. "11"
+  if (monthSelect) {
+    monthSelect.value = currentMonth;
+  }
+
+  // 2) Select first real account option (index 1, because 0 is "Choose account 👤")
+  if (accountSelect && accountSelect.options.length > 1) {
+    accountSelect.selectedIndex = 1;
+  }
+
+  // 3) Load summary with these defaults
   await loadRevenueSummary();
 
-  document.getElementById("filterAccount")?.addEventListener("change", loadRevenueSummary);
-  document.getElementById("filterMonth")?.addEventListener("change", loadRevenueSummary);
+  // 4) Re-load when filters change
+  accountSelect?.addEventListener("change", loadRevenueSummary);
+  monthSelect?.addEventListener("change", loadRevenueSummary);
 });
+
