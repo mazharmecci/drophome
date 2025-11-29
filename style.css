@@ -653,13 +653,22 @@ button.btn-secondary:hover {
 }
 
 /* ------------------------------
+   Table Scroll Wrapper
+------------------------------ */
+.table-scroll-wrapper {
+  overflow-x: auto;
+  max-width: 100%;
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1px #eee;
+}
+
+/* ------------------------------
    Summary Table
 ------------------------------ */
 .summary-table {
   width: 100%;
   border-collapse: collapse;
-  overflow-x: auto;
-  display: block;
+  min-width: 600px;
 }
 
 .summary-table thead {
@@ -674,7 +683,6 @@ button.btn-secondary:hover {
 .summary-table td {
   padding: 12px;
   text-align: left;
-  min-width: 120px;
   border-bottom: 1px solid #ddd;
 }
 
@@ -707,13 +715,6 @@ button.btn-secondary:hover {
   .summary-table th {
     text-align: left;
   }
-}
-
-.table-scroll-wrapper {
-  overflow-x: auto;
-  max-width: 100%;
-  border-radius: 8px;
-  box-shadow: inset 0 0 0 1px #eee;
 }
 
 .modal-overlay {
