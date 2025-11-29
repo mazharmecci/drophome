@@ -16,7 +16,10 @@ async function loadAccountDropdown() {
   const dropdown = document.getElementById("filterAccount");
   if (!dropdown) return;
 
-  dropdown.innerHTML = `<option value="" disabled selected>Choose account 👤</option>`;
+  // Add "All accounts" at top
+  dropdown.innerHTML = `
+    <option value="__all__" selected>All accounts 👥</option>
+  `;
 
   try {
     const masterRef = doc(db, "masterList", "VwsEuQNJgfo5TXM6A0DA");
@@ -47,10 +50,11 @@ async function loadRevenueSummary() {
   const totalLabelCostCell = document.getElementById("totalLabelCostCell");
   const total3PLCostCell = document.getElementById("total3PLCostCell");
 
-  const selectedAccount = document.getElementById("filterAccount")?.value?.toLowerCase() || "";
+  const selectedAccountRaw = document.getElementById("filterAccount")?.value || "__all__";
+  const selectedAccount = selectedAccountRaw.toLowerCase();
   const selectedMonth = document.getElementById("filterMonth")?.value || "";
 
-  console.log("🎛 Current filters:", { selectedAccount, selectedMonth });
+  console.log("🎛 Current filters:", { selectedAccountRaw, selectedMonth });
 
   if (!tbody || !totalProductsCell || !totalLabelCostCell || !total3PLCostCell) {
     console.warn("⚠️ Missing table elements");
@@ -72,7 +76,6 @@ async function loadRevenueSummary() {
       const accountName = data.accountName || "Unknown";
       const products = parseInt(data.totalProducts || 0, 10);
 
-      // Read both possible casings, prefer camelCase if present
       const labelCost = parseFloat(
         data.labelCost ?? data.labelcost ?? 0
       );
@@ -86,31 +89,15 @@ async function loadRevenueSummary() {
         ? String(convertedTs.getMonth() + 1).padStart(2, "0")
         : null;
 
+      const isAllAccounts = selectedAccountRaw === "__all__";
       const matchAccount =
-        !selectedAccount || accountName.toLowerCase() === selectedAccount;
+        isAllAccounts || accountName.toLowerCase() === selectedAccount;
 
-      // Allow records with no timestamp to pass when no month is selected
       const matchMonth =
         !selectedMonth || (monthStr ? monthStr === selectedMonth : true);
 
-      console.log("🕒 Timestamp check:", {
-        raw: timestamp,
-        converted: convertedTs,
-        monthStr
-      });
-
-      console.log("🔍 Filter vs Record:", {
-        selectedAccount,
-        selectedMonth,
-        recordAccount: accountName,
-        recordMonth: monthStr,
-        matchAccount,
-        matchMonth
-      });
-
       if (matchAccount && matchMonth) {
         matchCount++;
-        console.log("✅ MATCHED");
 
         const row = document.createElement("tr");
         row.innerHTML = `
@@ -126,7 +113,6 @@ async function loadRevenueSummary() {
         total3PL += threePLCost;
       } else {
         skipCount++;
-        console.log("⏭️ SKIPPED");
       }
     });
 
@@ -156,22 +142,20 @@ document.addEventListener("DOMContentLoaded", async () => {
   const accountSelect = document.getElementById("filterAccount");
   const monthSelect = document.getElementById("filterMonth");
 
-  // 1) Set month to current month (01–12)
+  // Set month to current month (01–12)
   const now = new Date();
   const currentMonth = String(now.getMonth() + 1).padStart(2, "0");
   if (monthSelect) {
     monthSelect.value = currentMonth;
   }
 
-  // 2) Select first real account option (index 1)
-  if (accountSelect && accountSelect.options.length > 1) {
-    accountSelect.selectedIndex = 1;
+  // Default to "All accounts"
+  if (accountSelect) {
+    accountSelect.value = "__all__";
   }
 
-  // 3) Load summary with these defaults
   await loadRevenueSummary();
 
-  // 4) Re-load when filters change
   accountSelect?.addEventListener("change", loadRevenueSummary);
   monthSelect?.addEventListener("change", loadRevenueSummary);
 });
