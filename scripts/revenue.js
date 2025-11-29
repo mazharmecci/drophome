@@ -47,7 +47,7 @@ async function loadRevenueSummary() {
   const totalLabelCostCell = document.getElementById("totalLabelCostCell");
   const total3PLCostCell = document.getElementById("total3PLCostCell");
 
-  const selectedAccount = document.getElementById("filterAccount")?.value || "";
+  const selectedAccount = document.getElementById("filterAccount")?.value?.toLowerCase() || "";
   const selectedMonth = document.getElementById("filterMonth")?.value || "";
 
   if (!tbody || !totalProductsCell || !totalLabelCostCell || !total3PLCostCell) {
@@ -59,6 +59,7 @@ async function loadRevenueSummary() {
   let totalProducts = 0;
   let totalLabel = 0;
   let total3PL = 0;
+  let matchCount = 0;
 
   try {
     const snapshot = await getDocs(collection(db, "revenue_summary"));
@@ -67,44 +68,55 @@ async function loadRevenueSummary() {
       const data = docSnap.data();
       const accountName = data.accountName || "Unknown";
       const products = parseInt(data.totalProducts || 0, 10);
-
-      // IMPORTANT: field names match outbound.js (labelCost, threePLCost)
-      const labelCost = parseFloat(data.labelCost || 0);
-      const threePLCost = parseFloat(data.threePLCost || 0);
+      const labelCost = parseFloat(data.labelCost ?? data.labelcost ?? 0);
+      const threePLCost = parseFloat(data.threePLCost ?? data.threePLcost ?? 0);
 
       const timestamp = data.timestamp;
       const monthStr = timestamp
         ? String(new Date(timestamp.toDate()).getMonth() + 1).padStart(2, "0")
         : null;
 
-      const matchAccount =
-        !selectedAccount || accountName === selectedAccount;
-      const matchMonth =
-        !selectedMonth || (monthStr && monthStr === selectedMonth);
+      const matchAccount = !selectedAccount || accountName.toLowerCase() === selectedAccount;
+      const matchMonth = !selectedMonth || (monthStr && monthStr === selectedMonth);
 
-      if (!matchAccount || !matchMonth) {
-        return;
+      console.log("🔍 Record check:", {
+        accountName,
+        products,
+        labelCost,
+        threePLCost,
+        monthStr,
+        matchAccount,
+        matchMonth
+      });
+
+      if (matchAccount && matchMonth) {
+        matchCount++;
+
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td style="padding: 12px;">${accountName}</td>
+          <td style="padding: 12px;">${products}</td>
+          <td style="padding: 12px;">₹${labelCost.toFixed(2)}</td>
+          <td style="padding: 12px;">₹${threePLCost.toFixed(2)}</td>
+        `;
+        tbody.appendChild(row);
+
+        totalProducts += products;
+        totalLabel += labelCost;
+        total3PL += threePLCost;
       }
-
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td style="padding: 12px;">${accountName}</td>
-        <td style="padding: 12px;">${products}</td>
-        <td style="padding: 12px;">₹${labelCost.toFixed(2)}</td>
-        <td style="padding: 12px;">₹${threePLCost.toFixed(2)}</td>
-      `;
-      tbody.appendChild(row);
-
-      totalProducts += products;
-      totalLabel += labelCost;
-      total3PL += threePLCost;
     });
 
-  totalProductsCell.textContent = totalProducts;
-  totalLabelCostCell.textContent = `₹${totalLabel.toFixed(2)}`;
-  total3PLCostCell.textContent = `₹${total3PL.toFixed(2)}`;
+    totalProductsCell.textContent = totalProducts;
+    totalLabelCostCell.textContent = `₹${totalLabel.toFixed(2)}`;
+    total3PLCostCell.textContent = `₹${total3PL.toFixed(2)}`;
 
-    console.log("📊 Revenue summary loaded.");
+    if (matchCount === 0) {
+      showToast("⚠️ No matching records found.");
+      console.warn("⚠️ No records matched filters.");
+    } else {
+      console.log(`📊 Revenue summary loaded: ${matchCount} matched records`);
+    }
   } catch (err) {
     console.error("❌ Failed to load revenue summary:", err);
     showToast("❌ Failed to load revenue summary.");
