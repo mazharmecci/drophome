@@ -67,8 +67,10 @@ async function loadRevenueSummary() {
       const data = docSnap.data();
       const accountName = data.accountName || "Unknown";
       const products = parseInt(data.totalProducts || 0, 10);
-      const labelCost = parseFloat(data.labelcost || 0);     // your field name
-      const threePLCost = parseFloat(data.threePLcost || 0); // your field name
+
+      // IMPORTANT: field names match outbound.js (labelCost, threePLCost)
+      const labelCost = parseFloat(data.labelCost || 0);
+      const threePLCost = parseFloat(data.threePLCost || 0);
 
       const timestamp = data.timestamp;
       const monthStr = timestamp
@@ -98,9 +100,9 @@ async function loadRevenueSummary() {
       total3PL += threePLCost;
     });
 
-    totalProductsCell.textContent = totalProducts;
-    totalLabelCostCell.textContent = `₹${totalLabel.toFixed(2)}`;
-    total3PLCostCell.textContent = `₹${total3PL.toFixed(2)}`;
+  totalProductsCell.textContent = totalProducts;
+  totalLabelCostCell.textContent = `₹${totalLabel.toFixed(2)}`;
+  total3PLCostCell.textContent = `₹${total3PL.toFixed(2)}`;
 
     console.log("📊 Revenue summary loaded.");
   } catch (err) {
@@ -121,7 +123,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // 1) Set month to current month (01–12)
   const now = new Date();
-  const currentMonth = String(now.getMonth() + 1).padStart(2, "0"); // e.g. "11"
+  const currentMonth = String(now.getMonth() + 1).padStart(2, "0");
   if (monthSelect) {
     monthSelect.value = currentMonth;
   }
@@ -138,4 +140,3 @@ document.addEventListener("DOMContentLoaded", async () => {
   accountSelect?.addEventListener("change", loadRevenueSummary);
   monthSelect?.addEventListener("change", loadRevenueSummary);
 });
-
