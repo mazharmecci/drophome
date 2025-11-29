@@ -1,5 +1,5 @@
 import { db } from "./firebase.js";
-import { showToast, showPopup } from "./popupHandler.js";
+import { showToast } from "./popupHandler.js";
 import {
   doc,
   getDoc,
@@ -8,6 +8,34 @@ import {
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 const docRef = doc(db, "masterList", "VwsEuQNJgfo5TXM6A0DA");
+
+// Modal confirmation helper
+function showModal({ title, message, confirmText, cancelText }) {
+  return new Promise((resolve) => {
+    const modal = document.getElementById("confirmBox");
+    const modalTitle = document.getElementById("confirmTitle");
+    const modalMessage = document.getElementById("confirmMessage");
+    const yesBtn = document.getElementById("confirmYesBtn");
+    const cancelBtn = document.getElementById("confirmCancelBtn");
+
+    modalTitle.textContent = title;
+    modalMessage.textContent = message;
+    yesBtn.textContent = confirmText;
+    cancelBtn.textContent = cancelText;
+
+    modal.style.display = "flex";
+
+    yesBtn.onclick = () => {
+      modal.style.display = "none";
+      resolve(true);
+    };
+
+    cancelBtn.onclick = () => {
+      modal.style.display = "none";
+      resolve(false);
+    };
+  });
+}
 
 // Load and render master list
 async function loadMasterList() {
@@ -19,7 +47,7 @@ async function loadMasterList() {
     }
 
     const data = snapshot.data();
-    renderList("accountList", data.accounts ?? [], "accounts"); // ✅ Add this line
+    renderList("accountList", data.accounts ?? [], "accounts");
     renderList("supplierList", data.suppliers ?? [], "suppliers");
     renderList("productList", data.products ?? [], "products");
     renderList("locationList", data.locations ?? [], "locations");
@@ -109,11 +137,11 @@ async function addItem(field, inputId) {
 
 // Remove item with confirmation
 async function removeItem(field, value) {
-  const confirmed = await showPopup({
+  const confirmed = await showModal({
     title: "Confirm Removal",
     message: `Are you sure you want to remove "${value}" from ${field}?`,
     confirmText: "Yes, remove it",
-    cancelText: "Cancel",
+    cancelText: "Cancel"
   });
 
   if (!confirmed) return;
@@ -139,11 +167,11 @@ async function removeItem(field, value) {
 
 // Clear entire field with confirmation
 async function clearField(field) {
-  const confirmed = await showPopup({
+  const confirmed = await showModal({
     title: "Clear All Items",
     message: `Are you sure you want to remove ALL items from ${field}? This cannot be undone.`,
     confirmText: "Yes, clear all",
-    cancelText: "Cancel",
+    cancelText: "Cancel"
   });
 
   if (!confirmed) return;
