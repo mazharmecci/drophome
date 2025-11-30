@@ -10,19 +10,17 @@ import {
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 const productSelector = document.getElementById('productName');
-const locationFilter = document.getElementById('location');
 const availableQty = document.getElementById('availableQuantity');
 
 // Load dropdowns on page load
 document.addEventListener("DOMContentLoaded", async () => {
   await loadMasterList();
 
-  // Auto-compute when filters change
+  // Auto-compute when product changes
   productSelector.addEventListener("change", computeStock);
-  locationFilter.addEventListener("change", computeStock);
 });
 
-// Load products and locations from masterList document
+// Load products from masterList document
 async function loadMasterList() {
   try {
     const masterRef = doc(db, "masterList", "VwsEuQNJgfo5TXM6A0DA");
@@ -35,23 +33,15 @@ async function loadMasterList() {
 
     const data = masterSnap.data();
 
-    // Populate product dropdown
+    // Populate product dropdown (products are objects { sku, name })
     data.products.forEach(product => {
       const opt = document.createElement("option");
-      opt.value = product;
-      opt.textContent = product;
+      opt.value = product.name;
+      opt.textContent = `${product.name} (${product.sku})`;
       productSelector.appendChild(opt);
     });
 
-    // Populate location dropdown
-    data.locations.forEach(location => {
-      const opt = document.createElement("option");
-      opt.value = location;
-      opt.textContent = location;
-      locationFilter.appendChild(opt);
-    });
-
-    console.log("✅ Master list loaded:", { products: data.products.length, locations: data.locations.length });
+    console.log("✅ Master list loaded:", { products: data.products.length });
 
   } catch (err) {
     console.error("❌ Error loading masterList:", err);
@@ -62,68 +52,47 @@ async function loadMasterList() {
 // Compute stock = inbound - outbound
 async function computeStock() {
   const product = productSelector.value;
-  const location = locationFilter.value;
 
-  if (!product || !location) {
+  if (!product) {
     availableQty.value = "";
     return;
   }
 
   try {
-    console.log("🔍 Computing stock for:", { product, location });
+    console.log("🔍 Computing stock for:", { product });
 
     // Fetch inbound records
     let inboundTotal = 0;
     try {
-      console.log("📥 Querying inbound collection:", "inbound");
       const inboundQuery = query(
         collection(db, "inbound"),
-        where("productName", "==", product),
-        where("storageLocation", "==", location)
+        where("productName", "==", product)
       );
-      console.log("📥 Inbound query object:", inboundQuery);
 
       const inboundSnapshot = await getDocs(inboundQuery);
-      console.log("📥 Inbound records found:", inboundSnapshot.size);
-
-      inboundSnapshot.forEach(doc => {
-        console.log("📥 Inbound record:", doc.id, doc.data());
-        inboundTotal += parseInt(doc.data().quantityReceived || 0);
+      inboundSnapshot.forEach(docSnap => {
+        inboundTotal += parseInt(docSnap.data().quantityReceived || 0);
       });
+      console.log("📥 Inbound total:", inboundTotal);
     } catch (inboundErr) {
       console.error("❌ Error fetching inbound records:", inboundErr);
       showToast("❌ Failed to fetch inbound data.");
       return;
     }
 
-    // Fetch outbound records (fallback for missing storageLocation)
+    // Fetch outbound records
     let outboundTotal = 0;
     try {
-      console.log("📤 Querying outbound collection:", "outbound_orders");
       const outboundQuery = query(
         collection(db, "outbound_orders"),
         where("productName", "==", product)
       );
-      console.log("📤 Outbound query object:", outboundQuery);
 
       const outboundSnapshot = await getDocs(outboundQuery);
-      console.log("📤 Outbound records found:", outboundSnapshot.size);
-
-      outboundSnapshot.forEach(doc => {
-        const data = doc.data();
-        console.log("📤 Outbound record:", doc.id, data);
-
-        if (data.storageLocation) {
-          if (data.storageLocation === location) {
-            outboundTotal += parseInt(data.quantity || 0);
-          } else {
-            console.log(`⚠️ Skipped outbound record at different location: ${data.storageLocation}`);
-          }
-        } else {
-          console.warn("⚠️ Outbound record missing storageLocation, counting anyway:", doc.id);
-          outboundTotal += parseInt(data.quantity || 0);
-        }
+      outboundSnapshot.forEach(docSnap => {
+        outboundTotal += parseInt(docSnap.data().quantity || 0);
       });
+      console.log("📤 Outbound total:", outboundTotal);
     } catch (outboundErr) {
       console.error("❌ Error fetching outbound records:", outboundErr);
       showToast("❌ Failed to fetch outbound data.");
@@ -132,8 +101,8 @@ async function computeStock() {
 
     // Compute available stock
     const stock = inboundTotal - outboundTotal;
-    console.log("✅ Computed stock:", { inboundTotal, outboundTotal, stock });
     availableQty.value = stock >= 0 ? stock : 0;
+    console.log("✅ Computed stock:", { inboundTotal, outboundTotal, stock });
 
   } catch (err) {
     console.error("❌ Error computing stock:", err);
