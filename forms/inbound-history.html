@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>📥 Inbound Records History</title>
+  <link rel="stylesheet" href="../style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    .history-container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 16px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f7f7f7;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    .link-cell a {
+      color: #0077cc;
+      text-decoration: none;
+    }
+
+    .link-cell a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="history-container">
+    <h2>📥 Historical Inbound Records</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Inbound ID</th>
+          <th>Date Received</th>
+          <th>Client Name</th>
+          <th>Product Name</th>
+          <th>SKU</th>
+          <th>Quantity</th>
+          <th>Product Picture</th>
+          <th>Label Link</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody id="inboundTableBody">
+        <!-- Records will be injected here -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Scripts -->
+  <script type="module">
+    import { db } from '../scripts/firebase.js';
+    import { collection, getDocs } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
+    async function loadInboundHistory() {
+      try {
+        const snapshot = await getDocs(collection(db, "inbound"));
+        const table = document.getElementById("inboundTableBody");
+        table.innerHTML = "";
+
+        snapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          const row = document.createElement("tr");
+
+          row.innerHTML = `
+            <td>${data.inboundId || ""}</td>
+            <td>${data.dateReceived || ""}</td>
+            <td>${data.clientName || ""}</td>
+            <td>${data.productName || ""}</td>
+            <td>${data.sku || ""}</td>
+            <td>${data.quantityReceived || ""}</td>
+            <td class="link-cell">${data.prodpic ? `<a href="${data.prodpic}" target="_blank">View</a>` : ""}</td>
+            <td class="link-cell">${data.labellink ? `<a href="${data.labellink}" target="_blank">Open</a>` : ""}</td>
+            <td>${data.receivingNotes || ""}</td>
+          `;
+
+          table.appendChild(row);
+        });
+      } catch (err) {
+        console.error("❌ Error loading inbound history:", err);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", loadInboundHistory);
+  </script>
+</body>
+</html>
