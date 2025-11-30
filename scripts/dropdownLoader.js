@@ -14,9 +14,8 @@ export async function loadDropdowns() {
 
     const data = snapshot.data();
 
-    // Populate simple lists
+    // Populate client names
     populateDropdown("clientName", data.clients ?? []);
-    populateDropdown("storageLocation", data.locations ?? []);
 
     // Populate product dropdown with name, and wire SKU auto-fill
     populateProductDropdown("productName", data.products ?? []);
@@ -30,6 +29,13 @@ function populateDropdown(fieldId, options) {
   const select = document.getElementById(fieldId);
   if (!select) return;
   select.innerHTML = "";
+
+  // Add placeholder option
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = `Choose ${fieldId.replace("Name", "").toLowerCase()}`;
+  placeholder.hidden = true;
+  select.appendChild(placeholder);
 
   options.forEach(opt => {
     const option = document.createElement("option");
@@ -46,6 +52,13 @@ function populateProductDropdown(fieldId, products) {
   if (!select) return;
 
   select.innerHTML = "";
+
+  // Add placeholder option
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = "Choose product name";
+  placeholder.hidden = true;
+  select.appendChild(placeholder);
 
   products.forEach(p => {
     const option = document.createElement("option");
