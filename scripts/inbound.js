@@ -35,6 +35,8 @@ function collectFormData() {
     clientName: document.getElementById("clientName")?.value || "",
     productName: document.getElementById("productName")?.value || "",
     sku: document.getElementById("sku")?.value || "",
+    prodpic: document.getElementById("prodpic")?.value || "",       // NEW FIELD
+    labellink: document.getElementById("labellink")?.value || "",   // NEW FIELD
     quantityReceived: parseInt(document.getElementById("quantityReceived")?.value || "0", 10),
     receivingNotes: document.getElementById("receivingNotes")?.value || ""
   };
