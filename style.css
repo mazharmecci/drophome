@@ -816,3 +816,61 @@ align-items: stretch;
 #confirmCancelBtn {
   background-color: #ccc;
 }
+
+/* Filter Bar Styling - history */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.filter-bar div {
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-bar label {
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #333;
+}
+
+.filter-bar input[type="text"],
+.filter-bar input[type="date"] {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #f9f9f9;
+  width: 180px;
+}
+
+.filter-bar button {
+  padding: 10px 16px;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#applyFilters {
+  background-color: #0077cc;
+  color: white;
+}
+
+#applyFilters:hover {
+  background-color: #005fa3;
+}
+
+#clearFilters {
+  background-color: #ffcc00;
+  color: #333;
+}
+
+#clearFilters:hover {
+  background-color: #e6b800;
+}
