@@ -49,7 +49,7 @@ async function loadMasterList() {
     const data = snapshot.data();
     renderList("accountList", data.accounts ?? [], "accounts");
     renderList("supplierList", data.suppliers ?? [], "suppliers");
-    renderList("productList", data.products ?? [], "products");
+    renderProductList(data.products ?? []); // special renderer for products
     renderList("locationList", data.locations ?? [], "locations");
 
     console.log("✅ Master list loaded:", {
@@ -64,13 +64,10 @@ async function loadMasterList() {
   }
 }
 
-// Render list items with remove buttons
+// Render generic list items
 function renderList(listId, items = [], fieldName) {
   const ul = document.getElementById(listId);
-  if (!ul) {
-    console.warn(`Element with id "${listId}" not found.`);
-    return;
-  }
+  if (!ul) return;
 
   ul.innerHTML = "";
   items.forEach((item) => {
@@ -88,7 +85,103 @@ function renderList(listId, items = [], fieldName) {
   });
 }
 
-// Add new item to master list
+// Render product list with SKU–Name pairs
+function renderProductList(products = []) {
+  const ul = document.getElementById("productList");
+  if (!ul) return;
+
+  ul.innerHTML = "";
+  products.forEach((p) => {
+    const li = document.createElement("li");
+    li.textContent = `${p.name} (${p.sku})`;
+
+    const removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.textContent = "❌";
+    removeBtn.setAttribute("aria-label", `Remove ${p.name}`);
+    removeBtn.addEventListener("click", () => removeProduct(p));
+
+    li.appendChild(removeBtn);
+    ul.appendChild(li);
+  });
+}
+
+// Add new product (SKU + Name)
+async function addProduct() {
+  const skuInput = document.getElementById("newSKU");
+  const nameInput = document.getElementById("newProductName");
+  if (!skuInput || !nameInput) return;
+
+  const sku = skuInput.value.trim();
+  const name = nameInput.value.trim();
+  if (!sku || !name) {
+    showToast("⚠️ Please enter both SKU and Product Name.");
+    return;
+  }
+
+  try {
+    const snapshot = await getDoc(docRef);
+
+    if (!snapshot.exists()) {
+      await setDoc(docRef, {
+        accounts: [],
+        suppliers: [],
+        products: [],
+        locations: [],
+      });
+      showToast("✅ Master list initialized.");
+    }
+
+    const current = snapshot.data()?.products || [];
+    if (current.some(p => p.sku === sku || p.name === name)) {
+      showToast("⚠️ Product with same SKU or Name already exists.");
+      return;
+    }
+
+    const updated = [...current, { sku, name }];
+    await updateDoc(docRef, { products: updated });
+
+    skuInput.value = "";
+    nameInput.value = "";
+    await loadMasterList();
+    showToast(`✅ Product "${name}" (${sku}) added.`);
+  } catch (error) {
+    console.error("Error adding product:", error);
+    showToast("❌ Failed to add product.");
+  }
+}
+
+// Remove product with confirmation
+async function removeProduct(product) {
+  const confirmed = await showModal({
+    title: "Confirm Removal",
+    message: `Are you sure you want to remove "${product.name}" (${product.sku})?`,
+    confirmText: "Yes, remove it",
+    cancelText: "Cancel"
+  });
+
+  if (!confirmed) return;
+
+  try {
+    const snapshot = await getDoc(docRef);
+    if (!snapshot.exists()) {
+      showToast("❌ Master list document not found.");
+      return;
+    }
+
+    const current = snapshot.data()?.products || [];
+    const updated = current.filter((p) => p.sku !== product.sku);
+
+    await updateDoc(docRef, { products: updated });
+    await loadMasterList();
+    showToast(`✅ "${product.name}" removed.`);
+  } catch (error) {
+    console.error("Error removing product:", error);
+    showToast("❌ Failed to remove product.");
+  }
+}
+
+// Generic add item
 async function addItem(field, inputId) {
   const input = document.getElementById(inputId);
   if (!input) return;
@@ -110,11 +203,6 @@ async function addItem(field, inputId) {
         locations: [],
       });
       showToast("✅ Master list initialized.");
-      await updateDoc(docRef, { [field]: [newValue] });
-      input.value = "";
-      await loadMasterList();
-      showToast(`✅ "${newValue}" added to ${field}.`);
-      return;
     }
 
     const current = snapshot.data()[field] || [];
@@ -135,58 +223,7 @@ async function addItem(field, inputId) {
   }
 }
 
-// Remove item with confirmation
-async function removeItem(field, value) {
-  const confirmed = await showModal({
-    title: "Confirm Removal",
-    message: `Are you sure you want to remove "${value}" from ${field}?`,
-    confirmText: "Yes, remove it",
-    cancelText: "Cancel"
-  });
-
-  if (!confirmed) return;
-
-  try {
-    const snapshot = await getDoc(docRef);
-    if (!snapshot.exists()) {
-      showToast("❌ Master list document not found.");
-      return;
-    }
-
-    const current = snapshot.data()[field] || [];
-    const updated = current.filter((item) => item !== value);
-
-    await updateDoc(docRef, { [field]: updated });
-    await loadMasterList();
-    showToast(`✅ "${value}" removed from ${field}.`);
-  } catch (error) {
-    console.error("Error removing item:", error);
-    showToast("❌ Failed to remove item.");
-  }
-}
-
-// Clear entire field with confirmation
-async function clearField(field) {
-  const confirmed = await showModal({
-    title: "Clear All Items",
-    message: `Are you sure you want to remove ALL items from ${field}? This cannot be undone.`,
-    confirmText: "Yes, clear all",
-    cancelText: "Cancel"
-  });
-
-  if (!confirmed) return;
-
-  try {
-    await updateDoc(docRef, { [field]: [] });
-    await loadMasterList();
-    showToast(`✅ All items cleared from ${field}.`);
-  } catch (error) {
-    console.error("Error clearing field:", error);
-    showToast("❌ Failed to clear field.");
-  }
-}
-
-// Clear UI only (does not touch backend)
+// Clear UI only
 function clearUIOnly() {
   ["accountList", "supplierList", "productList", "locationList"].forEach(id => {
     const el = document.getElementById(id);
@@ -195,7 +232,7 @@ function clearUIOnly() {
   showToast("🧹 UI cleared — backend data untouched.");
 }
 
-// Navigate back to origin form
+// Navigate back
 function goBack() {
   const params = new URLSearchParams(window.location.search);
   const origin = params.get("origin");
@@ -217,12 +254,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const bindings = [
     { id: "addAccountBtn", handler: () => addItem("accounts", "newAccount") },
     { id: "addSupplierBtn", handler: () => addItem("suppliers", "newSupplier") },
-    { id: "addProductBtn", handler: () => addItem("products", "newProduct") },
-    { id: "addLocationBtn", handler: () => addItem("locations", "newLocation") },
-    { id: "removeAllaccountsBtn", handler: () => clearField("accounts") },
-    { id: "removeAllSuppliersBtn", handler: () => clearField("suppliers") },
-    { id: "removeAllProductsBtn", handler: () => clearField("products") },
-    { id: "removeAllLocationsBtn", handler: () => clearField("locations") },
+    { id: "addProductBtn", handler: addProduct }, // special handler
+    { id: "addLocationBtn", handler: () => addItem("locations", "newClient") },
     { id: "backToFormBtn", handler: goBack },
     { id: "clearUIBtn", handler: clearUIOnly }
   ];
