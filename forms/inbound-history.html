@@ -21,6 +21,18 @@
       margin-bottom: 20px;
     }
 
+    .filter-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .filter-bar label {
+      font-weight: bold;
+      margin-right: 6px;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
@@ -49,11 +61,56 @@
     .link-cell a:hover {
       text-decoration: underline;
     }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .pagination button {
+      padding: 6px 12px;
+      border: 1px solid #ddd;
+      background: #f9f9f9;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .pagination button.active {
+      background: #0077cc;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    .pagination button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 <body>
   <div class="history-container">
     <h2>📥 Historical Inbound Records</h2>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div>
+        <label for="filterClient">Client:</label>
+        <input type="text" id="filterClient" placeholder="Enter client name" />
+      </div>
+      <div>
+        <label for="filterStart">From:</label>
+        <input type="date" id="filterStart" />
+      </div>
+      <div>
+        <label for="filterEnd">To:</label>
+        <input type="date" id="filterEnd" />
+      </div>
+      <button id="applyFilters">🔍 Apply Filters</button>
+      <button id="clearFilters">🧹 Clear</button>
+    </div>
+
     <table>
       <thead>
         <tr>
@@ -72,6 +129,9 @@
         <!-- Records will be injected here -->
       </tbody>
     </table>
+
+    <!-- Pagination Controls -->
+    <div class="pagination" id="paginationControls"></div>
   </div>
 
   <!-- Scripts -->
@@ -79,36 +139,100 @@
     import { db } from '../scripts/firebase.js';
     import { collection, getDocs } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
+    let allRecords = [];
+    let currentPage = 1;
+    const pageSize = 10; // records per page
+
     async function loadInboundHistory() {
       try {
         const snapshot = await getDocs(collection(db, "inbound"));
-        const table = document.getElementById("inboundTableBody");
-        table.innerHTML = "";
-
+        allRecords = [];
         snapshot.forEach(docSnap => {
-          const data = docSnap.data();
-          const row = document.createElement("tr");
-
-          row.innerHTML = `
-            <td>${data.inboundId || ""}</td>
-            <td>${data.dateReceived || ""}</td>
-            <td>${data.clientName || ""}</td>
-            <td>${data.productName || ""}</td>
-            <td>${data.sku || ""}</td>
-            <td>${data.quantityReceived || ""}</td>
-            <td class="link-cell">${data.prodpic ? `<a href="${data.prodpic}" target="_blank">View</a>` : ""}</td>
-            <td class="link-cell">${data.labellink ? `<a href="${data.labellink}" target="_blank">Open</a>` : ""}</td>
-            <td>${data.receivingNotes || ""}</td>
-          `;
-
-          table.appendChild(row);
+          allRecords.push(docSnap.data());
         });
+        renderTable(allRecords);
+        renderPagination(allRecords.length);
       } catch (err) {
         console.error("❌ Error loading inbound history:", err);
       }
     }
 
-    document.addEventListener("DOMContentLoaded", loadInboundHistory);
+    function renderTable(records) {
+      const table = document.getElementById("inboundTableBody");
+      table.innerHTML = "";
+
+      // Pagination slice
+      const start = (currentPage - 1) * pageSize;
+      const end = start + pageSize;
+      const pageRecords = records.slice(start, end);
+
+      pageRecords.forEach(data => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${data.inboundId || ""}</td>
+          <td>${data.dateReceived || ""}</td>
+          <td>${data.clientName || ""}</td>
+          <td>${data.productName || ""}</td>
+          <td>${data.sku || ""}</td>
+          <td>${data.quantityReceived || ""}</td>
+          <td class="link-cell">${data.prodpic ? `<a href="${data.prodpic}" target="_blank">View</a>` : ""}</td>
+          <td class="link-cell">${data.labellink ? `<a href="${data.labellink}" target="_blank">Open</a>` : ""}</td>
+          <td>${data.receivingNotes || ""}</td>
+        `;
+        table.appendChild(row);
+      });
+    }
+
+    function renderPagination(totalRecords) {
+      const controls = document.getElementById("paginationControls");
+      controls.innerHTML = "";
+
+      const totalPages = Math.ceil(totalRecords / pageSize);
+
+      for (let i = 1; i <= totalPages; i++) {
+        const btn = document.createElement("button");
+        btn.textContent = i;
+        btn.classList.toggle("active", i === currentPage);
+        btn.addEventListener("click", () => {
+          currentPage = i;
+          renderTable(allRecords);
+          renderPagination(totalRecords);
+        });
+        controls.appendChild(btn);
+      }
+    }
+
+    function applyFilters() {
+      const clientFilter = document.getElementById("filterClient").value.toLowerCase();
+      const startDate = document.getElementById("filterStart").value;
+      const endDate = document.getElementById("filterEnd").value;
+
+      const filtered = allRecords.filter(r => {
+        const matchesClient = clientFilter ? (r.clientName || "").toLowerCase().includes(clientFilter) : true;
+        const matchesStart = startDate ? (r.dateReceived >= startDate) : true;
+        const matchesEnd = endDate ? (r.dateReceived <= endDate) : true;
+        return matchesClient && matchesStart && matchesEnd;
+      });
+
+      currentPage = 1;
+      renderTable(filtered);
+      renderPagination(filtered.length);
+    }
+
+    function clearFilters() {
+      document.getElementById("filterClient").value = "";
+      document.getElementById("filterStart").value = "";
+      document.getElementById("filterEnd").value = "";
+      currentPage = 1;
+      renderTable(allRecords);
+      renderPagination(allRecords.length);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadInboundHistory();
+      document.getElementById("applyFilters").addEventListener("click", applyFilters);
+      document.getElementById("clearFilters").addEventListener("click", clearFilters);
+    });
   </script>
 </body>
 </html>
