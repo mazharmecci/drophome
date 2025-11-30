@@ -3,54 +3,51 @@ document.addEventListener("DOMContentLoaded", () => {
   const hamburgerBtn = document.getElementById("hamburgerBtn");
   const navLinks = document.getElementById("navLinks");
 
-  if (hamburgerBtn && navLinks) {
-    // Toggle menu open/close
-    hamburgerBtn.addEventListener("click", () => {
-      hamburgerBtn.classList.toggle("active");
-      navLinks.classList.toggle("show");
+  if (!hamburgerBtn || !navLinks) return;
 
-      // Optional: add overlay when menu is open
-      toggleOverlay(navLinks.classList.contains("show"));
-    });
-  }
+  // Toggle menu open/close
+  hamburgerBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    hamburgerBtn.classList.toggle("active");
+    navLinks.classList.toggle("show");
+    toggleOverlay(navLinks.classList.contains("show"));
+  });
 
-  // Close menu when a link is clicked (mobile UX polish)
-  document.querySelectorAll("#navLinks a").forEach(link => {
+  // Close menu when a nav link is clicked
+  navLinks.querySelectorAll("a").forEach(link => {
     link.addEventListener("click", () => {
-      if (navLinks.classList.contains("show")) {
-        navLinks.classList.remove("show");
-        hamburgerBtn.classList.remove("active");
-        toggleOverlay(false);
-      }
+      closeMenu();
     });
   });
 
-  // Optional: close menu if user clicks outside
+  // Close when clicking outside
   document.addEventListener("click", (e) => {
-    if (navLinks.classList.contains("show") &&
-        !navLinks.contains(e.target) &&
-        !hamburgerBtn.contains(e.target)) {
-      navLinks.classList.remove("show");
-      hamburgerBtn.classList.remove("active");
-      toggleOverlay(false);
+    if (!navLinks.classList.contains("show")) return;
+    if (!navLinks.contains(e.target) && !hamburgerBtn.contains(e.target)) {
+      closeMenu();
     }
   });
 
-  // Overlay helper
+  function closeMenu() {
+    navLinks.classList.remove("show");
+    hamburgerBtn.classList.remove("active");
+    toggleOverlay(false);
+  }
+
   function toggleOverlay(show) {
     let overlay = document.getElementById("navOverlay");
     if (!overlay) {
       overlay = document.createElement("div");
       overlay.id = "navOverlay";
       overlay.style.position = "fixed";
-      overlay.style.top = "0";
-      overlay.style.left = "0";
-      overlay.style.width = "100%";
-      overlay.style.height = "100%";
+      overlay.style.inset = "0";
       overlay.style.background = "rgba(0,0,0,0.4)";
-      overlay.style.zIndex = "999";
-      overlay.style.transition = "opacity 0.3s ease";
+      overlay.style.zIndex = "900";
       document.body.appendChild(overlay);
+
+      overlay.addEventListener("click", () => {
+        closeMenu();
+      });
     }
     overlay.style.display = show ? "block" : "none";
   }
