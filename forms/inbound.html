@@ -5,6 +5,28 @@
   <title>📥 Inbound Inventory Form</title>
   <link rel="stylesheet" href="../style.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    .hint-icon {
+      display: inline-block;
+      margin-left: 6px;
+      cursor: pointer;
+      color: #555;
+      font-size: 14px;
+    }
+    .hint-icon:hover::after {
+      content: "This SKU is auto-filled when you select a product from the list.";
+      position: absolute;
+      background: #333;
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      white-space: nowrap;
+      margin-top: -5px;
+      margin-left: 8px;
+      z-index: 10;
+    }
+  </style>
 </head>
 <body>
 
@@ -38,8 +60,11 @@
         <option value="" hidden>Client name</option>
       </select>
       
-      <!-- SKU is now readonly and auto-filled -->
-      <label for="sku">SKU (Auto-filled)</label>
+      <!-- SKU with info icon -->
+      <label for="sku">
+        SKU (Auto-filled)
+        <span class="hint-icon">ℹ️</span>
+      </label>
       <input type="text" id="sku" name="sku" readonly style="background-color: #f0f0f0;" />
       
       <label for="productName">Product Name</label>
