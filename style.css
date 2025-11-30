@@ -333,23 +333,32 @@ button.btn-clear:hover { background-color: #e6b800; }
 /* ------------------------------
    Filter Bar (Global)
 ------------------------------ */
+/* Filter + Button Row */
+/* Filter + Button Row */
 .filter-bar {
   display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 24px;
+  flex-wrap: nowrap;          /* keep in one row on larger screens */
+  gap: 12px;
   align-items: flex-end;
-  justify-content: center;
+  justify-content: flex-start;
+  margin-bottom: 20px;
 }
 
-.filter-bar div { display: flex; flex-direction: column; }
+/* Each filter group (label + control) */
+.filter-group {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
+}
 
+/* Labels */
 .filter-bar label {
   font-weight: 600;
-  margin-bottom: 4px;
   color: #333;
+  font-size: 0.9rem;
 }
 
+/* Inputs / selects */
 .filter-bar input[type="text"],
 .filter-bar input[type="date"],
 .filter-bar select {
@@ -359,10 +368,32 @@ button.btn-clear:hover { background-color: #e6b800; }
   font-size: 14px;
   background-color: #f9f9f9;
   width: 180px;
+  box-sizing: border-box;
 }
 
+/* Action buttons */
 .filter-bar button {
-  white-space: nowrap;
+  padding: 8px 16px;
+  background-color: #0066cc;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.95rem;
+  white-space: nowrap;        /* keeps button text on one line */
+  transition: background 0.2s ease;
+}
+.filter-bar button:hover {
+  background-color: #004999;
+}
+
+/* Mobile: allow wrapping so nothing overflows */
+@media (max-width: 700px) {
+  .filter-bar {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
 }
 
 /* ------------------------------
