@@ -1,7 +1,23 @@
 /* ------------------------------
-   dashboard setup 2x2
+   Global Reset & Typography
 ------------------------------ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #f9f9f9;
+  color: #333;
+  line-height: 1.5;
+  padding: 10px;
+}
+
+/* ------------------------------
+   Dashboard Setup 2x2
+------------------------------ */
 .dashboard-header {
   display: flex;
   align-items: center;
@@ -29,23 +45,12 @@
 }
 
 /* ------------------------------
-   Card color themes
+   Card Color Themes
 ------------------------------ */
-.inbound-card {
-  background: #e3f2fd; /* light blue */
-}
-
-.outbound-card {
-  background: #fce4ec; /* light pink */
-}
-
-.stock-card {
-  background: #e8f5e9; /* light green */
-}
-
-.audit-card {
-  background: #fff3e0; /* light orange */
-}
+.inbound-card { background: #e3f2fd; }   /* light blue */
+.outbound-card { background: #fce4ec; }  /* light pink */
+.stock-card { background: #e8f5e9; }     /* light green */
+.audit-card { background: #fff3e0; }     /* light orange */
 
 /* ------------------------------
    Header & Footer
@@ -68,10 +73,10 @@ label {
 }
 
 /* ------------------------------
-   Global Reset & Typography
+   Form Container
 ------------------------------ */
 .form-container {
-  max-width: 480px; /* reduced from 600px */
+  max-width: 480px;
   margin: 20px auto;
   border: 2px solid transparent;
   border-radius: 12px;
@@ -82,38 +87,11 @@ label {
   border-image-slice: 1;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: "Segoe UI", Arial, sans-serif;
-  background: #f9f9f9;
-  color: #333;
-  line-height: 1.5;
-  padding: 10px;
-}
-
-input,
-select,
-textarea {
-  padding: 10px;
-  font-size: 16px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  margin-bottom: 16px;
-  background-color: #fff;
-}
-
-/* Only the main form gets a controlled width */
 .form-container form {
   max-width: 480px;
   margin: 0 auto;
 }
 
-/* Fields inside the main form */
 .form-container form input,
 .form-container form select,
 .form-container form textarea {
@@ -122,29 +100,17 @@ textarea {
 }
 
 /* ------------------------------
-   Form elements
+   Global Inputs
 ------------------------------ */
-form label {
-  display: block;
-  margin-top: 15px;
-  font-weight: 600;
-}
-
-form button {
-  margin-top: 20px;
-  width: 100%;
-  padding: 12px;
-  background: #0066cc;
-  color: #fff;
-  border: none;
+input,
+select,
+textarea {
+  padding: 10px;
+  font-size: 16px;
   border-radius: 6px;
-  font-size: 1em;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-form button:hover {
-  background: #005bb5;
+  border: 1px solid #ccc;
+  margin-bottom: 16px;
+  background-color: #fff;
 }
 
 select option[hidden] {
@@ -152,24 +118,125 @@ select option[hidden] {
 }
 
 /* ------------------------------
-   Footer with Logo
+   Global Buttons
 ------------------------------ */
-.footer-with-logo {
-  margin-top: 40px;
-  font-size: 0.85em;
-  color: #888;
-  text-align: center;
+button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button.btn-primary {
+  background-color: #007bff;
+  color: #fff;
+}
+button.btn-primary:hover { background-color: #0056b3; }
+
+button.btn-secondary {
+  background-color: #6c757d;
+  color: #fff;
+}
+button.btn-secondary:hover { background-color: #5a6268; }
+
+button.btn-orange {
+  background-color: #FFA500;
+  color: #000;
+}
+button.btn-orange:hover { background-color: #e69500; }
+
+button.btn-clear {
+  background-color: #ffcc00;
+  color: #000;
+}
+button.btn-clear:hover { background-color: #e6b800; }
+
+/* ------------------------------
+   Form Actions (Global)
+------------------------------ */
+.form-actions {
   display: flex;
-  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.form-actions button { min-width: 120px; }
+
+/* ------------------------------
+   Filter Bar (Global)
+------------------------------ */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.filter-bar div { display: flex; flex-direction: column; }
+
+.filter-bar label {
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #333;
+}
+
+.filter-bar input[type="text"],
+.filter-bar input[type="date"],
+.filter-bar select {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #f9f9f9;
+  width: 180px;
+}
+
+.filter-bar button {
+  white-space: nowrap;
+}
+
+/* ------------------------------
+   Breadcrumb Navigation
+------------------------------ */
+.breadcrumb-nav {
+  margin: 10px 0 20px;
+  font-size: 0.9rem;
+}
+
+.breadcrumb-list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+  content: "›";
+  margin: 0 4px;
+  color: #999;
+}
+
+.breadcrumb-item a {
+  color: #0066cc;
+  text-decoration: none;
+  display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 4px;
 }
 
-.footer-logo {
-  height: 32px;
-  width: auto;
-}
+.breadcrumb-item a:hover { text-decoration: underline; }
 
+.breadcrumb-item.active a {
+  font-weight: bold;
+  color: #ff5722 !important;
+  border-bottom: 2px solid #ff5722;
+  padding-bottom: 2px;
+}
 
 /* ------------------------------
    Landing Page Cards
@@ -184,7 +251,6 @@ select option[hidden] {
 }
 
 .card {
-  /* remove solid background so theme colors show */
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   width: 220px;
@@ -202,19 +268,9 @@ select option[hidden] {
   box-shadow: 0 6px 12px rgba(0,0,0,0.15);
 }
 
-.card h2 {
-  margin: 15px 0 10px;
-  font-size: 1.2em;
-}
-
-.card p {
-  font-size: 0.9em;
-  color: #666;
-}
-
-.emoji {
-  font-size: 2em;
-}
+.card h2 { margin: 15px 0 10px; font-size: 1.2em; }
+.card p { font-size: 0.9em; color: #666; }
+.emoji { font-size: 2em; }
 
 /* ------------------------------
    Success Popup
@@ -229,10 +285,7 @@ select option[hidden] {
   justify-content: center;
   padding: 10px;
 }
-
-.popup.hidden {
-  display: none;
-}
+.popup.hidden { display: none; }
 
 .popup-content {
   background: #fff;
@@ -243,12 +296,7 @@ select option[hidden] {
   text-align: center;
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
-
-.popup-content h3 {
-  margin-bottom: 10px;
-  color: #0066cc;
-}
-
+.popup-content h3 { margin-bottom: 10px; color: #0066cc; }
 .popup-content button {
   margin-top: 20px;
   padding: 10px 20px;
@@ -258,10 +306,7 @@ select option[hidden] {
   border-radius: 6px;
   cursor: pointer;
 }
-
-.popup-content button:hover {
-  background: #005bb5;
-}
+.popup-content button:hover { background: #005bb5; }
 
 /* ------------------------------
    Table Styling (Dashboard)
@@ -275,107 +320,21 @@ table {
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
-
 table th, table td {
   padding: 12px 15px;
   text-align: left;
   border-bottom: 1px solid #eee;
 }
-
 table th {
   background: #0066cc;
   color: #fff;
   font-weight: 600;
 }
-
-table tr:hover {
-  background: #f1f7ff;
-}
+table tr:hover { background: #f1f7ff; }
 
 /* ------------------------------
-   Responsive Design
+   Toast Messages (continued)
 ------------------------------ */
-@media (max-width: 768px) {
-  body {
-    padding: 8px;
-  }
-
-  .card-container {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 20px;
-  }
-
-  .card {
-    width: 100%;
-    max-width: 100%;
-  }
-
-  .form-container {
-    width: 100%;
-    padding: 20px;
-  }
-
-  table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-}
-
-@media (max-width: 480px) {
-  header {
-    font-size: 1.2em;
-    padding: 15px;
-  }
-
-  .card h2 {
-    font-size: 1em;
-  }
-
-  .card p {
-    font-size: 0.85em;
-  }
-
-  form button {
-    font-size: 0.9em;
-    padding: 10px;
-  }
-
-  .popup-content {
-    padding: 15px;
-  }
-
-  table, thead, tbody, th, td, tr {
-    display: block;
-  }
-
-  table tr {
-    margin-bottom: 15px;
-    border-bottom: 2px solid #eee;
-  }
-
-  table td {
-    text-align: right;
-    padding-left: 50%;
-    position: relative;
-  }
-
-  table td::before {
-    content: attr(data-label);
-    position: absolute;
-    left: 15px;
-    width: 45%;
-    text-align: left;
-    font-weight: bold;
-    color: #333;
-  }
-}
-
-/* ------------------------------
-  Toast messages
------------------------------- */
-
 .toast {
   position: fixed;
   bottom: 24px;
@@ -389,38 +348,12 @@ table tr:hover {
   z-index: 9999;
   font-size: 14px;
 }
-.toast.visible {
-  opacity: 1;
-}
-
+.toast.visible { opacity: 1; }
 
 /* ------------------------------
-  Master Form
+   Master Form Blocks
 ------------------------------ */
-
-.form-block {
-  margin-bottom: 24px;
-}
-
-.form-actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 16px;
-  justify-content: center;
-}
-
-.form-actions button {
-  padding: 10px 20px;
-  background-color: var(--accent-color);
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.form-actions button:hover {
-  background-color: var(--accent-hover);
-}
+.form-block { margin-bottom: 24px; }
 
 .input-row {
   display: flex;
@@ -459,175 +392,51 @@ table tr:hover {
 }
 
 .input-row input::placeholder {
-  color: var(--placeholder-color);
+  color: var(--placeholder-color, #888);
   font-style: italic;
 }
 
 .input-row button:hover {
-  background-color: var(--accent-hover);
+  background-color: var(--accent-hover, #0056b3);
 }
 
 .list-display li {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: var(--card-bg);
+  background-color: var(--card-bg, #f9f9f9);
   padding: 10px 14px;
   margin-bottom: 6px;
   border-radius: 6px;
   font-size: 14px;
-  color: var(--text-color);
+  color: var(--text-color, #000);
 }
 
 .list-display button {
   background: none;
   border: none;
-  color: var(--danger-color);
+  color: var(--danger-color, #d9534f);
   font-size: 18px;
   cursor: pointer;
   padding: 0 6px;
 }
 
-.input-row button,
-.form-actions button {
-  padding: 10px 16px;
-  background-color: var(--accent-color, #007bff);
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.input-row button:hover,
-.form-actions button:hover {
-  background-color: var(--accent-hover, #0056b3); /* Deep blue hover */
-}
-
-button.btn-primary {
-  padding: 10px 20px;
-  background-color: var(--accent-color, #007bff);
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-button.btn-primary:hover {
-  background-color: var(--accent-hover, #0056b3);
-}
-
-button.btn-secondary {
-  padding: 10px 20px;
-  background-color: var(--secondary-color, #6c757d);
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-button.btn-secondary:hover {
-  background-color: var(--secondary-hover, #5a6268);
-}
-
-.btn-orange {
-  padding: 10px 20px;
-  background-color: #FFA500; /* vibrant orange */
-  color: #000;               /* black text */
-  border: none;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.btn-orange:hover {
-  background-color: #e69500; /* deeper orange on hover */
-}
-
-.btn-clear-ui {
-  background-color: #ffcc00;
-  color: #000;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.btn-clear-ui:hover {
-  background-color: #e6b800;
-}
-
-#backToFormBtn,
-.btn-clear-ui {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-/* Return to Form button styling */
-#backToFormBtn {
-  background-color: #007bff;
-  color: #fff;
-}
-
-#backToFormBtn:hover {
-  background-color: #0056b3;
-}
-
-/* Clear UI button styling */
-.btn-clear-ui {
-  background-color: #ffcc00;
-  color: #000;
-}
-
-.btn-clear-ui:hover {
-  background-color: #e6b800;
-}
-
-.breadcrumb-nav {
-  margin: 10px 0 20px;
-  font-size: 0.9rem;
-}
-
-.breadcrumb-list {
-  list-style: none;
+/* ------------------------------
+   Footer with Logo
+------------------------------ */
+.footer-with-logo {
+  margin-top: 40px;
+  font-size: 0.85em;
+  color: #888;
+  text-align: center;
   display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }
-
-.breadcrumb-item + .breadcrumb-item::before {
-  content: "›";
-  margin: 0 4px;
-  color: #999;
-}
-
-.breadcrumb-item a {
-  color: #0066cc;
-  text-decoration: none;
-}
-
-.breadcrumb-item a:hover {
-  text-decoration: underline;
-}
-
-/* Unified active state */
-.breadcrumb-item.active a {
-  font-weight: bold;
-  color: #ff5722 !important; /* Highlight color */
-  border-bottom: 2px solid #ff5722; /* Underline effect */
-  padding-bottom: 2px;
+.footer-logo {
+  height: 32px;
+  width: auto;
 }
 
 /* ------------------------------
@@ -635,8 +444,8 @@ button.btn-secondary:hover {
 ------------------------------ */
 .dashboard-container {
   padding: 20px;
-  max-width: 1200px;      /* give more space for wide tables */
-  margin: 0 auto;         /* center the dashboard */
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .logo-container {
@@ -645,51 +454,47 @@ button.btn-secondary:hover {
 }
 
 .logo-img {
-  height: 40px; /* match index file */
+  height: 40px;
   max-width: 160px;
   object-fit: contain;
 }
 
 .filters {
-display: flex;
-flex-direction: row;
-flex-wrap: wrap; /* allow wrapping only if truly needed */
-gap: 16px;
-justify-content: center;
-align-items: center;
-margin-bottom: 16px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 16px;
 }
 
 .filters select {
-width: 210px;
-height: 40px;
-font-size: 16px;
+  width: 210px;
+  height: 40px;
+  font-size: 16px;
 }
-
-If you only want them side by side on desktop and stacked on very small screens, add:
 
 @media (max-width: 480px) {
-.filters {
-flex-direction: column;
-align-items: stretch;
-}
-}
-
-.table-section {
-  margin-bottom: 40px;
+  .filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
 
-.table-section h2 {
-  margin-bottom: 10px;
-}
+/* ------------------------------
+   Table Section
+------------------------------ */
+.table-section { margin-bottom: 40px; }
+.table-section h2 { margin-bottom: 10px; }
 
 .summary-container {
   margin: 20px auto;
-  max-width: 100%;        /* let it use full dashboard width */
+  max-width: 100%;
   background: #fff;
   border-radius: 8px;
   padding: 16px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
 .summary-header {
@@ -698,7 +503,6 @@ align-items: stretch;
   align-items: center;
   margin-bottom: 12px;
 }
-
 
 /* ------------------------------
    Table Scroll Wrapper
@@ -710,26 +514,22 @@ align-items: stretch;
   box-shadow: inset 0 0 0 1px #eee;
 }
 
-
 /* ------------------------------
    Summary Table
 ------------------------------ */
 .summary-table {
   width: 100%;
   border-collapse: collapse;
-  /* Removed hard min-width so it can shrink more */
-  /* min-width: 600px; */
 }
 
-/* Let cell text wrap so columns can be narrower */
 .summary-table th,
 .summary-table td {
   padding: 12px;
   text-align: left;
   border-bottom: 1px solid #ddd;
-  white-space: normal;      /* allow wrapping */  /* [web:21][web:27] */
-  word-wrap: break-word;    /* break long words */ /* [web:22][web:25] */
-  font-size: 0.9rem;        /* slightly smaller text to fit more */
+  white-space: normal;
+  word-wrap: break-word;
+  font-size: 0.9rem;
 }
 
 .summary-table thead {
@@ -741,7 +541,7 @@ align-items: stretch;
 }
 
 /* ------------------------------
-   Mobile Responsive
+   Mobile Responsive Tables
 ------------------------------ */
 @media (max-width: 600px) {
   .summary-table,
@@ -766,18 +566,17 @@ align-items: stretch;
     text-align: left;
   }
 
-  .summary-table th {
-    text-align: left;
-  }
+  .summary-table th { text-align: left; }
 }
 
+/* ------------------------------
+   Modal Overlay
+------------------------------ */
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.4);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -788,7 +587,7 @@ align-items: stretch;
   background-color: #fff;
   padding: 24px;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   text-align: center;
   max-width: 320px;
   width: 90%;
@@ -815,79 +614,4 @@ align-items: stretch;
 
 #confirmCancelBtn {
   background-color: #ccc;
-}
-
-/* Filter Bar Styling - history */
-
-/* Filter Bar Layout */
-.filter-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 24px;
-  align-items: flex-end;
-  justify-content: center;
-}
-
-/* Each filter block */
-.filter-bar div {
-  display: flex;
-  flex-direction: column;
-}
-
-/* Inputs */
-.filter-bar input[type="text"],
-.filter-bar input[type="date"] {
-  padding: 8px 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-  background-color: #f9f9f9;
-  width: 180px;
-}
-
-/* Buttons */
-.filter-bar button {
-  padding: 10px 16px;
-  font-size: 14px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  white-space: nowrap;
-}
-
-#applyFilters {
-  background-color: #0077cc;
-  color: white;
-}
-
-#applyFilters:hover {
-  background-color: #005fa3;
-}
-
-#clearFilters {
-  background-color: #ffcc00;
-  color: #333;
-}
-
-#clearFilters:hover {
-  background-color: #e6b800;
-}
-
-/* Responsive tweaks */
-@media (max-width: 600px) {
-  .filter-bar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .filter-bar div,
-  .filter-bar button {
-    width: 100%;
-  }
-
-  .filter-bar button {
-    margin-top: 4px;
-  }
 }
