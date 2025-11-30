@@ -5,93 +5,10 @@
   <title>📥 Inbound Records History</title>
   <link rel="stylesheet" href="../style.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <style>
-    .history-container {
-      max-width: 1200px;
-      margin: 20px auto;
-      padding: 16px;
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .filter-bar {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
-
-    .filter-bar label {
-      font-weight: bold;
-      margin-right: 6px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-    }
-
-    th, td {
-      padding: 10px;
-      border: 1px solid #ddd;
-      text-align: left;
-    }
-
-    th {
-      background-color: #f7f7f7;
-    }
-
-    tr:nth-child(even) {
-      background-color: #fafafa;
-    }
-
-    .link-cell a {
-      color: #0077cc;
-      text-decoration: none;
-    }
-
-    .link-cell a:hover {
-      text-decoration: underline;
-    }
-
-    .pagination {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-      margin-top: 20px;
-    }
-
-    .pagination button {
-      padding: 6px 12px;
-      border: 1px solid #ddd;
-      background: #f9f9f9;
-      cursor: pointer;
-      border-radius: 4px;
-    }
-
-    .pagination button.active {
-      background: #0077cc;
-      color: #fff;
-      font-weight: bold;
-    }
-
-    .pagination button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-  </style>
 </head>
 <body>
   <div class="history-container">
-    <h2>📥 Historical Inbound Records</h2>
+    <h2 class="page-title">📥 Historical Inbound Records</h2>
 
     <!-- Filter Bar -->
     <div class="filter-bar">
@@ -107,13 +24,13 @@
         <label for="filterEnd">To:</label>
         <input type="date" id="filterEnd" />
       </div>
-      <button id="applyFilters">🔍 Apply Filters</button>
-      <button id="clearFilters">🧹 Clear</button>
+      <button id="applyFilters" class="btn-primary">🔍 Apply Filters</button>
+      <button id="clearFilters" class="btn-clear">🧹 Clear</button>
     </div>
 
     <!-- Breadcrumb Navigation -->
-    <nav class="breadcrumb-nav" aria-label="Quick Links" style="margin-top: 12px; text-align: center;">
-      <ol class="breadcrumb-list" style="display: inline-flex; gap: 16px; list-style: none; padding: 0; margin: 0;">
+    <nav class="breadcrumb-nav" aria-label="Quick Links">
+      <ol class="breadcrumb-list">
         <li class="breadcrumb-item">
           <a href="https://mazharmecci.github.io/drophome/" class="breadcrumb-link">🏠 Home</a>
         </li>
@@ -129,7 +46,8 @@
       </ol>
     </nav>
 
-    <table>
+    <!-- Records Table -->
+    <table class="summary-table">
       <thead>
         <tr>
           <th>Inbound ID</th>
@@ -250,19 +168,15 @@
       loadInboundHistory();
       document.getElementById("applyFilters").addEventListener("click", applyFilters);
       document.getElementById("clearFilters").addEventListener("click", clearFilters);
+
+      // Breadcrumb active highlight
+      const currentPath = window.location.pathname.split("/").pop();
+      document.querySelectorAll(".breadcrumb-link").forEach(link => {
+        if (link.getAttribute("href").includes(currentPath)) {
+          link.classList.add("active");
+        }
+      });
     });
   </script>
-
-  <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const currentPath = window.location.pathname.split("/").pop();
-    document.querySelectorAll(".breadcrumb-link").forEach(link => {
-      if (link.getAttribute("href").includes(currentPath)) {
-        link.classList.add("active");
-      }
-    });
-  });
-</script>
-
 </body>
 </html>
