@@ -2,15 +2,35 @@
 .navbar {
   display: flex;
   justify-content: space-between;
-  align-items: left;
-  background: #d0e8ff; /* light blue */
+  align-items: center;       /* was 'left' */
+  background: #d0e8ff;
   color: #333;
   padding: 10px 20px;
-  border-radius: 0;
   position: sticky;
   top: 0;
   z-index: 1000;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.hamburger span {
+  display: block;
+  height: 2px;
+  width: 100%;
+  background: #001f4d;       /* dark navy blue lines */
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+/* Hamburger Icon */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 22px;
+  height: 18px;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
 /* Logo + Brand */
@@ -45,27 +65,6 @@
   color: #0066cc;
 }
 
-/* Hamburger Icon */
-.hamburger {
-  display: none;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 22px;
-  height: 18px;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.hamburger span {
-  display: block;
-  height: 2px;
-  width: 100%;
-  background: #001f4d; /* Dark Navy Blue */
-  border-radius: 2px;
-  transition: all 0.3s ease;
-}
-
 /* Morph into X */
 .hamburger.active span:nth-child(1) {
   transform: rotate(45deg) translate(5px, 5px);
@@ -92,7 +91,7 @@
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   }
-  
+
   .nav-links.show {
     display: flex;
   }
