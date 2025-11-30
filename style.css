@@ -2,7 +2,7 @@
 .navbar {
   display: flex;
   justify-content: space-between;
-  align-items: center;       /* was 'left' */
+  align-items: center;
   background: #d0e8ff;
   color: #333;
   padding: 10px 20px;
@@ -12,25 +12,12 @@
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
-.hamburger span {
-  display: block;
-  height: 2px;
-  width: 100%;
-  background: #001f4d;       /* dark navy blue lines */
-  border-radius: 2px;
-  transition: all 0.3s ease;
-}
-
-/* Hamburger Icon */
-.hamburger {
-  display: none;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 22px;
-  height: 18px;
-  background: none;
-  border: none;
-  cursor: pointer;
+/* Left side: logo + hamburger */
+.navbar-left {
+  display: flex;
+  flex-direction: column;         /* logo on top, hamburger below */
+  align-items: flex-start;
+  gap: 6px;
 }
 
 /* Logo + Brand */
@@ -47,6 +34,26 @@
   font-size: 1rem;
   font-weight: 600;
   color: #333;
+}
+
+/* Hamburger Icon */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 22px;
+  height: 18px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.hamburger span {
+  display: block;
+  height: 2px;
+  width: 100%;
+  background: #001f4d;       /* dark navy blue lines */
+  border-radius: 2px;
+  transition: all 0.3s ease;
 }
 
 /* Nav Links */
@@ -78,15 +85,18 @@
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
-  .hamburger { display: flex; }
+  .hamburger { 
+    display: flex; 
+  }
 
+  /* Hide desktop nav; show as dropdown under logo/hamburger */
   .nav-links {
     display: none;
     flex-direction: column;
     background: #333;
     position: absolute;
-    top: 60px;
-    right: 20px;
+    top: 70px;              /* just below logo + hamburger */
+    left: 20px;             /* align to left, under brand */
     padding: 16px;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
@@ -94,6 +104,14 @@
 
   .nav-links.show {
     display: flex;
+  }
+
+  .nav-links a {
+    color: #fff;            /* white links in mobile dropdown */
+  }
+
+  .nav-links a:hover {
+    color: Black;         /* optional: black hover on mobile */
   }
 }
 
