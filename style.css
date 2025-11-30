@@ -50,7 +50,7 @@
   display: none;
   flex-direction: column;
   justify-content: space-between;
-  width: 24px;
+  width: 22px;
   height: 18px;
   background: none;
   border: none;
@@ -84,7 +84,7 @@
   .nav-links {
     display: none;
     flex-direction: column;
-    background: #d0e8ff;
+    background: #333;
     position: absolute;
     top: 60px;
     right: 20px;
@@ -92,6 +92,7 @@
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   }
+  
   .nav-links.show {
     display: flex;
   }
