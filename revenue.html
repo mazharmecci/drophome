@@ -9,6 +9,21 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Shared Navbar -->
+  <div id="navbar-placeholder"></div>
+  <script>
+    // Load shared navbar
+    fetch("includes/navbar.html")
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById("navbar-placeholder").innerHTML = data;
+        // Re-run navbar script after injection
+        const script = document.createElement("script");
+        script.src = "scripts/navbar.js";
+        document.body.appendChild(script);
+      });
+  </script>
+  
   <main>
     <section class="form-container">
 
