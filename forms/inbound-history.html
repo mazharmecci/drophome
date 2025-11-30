@@ -26,18 +26,21 @@
 
     <!-- Filter Bar -->
     <div class="filter-bar">
-      <div>
+      <div class="filter-group">
         <label for="filterClient">Client:</label>
         <input type="text" id="filterClient" placeholder="Enter client name" />
       </div>
-      <div>
+    
+      <div class="filter-group">
         <label for="filterStart">From:</label>
         <input type="date" id="filterStart" />
       </div>
-      <div>
+    
+      <div class="filter-group">
         <label for="filterEnd">To:</label>
         <input type="date" id="filterEnd" />
       </div>
+    
       <button id="applyFilters" class="btn-primary">🔍 Apply Filters</button>
       <button id="clearFilters" class="btn-clear">🧹 Clear</button>
     </div>
