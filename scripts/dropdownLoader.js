@@ -15,7 +15,7 @@ export async function loadDropdowns() {
     const data = snapshot.data();
 
     // Populate simple lists
-    populateDropdown("supplierName", data.suppliers ?? []);
+    populateDropdown("clientName", data.clients ?? []);
     populateDropdown("storageLocation", data.locations ?? []);
 
     // Populate product dropdown with name, and wire SKU auto-fill
