@@ -1,62 +1,100 @@
-/* Base navbar layout */
+/* Navbar Container */
 .navbar {
   display: flex;
+  justify-content: space-between;
+  align-items: left;
+  background: #d0e8ff; /* light blue */
+  color: #333;
+  padding: 10px 20px;
+  border-radius: 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Logo + Brand */
+.logo-container {
+  display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 10px 16px;
-  background: #1e2a38;
-  color: #fff;
+  gap: 10px;
+}
+.logo-img {
+  height: 24px;
+  width: auto;
+}
+.brand-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
 }
 
-/* Desktop: show links, hide hamburger */
-.hamburger {
-  display: none;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 28px;
-  height: 20px;
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-}
-
-.hamburger span {
-  display: block;
-  width: 100%;
-  height: 3px;
-  background: #fff;
-  border-radius: 2px;
-}
-
+/* Nav Links */
 .nav-links {
   display: flex;
   gap: 16px;
 }
+.nav-links a {
+  font-size: 0.85rem;
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+.nav-links a:hover {
+  color: #0066cc;
+}
 
-/* Mobile breakpoint */
+/* Hamburger Icon */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 24px;
+  height: 18px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.hamburger span {
+  display: block;
+  height: 2px;
+  width: 100%;
+  background: #333;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+/* Morph into X */
+.hamburger.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+.hamburger.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(6px, -6px);
+}
+
+/* Mobile Responsive */
 @media (max-width: 768px) {
-  .hamburger {
-    display: flex;
-  }
+  .hamburger { display: flex; }
 
   .nav-links {
     display: none;
-    position: absolute;
-    top: 56px;
-    right: 0;
-    left: 0;
     flex-direction: column;
-    background: #1e2a38;
-    padding: 10px 16px;
-    z-index: 1000;
+    background: #d0e8ff;
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   }
-
   .nav-links.show {
     display: flex;
   }
 }
-
 
 /* History Container */
 .history-container {
