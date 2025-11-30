@@ -46,16 +46,17 @@
           <ul id="accountList" class="list-display"></ul>
       </div>
 
-      <!-- Suppliers -->
-      <div class="form-block">
-        <h4><strong>Suppliers:</strong></h4>
-        <div class="input-row">
-          <span class="emoji">🏢</span>
-          <input type="text" id="newSupplier" placeholder="Add new supplier" />
-          <button type="button" id="addSupplierBtn">Add Supplier</button>
+       <!-- Client Names -->
+        <div class="form-block">
+          <h4><strong>Client Name:</strong></h4>
+          <div class="input-row">
+            <span class="emoji">🏬</span>
+            <input type="text" id="newClient" placeholder="Add new client" />
+            <button type="button" id="addClientBtn">Add Client</button>
+          </div>
+          <ul id="clientList" class="list-display"></ul>
         </div>
-        <ul id="supplierList" class="list-display"></ul>
-      </div>
+      </section>
 
       <!-- Products -->
       <div class="form-block">
@@ -68,27 +69,15 @@
         </div>
         <ul id="productList" class="list-display"></ul>
       </div>
-
-      <!-- Locations -->
-      <div class="form-block">
-        <h4><strong>Client Name:</strong></h4>
-        <div class="input-row">
-          <span class="emoji">🏬</span>
-          <input type="text" id="newClient" placeholder="Add new client" />
-          <button type="button" id="addClientBtn">Add Client</button>
-        </div>
-        <ul id="clientList" class="list-display"></ul>
+  
+      <!-- Actions -->
+      <div class="form-actions">
+        <button type="button" id="backToFormBtn">🔙 Return to Form</button>
+        <button type="button" id="clearUIBtn" onclick="clearUIOnly()" class="btn-clear-ui">
+          🧹 Clear UI Only
+        </button>
       </div>
-    </section>
-
-    <!-- Actions -->
-    <div class="form-actions">
-      <button type="button" id="backToFormBtn">🔙 Return to Form</button>
-      <button type="button" id="clearUIBtn" onclick="clearUIOnly()" class="btn-clear-ui">
-        🧹 Clear UI Only
-      </button>
-    </div>
-  </main>
+    </main>
 
   <script type="module" src="scripts/masterManager.js"></script>
   <script>
