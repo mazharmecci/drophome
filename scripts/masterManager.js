@@ -48,14 +48,14 @@ async function loadMasterList() {
 
     const data = snapshot.data();
     renderList("accountList", data.accounts ?? [], "accounts");
-    renderList("supplierList", data.suppliers ?? [], "suppliers");
-    renderProductList(data.products ?? []); // special renderer for products
+    renderProductList(data.products ?? []); // SKU–Name pairs
+    renderList("clientList", data.clients ?? [], "clients");
     renderList("locationList", data.locations ?? [], "locations");
 
     console.log("✅ Master list loaded:", {
       accounts: data.accounts?.length,
-      suppliers: data.suppliers?.length,
       products: data.products?.length,
+      clients: data.clients?.length,
       locations: data.locations?.length
     });
   } catch (error) {
@@ -125,8 +125,8 @@ async function addProduct() {
     if (!snapshot.exists()) {
       await setDoc(docRef, {
         accounts: [],
-        suppliers: [],
         products: [],
+        clients: [],
         locations: [],
       });
       showToast("✅ Master list initialized.");
@@ -198,8 +198,8 @@ async function addItem(field, inputId) {
     if (!snapshot.exists()) {
       await setDoc(docRef, {
         accounts: [],
-        suppliers: [],
         products: [],
+        clients: [],
         locations: [],
       });
       showToast("✅ Master list initialized.");
@@ -225,7 +225,7 @@ async function addItem(field, inputId) {
 
 // Clear UI only
 function clearUIOnly() {
-  ["accountList", "supplierList", "productList", "locationList"].forEach(id => {
+  ["accountList", "productList", "clientList", "locationList"].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.innerHTML = "";
   });
@@ -253,9 +253,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const bindings = [
     { id: "addAccountBtn", handler: () => addItem("accounts", "newAccount") },
-    { id: "addSupplierBtn", handler: () => addItem("suppliers", "newSupplier") },
     { id: "addProductBtn", handler: addProduct }, // special handler
-    { id: "addLocationBtn", handler: () => addItem("locations", "newClient") },
+    { id: "addClientBtn", handler: () => addItem("clients", "newClient") },
+    { id: "addLocationBtn", handler: () => addItem("locations", "newLocation") },
     { id: "backToFormBtn", handler: goBack },
     { id: "clearUIBtn", handler: clearUIOnly }
   ];
