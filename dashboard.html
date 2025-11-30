@@ -16,7 +16,7 @@
         const placeholder = document.getElementById("navbar-placeholder");
         if (!placeholder) return;
     
-        fetch("includes/navbar.html")
+        fetch("navbar.html")
           .then(res => {
             if (!res.ok) throw new Error("Navbar load failed");
             return res.text();
