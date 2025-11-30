@@ -1,6 +1,4 @@
 <header class="navbar">
-
-  <!-- Playful Spin Hamburger -->
   <button class="hamburger spin" id="hamburgerBtn" aria-label="Toggle Menu">
     <span></span>
     <span></span>
@@ -15,39 +13,3 @@
     <a href="revenue.html">💰 Revenue</a>
   </nav>
 </header>
-
-<div id="navbar-placeholder"></div>
-<script>
-  (function () {
-    const placeholder = document.getElementById("navbar-placeholder");
-    if (!placeholder) return;
-
-    fetch("includes/navbar.html")
-      .then(res => {
-        if (!res.ok) throw new Error("Navbar load failed");
-        return res.text();
-      })
-      .then(html => {
-        placeholder.innerHTML = html;
-
-        // Attach behavior after injection
-        const hamburgerBtn = document.getElementById("hamburgerBtn");
-        const navLinks = document.getElementById("navLinks");
-        if (!hamburgerBtn || !navLinks) return;
-
-        hamburgerBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          navLinks.classList.toggle("show");
-        });
-
-        document.addEventListener("click", (e) => {
-          if (!navLinks.classList.contains("show")) return;
-          if (!navLinks.contains(e.target) && !hamburgerBtn.contains(e.target)) {
-            navLinks.classList.remove("show");
-          }
-        });
-      })
-      .catch(err => console.error(err));
-  })();
-</script>
-
