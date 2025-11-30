@@ -9,36 +9,40 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Shared Navbar -->
-    <div id="navbar-placeholder"></div>
-    <script>
-      (function () {
-        const placeholder = document.getElementById("navbar-placeholder");
-        if (!placeholder) return;
-    
-        fetch("includes/navbar.html")
-          .then(res => {
-            if (!res.ok) throw new Error("Navbar load failed");
-            return res.text();
-          })
-          .then(html => {
-            placeholder.innerHTML = html;
-    
-            // Load navbar JS once navbar HTML is in place
-            const existing = document.querySelector('script[data-navbar="true"]');
-            if (!existing) {
-              const s = document.createElement("script");
-              s.src = "scripts/navbar.js";
-              s.defer = true;
-              s.dataset.navbar = "true";
-              document.body.appendChild(s);
-            }
-          })
-          .catch(err => {
-            console.error(err);
+  <!-- Shared Navbar -->
+  <div id="navbar-placeholder"></div>
+  <script>
+    (function () {
+      const placeholder = document.getElementById("navbar-placeholder");
+      if (!placeholder) return;
+
+      fetch("includes/navbar.html")
+        .then(res => {
+          if (!res.ok) throw new Error("Navbar load failed");
+          return res.text();
+        })
+        .then(html => {
+          placeholder.innerHTML = html;
+
+          const hamburgerBtn = document.getElementById("hamburgerBtn");
+          const navLinks = document.getElementById("navLinks");
+          if (!hamburgerBtn || !navLinks) return;
+
+          hamburgerBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            navLinks.classList.toggle("show");
           });
-      })();
-    </script>
+
+          document.addEventListener("click", (e) => {
+            if (!navLinks.classList.contains("show")) return;
+            if (!navLinks.contains(e.target) && !hamburgerBtn.contains(e.target)) {
+              navLinks.classList.remove("show");
+            }
+          });
+        })
+        .catch(err => console.error(err));
+    })();
+  </script>
   
   <main>
     <section class="form-container">
