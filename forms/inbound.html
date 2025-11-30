@@ -5,62 +5,12 @@
   <title>📥 Inbound Inventory Form</title>
   <link rel="stylesheet" href="../style.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    .hint-icon {
-      display: inline-block;
-      margin-left: 6px;
-      cursor: pointer;
-      color: #0077cc; /* theme accent color */
-      font-size: 14px;
-      position: relative;
-    }
-  
-    /* Tooltip container */
-    .hint-icon::after {
-      content: attr(data-tooltip);
-      position: absolute;
-      left: 50%;
-      top: -40px;
-      transform: translateX(-50%);
-      background: #222;
-      color: #fff;
-      padding: 6px 10px;
-      border-radius: 6px;
-      font-size: 12px;
-      white-space: nowrap;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease, transform 0.3s ease;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-    }
-  
-    /* Tooltip arrow */
-    .hint-icon::before {
-      content: "";
-      position: absolute;
-      left: 50%;
-      top: -10px;
-      transform: translateX(-50%);
-      border-width: 6px;
-      border-style: solid;
-      border-color: transparent transparent #222 transparent;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-  
-    /* Show tooltip on hover */
-    .hint-icon:hover::after,
-    .hint-icon:hover::before {
-      opacity: 1;
-      transform: translateX(-50%) translateY(-4px);
-    }
-  </style>
 </head>
 <body>
 
   <div class="form-container">   
-    <header style="display: flex; align-items: center; justify-content: center; gap: 12px;">
-      <img src="../images/DH-white.png" alt="Drophome Logo" style="height: 32px; width: auto;" />
+    <header class="form-header">
+      <img src="../images/DH-white.png" alt="Drophome Logo" class="logo-img" />
       <span>Inbound Inventory 📥</span>
     </header>
 
@@ -68,28 +18,28 @@
     <nav class="breadcrumb-nav" aria-label="Breadcrumb">
       <ol class="breadcrumb-list">
         <li class="breadcrumb-item">
-          <a href="https://mazharmecci.github.io/drophome/">Home</a>
+          <a href="https://mazharmecci.github.io/drophome/">🏠 Home</a>
         </li>
         <li class="breadcrumb-item breadcrumb-current" aria-current="page">
-          Inbound Inventory
+          📥 Inbound Inventory
         </li>
       </ol>
     </nav>
 
     <form id="inboundForm">
       <label for="inboundId">Inbound ID (Auto-generated)</label>
-      <input type="text" id="inboundId" name="inboundId" readonly style="background-color: #ffe6e6;" />
+      <input type="text" id="inboundId" name="inboundId" readonly class="input-readonly-error" />
       
       <label for="dateReceived">Date Received</label>
       <input type="date" id="dateReceived" name="dateReceived" required />
       
       <label for="clientName">Client Name</label>
-      <select id="clientName" name="clientName" required style="height: 40px; font-size: 16px;">
+      <select id="clientName" name="clientName" required>
         <option value="" hidden>Client name</option>
       </select>
 
       <label for="productName">Product Name</label>
-      <select id="productName" name="productName" required style="height: 40px; font-size: 16px;">
+      <select id="productName" name="productName" required>
         <option value="" hidden>Choose product name</option>
       </select>
       
@@ -98,36 +48,23 @@
         SKU (Auto-filled)
         <span class="hint-icon" data-tooltip="This SKU is auto-filled when you select a product from the list.">ℹ️</span>
       </label>
-      <input type="text" id="sku" name="sku" readonly style="background-color: #f0f0f0;" />
+      <input type="text" id="sku" name="sku" readonly class="input-readonly" />
 
-        <label for="prodpic">Product Picture URL</label>
-        <input
-          type="text"
-          id="prodpic"
-          name="prodpic"
-          style="background-color: #c7E4EE;"
-        />
+      <label for="prodpic">Product Picture URL</label>
+      <input type="text" id="prodpic" name="prodpic" class="input-highlight" />
 
-        <label for="labellink">Label Link URL</label>
-        <input
-          type="text"
-          id="labellink"
-          name="labellink"
-          style="background-color: #c7E4EE;"
-        />
+      <label for="labellink">Label Link URL</label>
+      <input type="text" id="labellink" name="labellink" class="input-highlight" />
       
       <label for="quantityReceived">Quantity</label>
       <input type="number" id="quantityReceived" name="quantityReceived" required />
       
       <label for="receivingNotes">Receiving Notes</label>
-      <textarea id="receivingNotes" name="receivingNotes" placeholder="Optional notes or remarks..." style="height: 80px;"></textarea>
+      <textarea id="receivingNotes" name="receivingNotes" placeholder="Optional notes or remarks..." class="textarea-large"></textarea>
     
       <div class="form-actions">
         <button type="submit" class="btn-primary">Submit</button>
-        <button 
-          type="button" 
-          class="btn-orange" 
-          onclick="window.location.href='../master.html?origin=inbound'">
+        <button type="button" class="btn-orange" onclick="window.location.href='../master.html?origin=inbound'">
           ⚙️ Master List
         </button>
       </div>
