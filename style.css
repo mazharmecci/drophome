@@ -31,7 +31,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  z-index: 1001; /* keep above menu */
+  transition: transform 0.5s ease; /* spin effect */
 }
 .hamburger span {
   display: block;
@@ -39,7 +39,42 @@
   width: 100%;
   background: #fff;
   border-radius: 2px;
-  transition: all 0.4s ease;
+  transition: all 0.3s ease;
+}
+
+/* Spin + Morph into X */
+.hamburger.active {
+  transform: rotate(180deg); /* playful spin */
+}
+.hamburger.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+.hamburger.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(6px, -6px);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .hamburger { display: flex; }
+
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    background: #005bb5;
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+  .nav-links.show {
+    display: flex;
+    animation: slideDown 0.4s ease forwards;
+  }
 }
 
 /* Hamburger Active State (turns into X) */
