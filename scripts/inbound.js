@@ -22,21 +22,21 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const form = document.getElementById('inboundForm');
-  form.addEventListener('submit', handleSubmit);
+  if (form) {
+    form.addEventListener('submit', handleSubmit);
+  }
 });
 
 // 🔄 Collect form data
 function collectFormData() {
   return {
-    inboundId: document.getElementById('inboundId').value,
-    dateReceived: document.getElementById('dateReceived').value,
-    supplierName: document.getElementById('supplierName').value,
-    sku: document.getElementById('sku').value,
-    productName: document.getElementById('productName').value,
-    quantityReceived: parseInt(document.getElementById('quantityReceived').value),
-    storageLocation: document.getElementById('storageLocation').value,
-    receivingNotes: document.getElementById('receivingNotes').value,
-    timestamp: new Date()
+    inboundId: document.getElementById("inboundId")?.value || "",
+    dateReceived: document.getElementById("dateReceived")?.value || "",
+    clientName: document.getElementById("clientName")?.value || "",
+    productName: document.getElementById("productName")?.value || "",
+    sku: document.getElementById("sku")?.value || "",
+    quantityReceived: parseInt(document.getElementById("quantityReceived")?.value || "0", 10),
+    receivingNotes: document.getElementById("receivingNotes")?.value || ""
   };
 }
 
@@ -48,7 +48,7 @@ async function handleSubmit(e) {
 
   try {
     await addDoc(collection(db, 'inbound'), data);
-    await updateStock(data.productName, data.storageLocation, data.quantityReceived);
+    await updateStock(data.productName, data.quantityReceived);
 
     showToast("✅ Inbound record submitted successfully.");
     form.reset();
@@ -63,13 +63,12 @@ async function handleSubmit(e) {
   }
 }
 
-// 📦 Update stock collection
-async function updateStock(productName, location, qty) {
+// 📦 Update stock collection (no location now)
+async function updateStock(productName, qty) {
   try {
     const stockQuery = query(
       collection(db, "stock"),
-      where("productName", "==", productName),
-      where("location", "==", location)
+      where("productName", "==", productName)
     );
     const snapshot = await getDocs(stockQuery);
 
@@ -83,7 +82,6 @@ async function updateStock(productName, location, qty) {
     } else {
       await addDoc(collection(db, "stock"), {
         productName,
-        location,
         availableQuantity: qty,
         timestamp: new Date()
       });
