@@ -234,5 +234,17 @@
       document.getElementById("clearFilters").addEventListener("click", clearFilters);
     });
   </script>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const currentPath = window.location.pathname.split("/").pop();
+    document.querySelectorAll(".breadcrumb-link").forEach(link => {
+      if (link.getAttribute("href").includes(currentPath)) {
+        link.classList.add("active");
+      }
+    });
+  });
+</script>
+
 </body>
 </html>
