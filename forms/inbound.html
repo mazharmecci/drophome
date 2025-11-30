@@ -10,21 +10,49 @@
       display: inline-block;
       margin-left: 6px;
       cursor: pointer;
-      color: #555;
+      color: #0077cc; /* theme accent color */
       font-size: 14px;
+      position: relative;
     }
-    .hint-icon:hover::after {
-      content: "This SKU is auto-filled when you select a product from the list.";
+  
+    /* Tooltip container */
+    .hint-icon::after {
+      content: attr(data-tooltip);
       position: absolute;
-      background: #333;
+      left: 50%;
+      top: -40px;
+      transform: translateX(-50%);
+      background: #222;
       color: #fff;
       padding: 6px 10px;
-      border-radius: 4px;
+      border-radius: 6px;
       font-size: 12px;
       white-space: nowrap;
-      margin-top: -5px;
-      margin-left: 8px;
-      z-index: 10;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    }
+  
+    /* Tooltip arrow */
+    .hint-icon::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: -10px;
+      transform: translateX(-50%);
+      border-width: 6px;
+      border-style: solid;
+      border-color: transparent transparent #222 transparent;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+  
+    /* Show tooltip on hover */
+    .hint-icon:hover::after,
+    .hint-icon:hover::before {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-4px);
     }
   </style>
 </head>
