@@ -9,34 +9,38 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <main>
-    <!-- Form Container / Landing Section -->
-    <section class="form-container">
+  <!-- Shared Navbar -->
+  <div id="navbar-placeholder"></div>
+  <script>
+    // Load shared navbar
+    fetch("includes/navbar.html")
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById("navbar-placeholder").innerHTML = data;
+        // Re-run navbar script after injection
+        const script = document.createElement("script");
+        script.src = "scripts/navbar.js";
+        document.body.appendChild(script);
+      });
+  </script>
 
+  <!-- Main Content -->
+  <main>
+    <section class="form-container">
       <!-- Logo + Brand -->
-      <header class="brand-header" style="display:flex;align-items:center;justify-content:center;gap:12px;">
+      <header class="brand-header">
         <img src="images/DH-white.png" alt="Drophome Logo" class="logo-img">
         <span>Drophome</span>
       </header>
       
       <!-- Breadcrumb Navigation -->
-      <nav class="breadcrumb-nav" aria-label="Quick Links" style="margin-top: 12px; text-align: center;">
-        <ol class="breadcrumb-list" style="display: inline-flex; gap: 16px; list-style: none; padding: 0; margin: 0;">
-          <li class="breadcrumb-item">
-            <a href="master.html" class="breadcrumb-link">🧾 Master List</a>
-          </li>
-          <li class="breadcrumb-item">
-            <a href="dashboard.html" class="breadcrumb-link">📊 Sales</a>
-          </li>
-          <li class="breadcrumb-item">
-            <a href="forms/manage-outbound.html" class="breadcrumb-link">📦 Status</a>
-          </li>
-          <li class="breadcrumb-item">
-            <a href="forms/inbound-history.html" class="breadcrumb-link">📥 Inbound History</a>
-          </li>
-          <li class="breadcrumb-item">
-            <a href="revenue.html" class="breadcrumb-link">💰 Revenue</a>
-          </li>
+      <nav class="breadcrumb-nav" aria-label="Quick Links">
+        <ol class="breadcrumb-list">
+          <li class="breadcrumb-item"><a href="master.html" class="breadcrumb-link">🧾 Master List</a></li>
+          <li class="breadcrumb-item"><a href="dashboard.html" class="breadcrumb-link">📊 Sales</a></li>
+          <li class="breadcrumb-item"><a href="forms/manage-outbound.html" class="breadcrumb-link">📦 Status</a></li>
+          <li class="breadcrumb-item"><a href="forms/inbound-history.html" class="breadcrumb-link">📥 Inbound History</a></li>
+          <li class="breadcrumb-item"><a href="revenue.html" class="breadcrumb-link">💰 Revenue</a></li>
         </ol>
       </nav>
 
@@ -69,10 +73,10 @@
     </section>
   </main>
 
-<footer class="footer-with-logo">
-  <img src="images/DH-Black.png" alt="Drophome Logo" class="footer-logo" />
-  <span>© 2025 Drophome — Leader in E-commerce business</span>
-</footer>
-
+  <!-- Footer -->
+  <footer class="footer-with-logo">
+    <img src="images/DH-Black.png" alt="Drophome Logo" class="footer-logo" />
+    <span>© 2025 Drophome — Leader in E-commerce business</span>
+  </footer>
 </body>
 </html>
