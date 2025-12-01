@@ -1,7 +1,7 @@
 <header class="navbar">
   <div class="navbar-left">
     <!-- Hamburger -->
-    <button class="hamburger" id="hamburgerBtn">
+    <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation">
       <span></span>
       <span></span>
       <span></span>
@@ -12,6 +12,12 @@
     <a href="master.html">🧾 Master List</a>
     <a href="dashboard.html">📊 Sales</a>
     <a href="forms/inbound-history.html">📥 Inbound History</a>
+    <a href="forms/inventory.html">📦 Inventory</a>
     <a href="revenue.html">💰 Revenue</a>
   </nav>
+
+  <div id="navOverlay"></div>
 </header>
+
+<!-- Load navbar behavior exactly once, here -->
+<script type="module" src="/drophome/scripts/navbar.js"></script>
