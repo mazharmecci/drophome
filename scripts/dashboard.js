@@ -24,7 +24,7 @@ async function renderStockSummary(products, summaryBody, fromDate, toDate) {
     const available = inboundTotal - outboundTotal;
 
     summaryBody.insertAdjacentHTML("beforeend", `
-      <tr style="background-color:#007bff; color:white; font-weight:bold;">
+      <tr class="summary-row">
         <td>${product}</td>
         <td>-</td>
         <td>${inboundTotal}</td>
