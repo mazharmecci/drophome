@@ -14,18 +14,22 @@ let hasInitialLoadCompleted = false;
 document.addEventListener("DOMContentLoaded", async () => {
   await loadAndRenderRecords({ showErrorToast: false });
 
-  document.getElementById("applyFilters")?.addEventListener("click", applyFilters);
-  document.getElementById("clearFilters")?.addEventListener("click", clearFilters);
+  const applyBtn = document.getElementById("applyFilters");
+  if (applyBtn) applyBtn.addEventListener("click", applyFilters);
+
+  const clearBtn = document.getElementById("clearFilters");
+  if (clearBtn) clearBtn.addEventListener("click", clearFilters);
 });
 
 // 🔄 Load and render inventory records
-async function loadAndRenderRecords({ showErrorToast = true } = {}) {
+async function loadAndRenderRecords(options) {
+  const { showErrorToast = true } = options || {};
+
   try {
     const snapshot = await getDocs(collection(db, "inventory"));
-    allRecords = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    allRecords = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
     renderTable(allRecords);
 
-    // ✅ Set only after successful load
     hasInitialLoadCompleted = true;
   } catch (err) {
     console.error("❌ loadAndRenderRecords failed:", err);
@@ -126,10 +130,17 @@ function renderStatusOptions(current) {
 
 // 🔍 Apply filters
 function applyFilters() {
-  const client = document.getElementById("filterClient")?.value.trim().toLowerCase();
-  const fromDate = document.getElementById("filterStart")?.value;
-  const toDate = document.getElementById("filterEnd")?.value;
-  const status = document.getElementById("filterStatus")?.value;
+  const clientInput = document.getElementById("filterClient");
+  const fromInput = document.getElementById("filterStart");
+  const toInput = document.getElementById("filterEnd");
+  const statusSelect = document.getElementById("filterStatus");
+
+  const client = clientInput && clientInput.value
+    ? clientInput.value.trim().toLowerCase()
+    : "";
+  const fromDate = fromInput && fromInput.value ? fromInput.value : "";
+  const toDate = toInput && toInput.value ? toInput.value : "";
+  const status = statusSelect && statusSelect.value ? statusSelect.value : "";
 
   const filtered = allRecords.filter(record => {
     const recordClient = (record.accountName || "").toLowerCase();
@@ -146,12 +157,18 @@ function applyFilters() {
 
 // 🧹 Clear filters
 function clearFilters() {
-  document.getElementById("filterClient")?.value = "";
-  document.getElementById("filterStart")?.value = "";
-  document.getElementById("filterEnd")?.value = "";
-  document.getElementById("filterStatus")?.value = "";
+  const clientInput = document.getElementById("filterClient");
+  const fromInput = document.getElementById("filterStart");
+  const toInput = document.getElementById("filterEnd");
+  const statusSelect = document.getElementById("filterStatus");
+
+  if (clientInput) clientInput.value = "";
+  if (fromInput) fromInput.value = "";
+  if (toInput) toInput.value = "";
+  if (statusSelect) statusSelect.value = "";
 
   renderTable(allRecords);
+  // Toast only when user clicks Clear
   showToast("🔄 Filters cleared. Showing all records.");
 }
 
