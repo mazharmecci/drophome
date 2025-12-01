@@ -1,3 +1,33 @@
+.checkmark-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid #4da3ff;
+  margin: 0 auto;
+  position: relative;
+  animation: circleAnim 0.5s ease forwards;
+}
+
+.checkmark-check {
+  width: 20px;
+  height: 10px;
+  border-left: 3px solid #4da3ff;
+  border-bottom: 3px solid #4da3ff;
+  transform: rotate(-45deg);
+  margin: 10px auto;
+  animation: checkAnim 0.5s ease forwards;
+}
+
+@keyframes circleAnim {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes checkAnim {
+  from { opacity: 0; transform: scale(0) rotate(-45deg); }
+  to { opacity: 1; transform: scale(1) rotate(-45deg); }
+}
+
 .logo-brand {
   display: flex;
   flex-direction: column;
