@@ -16,7 +16,6 @@
       const placeholder = document.getElementById("navbar-placeholder");
       if (!placeholder) return;
 
-      // Resolve path whether page is in root or /forms
       const isInForms = window.location.pathname.includes("/forms/");
       const navbarPath = isInForms ? "https://mazharmecci.github.io/drophome/navbar.html" : "navbar.html";
 
@@ -27,14 +26,11 @@
         })
         .then(html => {
           placeholder.innerHTML = html;
-
           const hamburgerBtn = document.getElementById("hamburgerBtn");
           const navLinks = document.getElementById("navLinks");
           const overlay = document.getElementById("navOverlay");
-
           if (!hamburgerBtn || !navLinks || !overlay) return;
 
-          // Toggle drawer
           hamburgerBtn.addEventListener("click", (e) => {
             e.stopPropagation();
             const isOpen = navLinks.classList.toggle("active");
@@ -42,12 +38,10 @@
             overlay.style.display = isOpen ? "block" : "none";
           });
 
-          // Close on link click
           navLinks.querySelectorAll("a").forEach(link =>
             link.addEventListener("click", () => closeDrawer())
           );
 
-          // Close on outside click
           document.addEventListener("click", (e) => {
             if (!navLinks.classList.contains("active")) return;
             if (!navLinks.contains(e.target) && !hamburgerBtn.contains(e.target)) {
@@ -55,7 +49,6 @@
             }
           });
 
-          // Close on overlay click
           overlay.addEventListener("click", () => closeDrawer());
 
           function closeDrawer() {
@@ -92,56 +85,58 @@
 
       <!-- Stock Summary Section -->
       <section class="summary-container">
-        <div class="filters" style="display: flex; gap: 16px; margin-bottom: 8px; justify-content: center;">
-          <select id="filterProduct" style="width: 220px; height: 40px; font-size: 16px;">
-            <option value="" disabled selected>Choose your product 📦</option>
+        <!-- Filters -->
+        <div class="filters" style="display:flex; flex-wrap:wrap; gap:16px; margin-bottom:12px; justify-content:center;">
+          <select id="filterProduct" style="width:220px; height:40px; font-size:16px;">
+            <option value="" disabled selected>Choose product 📦</option>
           </select>
-          <select id="filterLocation" style="width: 220px; height: 40px; font-size: 16px;">
-            <option value="" disabled selected>Choose your account 📍</option>
-          </select>
+          <input id="filterStart" type="date" style="height:40px; font-size:16px; padding:0 8px;" />
+          <input id="filterEnd" type="date" style="height:40px; font-size:16px; padding:0 8px;" />
         </div>
 
-        <div style="text-align: center; margin-bottom: 16px;">
+        <div style="text-align:center; margin-bottom:16px;">
           <button id="resetFiltersBtn"
-            style="height: 40px; padding: 0 24px; font-size: 16px; background-color: #e0e0e0; border: none; border-radius: 6px; cursor: pointer;">
+            style="height:40px; padding:0 24px; font-size:16px; background-color:#e0e0e0; border:none; border-radius:6px; cursor:pointer;">
             🔄 Reset Filters
           </button>
         </div>
 
-    <!-- 📊 Responsive Scroll Wrapper -->
-    <div class="table-scroll-wrapper" style="
-      overflow-x: auto;
-      max-width: 100%;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    ">
-      <table class="summary-table" style="
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 15px;
-        background-color: #fff;
-      ">
-        <thead style="
-          position: sticky;
-          top: 0;
-          background-color: #007bff;
-          color: white;
-          z-index: 1;
-          text-align: left;
+        <!-- 📊 Responsive Scroll Wrapper -->
+        <div class="table-scroll-wrapper" style="
+          overflow-x:auto;
+          max-width:100%;
+          border-radius:8px;
+          border:1px solid #ccc;
+          box-shadow:0 2px 6px rgba(0,0,0,0.05);
         ">
-          <tr>
-            <th style="padding: 12px;">📦 Product</th>            
-            <th style="padding: 12px;">🚚 Inbd</th>
-            <th style="padding: 12px;">🚚 Outd</th>
-            <th style="padding: 12px;">📅 Quantity</th>
-          </tr>
-        </thead>
-        <tbody id="summaryBody">
-          <!-- Rows injected dynamically -->
-        </tbody>
-      </table>
-    </div>
+          <table class="summary-table" style="
+            width:100%;
+            border-collapse:collapse;
+            font-size:15px;
+            background-color:#fff;
+          ">
+            <thead style="
+              position:sticky;
+              top:0;
+              background-color:#007bff;
+              color:white;
+              z-index:1;
+              text-align:left;
+            ">
+              <tr>
+                <th style="padding:12px;">📦 Product</th>
+                <th style="padding:12px;">🚚 Inbd</th>
+                <th style="padding:12px;">🚚 Outd</th>
+                <th style="padding:12px;">📅 Quantity</th>
+              </tr>
+            </thead>
+            <tbody id="summaryBody">
+              <!-- Rows injected dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </section>      
+    </main>
 
   <script>
     const originMap = {
