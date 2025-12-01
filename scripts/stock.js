@@ -9,19 +9,17 @@ import {
   where
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-const productSelector = document.getElementById('productName');
-const availableQty = document.getElementById('availableQuantity');
-
-// Load dropdowns on page load
 document.addEventListener("DOMContentLoaded", async () => {
-  await loadMasterList();
-
-  // Auto-compute when product changes
-  productSelector.addEventListener("change", computeStock);
+  await loadProductDropdown();
+  const selector = document.getElementById("productName");
+  if (selector) selector.addEventListener("change", computeStockBalance);
 });
 
-// Load products from masterList document
-async function loadMasterList() {
+// 🔄 Load product options from masterList
+async function loadProductDropdown() {
+  const selector = document.getElementById("productName");
+  if (!selector) return;
+
   try {
     const masterRef = doc(db, "masterList", "VwsEuQNJgfo5TXM6A0DA");
     const masterSnap = await getDoc(masterRef);
@@ -31,81 +29,59 @@ async function loadMasterList() {
       return;
     }
 
-    const data = masterSnap.data();
-
-    // Populate product dropdown (products are objects { sku, name })
-    data.products.forEach(product => {
+    const products = masterSnap.data().products || [];
+    selector.innerHTML = `<option value="" disabled selected>Choose your product</option>`;
+    products.forEach(({ name, sku }) => {
       const opt = document.createElement("option");
-      opt.value = product.name;
-      opt.textContent = `${product.name} (${product.sku})`;
-      productSelector.appendChild(opt);
+      opt.value = name;
+      opt.textContent = `${name} (${sku})`;
+      selector.appendChild(opt);
     });
 
-    console.log("✅ Master list loaded:", { products: data.products.length });
-
+    console.log("✅ Product dropdown loaded:", products.length);
   } catch (err) {
     console.error("❌ Error loading masterList:", err);
-    showToast("❌ Failed to load master data.");
+    showToast("❌ Failed to load product list.");
   }
 }
 
-// Compute stock = inbound - outbound
-async function computeStock() {
-  const product = productSelector.value;
-
-  if (!product) {
-    availableQty.value = "";
-    return;
-  }
+// 📊 Compute stock = inbound - outbound
+async function computeStockBalance() {
+  const product = document.getElementById("productName")?.value;
+  const qtyField = document.getElementById("availableQuantity");
+  if (!product || !qtyField) return;
 
   try {
-    console.log("🔍 Computing stock for:", { product });
+    console.log("🔍 Computing stock for:", product);
 
-    // Fetch inbound records
-    let inboundTotal = 0;
-    try {
-      const inboundQuery = query(
-        collection(db, "inbound"),
-        where("productName", "==", product)
-      );
+    const inboundTotal = await getTotal("inbound", "quantityReceived", product);
+    const outboundTotal = await getTotal("outbound_orders", "quantity", product);
+    const balance = inboundTotal - outboundTotal;
 
-      const inboundSnapshot = await getDocs(inboundQuery);
-      inboundSnapshot.forEach(docSnap => {
-        inboundTotal += parseInt(docSnap.data().quantityReceived || 0);
-      });
-      console.log("📥 Inbound total:", inboundTotal);
-    } catch (inboundErr) {
-      console.error("❌ Error fetching inbound records:", inboundErr);
-      showToast("❌ Failed to fetch inbound data.");
-      return;
-    }
-
-    // Fetch outbound records
-    let outboundTotal = 0;
-    try {
-      const outboundQuery = query(
-        collection(db, "outbound_orders"),
-        where("productName", "==", product)
-      );
-
-      const outboundSnapshot = await getDocs(outboundQuery);
-      outboundSnapshot.forEach(docSnap => {
-        outboundTotal += parseInt(docSnap.data().quantity || 0);
-      });
-      console.log("📤 Outbound total:", outboundTotal);
-    } catch (outboundErr) {
-      console.error("❌ Error fetching outbound records:", outboundErr);
-      showToast("❌ Failed to fetch outbound data.");
-      return;
-    }
-
-    // Compute available stock
-    const stock = inboundTotal - outboundTotal;
-    availableQty.value = stock >= 0 ? stock : 0;
-    console.log("✅ Computed stock:", { inboundTotal, outboundTotal, stock });
-
+    qtyField.value = balance >= 0 ? balance : 0;
+    console.log("✅ Stock computed:", { inboundTotal, outboundTotal, balance });
   } catch (err) {
     console.error("❌ Error computing stock:", err);
     showToast("❌ Failed to compute stock.");
+  }
+}
+
+// 🔢 Helper: get total quantity from a collection
+async function getTotal(collectionName, field, productName) {
+  try {
+    const q = query(collection(db, collectionName), where("productName", "==", productName));
+    const snapshot = await getDocs(q);
+
+    let total = 0;
+    snapshot.forEach(doc => {
+      total += parseInt(doc.data()[field] || 0);
+    });
+
+    console.log(`📦 ${collectionName} total:`, total);
+    return total;
+  } catch (err) {
+    console.error(`❌ Error fetching ${collectionName} records:`, err);
+    showToast(`❌ Failed to fetch ${collectionName} data.`);
+    return 0;
   }
 }
