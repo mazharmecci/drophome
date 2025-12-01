@@ -34,17 +34,14 @@
   border-radius: 8px;
   border: 1px solid #ccc;
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  background-color: #fff; /* Ensures full stretch */
-}
-
-.summary-table {
-  table-layout: fixed;
+  background-color: #fff;
 }
 
 table,
 .summary-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
   margin: 30px auto;
   background: #fff;
   border-radius: 8px;
@@ -52,20 +49,17 @@ table,
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-/* Table cells */
-table th, table td,
-.summary-table th, .summary-table td {
+table th, .summary-table th,
+table td, .summary-table td {
   padding: 12px;
   text-align: left;
   border-bottom: 1px solid #ddd;
   white-space: normal;
-  word-wrap: break-word;
+  overflow-wrap: break-word; /* modern replacement */
   font-size: 0.9rem;
 }
 
-/* Table header */
-table thead,
-.summary-table thead {
+table thead, .summary-table thead {
   position: sticky;
   top: 0;
   background-color: #007bff;
@@ -74,7 +68,6 @@ table thead,
   font-weight: 600;
 }
 
-/* Zebra striping + hover */
 table tbody tr:nth-of-type(odd),
 .summary-table tbody tr:nth-of-type(odd) {
   background-color: #f9fbff;
@@ -92,38 +85,29 @@ table tbody tr:hover,
    Mobile Responsive Tables
 ------------------------------ */
 @media (max-width: 768px) {
-  table,
-  table thead,
-  table tbody,
-  table th,
-  table td,
-  table tr,
-  .summary-table,
-  .summary-table thead,
-  .summary-table tbody,
-  .summary-table th,
-  .summary-table td,
-  .summary-table tr {
+  table, .summary-table,
+  table thead, .summary-table thead,
+  table tbody, .summary-table tbody,
+  table tr, .summary-table tr,
+  table th, .summary-table th,
+  table td, .summary-table td {
     display: block;
   }
 
-  table tr,
-  .summary-table tr {
+  table tr, .summary-table tr {
     margin-bottom: 12px;
     border: 1px solid #ddd;
     border-radius: 6px;
     padding: 8px;
   }
 
-  table td,
-  .summary-table td {
+  table td, .summary-table td {
     display: flex;
     justify-content: space-between;
     text-align: left;
   }
 
-  table th,
-  .summary-table th {
+  table th, .summary-table th {
     text-align: left;
   }
 }
