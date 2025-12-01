@@ -11,6 +11,7 @@
 /* ------------------------------
    Hide NavBar on desktop
 ------------------------------ */
+
 @media screen and (min-width: 1024px) {
   #navbar-placeholder {
     display: none;
@@ -18,27 +19,13 @@
 }
 
 /* ------------------------------
-   Unified Table Styling
+   Unified Table Styling (Inventory Look & Feel)
+   Applies to all tables, including .summary-table
 ------------------------------ */
-.summary-container {
-  width: 100%;
-  padding: 0 16px;
-}
-
-.table-scroll-wrapper {
-  width: 100%;
-  overflow-x: auto;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  background-color: #fff;
-}
-
 table,
 .summary-table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed;
   margin: 30px auto;
   background: #fff;
   border-radius: 8px;
@@ -46,17 +33,20 @@ table,
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-table th, .summary-table th,
-table td, .summary-table td {
+/* Table cells */
+table th, table td,
+.summary-table th, .summary-table td {
   padding: 12px;
   text-align: left;
   border-bottom: 1px solid #ddd;
   white-space: normal;
-  overflow-wrap: break-word;
+  word-wrap: break-word;
   font-size: 0.9rem;
 }
 
-table thead, .summary-table thead {
+/* Table header */
+table thead,
+.summary-table thead {
   position: sticky;
   top: 0;
   background-color: #007bff;
@@ -65,6 +55,7 @@ table thead, .summary-table thead {
   font-weight: 600;
 }
 
+/* Zebra striping + hover */
 table tbody tr:nth-of-type(odd),
 .summary-table tbody tr:nth-of-type(odd) {
   background-color: #f9fbff;
@@ -82,75 +73,45 @@ table tbody tr:hover,
    Mobile Responsive Tables
 ------------------------------ */
 @media (max-width: 768px) {
-  table, .summary-table,
-  table thead, .summary-table thead,
-  table tbody, .summary-table tbody,
-  table tr, .summary-table tr,
-  table th, .summary-table th,
-  table td, .summary-table td {
+  table,
+  table thead,
+  table tbody,
+  table th,
+  table td,
+  table tr,
+  .summary-table,
+  .summary-table thead,
+  .summary-table tbody,
+  .summary-table th,
+  .summary-table td,
+  .summary-table tr {
     display: block;
   }
 
-  table tr, .summary-table tr {
+  table tr,
+  .summary-table tr {
     margin-bottom: 12px;
     border: 1px solid #ddd;
     border-radius: 6px;
     padding: 8px;
   }
 
-  table td, .summary-table td {
+  table td,
+  .summary-table td {
     display: flex;
     justify-content: space-between;
     text-align: left;
   }
 
-  table th, .summary-table th {
+  table th,
+  .summary-table th {
     text-align: left;
   }
 }
 
-/* ------------------------------
-   Mobile Responsive Filters & Buttons
------------------------------- */
-@media (max-width: 768px) {
-  .filters {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-  }
 
-  .filter-select,
-  .filter-date {
-    width: 100%;
-    font-size: 15px;
-  }
+/* Toast */
 
-  .filters-actions {
-    text-align: center;
-  }
-
-  .reset-btn {
-    width: 100%;
-    font-size: 15px;
-  }
-}
-
-/* ------------------------------
-   Mobile Responsive Header
------------------------------- */
-.brand-header .logo-img {
-  max-width: 120px;
-  height: auto;
-}
-
-.brand-header span {
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-/* ------------------------------
-   Toast (checkmark animation)
------------------------------- */
 .checkmark-circle {
   width: 40px;
   height: 40px;
@@ -181,9 +142,8 @@ table tbody tr:hover,
   to { opacity: 1; transform: scale(1) rotate(-45deg); }
 }
 
-/* ------------------------------
-   Brand name styling
------------------------------- */
+/* Brand name styling */
+
 .logo-brand {
   display: flex;
   flex-direction: column;
@@ -192,6 +152,8 @@ table tbody tr:hover,
   text-align: center;
   gap: 8px;
 }
+
+/* Brand name styling */
 
 .brand-title {
   font-size: 48px;
@@ -233,7 +195,7 @@ table tbody tr:hover,
 
 .brand-letter {
   font-weight: bold;
-  color: #0066cc;
+  color: #0066cc; /* bold blue */
 }
 
 /* Logo image */
@@ -242,35 +204,19 @@ table tbody tr:hover,
   height: 40px;
 }
 
-/* ------------------------------
-   Navbar / Hamburger
------------------------------- */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #d0e8ff;
-  color: #333;
-  padding: 10px 20px;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-
-/* Default desktop */
+/* Default: desktop view */
 .hamburger {
-  display: none;
+  display: none; /* hidden on desktop */
 }
 .nav-links {
-  display: flex;
+  display: flex; /* show full nav on desktop */
   gap: 16px;
 }
 
 /* Mobile: show hamburger, hide nav until toggled */
 @media screen and (max-width: 768px) {
   .hamburger {
-    display: flex;
+    display: flex; /* show hamburger button */
     flex-direction: column;
     justify-content: space-between;
     width: 25px;
@@ -285,12 +231,12 @@ table tbody tr:hover,
     width: 25px;
     height: 3px;
     margin: 4px 0;
-    background: #4da3ff;
+    background: #4da3ff; /* light blue lines */
     transition: 0.3s;
   }
 
   .nav-links {
-    display: none;
+    display: none; /* hidden until toggled */
     flex-direction: column;
     position: absolute;
     top: 100%;
@@ -301,13 +247,11 @@ table tbody tr:hover,
   }
 
   .nav-links.active {
-    display: flex;
+    display: flex; /* shown when JS adds 'active' class */
   }
 }
 
-/* ------------------------------
-   History Container & Pagination
------------------------------- */
+/* History Container */
 .history-container {
   max-width: 1200px;
   margin: 20px auto;
@@ -317,17 +261,20 @@ table tbody tr:hover,
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
+/* Page Title */
 .page-title {
   text-align: center;
   margin-bottom: 20px;
 }
 
+/* Link cells */
 .link-cell a {
   color: #0077cc;
   text-decoration: none;
 }
 .link-cell a:hover { text-decoration: underline; }
 
+/* Pagination */
 .pagination {
   display: flex;
   justify-content: center;
@@ -351,9 +298,7 @@ table tbody tr:hover,
   cursor: not-allowed;
 }
 
-/* ------------------------------
-   Tooltip (global reusable)
------------------------------- */
+/* Tooltip (global reusable) */
 .hint-icon {
   display: inline-block;
   margin-left: 6px;
@@ -397,9 +342,7 @@ table tbody tr:hover,
   transform: translateX(-50%) translateY(-4px);
 }
 
-/* ------------------------------
-   Special input states
------------------------------- */
+/* Special input states */
 .input-readonly-error { background-color: #ffe6e6; }
 .input-readonly { background-color: #f0f0f0; }
 .input-highlight { background-color: #c7e4ee; }
@@ -456,10 +399,10 @@ body {
 /* ------------------------------
    Card Color Themes
 ------------------------------ */
-.inbound-card { background: #e3f2fd; }
-.outbound-card { background: #fce4ec; }
-.stock-card { background: #e8f5e9; }
-.audit-card { background: #fff3e0; }
+.inbound-card { background: #e3f2fd; }   /* light blue */
+.outbound-card { background: #fce4ec; }  /* light pink */
+.stock-card { background: #e8f5e9; }     /* light green */
+.audit-card { background: #fff3e0; }     /* light orange */
 
 /* ------------------------------
    Header & Footer
@@ -577,27 +520,32 @@ button.btn-clear:hover { background-color: #e6b800; }
 /* ------------------------------
    Filter Bar (Global)
 ------------------------------ */
+/* Filter + Button Row */
+/* Filter + Button Row */
 .filter-bar {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: nowrap;          /* keep in one row on larger screens */
   gap: 12px;
   align-items: flex-end;
   justify-content: flex-start;
   margin-bottom: 20px;
 }
 
+/* Each filter group (label + control) */
 .filter-group {
   display: inline-flex;
   flex-direction: column;
   gap: 4px;
 }
 
+/* Labels */
 .filter-bar label {
   font-weight: 600;
   color: #333;
   font-size: 0.9rem;
 }
 
+/* Inputs / selects */
 .filter-bar input[type="text"],
 .filter-bar input[type="date"],
 .filter-bar select {
@@ -610,6 +558,7 @@ button.btn-clear:hover { background-color: #e6b800; }
   box-sizing: border-box;
 }
 
+/* Action buttons */
 .filter-bar button {
   padding: 8px 16px;
   background-color: #0066cc;
@@ -619,13 +568,14 @@ button.btn-clear:hover { background-color: #e6b800; }
   cursor: pointer;
   font-weight: 500;
   font-size: 0.95rem;
-  white-space: nowrap;
+  white-space: nowrap;        /* keeps button text on one line */
   transition: background 0.2s ease;
 }
 .filter-bar button:hover {
   background-color: #004999;
 }
 
+/* Mobile: allow wrapping so nothing overflows */
 @media (max-width: 768px) {
   .filter-bar {
     flex-wrap: wrap;
@@ -755,7 +705,7 @@ button.btn-clear:hover { background-color: #e6b800; }
 .popup-content button:hover { background: #005bb5; }
 
 /* ------------------------------
-   Toast Messages
+   Toast Messages (continued)
 ------------------------------ */
 .toast {
   position: fixed;
