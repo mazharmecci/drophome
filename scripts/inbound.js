@@ -27,19 +27,23 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// 🔄 Collect form data
+// 🔄 Collect form data from inbound form
 function collectFormData() {
   return {
-    inboundId: document.getElementById("inboundId")?.value || "",
-    dateReceived: document.getElementById("dateReceived")?.value || "",
-    clientName: document.getElementById("clientName")?.value || "",
-    productName: document.getElementById("productName")?.value || "",
-    sku: document.getElementById("sku")?.value || "",
-    prodpic: document.getElementById("prodpic")?.value || "",       // NEW FIELD
-    labellink: document.getElementById("labellink")?.value || "",   // NEW FIELD
-    quantityReceived: parseInt(document.getElementById("quantityReceived")?.value || "0", 10),
-    receivingNotes: document.getElementById("receivingNotes")?.value || ""
+    inboundId: getValue("inboundId"),
+    dateReceived: getValue("dateReceived"),
+    clientName: getValue("clientName"),
+    productName: getValue("productName"),
+    sku: getValue("sku"),
+    prodpic: getValue("prodpic"),
+    labellink: getValue("labellink"),
+    quantityReceived: parseInt(getValue("quantityReceived") || "0", 10),
+    receivingNotes: getValue("receivingNotes")
   };
+}
+
+function getValue(id) {
+  return document.getElementById(id)?.value || "";
 }
 
 // ✅ Submit handler
@@ -47,47 +51,42 @@ async function handleSubmit(e) {
   e.preventDefault();
   const form = e.target;
   const data = collectFormData();
-  const sendToInventory = document.getElementById("sendToInventory")?.checked;
 
   try {
-    // Submit to inbound
+    // 🔄 Submit to inbound
     await addDoc(collection(db, 'inbound'), data);
     await updateStock(data.productName, data.quantityReceived);
 
-    // Optional: Submit to inventory
-    if (sendToInventory) {
-      const inventoryData = {
-        orderId: data.inboundId,
-        date: data.dateReceived,
-        accountName: data.clientName,
-        productName: data.productName,
-        sku: data.sku,
-        quantity: data.quantityReceived,
-        prodpic: data.prodpic,
-        status: "OrderPending",         // default status
-        labelqty: 0,
-        labelcost: "",
-        threePLcost: ""
-      };
-      await addDoc(collection(db, "inventory"), inventoryData);
-      console.log("📦 Sent to inventory:", inventoryData);
-    }
+    // 📦 Auto-sync to inventory
+    const inventoryData = {
+      orderId: data.inboundId,
+      date: data.dateReceived,
+      accountName: data.clientName,
+      productName: data.productName,
+      sku: data.sku,
+      quantity: data.quantityReceived,
+      prodpic: data.prodpic,
+      status: "OrderPending",
+      labelqty: 0,
+      labelcost: "",
+      threePLcost: ""
+    };
+    await addDoc(collection(db, "inventory"), inventoryData);
+    console.log("📦 Auto-synced to inventory:", inventoryData);
 
-    showToast("✅ Inbound record submitted successfully.");
+    // ✅ Feedback and reset
+    showToast("✅ Inbound record submitted and synced to inventory.");
     form.reset();
-
-    // Regenerate ID and reload dropdowns
     document.getElementById('inboundId').value = "";
     generateId('INB', 'inbound', 'inboundId');
     loadDropdowns();
   } catch (err) {
-    console.error("❌ Error submitting inbound or inventory:", err);
+    console.error("❌ Error submitting inbound or syncing inventory:", err);
     showToast("❌ Failed to submit inbound record.");
   }
 }
 
-
-// 📦 Update stock collection (no location now)
+// 📦 Update stock quantity
 async function updateStock(productName, qty) {
   try {
     const stockQuery = query(
