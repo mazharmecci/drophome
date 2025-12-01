@@ -16,69 +16,45 @@ function animateStockTable() {
   }
 }
 
-// 📊 Render stock summary rows
-async function renderStockSummary(products, accounts, summaryBody) {
+// 📊 Render stock summary rows (product-level only)
+async function renderStockSummary(products, summaryBody) {
   for (const product of products) {
-    let inboundSubtotal = 0;
-    let outboundSubtotal = 0;
+    const inboundTotal = await computeInbound(product);
+    const outboundTotal = await computeOutbound(product);
+    const available = inboundTotal - outboundTotal;
 
     summaryBody.insertAdjacentHTML("beforeend", `
       <tr style="background-color:#007bff; color:white; font-weight:bold;">
-        <td colspan="5">${product}</td>
-      </tr>
-    `);
-
-    for (const account of accounts) {
-      const inboundTotal = await computeInbound(product, account);
-      const outboundTotal = await computeOutbound(product, account);
-      const available = inboundTotal - outboundTotal;
-
-      inboundSubtotal += inboundTotal;
-      outboundSubtotal += outboundTotal;
-
-      summaryBody.insertAdjacentHTML("beforeend", `
-        <tr>
-          <td></td>
-          <td>${account}</td>
-          <td>${inboundTotal}</td>
-          <td>${outboundTotal}</td>
-          <td>${available >= 0 ? available : 0}</td>
-        </tr>
-      `);
-    }
-
-    summaryBody.insertAdjacentHTML("beforeend", `
-      <tr style="background-color:#ffe6e6; font-weight:bold;">
-        <td></td>
-        <td>➤ Subtotal</td>
-        <td>${inboundSubtotal}</td>
-        <td>${outboundSubtotal}</td>
-        <td>${inboundSubtotal - outboundSubtotal}</td>
+        <td>${product}</td>
+        <td>-</td>
+        <td>${inboundTotal}</td>
+        <td>${outboundTotal}</td>
+        <td>${available >= 0 ? available : 0}</td>
       </tr>
     `);
   }
 }
 
-// 🔢 Compute inbound totals
-async function computeInbound(product, account) {
+// 🔢 Compute inbound totals (product only)
+async function computeInbound(product) {
   const snapshot = await getDocs(collection(db, "inbound"));
   let total = 0;
   snapshot.forEach(doc => {
     const data = doc.data();
-    if (data.productName === product && data.accountName === account) {
+    if (data.productName === product) {
       total += parseInt(data.quantityReceived || 0, 10);
     }
   });
   return total;
 }
 
-// 🔢 Compute outbound totals
-async function computeOutbound(product, account) {
+// 🔢 Compute outbound totals (product only)
+async function computeOutbound(product) {
   const snapshot = await getDocs(collection(db, "outbound_orders"));
   let total = 0;
   snapshot.forEach(doc => {
     const data = doc.data();
-    if (data.productName === product && data.accountName === account) {
+    if (data.productName === product) {
       total += parseInt(data.quantity || 0, 10);
     }
   });
@@ -96,18 +72,14 @@ async function loadStockSummary() {
   try {
     const snapshot = await getDocs(collection(db, "inbound"));
     const productSet = new Set();
-    const accountSet = new Set();
 
     snapshot.forEach(doc => {
       const data = doc.data();
       if (data.productName) productSet.add(data.productName);
-      if (data.accountName) accountSet.add(data.accountName);
     });
 
     const sortedProducts = [...productSet].sort();
-    const sortedAccounts = [...accountSet].sort();
-
-    await renderStockSummary(sortedProducts, sortedAccounts, summaryBody);
+    await renderStockSummary(sortedProducts, summaryBody);
     console.log("✅ Stock summary loaded.");
   } catch (err) {
     console.error("❌ Error loading stock summary:", err);
@@ -115,24 +87,21 @@ async function loadStockSummary() {
   }
 }
 
-// 🔍 Load product/account filters
-async function loadStockFilters() {
+// 🔍 Load product filter
+async function loadProductFilter() {
   const productFilter = document.getElementById("filterProduct");
-  const accountFilter = document.getElementById("filterLocation");
-  if (!productFilter || !accountFilter) return;
+  if (!productFilter) return;
 
   try {
     const snapshot = await getDocs(collection(db, "inbound"));
     const productSet = new Set();
-    const accountSet = new Set();
 
     snapshot.forEach(doc => {
       const data = doc.data();
       if (data.productName) productSet.add(data.productName);
-      if (data.accountName) accountSet.add(data.accountName);
     });
 
-    productFilter.innerHTML = `<option value="" disabled selected>Choose your product 📦</option>`;
+    productFilter.innerHTML = `<option value="" disabled selected>Choose product name 📦</option>`;
     [...productSet].sort().forEach(product => {
       const opt = document.createElement("option");
       opt.value = product;
@@ -140,73 +109,56 @@ async function loadStockFilters() {
       productFilter.appendChild(opt);
     });
 
-    accountFilter.innerHTML = `<option value="" disabled selected>Choose your account 🔑</option>`;
-    [...accountSet].sort().forEach(account => {
-      const opt = document.createElement("option");
-      opt.value = account;
-      opt.textContent = account;
-      accountFilter.appendChild(opt);
-    });
-
-    console.log("✅ Filters loaded from inbound records.");
+    console.log("✅ Product filter loaded.");
   } catch (err) {
-    console.error("❌ Error loading filters:", err);
-    showToast("❌ Failed to load filter options.");
+    console.error("❌ Error loading product filter:", err);
+    showToast("❌ Failed to load product options.");
   }
 }
 
-// 🧮 Apply stock filters
-async function applyStockFilters() {
+// 🧮 Apply product filter
+async function applyProductFilter() {
   const productFilter = document.getElementById("filterProduct");
-  const accountFilter = document.getElementById("filterLocation");
   const summaryBody = document.getElementById("summaryBody");
-  if (!productFilter || !accountFilter || !summaryBody) return;
+  if (!productFilter || !summaryBody) return;
 
   const selectedProduct = productFilter.value;
-  const selectedAccount = accountFilter.value;
 
   summaryBody.innerHTML = "";
   animateStockTable();
 
   try {
     const snapshot = await getDocs(collection(db, "inbound"));
-    const allProducts = new Set();
-    const allAccounts = new Set();
+    const productSet = new Set();
 
     snapshot.forEach(doc => {
       const data = doc.data();
-      if (data.productName) allProducts.add(data.productName);
-      if (data.accountName) allAccounts.add(data.accountName);
+      if (data.productName) productSet.add(data.productName);
     });
 
-    const filteredProducts = selectedProduct ? [selectedProduct] : [...allProducts];
-    const filteredAccounts = selectedAccount ? [selectedAccount] : [...allAccounts];
-
-    await renderStockSummary(filteredProducts, filteredAccounts, summaryBody);
+    const filteredProducts = selectedProduct ? [selectedProduct] : [...productSet];
+    await renderStockSummary(filteredProducts, summaryBody);
     console.log("✅ Filtered stock summary loaded.");
   } catch (err) {
-    console.error("❌ Error applying stock filters:", err);
-    showToast("❌ Failed to apply stock filters.");
+    console.error("❌ Error applying product filter:", err);
+    showToast("❌ Failed to apply product filter.");
   }
 }
 
 // 🔄 DOM Ready
 document.addEventListener("DOMContentLoaded", async () => {
   await loadStockSummary();
-  await loadStockFilters();
+  await loadProductFilter();
 
   const productFilter = document.getElementById("filterProduct");
-  const accountFilter = document.getElementById("filterLocation");
   const resetBtn = document.getElementById("resetFiltersBtn");
 
-  if (productFilter) productFilter.addEventListener("change", applyStockFilters);
-  if (accountFilter) accountFilter.addEventListener("change", applyStockFilters);
+  if (productFilter) productFilter.addEventListener("change", applyProductFilter);
   if (resetBtn) {
     resetBtn.addEventListener("click", () => {
       productFilter.selectedIndex = 0;
-      accountFilter.selectedIndex = 0;
       loadStockSummary();
-      showToast("🔄 Filters reset — full stock summary restored.");
+      showToast("🔄 Filter reset — full stock summary restored.");
     });
   }
 });
