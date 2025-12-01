@@ -96,28 +96,13 @@
           <th>Label Cost</th>
           <th>3PL Cost</th>
           <th>Status</th>
+          <th>Action</th>
         </tr>
       </thead>
       <tbody id="inboundTableBody">
-        <!-- Records will be injected here -->
+        <!-- Records injected here -->
       </tbody>
     </table>
-
-      <label for="status">Order Status</label>
-      <select
-        id="status"
-        name="status"
-        required
-      >
-        <option value="">Select status</option>
-        <option value="OrderPending">Order-Pending</option>
-        <option value="OrderDelivered">Order-Delivered</option>
-        <option value="OrderCompleted">Order-Completed</option>
-        <option value="CancelCompleted">Cancel-Completed</option>
-        <option value="Refunded">Refunded</option>
-        <option value="Shipped">Shipped</option>
-        <option value="LabelsPrinted">LabelsPrinted</option>
-      </select>
 
       <button type="submit">💾 Save</button>
     </form>
