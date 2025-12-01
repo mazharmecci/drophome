@@ -556,7 +556,7 @@ button.btn-clear:hover { background-color: #e6b800; }
 ------------------------------ */
 .breadcrumb-nav {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   margin: 12px 0 24px;
   font-size: 0.9rem;
   overflow-x: auto;
@@ -583,7 +583,7 @@ button.btn-clear:hover { background-color: #e6b800; }
   color: #0066cc;
   text-decoration: none;
   display: inline-flex;
-  align-items: center;
+  align-items: left;
   gap: 4px;
   font-weight: 500;
   transition: color 0.3s ease;
