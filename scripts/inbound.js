@@ -47,10 +47,31 @@ async function handleSubmit(e) {
   e.preventDefault();
   const form = e.target;
   const data = collectFormData();
+  const sendToInventory = document.getElementById("sendToInventory")?.checked;
 
   try {
+    // Submit to inbound
     await addDoc(collection(db, 'inbound'), data);
     await updateStock(data.productName, data.quantityReceived);
+
+    // Optional: Submit to inventory
+    if (sendToInventory) {
+      const inventoryData = {
+        orderId: data.inboundId,
+        date: data.dateReceived,
+        accountName: data.clientName,
+        productName: data.productName,
+        sku: data.sku,
+        quantity: data.quantityReceived,
+        prodpic: data.prodpic,
+        status: "OrderPending",         // default status
+        labelqty: 0,
+        labelcost: "",
+        threePLcost: ""
+      };
+      await addDoc(collection(db, "inventory"), inventoryData);
+      console.log("📦 Sent to inventory:", inventoryData);
+    }
 
     showToast("✅ Inbound record submitted successfully.");
     form.reset();
@@ -60,10 +81,11 @@ async function handleSubmit(e) {
     generateId('INB', 'inbound', 'inboundId');
     loadDropdowns();
   } catch (err) {
-    console.error("❌ Error adding inbound record:", err);
+    console.error("❌ Error submitting inbound or inventory:", err);
     showToast("❌ Failed to submit inbound record.");
   }
 }
+
 
 // 📦 Update stock collection (no location now)
 async function updateStock(productName, qty) {
