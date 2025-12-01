@@ -6,19 +6,19 @@ import {
   doc
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-let allOrders = [];
+let allRecords = [];
 
 document.addEventListener("DOMContentLoaded", async () => {
-  await fetchOrders();
-
-  document.getElementById("applyFilters").addEventListener("click", applyFilters);
+  await fetchRecords();
+  const applyBtn = document.getElementById("applyFilters");
+  if (applyBtn) applyBtn.addEventListener("click", applyFilters);
 });
 
-// 🔄 Fetch all outbound orders
-async function fetchOrders() {
-  const snapshot = await getDocs(collection(db, "outbound_orders"));
-  allOrders = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-  renderTable(allOrders);
+// 🔄 Fetch all inventory records
+async function fetchRecords() {
+  const snapshot = await getDocs(collection(db, "inventory"));
+  allRecords = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+  renderTable(allRecords);
 }
 
 // 📊 Render table
@@ -38,11 +38,18 @@ function renderTable(records) {
       <td>${record.sku || ""}</td>
       <td>${record.quantity || ""}</td>
       <td><img src="${record.prodpic || ""}" alt="Product" style="max-width:60px"/></td>
-      <td>${record.labelqty || ""}</td>
-      <td>${record.labelcost || ""}</td>
-      <td>${record.threePLcost || ""}</td>
+
+      <!-- Editable fields -->
+      <td><input type="number" value="${record.labelqty || 0}" 
+          onchange="updateField('${record.id}','labelqty',this.value,this)" /></td>
+      <td><input type="text" value="${record.labelcost || ''}" placeholder="$00.00" 
+          onchange="updateField('${record.id}','labelcost',this.value,this)" /></td>
+      <td><input type="text" value="${record.threePLcost || ''}" placeholder="$00.00" 
+          onchange="updateField('${record.id}','threePLcost',this.value,this)" /></td>
+
+      <!-- Status dropdown -->
       <td>
-        <select onchange="updateStatus('${record.id}', this.value)">
+        <select onchange="updateField('${record.id}','status',this.value,this)">
           <option value="OrderPending" ${record.status==="OrderPending"?"selected":""}>Order-Pending</option>
           <option value="OrderDelivered" ${record.status==="OrderDelivered"?"selected":""}>Order-Delivered</option>
           <option value="OrderCompleted" ${record.status==="OrderCompleted"?"selected":""}>Order-Completed</option>
@@ -52,40 +59,53 @@ function renderTable(records) {
           <option value="LabelsPrinted" ${record.status==="LabelsPrinted"?"selected":""}>LabelsPrinted</option>
         </select>
       </td>
-      <td><button onclick="saveStatus('${record.id}')">💾 Save</button></td>
+
+      <!-- Save button -->
+      <td><button onclick="saveRecord('${record.id}')">💾 Save</button></td>
     `;
 
     tbody.appendChild(tr);
   });
 }
 
-// 🔄 Update status in Firestore
-window.updateStatus = function(recordId, newStatus) {
+// Store temporary edits + highlight
+window.updateField = function(recordId, field, value, element) {
   const record = allRecords.find(r => r.id === recordId);
-  if (record) record.newStatus = newStatus; // temp store until save
+  if (record) {
+    record[field] = value;
+    record._dirty = true; // mark as changed
+    if (element) element.style.backgroundColor = "#fff3cd"; // highlight edited cell
+  }
 };
 
-window.saveStatus = async function(recordId) {
+// Save changes to Firestore
+window.saveRecord = async function(recordId) {
   const record = allRecords.find(r => r.id === recordId);
-  if (!record || !record.newStatus) return;
+  if (!record || !record._dirty) return;
 
   await updateDoc(doc(db, "inventory", recordId), {
-    status: record.newStatus,
+    labelqty: Number(record.labelqty) || 0,
+    labelcost: record.labelcost || "",
+    threePLcost: record.threePLcost || "",
+    status: record.status || "OrderPending",
     updatedAt: new Date()
   });
 
-  alert(`✅ Status updated for ${record.orderId || record.id}`);
-  await fetchRecords(); // refresh table
+  alert(`✅ Record updated for ${record.orderId || record.id}`);
+  record._dirty = false;
+
+  // Refresh table to clear highlights
+  await fetchRecords();
 };
 
 // 🔍 Apply filters
 function applyFilters() {
-  const searchId = document.getElementById("searchOrderId").value.trim();
-  const status = document.getElementById("filterStatus").value;
+  const searchId = document.getElementById("searchOrderId")?.value.trim();
+  const status = document.getElementById("filterStatus")?.value;
 
-  const filtered = allOrders.filter(o =>
-    (!searchId || o.orderId.includes(searchId)) &&
-    (!status || o.status === status)
+  const filtered = allRecords.filter(r =>
+    (!searchId || (r.orderId && r.orderId.includes(searchId))) &&
+    (!status || r.status === status)
   );
 
   renderTable(filtered);
