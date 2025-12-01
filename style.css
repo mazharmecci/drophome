@@ -1,4 +1,14 @@
 /* ------------------------------
+   Hide NavBar on desktop
+------------------------------ */
+
+@media screen and (min-width: 1024px) {
+  #navbar-placeholder {
+    display: none;
+  }
+}
+
+/* ------------------------------
    Unified Table Styling (Inventory Look & Feel)
    Applies to all tables, including .summary-table
 ------------------------------ */
