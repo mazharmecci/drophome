@@ -23,6 +23,11 @@
    Applies to all tables, including .summary-table
 ------------------------------ */
 
+.summary-container {
+  width: 100%;
+  padding: 0 16px;
+}
+
 .table-scroll-wrapper {
   width: 100%;
   overflow-x: auto;
