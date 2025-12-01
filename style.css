@@ -1,17 +1,6 @@
 /* ------------------------------
-   Inventory numeric fields
------------------------------- */
-.compact-input {
-  width: 70px;
-  box-sizing: border-box;
-  padding: 2px 4px;
-  font-size: 0.85rem;
-}
-
-/* ------------------------------
    Hide NavBar on desktop
 ------------------------------ */
-
 @media screen and (min-width: 1024px) {
   #navbar-placeholder {
     display: none;
@@ -19,10 +8,8 @@
 }
 
 /* ------------------------------
-   Unified Table Styling (Inventory Look & Feel)
-   Applies to all tables, including .summary-table
+   Unified Table Styling
 ------------------------------ */
-
 .summary-container {
   width: 100%;
   padding: 0 16px;
@@ -55,7 +42,7 @@ table td, .summary-table td {
   text-align: left;
   border-bottom: 1px solid #ddd;
   white-space: normal;
-  overflow-wrap: break-word; /* modern replacement */
+  overflow-wrap: break-word;
   font-size: 0.9rem;
 }
 
@@ -124,7 +111,7 @@ table tbody tr:hover,
 
   .filter-select,
   .filter-date {
-    width: 100%;   /* full width on mobile */
+    width: 100%;
     font-size: 15px;
   }
 
@@ -133,62 +120,27 @@ table tbody tr:hover,
   }
 
   .reset-btn {
-    width: 100%;   /* button spans full width */
+    width: 100%;
     font-size: 15px;
   }
 }
 
 /* ------------------------------
-   Mobile Responsive Header & Breadcrumb
+   Mobile Responsive Header
 ------------------------------ */
-  .brand-header .logo-img {
-    max-width: 120px;
-    height: auto;
-  }
-
-  .brand-header span {
-    font-size: 1rem;
-    font-weight: 600;
-  }
-
-  /* Breadcrumb navigation */
-/* Breadcrumb navigation */
-.breadcrumb-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  padding: 0;
-  margin: 12px 0;
-  justify-content: flex-start; /* always left-aligned */
-  align-items: center;
+.brand-header .logo-img {
+  max-width: 120px;
+  height: auto;
 }
 
-.breadcrumb-item {
-  display: inline-block;
-}
-
-.breadcrumb-link {
-  font-size: 0.95rem;
-  text-decoration: none;
-  color: #007bff;
-}
-
-.breadcrumb-current {
+.brand-header span {
+  font-size: 1rem;
   font-weight: 600;
-  color: #333;
 }
 
-/* Mobile refinement */
-@media (max-width: 768px) {
-  .breadcrumb-list {
-    flex-direction: row;   /* keep horizontal */
-    justify-content: flex-start; /* stay left */
-    align-items: flex-start;
-  }
-}
-
-/* Toast */
-
+/* ------------------------------
+   Toast (checkmark animation)
+------------------------------ */
 .checkmark-circle {
   width: 40px;
   height: 40px;
@@ -219,8 +171,9 @@ table tbody tr:hover,
   to { opacity: 1; transform: scale(1) rotate(-45deg); }
 }
 
-/* Brand name styling */
-
+/* ------------------------------
+   Brand name styling
+------------------------------ */
 .logo-brand {
   display: flex;
   flex-direction: column;
@@ -229,8 +182,6 @@ table tbody tr:hover,
   text-align: center;
   gap: 8px;
 }
-
-/* Brand name styling */
 
 .brand-title {
   font-size: 48px;
@@ -272,7 +223,7 @@ table tbody tr:hover,
 
 .brand-letter {
   font-weight: bold;
-  color: #0066cc; /* bold blue */
+  color: #0066cc;
 }
 
 /* Logo image */
@@ -281,19 +232,35 @@ table tbody tr:hover,
   height: 40px;
 }
 
-/* Default: desktop view */
+/* ------------------------------
+   Navbar / Hamburger
+------------------------------ */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #d0e8ff;
+  color: #333;
+  padding: 10px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Default desktop */
 .hamburger {
-  display: none; /* hidden on desktop */
+  display: none;
 }
 .nav-links {
-  display: flex; /* show full nav on desktop */
+  display: flex;
   gap: 16px;
 }
 
 /* Mobile: show hamburger, hide nav until toggled */
 @media screen and (max-width: 768px) {
   .hamburger {
-    display: flex; /* show hamburger button */
+    display: flex;
     flex-direction: column;
     justify-content: space-between;
     width: 25px;
@@ -308,12 +275,12 @@ table tbody tr:hover,
     width: 25px;
     height: 3px;
     margin: 4px 0;
-    background: #4da3ff; /* light blue lines */
+    background: #4da3ff;
     transition: 0.3s;
   }
 
   .nav-links {
-    display: none; /* hidden until toggled */
+    display: none;
     flex-direction: column;
     position: absolute;
     top: 100%;
@@ -324,11 +291,13 @@ table tbody tr:hover,
   }
 
   .nav-links.active {
-    display: flex; /* shown when JS adds 'active' class */
+    display: flex;
   }
 }
 
-/* History Container */
+/* ------------------------------
+   History Container & Pagination
+------------------------------ */
 .history-container {
   max-width: 1200px;
   margin: 20px auto;
@@ -338,20 +307,17 @@ table tbody tr:hover,
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-/* Page Title */
 .page-title {
   text-align: center;
   margin-bottom: 20px;
 }
 
-/* Link cells */
 .link-cell a {
   color: #0077cc;
   text-decoration: none;
 }
 .link-cell a:hover { text-decoration: underline; }
 
-/* Pagination */
 .pagination {
   display: flex;
   justify-content: center;
@@ -375,7 +341,9 @@ table tbody tr:hover,
   cursor: not-allowed;
 }
 
-/* Tooltip (global reusable) */
+/* ------------------------------
+   Tooltip (global reusable)
+------------------------------ */
 .hint-icon {
   display: inline-block;
   margin-left: 6px;
@@ -419,7 +387,9 @@ table tbody tr:hover,
   transform: translateX(-50%) translateY(-4px);
 }
 
-/* Special input states */
+/* ------------------------------
+   Special input states
+------------------------------ */
 .input-readonly-error { background-color: #ffe6e6; }
 .input-readonly { background-color: #f0f0f0; }
 .input-highlight { background-color: #c7e4ee; }
@@ -476,10 +446,10 @@ body {
 /* ------------------------------
    Card Color Themes
 ------------------------------ */
-.inbound-card { background: #e3f2fd; }   /* light blue */
-.outbound-card { background: #fce4ec; }  /* light pink */
-.stock-card { background: #e8f5e9; }     /* light green */
-.audit-card { background: #fff3e0; }     /* light orange */
+.inbound-card { background: #e3f2fd; }
+.outbound-card { background: #fce4ec; }
+.stock-card { background: #e8f5e9; }
+.audit-card { background: #fff3e0; }
 
 /* ------------------------------
    Header & Footer
@@ -597,32 +567,27 @@ button.btn-clear:hover { background-color: #e6b800; }
 /* ------------------------------
    Filter Bar (Global)
 ------------------------------ */
-/* Filter + Button Row */
-/* Filter + Button Row */
 .filter-bar {
   display: flex;
-  flex-wrap: nowrap;          /* keep in one row on larger screens */
+  flex-wrap: nowrap;
   gap: 12px;
   align-items: flex-end;
   justify-content: flex-start;
   margin-bottom: 20px;
 }
 
-/* Each filter group (label + control) */
 .filter-group {
   display: inline-flex;
   flex-direction: column;
   gap: 4px;
 }
 
-/* Labels */
 .filter-bar label {
   font-weight: 600;
   color: #333;
   font-size: 0.9rem;
 }
 
-/* Inputs / selects */
 .filter-bar input[type="text"],
 .filter-bar input[type="date"],
 .filter-bar select {
@@ -635,7 +600,6 @@ button.btn-clear:hover { background-color: #e6b800; }
   box-sizing: border-box;
 }
 
-/* Action buttons */
 .filter-bar button {
   padding: 8px 16px;
   background-color: #0066cc;
@@ -645,14 +609,13 @@ button.btn-clear:hover { background-color: #e6b800; }
   cursor: pointer;
   font-weight: 500;
   font-size: 0.95rem;
-  white-space: nowrap;        /* keeps button text on one line */
+  white-space: nowrap;
   transition: background 0.2s ease;
 }
 .filter-bar button:hover {
   background-color: #004999;
 }
 
-/* Mobile: allow wrapping so nothing overflows */
 @media (max-width: 768px) {
   .filter-bar {
     flex-wrap: wrap;
@@ -782,7 +745,7 @@ button.btn-clear:hover { background-color: #e6b800; }
 .popup-content button:hover { background: #005bb5; }
 
 /* ------------------------------
-   Toast Messages (continued)
+   Toast Messages
 ------------------------------ */
 .toast {
   position: fixed;
