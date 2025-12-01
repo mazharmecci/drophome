@@ -1,4 +1,3 @@
-// scripts/navbar.js
 document.addEventListener("DOMContentLoaded", () => {
   const hamburgerBtn = document.getElementById("hamburgerBtn");
   const navLinks = document.getElementById("navLinks");
@@ -8,16 +7,14 @@ document.addEventListener("DOMContentLoaded", () => {
   // Toggle menu open/close
   hamburgerBtn.addEventListener("click", (e) => {
     e.stopPropagation();
-    hamburgerBtn.classList.toggle("active");
-    navLinks.classList.toggle("show");
-    toggleOverlay(navLinks.classList.contains("show"));
+    const isOpen = navLinks.classList.toggle("show");
+    hamburgerBtn.classList.toggle("active", isOpen);
+    toggleOverlay(isOpen);
   });
 
   // Close menu when a nav link is clicked
   navLinks.querySelectorAll("a").forEach(link => {
-    link.addEventListener("click", () => {
-      closeMenu();
-    });
+    link.addEventListener("click", closeMenu);
   });
 
   // Close when clicking outside
@@ -36,19 +33,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function toggleOverlay(show) {
     let overlay = document.getElementById("navOverlay");
+
     if (!overlay) {
       overlay = document.createElement("div");
       overlay.id = "navOverlay";
-      overlay.style.position = "fixed";
-      overlay.style.inset = "0";
-      overlay.style.background = "rgba(0,0,0,0.4)";
-      overlay.style.zIndex = "900";
+      overlay.style.cssText = `
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.4);
+        z-index: 900;
+        display: none;
+      `;
       document.body.appendChild(overlay);
 
-      overlay.addEventListener("click", () => {
-        closeMenu();
-      });
+      overlay.addEventListener("click", closeMenu);
     }
+
     overlay.style.display = show ? "block" : "none";
   }
 });
