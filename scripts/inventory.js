@@ -19,19 +19,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const clearBtn = document.getElementById("clearFilters");
   if (clearBtn) clearBtn.addEventListener("click", clearFilters);
+
+  hasInitialLoadCompleted = true;
 });
 
 // 🔄 Load and render inventory records
 async function loadAndRenderRecords(options) {
-  const opts = options || {};
-  const showErrorToast = opts.showErrorToast !== undefined ? opts.showErrorToast : true;
+  const { showErrorToast = true } = options || {};
 
   try {
     const snapshot = await getDocs(collection(db, "inventory"));
     allRecords = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
     renderTable(allRecords);
-
-    hasInitialLoadCompleted = true;
   } catch (err) {
     console.error("❌ loadAndRenderRecords failed:", err);
     if (showErrorToast && hasInitialLoadCompleted) {
@@ -48,10 +47,11 @@ function renderTable(records) {
   tbody.innerHTML = "";
 
   if (!Array.isArray(records) || records.length === 0) {
-    tbody.innerHTML =
+    tbody.innerHTML = (
       '<tr><td colspan="13" style="text-align:center; padding:20px; color:#888;">' +
-      "🚫 No records found. Try adjusting your filters or check back later." +
-      "</td></tr>";
+      '🚫 No records found. Try adjusting your filters or check back later.' +
+      "</td></tr>"
+    );
     return;
   }
 
@@ -110,41 +110,45 @@ function renderTable(records) {
     tbody.appendChild(tr);
   });
 
-  const costInputs = tbody.querySelectorAll('input[name="labelcost"], input[name="threePLcost"]');
-  costInputs.forEach(input => setupDollarInput(input));
+  // Attach currency formatting to cost fields
+  var costInputs = tbody.querySelectorAll('input[name="labelcost"], input[name="threePLcost"]');
+  costInputs.forEach(function (input) {
+    setupDollarInput(input);
+  });
 }
 
-// 💲 Format dollar values
+// 💲 Format dollar values for display
 function formatDollar(value) {
-  const num = parseFloat(value);
-  return isNaN(num) || num === 0 ? "$0.00" : "$" + num.toFixed(2);
+  var num = parseFloat(value);
+  if (isNaN(num) || num === 0) return "$0.00";
+  return "$" + num.toFixed(2);
 }
 
 // 💲 Setup dollar input formatting
 function setupDollarInput(input) {
   if (!input) return;
 
-  input.addEventListener("focus", () => {
+  input.addEventListener("focus", function () {
     input.value = input.value.replace(/[^0-9.]/g, "");
   });
 
-  input.addEventListener("input", () => {
-    const raw = input.value.replace(/[^0-9.]/g, "");
-    const parts = raw.split(".");
-    const whole = parts[0];
-    const decimal = parts[1];
+  input.addEventListener("input", function () {
+    var raw = input.value.replace(/[^0-9.]/g, "");
+    var parts = raw.split(".");
+    var whole = parts[0];
+    var decimal = parts[1];
     input.value = decimal ? whole + "." + decimal.slice(0, 2) : whole;
   });
 
-  input.addEventListener("blur", () => {
-    const num = parseFloat(input.value.replace(/[^0-9.]/g, ""));
+  input.addEventListener("blur", function () {
+    var num = parseFloat(input.value.replace(/[^0-9.]/g, ""));
     input.value = isNaN(num) ? "$0.00" : "$" + num.toFixed(2);
   });
 }
 
 // 🧠 Render status options
 function renderStatusOptions(current) {
-  const statuses = [
+  var statuses = [
     "OrderPending",
     "OrderDelivered",
     "OrderCompleted",
@@ -155,34 +159,33 @@ function renderStatusOptions(current) {
   ];
 
   return statuses
-    .map(status => {
-      const label = status.replace(/([A-Z])/g, " $1").trim();
-      const selected = current === status ? "selected" : "";
-      return `<option value="${status}" ${selected}>${label}</option>`;
+    .map(function (status) {
+      var label = status.replace(/([A-Z])/g, " $1").trim();
+      var selected = current === status ? "selected" : "";
+      return '<option value="' + status + '" ' + selected + ">" + label + "</option>";
     })
     .join("");
 }
 
 // 🔍 Apply filters
 function applyFilters() {
-  const clientInput = document.getElementById("filterClient");
-  const fromInput = document.getElementById("filterStart");
-  const toInput = document.getElementById("filterEnd");
-  const statusSelect = document.getElementById("filterStatus");
+  var clientInput = document.getElementById("filterClient");
+  var fromInput = document.getElementById("filterStart");
+  var toInput = document.getElementById("filterEnd");
+  var statusSelect = document.getElementById("filterStatus");
 
-  const client =
-    clientInput && clientInput.value ? clientInput.value.trim().toLowerCase() : "";
-  const fromDate = fromInput && fromInput.value ? fromInput.value : "";
-  const toDate = toInput && toInput.value ? toInput.value : "";
-  const status = statusSelect && statusSelect.value ? statusSelect.value : "";
+  var client = clientInput && clientInput.value ? clientInput.value.trim().toLowerCase() : "";
+  var fromDate = fromInput && fromInput.value ? fromInput.value : "";
+  var toDate = toInput && toInput.value ? toInput.value : "";
+  var status = statusSelect && statusSelect.value ? statusSelect.value : "";
 
-  const filtered = allRecords.filter(record => {
-    const recordClient = (record.accountName || "").toLowerCase();
-    const recordDate = record.date || "";
-    const matchClient = !client || recordClient.includes(client);
-    const matchStart = !fromDate || recordDate >= fromDate;
-    const matchEnd = !toDate || recordDate <= toDate;
-    const matchStatus = !status || record.status === status;
+  var filtered = allRecords.filter(function (record) {
+    var recordClient = (record.accountName || "").toLowerCase();
+    var recordDate = record.date || "";
+    var matchClient = !client || recordClient.includes(client);
+    var matchStart = !fromDate || recordDate >= fromDate;
+    var matchEnd = !toDate || recordDate <= toDate;
+    var matchStatus = !status || record.status === status;
     return matchClient && matchStart && matchEnd && matchStatus;
   });
 
@@ -191,15 +194,15 @@ function applyFilters() {
 
 // 🧹 Clear filters
 function clearFilters() {
-  const clientInput = document.getElementById("filterClient");
-  const fromInput = document.getElementById("filterStart");
-  const toInput = document.getElementById("filterEnd");
-  const statusSelect = document.getElementById("filterStatus");
+  var cf = document.getElementById("filterClient");
+  var fs = document.getElementById("filterStart");
+  var fe = document.getElementById("filterEnd");
+  var st = document.getElementById("filterStatus");
 
-  if (clientInput) clientInput.value = "";
-  if (fromInput) fromInput.value = "";
-  if (toInput) toInput.value = "";
-  if (statusSelect) statusSelect.value = "";
+  if (cf) cf.value = "";
+  if (fs) fs.value = "";
+  if (fe) fe.value = "";
+  if (st) st.value = "";
 
   renderTable(allRecords);
   showToast("🔄 Filters cleared. Showing all records.");
@@ -207,7 +210,7 @@ function clearFilters() {
 
 // ✏️ Track edits
 window.updateField = function (recordId, field, value, element) {
-  const record = allRecords.find(r => r.id === recordId);
+  var record = allRecords.find(function (r) { return r.id === recordId; });
   if (!record) return;
 
   record[field] = value;
@@ -217,13 +220,12 @@ window.updateField = function (recordId, field, value, element) {
 
 // 💾 Save record
 window.saveRecord = async function (recordId) {
-  const record = allRecords.find(r => r.id === recordId);
+  var record = allRecords.find(function (r) { return r.id === recordId; });
   if (!record || !record._dirty) return;
 
-  const labelCost =
-    parseFloat(String(record.labelcost || "").replace(/[^0-9.]/g, "")) || 0;
-  const threePLCost =
-    parseFloat(String(record.threePLcost || "").replace(/[^0-9.]/g, "")) || 0;
+  // Sanitize currency fields
+  var labelCost = parseFloat(String(record.labelcost || "").replace(/[^0-9.]/g, "")) || 0;
+  var threePLCost = parseFloat(String(record.threePLcost || "").replace(/[^0-9.]/g, "")) || 0;
 
   try {
     await updateDoc(doc(db, "inventory", recordId), {
