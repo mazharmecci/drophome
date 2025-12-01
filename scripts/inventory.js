@@ -22,32 +22,42 @@ async function fetchOrders() {
 }
 
 // 📊 Render table
-function renderTable(orders) {
-  const tbody = document.querySelector("#ordersTable tbody");
+function renderTable(records) {
+  const tbody = document.getElementById("inboundTableBody");
+  if (!tbody) {
+    console.warn("⚠️ inboundTableBody not found in DOM");
+    return;
+  }
   tbody.innerHTML = "";
 
-  orders.forEach(order => {
+  records.forEach(record => {
     const tr = document.createElement("tr");
 
     tr.innerHTML = `
-      <td>${order.orderId}</td>
-      <td>${order.date}</td>
-      <td>${order.accountName}</td>
-      <td>${order.productName}</td>
-      <td>${order.storageLocation}</td>
-      <td>${order.quantity}</td>
+      <td>${record.orderId || ""}</td>
+      <td>${record.date || ""}</td>
+      <td>${record.accountName || ""}</td>
+      <td>${record.productName || ""}</td>
+      <td>${record.sku || ""}</td>
+      <td>${record.quantity || ""}</td>
+      <td><img src="${record.prodpic || ""}" alt="Product" style="max-width:60px"/></td>
+      <td><a href="${record.labellink || "#"}" target="_blank">Label</a></td>
+      <td>${record.labelqty || ""}</td>
+      <td>${record.labelcost || ""}</td>
+      <td>${record.threePLcost || ""}</td>
+      <td>${record.notes || ""}</td>
       <td>
-        <select onchange="updateStatus('${order.id}', this.value)">
-          <option value="OrderPending" ${order.status==="OrderPending"?"selected":""}>Order-Pending</option>
-          <option value="OrderDelivered" ${order.status==="OrderDelivered"?"selected":""}>Order-Delivered</option>
-          <option value="OrderCompleted" ${order.status==="OrderCompleted"?"selected":""}>Order-Completed</option>
-          <option value="CancelCompleted" ${order.status==="CancelCompleted"?"selected":""}>Cancel-Completed</option>
-          <option value="Refunded" ${order.status==="Refunded"?"selected":""}>Refunded</option>
-          <option value="Shipped" ${order.status==="Shipped"?"selected":""}>Shipped</option>
-          <option value="LabelsPrinted" ${order.status==="LabelsPrinted"?"selected":""}>LabelsPrinted</option>
+        <select onchange="updateStatus('${record.id}', this.value)">
+          <option value="OrderPending" ${record.status==="OrderPending"?"selected":""}>Order-Pending</option>
+          <option value="OrderDelivered" ${record.status==="OrderDelivered"?"selected":""}>Order-Delivered</option>
+          <option value="OrderCompleted" ${record.status==="OrderCompleted"?"selected":""}>Order-Completed</option>
+          <option value="CancelCompleted" ${record.status==="CancelCompleted"?"selected":""}>Cancel-Completed</option>
+          <option value="Refunded" ${record.status==="Refunded"?"selected":""}>Refunded</option>
+          <option value="Shipped" ${record.status==="Shipped"?"selected":""}>Shipped</option>
+          <option value="LabelsPrinted" ${record.status==="LabelsPrinted"?"selected":""}>LabelsPrinted</option>
         </select>
       </td>
-      <td><button onclick="saveStatus('${order.id}')">Save</button></td>
+      <td><button onclick="saveStatus('${record.id}')">💾 Save</button></td>
     `;
 
     tbody.appendChild(tr);
