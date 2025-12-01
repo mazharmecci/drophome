@@ -64,10 +64,14 @@ table tbody tr:nth-of-type(even),
 .summary-table tbody tr:nth-of-type(even) {
   background-color: #f3f4f7;
 }
-table tbody tr:hover,
-.summary-table tbody tr:hover {
-  background-color: #e6f2ff;
+
+@media (hover: hover) {
+  table tbody tr:hover,
+  .summary-table tbody tr:hover {
+    background-color: #e6f2ff;
+  }
 }
+
 
 /* ------------------------------
    Mobile Responsive Tables
