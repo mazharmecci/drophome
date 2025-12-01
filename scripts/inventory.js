@@ -19,16 +19,32 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 // 📥 Fetch inventory records
 async function fetchRecords() {
+  console.log("🔄 Starting fetchRecords...");
+
   try {
     const snapshot = await getDocs(collection(db, "inventory"));
-    allRecords = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    console.log("📦 Raw snapshot received:", snapshot);
+
+    allRecords = snapshot.docs.map(d => {
+      const data = d.data();
+      console.log(`🧾 Record ID: ${d.id}`, data);
+      return { id: d.id, ...data };
+    });
+
+    console.log("✅ Total records fetched:", allRecords.length);
     renderTable(allRecords);
   } catch (err) {
     console.error("❌ fetchRecords failed:", err);
-    showToast("⚠️ Failed to load records. Check Firestore rules or collection name.");
+
+    // Only show toast if it's a real error, not just empty
+    if (err.code !== "permission-denied") {
+      showToast("⚠️ Failed to load records. Please check your connection or Firestore rules.");
+    }
+
     renderTable([]); // fallback row
   }
 }
+
 
 // 📊 Render inventory table
 function renderTable(records) {
