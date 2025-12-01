@@ -17,10 +17,10 @@ function animateStockTable() {
 }
 
 // 📊 Render stock summary rows (product-level only)
-async function renderStockSummary(products, summaryBody) {
+async function renderStockSummary(products, summaryBody, fromDate, toDate) {
   for (const product of products) {
-    const inboundTotal = await computeInbound(product);
-    const outboundTotal = await computeOutbound(product);
+    const inboundTotal = await computeInbound(product, fromDate, toDate);
+    const outboundTotal = await computeOutbound(product, fromDate, toDate);
     const available = inboundTotal - outboundTotal;
 
     summaryBody.insertAdjacentHTML("beforeend", `
@@ -35,27 +35,33 @@ async function renderStockSummary(products, summaryBody) {
   }
 }
 
-// 🔢 Compute inbound totals (product only)
-async function computeInbound(product) {
+// 🔢 Compute inbound totals (product + date filter)
+async function computeInbound(product, fromDate, toDate) {
   const snapshot = await getDocs(collection(db, "inbound"));
   let total = 0;
   snapshot.forEach(doc => {
     const data = doc.data();
     if (data.productName === product) {
-      total += parseInt(data.quantityReceived || 0, 10);
+      const recordDate = data.date || "";
+      if ((!fromDate || recordDate >= fromDate) && (!toDate || recordDate <= toDate)) {
+        total += parseInt(data.quantityReceived || 0, 10);
+      }
     }
   });
   return total;
 }
 
-// 🔢 Compute outbound totals (product only)
-async function computeOutbound(product) {
+// 🔢 Compute outbound totals (product + date filter)
+async function computeOutbound(product, fromDate, toDate) {
   const snapshot = await getDocs(collection(db, "outbound_orders"));
   let total = 0;
   snapshot.forEach(doc => {
     const data = doc.data();
     if (data.productName === product) {
-      total += parseInt(data.quantity || 0, 10);
+      const recordDate = data.date || "";
+      if ((!fromDate || recordDate >= fromDate) && (!toDate || recordDate <= toDate)) {
+        total += parseInt(data.quantity || 0, 10);
+      }
     }
   });
   return total;
@@ -116,13 +122,18 @@ async function loadProductFilter() {
   }
 }
 
-// 🧮 Apply product filter
-async function applyProductFilter() {
+// 🧮 Apply product + date filters
+async function applyFilters() {
   const productFilter = document.getElementById("filterProduct");
+  const fromInput = document.getElementById("filterStart");
+  const toInput = document.getElementById("filterEnd");
   const summaryBody = document.getElementById("summaryBody");
+
   if (!productFilter || !summaryBody) return;
 
   const selectedProduct = productFilter.value;
+  const fromDate = fromInput?.value || "";
+  const toDate = toInput?.value || "";
 
   summaryBody.innerHTML = "";
   animateStockTable();
@@ -137,11 +148,11 @@ async function applyProductFilter() {
     });
 
     const filteredProducts = selectedProduct ? [selectedProduct] : [...productSet];
-    await renderStockSummary(filteredProducts, summaryBody);
+    await renderStockSummary(filteredProducts, summaryBody, fromDate, toDate);
     console.log("✅ Filtered stock summary loaded.");
   } catch (err) {
-    console.error("❌ Error applying product filter:", err);
-    showToast("❌ Failed to apply product filter.");
+    console.error("❌ Error applying filters:", err);
+    showToast("❌ Failed to apply filters.");
   }
 }
 
@@ -151,14 +162,21 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadProductFilter();
 
   const productFilter = document.getElementById("filterProduct");
+  const fromInput = document.getElementById("filterStart");
+  const toInput = document.getElementById("filterEnd");
   const resetBtn = document.getElementById("resetFiltersBtn");
 
-  if (productFilter) productFilter.addEventListener("change", applyProductFilter);
+  if (productFilter) productFilter.addEventListener("change", applyFilters);
+  if (fromInput) fromInput.addEventListener("change", applyFilters);
+  if (toInput) toInput.addEventListener("change", applyFilters);
+
   if (resetBtn) {
     resetBtn.addEventListener("click", () => {
       productFilter.selectedIndex = 0;
+      if (fromInput) fromInput.value = "";
+      if (toInput) toInput.value = "";
       loadStockSummary();
-      showToast("🔄 Filter reset — full stock summary restored.");
+      showToast("🔄 Filters reset — full stock summary restored.");
     });
   }
 });
