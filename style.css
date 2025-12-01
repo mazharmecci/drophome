@@ -1,3 +1,14 @@
+/* Inventory numeric fields */
+
+.compact-input {
+  width: 70px;
+  box-sizing: border-box;
+  padding: 2px 4px;
+  font-size: 0.85rem;
+}
+
+/* Toast */
+
 .checkmark-circle {
   width: 40px;
   height: 40px;
@@ -27,6 +38,8 @@
   from { opacity: 0; transform: scale(0) rotate(-45deg); }
   to { opacity: 1; transform: scale(1) rotate(-45deg); }
 }
+
+/* Brand name styling */
 
 .logo-brand {
   display: flex;
