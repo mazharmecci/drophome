@@ -7,8 +7,98 @@
   <link rel="stylesheet" href="/drophome/style.css" />
 </head>
 <body>
-  <div class="container">
-    <h2>📦 Inventory Management</h2>
+  <!-- Shared Navbar -->
+<!-- Shared Navbar -->
+<div id="navbar-placeholder"></div>
+<script>
+  (function () {
+    const placeholder = document.getElementById("navbar-placeholder");
+    if (!placeholder) return;
+
+    // ✅ Correct path: go up one level to reach root navbar.html
+    fetch("../navbar.html")
+      .then(res => {
+        if (!res.ok) throw new Error("Navbar load failed");
+        return res.text();
+      })
+      .then(html => {
+        placeholder.innerHTML = html;
+
+        const hamburgerBtn = document.getElementById("hamburgerBtn");
+        const navLinks = document.getElementById("navLinks");
+        if (!hamburgerBtn || !navLinks) return;
+
+        hamburgerBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          navLinks.classList.toggle("show");
+        });
+
+        document.addEventListener("click", (e) => {
+          if (!navLinks.classList.contains("show")) return;
+          if (!navLinks.contains(e.target) && !hamburgerBtn.contains(e.target)) {
+            navLinks.classList.remove("show");
+          }
+        });
+      })
+      .catch(err => console.error(err));
+  })();
+</script>
+   
+  <div class="history-container">
+    
+    <h3 class="page-title">Dispatch viewer</h3>
+
+    <!-- Breadcrumb Navigation -->
+    <nav class="breadcrumb-nav" aria-label="Quick Links">
+      <ol class="breadcrumb-list">
+        <li class="breadcrumb-item">
+          <a href="https://mazharmecci.github.io/drophome/" class="breadcrumb-link">🏠 Home</a>
+        </li>
+        <li class="breadcrumb-item active">
+          <a href="inbound-history.html" class="breadcrumb-link">Inventory</a>
+        </li>
+      </ol>
+    </nav>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div class="filter-group">
+        <label for="filterClient">Client:</label>
+        <input type="text" id="filterClient" placeholder="Enter client name" />
+      </div>
+    
+      <div class="filter-group">
+        <label for="filterStart">From:</label>
+        <input type="date" id="filterStart" />
+      </div>
+    
+      <div class="filter-group">
+        <label for="filterEnd">To:</label>
+        <input type="date" id="filterEnd" />
+      </div>
+    
+      <button id="applyFilters" class="btn-primary">🔍 Apply Filters</button>
+      <button id="clearFilters" class="btn-clear">🧹 Clear</button>
+    </div>
+
+    <!-- Records Table -->
+    <table class="summary-table">
+      <thead>
+        <tr>
+          <th>Start Date</th>
+          <th>Client Name</th>
+          <th>Product Name</th>
+          <th>SKU</th>
+          <th>Quantity</th>
+          <th>Product Picture</th>
+          <th>Label Link</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody id="inboundTableBody">
+        <!-- Records will be injected here -->
+      </tbody>
+    </table>
 
     <form id="inventoryForm">
       <label for="prodpic">Product Picture URL</label>
