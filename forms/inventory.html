@@ -62,17 +62,31 @@
         <label for="filterClient">Client:</label>
         <input type="text" id="filterClient" placeholder="Enter client name" />
       </div>
-
+    
       <div class="filter-group">
         <label for="filterStart">From:</label>
         <input type="date" id="filterStart" />
       </div>
-
+    
       <div class="filter-group">
         <label for="filterEnd">To:</label>
         <input type="date" id="filterEnd" />
       </div>
-
+    
+      <div class="filter-group">
+        <label for="filterStatus">Status:</label>
+        <select id="filterStatus">
+          <option value="">All Statuses</option>
+          <option value="OrderPending">Order Pending</option>
+          <option value="OrderDelivered">Order Delivered</option>
+          <option value="OrderCompleted">Order Completed</option>
+          <option value="CancelCompleted">Cancel Completed</option>
+          <option value="Refunded">Refunded</option>
+          <option value="Shipped">Shipped</option>
+          <option value="LabelsPrinted">Labels Printed</option>
+        </select>
+      </div>
+    
       <button id="applyFilters" class="btn-primary">🔍 Apply Filters</button>
       <button id="clearFilters" class="btn-clear">🧹 Clear</button>
     </div>
