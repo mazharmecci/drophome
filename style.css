@@ -1,3 +1,31 @@
+.logo-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 8px;
+}
+
+/* Brand name styling */
+.brand-name {
+  font-family: "Goudy Stout", cursive, serif;
+  font-size: 1.5rem;
+  margin: 0;
+  color: #333;
+}
+
+.brand-letter {
+  font-weight: bold;
+  color: #0066cc; /* bold blue */
+}
+
+/* Logo image */
+.logo-img {
+  width: auto;
+  height: 40px;
+}
+
 /* Default: desktop view */
 .hamburger {
   display: none; /* hidden on desktop */
@@ -641,12 +669,6 @@ table tr:hover { background: #f1f7ff; }
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
-}
-
-.logo-img {
-  height: 40px;
-  max-width: 160px;
-  object-fit: contain;
 }
 
 .filters {
