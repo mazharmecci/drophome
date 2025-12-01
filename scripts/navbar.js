@@ -4,40 +4,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!hamburgerBtn || !navLinks) return;
 
-  const overlay = createOverlay();
+  const overlay = setupOverlay();
 
-  // Toggle menu open/close
+  // Toggle drawer
   hamburgerBtn.addEventListener("click", (e) => {
     e.stopPropagation();
     const isOpen = navLinks.classList.toggle("show");
     hamburgerBtn.classList.toggle("active", isOpen);
-    toggleOverlay(isOpen);
+    overlay.style.display = isOpen ? "block" : "none";
   });
 
-  // Close menu when a nav link is clicked
+  // Close drawer on nav link click
   navLinks.querySelectorAll("a").forEach(link =>
-    link.addEventListener("click", closeMenu)
+    link.addEventListener("click", closeDrawer)
   );
 
-  // Close when clicking outside
+  // Close drawer on outside click
   document.addEventListener("click", (e) => {
     if (!navLinks.classList.contains("show")) return;
     if (!navLinks.contains(e.target) && !hamburgerBtn.contains(e.target)) {
-      closeMenu();
+      closeDrawer();
     }
   });
 
-  function closeMenu() {
+  function closeDrawer() {
     navLinks.classList.remove("show");
     hamburgerBtn.classList.remove("active");
-    toggleOverlay(false);
+    overlay.style.display = "none";
   }
 
-  function toggleOverlay(show) {
-    overlay.style.display = show ? "block" : "none";
-  }
-
-  function createOverlay() {
+  function setupOverlay() {
     let existing = document.getElementById("navOverlay");
     if (existing) return existing;
 
@@ -49,8 +45,9 @@ document.addEventListener("DOMContentLoaded", () => {
       background: rgba(0,0,0,0.4);
       z-index: 900;
       display: none;
+      transition: opacity 0.3s ease-in-out;
     `;
-    div.addEventListener("click", closeMenu);
+    div.addEventListener("click", closeDrawer);
     document.body.appendChild(div);
     return div;
   }
