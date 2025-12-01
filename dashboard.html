@@ -68,7 +68,7 @@
       <!-- Logo + Brand -->
       <header class="brand-header" style="display:flex;align-items:center;justify-content:center;gap:12px;">
         <img src="images/DH-white.png" alt="Drophome Logo" class="logo-img">
-        <span>Sales Summary</span>
+        <span>Sales</span>
       </header>
 
       <!-- Breadcrumb -->
@@ -85,50 +85,31 @@
 
       <!-- Stock Summary Section -->
       <section class="summary-container">
+      
         <!-- Filters -->
-        <div class="filters" style="display:flex; flex-wrap:wrap; gap:16px; margin-bottom:12px; justify-content:center;">
-          <select id="filterProduct" style="width:220px; height:40px; font-size:16px;">
+        <div class="filters">
+          <select id="filterProduct" class="filter-select">
             <option value="" disabled selected>Choose product 📦</option>
           </select>
-          <input id="filterStart" type="date" style="height:40px; font-size:16px; padding:0 8px;" />
-          <input id="filterEnd" type="date" style="height:40px; font-size:16px; padding:0 8px;" />
+          <input id="filterStart" type="date" class="filter-date" />
+          <input id="filterEnd" type="date" class="filter-date" />
         </div>
-
-        <div style="text-align:center; margin-bottom:16px;">
-          <button id="resetFiltersBtn"
-            style="height:40px; padding:0 24px; font-size:16px; background-color:#e0e0e0; border:none; border-radius:6px; cursor:pointer;">
-            🔄 Reset Filters
-          </button>
+      
+        <!-- Reset Button -->
+        <div class="filters-actions">
+          <button id="resetFiltersBtn" class="reset-btn">🔄 Reset Filters</button>
         </div>
-
+      
         <!-- 📊 Responsive Scroll Wrapper -->
-        <div class="table-scroll-wrapper" style="
-          overflow-x:auto;
-          max-width:100%;
-          border-radius:8px;
-          border:1px solid #ccc;
-          box-shadow:0 2px 6px rgba(0,0,0,0.05);
-        ">
-          <table class="summary-table" style="
-            width:100%;
-            border-collapse:collapse;
-            font-size:15px;
-            background-color:#fff;
-          ">
-            <thead style="
-              position:sticky;
-              top:0;
-              background-color:#007bff;
-              color:white;
-              z-index:1;
-              text-align:left;
-            ">
+        <div class="table-scroll-wrapper">
+          <table class="summary-table">
+            <thead>
               <tr>
-                <th style="padding:12px;">📦 Product</th>
-                 <th style="padding:12px;">🧑‍💼 Client</th>
-                <th style="padding:12px;">🚚 Inbd</th>
-                <th style="padding:12px;">🚚 Outd</th>
-                <th style="padding:12px;">📅 Quantity</th>
+                <th>📦 Product</th>
+                <th>🧑‍💼 Client</th>
+                <th>🚚 Inbd</th>
+                <th>🚚 Outd</th>
+                <th>📅 Quantity</th>
               </tr>
             </thead>
             <tbody id="summaryBody">
@@ -136,7 +117,7 @@
             </tbody>
           </table>
         </div>
-      </section>      
+      </section>
     </main>
 
   <script>
