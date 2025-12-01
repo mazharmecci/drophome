@@ -10,18 +10,23 @@ import {
 let allRecords = [];
 let hasInitialLoadCompleted = false;
 
+// 🔄 DOM ready
 document.addEventListener("DOMContentLoaded", async () => {
   await loadAndRenderRecords({ showErrorToast: false });
 
-  document.getElementById("applyFilters")?.addEventListener("click", applyFilters);
-  document.getElementById("clearFilters")?.addEventListener("click", clearFilters);
+  const applyBtn = document.getElementById("applyFilters");
+  if (applyBtn) applyBtn.addEventListener("click", applyFilters);
 
-  // ✅ just assign once, not inside a condition
+  const clearBtn = document.getElementById("clearFilters");
+  if (clearBtn) clearBtn.addEventListener("click", clearFilters);
+
   hasInitialLoadCompleted = true;
 });
 
 // 🔄 Load and render inventory records
-async function loadAndRenderRecords({ showErrorToast = true } = {}) {
+async function loadAndRenderRecords(options) {
+  const { showErrorToast = true } = options || {};
+
   try {
     const snapshot = await getDocs(collection(db, "inventory"));
     allRecords = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -42,10 +47,11 @@ function renderTable(records) {
   tbody.innerHTML = "";
 
   if (!Array.isArray(records) || records.length === 0) {
-    tbody.innerHTML = `
-      <tr><td colspan="13" style="text-align:center; padding:20px; color:#888;">
-        🚫 No records found. Try adjusting your filters or check back later.
-      </td></tr>`;
+    tbody.innerHTML = (
+      '<tr><td colspan="13" style="text-align:center; padding:20px; color:#888;">' +
+      '🚫 No records found. Try adjusting your filters or check back later.' +
+      "</td></tr>"
+    );
     return;
   }
 
@@ -60,83 +66,126 @@ function renderTable(records) {
       <td>${record.quantity || ""}</td>
       <td><img src="${record.prodpic || ""}" alt="Product" style="max-width:60px"/></td>
 
-      <td><input class="compact-input" type="number" value="${record.labelqty ?? 0}"
-        onchange="updateField('${record.id}','labelqty',this.value,this)" /></td>
+      <td>
+        <input
+          class="compact-input"
+          type="number"
+          value="${record.labelqty != null ? record.labelqty : 0}"
+          onchange="updateField('${record.id}','labelqty',this.value,this)"
+        />
+      </td>
 
-      <td><input class="compact-input" type="text" name="labelcost"
-        value="${formatDollar(record.labelcost)}" placeholder="$0.00"
-        onchange="updateField('${record.id}','labelcost',this.value,this)" /></td>
+      <td>
+        <input
+          class="compact-input"
+          type="text"
+          name="labelcost"
+          value="${formatDollar(record.labelcost)}"
+          placeholder="$0.00"
+          onchange="updateField('${record.id}','labelcost',this.value,this)"
+        />
+      </td>
 
-      <td><input class="compact-input" type="text" name="threePLcost"
-        value="${formatDollar(record.threePLcost)}" placeholder="$0.00"
-        onchange="updateField('${record.id}','threePLcost',this.value,this)" /></td>
+      <td>
+        <input
+          class="compact-input"
+          type="text"
+          name="threePLcost"
+          value="${formatDollar(record.threePLcost)}"
+          placeholder="$0.00"
+          onchange="updateField('${record.id}','threePLcost',this.value,this)"
+        />
+      </td>
 
-      <td><select onchange="updateField('${record.id}','status',this.value,this)">
-        ${renderStatusOptions(record.status)}
-      </select></td>
+      <td>
+        <select onchange="updateField('${record.id}','status',this.value,this)">
+          ${renderStatusOptions(record.status)}
+        </select>
+      </td>
 
-      <td><button onclick="saveRecord('${record.id}')">💾 Save</button></td>
+      <td>
+        <button class="btn-save" onclick="saveRecord('${record.id}')">💾 Save</button>
+      </td>
     `;
     tbody.appendChild(tr);
   });
 
-  tbody.querySelectorAll('input[name="labelcost"], input[name="threePLcost"]').forEach(setupDollarInput);
+  // Attach currency formatting to cost fields
+  var costInputs = tbody.querySelectorAll('input[name="labelcost"], input[name="threePLcost"]');
+  costInputs.forEach(function (input) {
+    setupDollarInput(input);
+  });
 }
 
-// 💲 Format dollar values
+// 💲 Format dollar values for display
 function formatDollar(value) {
-  const num = parseFloat(value);
-  return isNaN(num) || num === 0 ? "$0.00" : `$${num.toFixed(2)}`;
+  var num = parseFloat(value);
+  if (isNaN(num) || num === 0) return "$0.00";
+  return "$" + num.toFixed(2);
 }
 
 // 💲 Setup dollar input formatting
 function setupDollarInput(input) {
   if (!input) return;
 
-  input.addEventListener("focus", () => {
+  input.addEventListener("focus", function () {
     input.value = input.value.replace(/[^0-9.]/g, "");
   });
 
-  input.addEventListener("input", () => {
-    let raw = input.value.replace(/[^0-9.]/g, "");
-    const [whole, decimal] = raw.split(".");
-    input.value = decimal ? `${whole}.${decimal.slice(0, 2)}` : whole;
+  input.addEventListener("input", function () {
+    var raw = input.value.replace(/[^0-9.]/g, "");
+    var parts = raw.split(".");
+    var whole = parts[0];
+    var decimal = parts[1];
+    input.value = decimal ? whole + "." + decimal.slice(0, 2) : whole;
   });
 
-  input.addEventListener("blur", () => {
-    const num = parseFloat(input.value.replace(/[^0-9.]/g, ""));
-    input.value = isNaN(num) ? "$0.00" : `$${num.toFixed(2)}`;
+  input.addEventListener("blur", function () {
+    var num = parseFloat(input.value.replace(/[^0-9.]/g, ""));
+    input.value = isNaN(num) ? "$0.00" : "$" + num.toFixed(2);
   });
 }
 
 // 🧠 Render status options
 function renderStatusOptions(current) {
-  const statuses = [
-    "OrderPending", "OrderDelivered", "OrderCompleted",
-    "CancelCompleted", "Refunded", "Shipped", "LabelsPrinted"
+  var statuses = [
+    "OrderPending",
+    "OrderDelivered",
+    "OrderCompleted",
+    "CancelCompleted",
+    "Refunded",
+    "Shipped",
+    "LabelsPrinted"
   ];
 
-  return statuses.map(status => {
-    const label = status.replace(/([A-Z])/g, " $1").trim();
-    const selected = current === status ? "selected" : "";
-    return `<option value="${status}" ${selected}>${label}</option>`;
-  }).join("");
+  return statuses
+    .map(function (status) {
+      var label = status.replace(/([A-Z])/g, " $1").trim();
+      var selected = current === status ? "selected" : "";
+      return '<option value="' + status + '" ' + selected + ">" + label + "</option>";
+    })
+    .join("");
 }
 
 // 🔍 Apply filters
 function applyFilters() {
-  const client = document.getElementById("filterClient")?.value.trim().toLowerCase();
-  const fromDate = document.getElementById("filterStart")?.value;
-  const toDate = document.getElementById("filterEnd")?.value;
-  const status = document.getElementById("filterStatus")?.value;
+  var clientInput = document.getElementById("filterClient");
+  var fromInput = document.getElementById("filterStart");
+  var toInput = document.getElementById("filterEnd");
+  var statusSelect = document.getElementById("filterStatus");
 
-  const filtered = allRecords.filter(record => {
-    const recordClient = (record.accountName || "").toLowerCase();
-    const recordDate = record.date || "";
-    const matchClient = !client || recordClient.includes(client);
-    const matchStart = !fromDate || recordDate >= fromDate;
-    const matchEnd = !toDate || recordDate <= toDate;
-    const matchStatus = !status || record.status === status;
+  var client = clientInput && clientInput.value ? clientInput.value.trim().toLowerCase() : "";
+  var fromDate = fromInput && fromInput.value ? fromInput.value : "";
+  var toDate = toInput && toInput.value ? toInput.value : "";
+  var status = statusSelect && statusSelect.value ? statusSelect.value : "";
+
+  var filtered = allRecords.filter(function (record) {
+    var recordClient = (record.accountName || "").toLowerCase();
+    var recordDate = record.date || "";
+    var matchClient = !client || recordClient.includes(client);
+    var matchStart = !fromDate || recordDate >= fromDate;
+    var matchEnd = !toDate || recordDate <= toDate;
+    var matchStatus = !status || record.status === status;
     return matchClient && matchStart && matchEnd && matchStatus;
   });
 
@@ -145,10 +194,15 @@ function applyFilters() {
 
 // 🧹 Clear filters
 function clearFilters() {
-  document.getElementById("filterClient")?.value = "";
-  document.getElementById("filterStart")?.value = "";
-  document.getElementById("filterEnd")?.value = "";
-  document.getElementById("filterStatus")?.value = "";
+  var cf = document.getElementById("filterClient");
+  var fs = document.getElementById("filterStart");
+  var fe = document.getElementById("filterEnd");
+  var st = document.getElementById("filterStatus");
+
+  if (cf) cf.value = "";
+  if (fs) fs.value = "";
+  if (fe) fe.value = "";
+  if (st) st.value = "";
 
   renderTable(allRecords);
   showToast("🔄 Filters cleared. Showing all records.");
@@ -156,7 +210,7 @@ function clearFilters() {
 
 // ✏️ Track edits
 window.updateField = function (recordId, field, value, element) {
-  const record = allRecords.find(r => r.id === recordId);
+  var record = allRecords.find(function (r) { return r.id === recordId; });
   if (!record) return;
 
   record[field] = value;
@@ -166,12 +220,12 @@ window.updateField = function (recordId, field, value, element) {
 
 // 💾 Save record
 window.saveRecord = async function (recordId) {
-  const record = allRecords.find(r => r.id === recordId);
+  var record = allRecords.find(function (r) { return r.id === recordId; });
   if (!record || !record._dirty) return;
 
   // Sanitize currency fields
-  const labelCost = parseFloat((record.labelcost || "").toString().replace(/[^0-9.]/g, "")) || 0;
-  const threePLCost = parseFloat((record.threePLcost || "").toString().replace(/[^0-9.]/g, "")) || 0;
+  var labelCost = parseFloat(String(record.labelcost || "").replace(/[^0-9.]/g, "")) || 0;
+  var threePLCost = parseFloat(String(record.threePLcost || "").replace(/[^0-9.]/g, "")) || 0;
 
   try {
     await updateDoc(doc(db, "inventory", recordId), {
@@ -182,11 +236,10 @@ window.saveRecord = async function (recordId) {
       updatedAt: new Date()
     });
 
-    showToast(`✅ Record updated for ${record.orderId || record.id}`);
+    showToast("✅ Record updated for " + (record.orderId || record.id));
     showSuccessPopup();
     record._dirty = false;
 
-    // Reload table after save
     await loadAndRenderRecords({ showErrorToast: true });
   } catch (err) {
     console.error("❌ saveRecord failed:", err);
