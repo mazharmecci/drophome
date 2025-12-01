@@ -1,33 +1,36 @@
-/* Default: Hide hamburger on desktop, show full nav */
+/* Default: desktop view */
 .hamburger {
-  display: none;
+  display: none; /* hidden on desktop */
 }
 .nav-links {
-  display: flex;
+  display: flex; /* show full nav on desktop */
+  gap: 16px;
 }
 
-/* Mobile: Show hamburger, style lines */
+/* Mobile: show hamburger, hide nav until toggled */
 @media screen and (max-width: 768px) {
-  .hamburger span {
-    display: block;
+  .hamburger {
+    display: flex; /* show hamburger button */
+    flex-direction: column;
+    justify-content: space-between;
     width: 25px;
-    height: 3px;
-    margin: 5px 0;
-    background: #4da3ff; /* light blue */
-    transition: 0.3s;
+    height: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
   }
-}
 
   .hamburger span {
     display: block;
     width: 25px;
     height: 3px;
-    margin: 5px 0;
-    background: #000;
+    margin: 4px 0;
+    background: #4da3ff; /* light blue lines */
     transition: 0.3s;
   }
+
   .nav-links {
-    display: none; /* Hidden until toggled */
+    display: none; /* hidden until toggled */
     flex-direction: column;
     position: absolute;
     top: 100%;
@@ -36,9 +39,12 @@
     background: white;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
   }
+
   .nav-links.active {
-    display: flex; /* Shown when JS adds 'active' class */
+    display: flex; /* shown when JS adds 'active' class */
   }
+}
+
 
 /* History Container */
 .history-container {
