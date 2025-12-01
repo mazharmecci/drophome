@@ -15,7 +15,7 @@
 /* Left side: logo + hamburger */
 .navbar-left {
   display: flex;
-  flex-direction: column;         /* logo on top, hamburger below */
+  flex-direction: column;   /* logo on top, hamburger below */
   align-items: flex-start;
   gap: 6px;
 }
@@ -38,7 +38,7 @@
 
 /* Hamburger Icon */
 .hamburger {
-  display: none;
+  display: none; /* shown only on mobile */
   flex-direction: column;
   justify-content: space-between;
   width: 22px;
@@ -51,12 +51,23 @@
   display: block;
   height: 2px;
   width: 100%;
-  background: #001f4d;       /* dark navy blue lines */
+  background: #001f4d; /* dark navy blue lines */
   border-radius: 2px;
   transition: all 0.3s ease;
 }
 
-/* Nav Links */
+/* Morph into X */
+.hamburger.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+.hamburger.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(6px, -6px);
+}
+
+/* Nav Links (desktop) */
 .nav-links {
   display: flex;
   gap: 16px;
@@ -72,46 +83,46 @@
   color: #0066cc;
 }
 
-/* Morph into X */
-.hamburger.active span:nth-child(1) {
-  transform: rotate(45deg) translate(5px, 5px);
-}
-.hamburger.active span:nth-child(2) {
-  opacity: 0;
-}
-.hamburger.active span:nth-child(3) {
-  transform: rotate(-45deg) translate(6px, -6px);
-}
-
-/* Mobile Responsive */
+/* Mobile Drawer */
 @media (max-width: 768px) {
-  .hamburger { 
-    display: flex; 
-  }
-
-  /* Hide desktop nav; show as dropdown under logo/hamburger */
-  .nav-links {
-    display: none;
-    flex-direction: column;
-    background: #333;
-    position: absolute;
-    top: 70px;              /* just below logo + hamburger */
-    left: 20px;             /* align to left, under brand */
-    padding: 16px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  }
-
-  .nav-links.show {
+  .hamburger {
     display: flex;
   }
 
-  .nav-links a {
-    color: #fff;            /* white links in mobile dropdown */
+  .nav-links {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 100%;
+    background: #fff;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+    flex-direction: column;
+    padding: 2rem 1rem;
+    transform: translateX(-100%); /* hidden offscreen */
+    transition: transform 0.3s ease-in-out;
+    z-index: 1000;
   }
 
-  .nav-links a:hover {
-    color: Black;         /* optional: black hover on mobile */
+  .nav-links.show {
+    transform: translateX(0); /* slide in */
+  }
+
+  .nav-links a {
+    margin: 0.75rem 0;
+  }
+
+  #navOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 900;
+    display: none;
+    transition: opacity 0.3s ease-in-out;
+  }
+  #navOverlay.show {
+    display: block;
+    opacity: 1;
   }
 }
 
