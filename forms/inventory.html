@@ -15,7 +15,7 @@
       if (!placeholder) return;
 
       // Load shared navbar
-      fetch("../scripts/navbar.html")
+      fetch("navbar.html")
         .then(res => {
           if (!res.ok) throw new Error("Navbar load failed");
           return res.text();
