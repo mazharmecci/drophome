@@ -1,4 +1,5 @@
 import { db } from "./firebase.js";
+import { showToast, showSuccessPopup } from "./popupHandler.js";
 import {
   collection,
   getDocs,
@@ -6,75 +7,29 @@ import {
   doc
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-import { showSuccessPopup, showToast } from "./popupHandler.js";
-
 let allRecords = [];
 let hasInitialLoadCompleted = false;
 
-// 🔄 Initialize on DOM ready
 document.addEventListener("DOMContentLoaded", async () => {
-  await loadAndRenderRecords({ showErrorToast: false }); // no toast on first load
+  await loadAndRenderRecords({ showErrorToast: false });
 
-  const applyBtn = document.getElementById("applyFilters");
-  if (applyBtn) applyBtn.addEventListener("click", applyFilters);
-
-  hasInitialLoadCompleted = true;
+  document.getElementById("applyFilters")?.addEventListener("click", applyFilters);
+  document.getElementById("clearFilters")?.addEventListener("click", clearFilters);
 });
 
-// 🔄 Generic loader + renderer
+// 🔄 Load and render inventory records
 async function loadAndRenderRecords({ showErrorToast = true } = {}) {
   try {
-    allRecords = await fetchRecords();
+    const snapshot = await getDocs(collection(db, "inventory"));
+    allRecords = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     renderTable(allRecords);
   } catch (err) {
     console.error("❌ loadAndRenderRecords failed:", err);
-
-    if (showErrorToast && hasInitialLoadCompleted && err.code !== "permission-denied") {
+    if (showErrorToast && hasInitialLoadCompleted) {
       showToast("⚠️ Failed to load records. Please check your connection or Firestore rules.");
     }
-
-    renderTable([]); // fallback UI
+    renderTable([]);
   }
-}
-
-// 📥 Fetch inventory records (data only)
-async function fetchRecords() {
-  console.log("🔄 Starting fetchRecords...");
-  const snapshot = await getDocs(collection(db, "inventory"));
-
-  const records = snapshot.docs.map(d => {
-    const data = d.data();
-    return { id: d.id, ...data };
-  });
-
-  console.log("✅ Total records fetched:", records.length);
-  return records;
-}
-
-// 💲 Dollar-format helper (reused logic)
-function setupDollarInput(input) {
-  if (!input) return;
-
-  input.addEventListener("focus", () => {
-    const raw = input.value.replace(/[^0-9.]/g, "");
-    input.value = raw;
-  });
-
-  input.addEventListener("input", () => {
-    let raw = input.value.replace(/[^0-9.]/g, "");
-    const parts = raw.split(".");
-    let sanitized = parts[0];
-    if (parts.length > 1) {
-      sanitized += "." + parts[1].slice(0, 2);
-    }
-    input.value = sanitized;
-  });
-
-  input.addEventListener("blur", () => {
-    const raw = input.value.replace(/[^0-9.]/g, "");
-    const num = parseFloat(raw);
-    input.value = isNaN(num) ? "$0.00" : `$${num.toFixed(2)}`;
-  });
 }
 
 // 📊 Render inventory table
@@ -84,13 +39,10 @@ function renderTable(records) {
   tbody.innerHTML = "";
 
   if (!Array.isArray(records) || records.length === 0) {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td colspan="13" style="text-align:center; padding:20px; color:#888;">
+    tbody.innerHTML = `
+      <tr><td colspan="13" style="text-align:center; padding:20px; color:#888;">
         🚫 No records found. Try adjusting your filters or check back later.
-      </td>
-    `;
-    tbody.appendChild(tr);
+      </td></tr>`;
     return;
   }
 
@@ -105,120 +57,124 @@ function renderTable(records) {
       <td>${record.quantity || ""}</td>
       <td><img src="${record.prodpic || ""}" alt="Product" style="max-width:60px"/></td>
 
-      <td>
-        <input
-          class="compact-input"
-          type="number"
-          value="${record.labelqty ?? 0}"
-          onchange="updateField('${record.id}','labelqty',this.value,this)"
-        />
-      </td>
-      <td>
-        <input
-          class="compact-input"
-          type="text"
-          name="labelcost"
-          value="${formatDollarCell(record.labelcost)}"
-          placeholder="$0.00"
-          onchange="updateField('${record.id}','labelcost',this.value,this)"
-        />
-      </td>
-      <td>
-        <input
-          class="compact-input"
-          type="text"
-          name="threePLcost"
-          value="${formatDollarCell(record.threePLcost)}"
-          placeholder="$0.00"
-          onchange="updateField('${record.id}','threePLcost',this.value,this)"
-        />
-      </td>
+      <td><input class="compact-input" type="number" value="${record.labelqty ?? 0}"
+        onchange="updateField('${record.id}','labelqty',this.value,this)" /></td>
 
-      <td>
-        <select onchange="updateField('${record.id}','status',this.value,this)">
-          ${renderStatusOptions(record.status)}
-        </select>
-      </td>
+      <td><input class="compact-input" type="text" name="labelcost"
+        value="${formatDollar(record.labelcost)}" placeholder="$0.00"
+        onchange="updateField('${record.id}','labelcost',this.value,this)" /></td>
+
+      <td><input class="compact-input" type="text" name="threePLcost"
+        value="${formatDollar(record.threePLcost)}" placeholder="$0.00"
+        onchange="updateField('${record.id}','threePLcost',this.value,this)" /></td>
+
+      <td><select onchange="updateField('${record.id}','status',this.value,this)">
+        ${renderStatusOptions(record.status)}
+      </select></td>
 
       <td><button onclick="saveRecord('${record.id}')">💾 Save</button></td>
     `;
     tbody.appendChild(tr);
   });
 
-  // Attach dollar formatting to cost inputs after rows are in the DOM
   tbody.querySelectorAll('input[name="labelcost"], input[name="threePLcost"]').forEach(setupDollarInput);
 }
 
-// Helper to display existing numeric values as $x.xx
-function formatDollarCell(value) {
+// 💲 Format dollar values
+function formatDollar(value) {
   const num = parseFloat(value);
-  if (isNaN(num) || num === 0) return "$0.00";
-  return `$${num.toFixed(2)}`;
+  return isNaN(num) || num === 0 ? "$0.00" : `$${num.toFixed(2)}`;
 }
 
-// 🧠 Status options renderer
+// 💲 Setup dollar input formatting
+function setupDollarInput(input) {
+  if (!input) return;
+
+  input.addEventListener("focus", () => {
+    input.value = input.value.replace(/[^0-9.]/g, "");
+  });
+
+  input.addEventListener("input", () => {
+    let raw = input.value.replace(/[^0-9.]/g, "");
+    const [whole, decimal] = raw.split(".");
+    input.value = decimal ? `${whole}.${decimal.slice(0, 2)}` : whole;
+  });
+
+  input.addEventListener("blur", () => {
+    const num = parseFloat(input.value.replace(/[^0-9.]/g, ""));
+    input.value = isNaN(num) ? "$0.00" : `$${num.toFixed(2)}`;
+  });
+}
+
+// 🧠 Render status options
 function renderStatusOptions(current) {
   const statuses = [
-    "OrderPending",
-    "OrderDelivered",
-    "OrderCompleted",
-    "CancelCompleted",
-    "Refunded",
-    "Shipped",
-    "LabelsPrinted"
+    "OrderPending", "OrderDelivered", "OrderCompleted",
+    "CancelCompleted", "Refunded", "Shipped", "LabelsPrinted"
   ];
 
-  return statuses
-    .map(
-      s =>
-        `<option value="${s}" ${current === s ? "selected" : ""}>${s
-          .replace(/([A-Z])/g, " $1")
-          .trim()}</option>`
-    )
-    .join("");
+  return statuses.map(status => {
+    const label = status.replace(/([A-Z])/g, " $1").trim();
+    const selected = current === status ? "selected" : "";
+    return `<option value="${status}" ${selected}>${label}</option>`;
+  }).join("");
 }
 
-// 🔍 Apply filters (no toast here)
+// 🔍 Apply filters
 function applyFilters() {
-  const searchId = document.getElementById("searchOrderId")?.value.trim();
+  const client = document.getElementById("filterClient")?.value.trim().toLowerCase();
+  const fromDate = document.getElementById("filterStart")?.value;
+  const toDate = document.getElementById("filterEnd")?.value;
   const status = document.getElementById("filterStatus")?.value;
 
-  const filtered = allRecords.filter(r =>
-    (!searchId || (r.orderId && r.orderId.includes(searchId))) &&
-    (!status || r.status === status)
-  );
+  const filtered = allRecords.filter(record => {
+    const recordClient = (record.accountName || "").toLowerCase();
+    const recordDate = record.date || "";
+    const matchClient = !client || recordClient.includes(client);
+    const matchStart = !fromDate || recordDate >= fromDate;
+    const matchEnd = !toDate || recordDate <= toDate;
+    const matchStatus = !status || record.status === status;
+    return matchClient && matchStart && matchEnd && matchStatus;
+  });
 
   renderTable(filtered);
 }
 
-// ✏️ Track edits + highlight
+// 🧹 Clear filters
+function clearFilters() {
+  document.getElementById("filterClient")?.value = "";
+  document.getElementById("filterStart")?.value = "";
+  document.getElementById("filterEnd")?.value = "";
+  document.getElementById("filterStatus")?.value = "";
+
+  renderTable(allRecords);
+  showToast("🔄 Filters cleared. Showing all records.");
+}
+
+// ✏️ Track edits
 window.updateField = function (recordId, field, value, element) {
   const record = allRecords.find(r => r.id === recordId);
   if (!record) return;
 
   record[field] = value;
   record._dirty = true;
-
   if (element) element.style.backgroundColor = "#fff3cd";
 };
 
-// 💾 Save changes (user action → show toast)
+// 💾 Save record
 window.saveRecord = async function (recordId) {
   const record = allRecords.find(r => r.id === recordId);
   if (!record || !record._dirty) return;
 
-  // Sanitize currency fields to numbers before saving
-  const labelCostRaw = (record.labelcost || "").toString().replace(/[^0-9.]/g, "");
-  const threePLCostRaw = (record.threePLcost || "").toString().replace(/[^0-9.]/g, "");
-
-  const labelcostNum = parseFloat(labelCostRaw) || 0;
-  const threePLcostNum = parseFloat(threePLCostRaw) || 0;
+  // Sanitize currency fields
+  const labelCost = parseFloat((record.labelcost || "").toString().replace(/[^0-9.]/g, "")) || 0;
+  const threePLCost = parseFloat((record.threePLcost || "").toString().replace(/[^0-9.]/g, "")) || 0;
 
   try {
     await updateDoc(doc(db, "inventory", recordId), {
       labelqty: Number(record.labelqty) || 0,
-      labelcost: labelcostNum,
-      threePLcost: threePLcostNum,
+      labelcost: labelCost,
+      threePLcost: threePLCost,
       status: record.status || "OrderPending",
       updatedAt: new Date()
     });
@@ -227,7 +183,7 @@ window.saveRecord = async function (recordId) {
     showSuccessPopup();
     record._dirty = false;
 
-    // reload after save; allow error toast now
+    // Reload table after save
     await loadAndRenderRecords({ showErrorToast: true });
   } catch (err) {
     console.error("❌ saveRecord failed:", err);
