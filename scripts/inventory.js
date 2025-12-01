@@ -15,13 +15,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   document.getElementById("applyFilters")?.addEventListener("click", applyFilters);
   document.getElementById("clearFilters")?.addEventListener("click", clearFilters);
+
+  // ✅ just assign once, not inside a condition
+  hasInitialLoadCompleted = true;
 });
 
 // 🔄 Load and render inventory records
 async function loadAndRenderRecords({ showErrorToast = true } = {}) {
   try {
     const snapshot = await getDocs(collection(db, "inventory"));
-    allRecords = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    allRecords = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
     renderTable(allRecords);
   } catch (err) {
     console.error("❌ loadAndRenderRecords failed:", err);
