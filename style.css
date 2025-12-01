@@ -6,15 +6,24 @@
   display: flex;
 }
 
-/* Mobile: Show hamburger, hide nav */
+/* Mobile: Show hamburger, style lines */
 @media screen and (max-width: 768px) {
-  .hamburger {
+  .hamburger span {
     display: block;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 5px;
+    width: 25px;
+    height: 3px;
+    margin: 5px 0;
+    background: #4da3ff; /* light blue */
+    transition: 0.3s;
   }
+}
+
+.hamburger.active span,
+.hamburger.active span::before,
+.hamburger.active span::after {
+  background: #4da3ff; /* keep light blue when open */
+}
+
   .hamburger span {
     display: block;
     width: 25px;
@@ -50,7 +59,6 @@
     display: block;
   }
 }
-
 
 /* History Container */
 .history-container {
