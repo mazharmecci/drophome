@@ -17,17 +17,21 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 // 🔄 Fetch all inventory records
-async function fetchRecords() {
-  const snapshot = await getDocs(collection(db, "inventory"));
-  allRecords = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-  renderTable(allRecords);
-}
-
-// 📊 Render table
 function renderTable(records) {
   const tbody = document.getElementById("inboundTableBody");
   if (!tbody) return;
   tbody.innerHTML = "";
+
+  if (records.length === 0) {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td colspan="13" style="text-align:center; padding:20px; color:#888;">
+        🚫 No records found. Try adjusting your filters or check back later.
+      </td>
+    `;
+    tbody.appendChild(tr);
+    return;
+  }
 
   records.forEach(record => {
     const tr = document.createElement("tr");
