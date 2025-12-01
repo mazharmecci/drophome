@@ -24,10 +24,7 @@ async function fetchOrders() {
 // 📊 Render table
 function renderTable(records) {
   const tbody = document.getElementById("inboundTableBody");
-  if (!tbody) {
-    console.warn("⚠️ inboundTableBody not found in DOM");
-    return;
-  }
+  if (!tbody) return;
   tbody.innerHTML = "";
 
   records.forEach(record => {
@@ -41,11 +38,9 @@ function renderTable(records) {
       <td>${record.sku || ""}</td>
       <td>${record.quantity || ""}</td>
       <td><img src="${record.prodpic || ""}" alt="Product" style="max-width:60px"/></td>
-      <td><a href="${record.labellink || "#"}" target="_blank">Label</a></td>
       <td>${record.labelqty || ""}</td>
       <td>${record.labelcost || ""}</td>
       <td>${record.threePLcost || ""}</td>
-      <td>${record.notes || ""}</td>
       <td>
         <select onchange="updateStatus('${record.id}', this.value)">
           <option value="OrderPending" ${record.status==="OrderPending"?"selected":""}>Order-Pending</option>
@@ -65,22 +60,22 @@ function renderTable(records) {
 }
 
 // 🔄 Update status in Firestore
-window.updateStatus = async function(orderId, newStatus) {
-  const order = allOrders.find(o => o.id === orderId);
-  if (order) order.newStatus = newStatus; // temp store until save
+window.updateStatus = function(recordId, newStatus) {
+  const record = allRecords.find(r => r.id === recordId);
+  if (record) record.newStatus = newStatus; // temp store until save
 };
 
-window.saveStatus = async function(orderId) {
-  const order = allOrders.find(o => o.id === orderId);
-  if (!order || !order.newStatus) return;
+window.saveStatus = async function(recordId) {
+  const record = allRecords.find(r => r.id === recordId);
+  if (!record || !record.newStatus) return;
 
-  await updateDoc(doc(db, "outbound_orders", orderId), {
-    status: order.newStatus,
+  await updateDoc(doc(db, "inventory", recordId), {
+    status: record.newStatus,
     updatedAt: new Date()
   });
 
-  alert(`✅ Status updated for ${order.orderId}`);
-  await fetchOrders(); // refresh table
+  alert(`✅ Status updated for ${record.orderId || record.id}`);
+  await fetchRecords(); // refresh table
 };
 
 // 🔍 Apply filters
