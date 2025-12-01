@@ -112,6 +112,31 @@ table tbody tr:hover,
   }
 }
 
+/* ------------------------------
+   Mobile Responsive Filters & Buttons
+------------------------------ */
+@media (max-width: 768px) {
+  .filters {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .filter-select,
+  .filter-date {
+    width: 100%;   /* full width on mobile */
+    font-size: 15px;
+  }
+
+  .filters-actions {
+    text-align: center;
+  }
+
+  .reset-btn {
+    width: 100%;   /* button spans full width */
+    font-size: 15px;
+  }
+}
 
 /* Toast */
 
