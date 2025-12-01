@@ -29,7 +29,6 @@ async function loadAndRenderRecords({ showErrorToast = true } = {}) {
   } catch (err) {
     console.error("❌ loadAndRenderRecords failed:", err);
 
-    // Optional toast on later failures only
     if (showErrorToast && hasInitialLoadCompleted && err.code !== "permission-denied") {
       showToast("⚠️ Failed to load records. Please check your connection or Firestore rules.");
     }
@@ -50,6 +49,32 @@ async function fetchRecords() {
 
   console.log("✅ Total records fetched:", records.length);
   return records;
+}
+
+// 💲 Dollar-format helper (reused logic)
+function setupDollarInput(input) {
+  if (!input) return;
+
+  input.addEventListener("focus", () => {
+    const raw = input.value.replace(/[^0-9.]/g, "");
+    input.value = raw;
+  });
+
+  input.addEventListener("input", () => {
+    let raw = input.value.replace(/[^0-9.]/g, "");
+    const parts = raw.split(".");
+    let sanitized = parts[0];
+    if (parts.length > 1) {
+      sanitized += "." + parts[1].slice(0, 2);
+    }
+    input.value = sanitized;
+  });
+
+  input.addEventListener("blur", () => {
+    const raw = input.value.replace(/[^0-9.]/g, "");
+    const num = parseFloat(raw);
+    input.value = isNaN(num) ? "$0.00" : `$${num.toFixed(2)}`;
+  });
 }
 
 // 📊 Render inventory table
@@ -92,8 +117,9 @@ function renderTable(records) {
         <input
           class="compact-input"
           type="text"
-          value="${record.labelcost ?? ''}"
-          placeholder="$00.00"
+          name="labelcost"
+          value="${formatDollarCell(record.labelcost)}"
+          placeholder="$0.00"
           onchange="updateField('${record.id}','labelcost',this.value,this)"
         />
       </td>
@@ -101,8 +127,9 @@ function renderTable(records) {
         <input
           class="compact-input"
           type="text"
-          value="${record.threePLcost ?? ''}"
-          placeholder="$00.00"
+          name="threePLcost"
+          value="${formatDollarCell(record.threePLcost)}"
+          placeholder="$0.00"
           onchange="updateField('${record.id}','threePLcost',this.value,this)"
         />
       </td>
@@ -117,8 +144,17 @@ function renderTable(records) {
     `;
     tbody.appendChild(tr);
   });
+
+  // Attach dollar formatting to cost inputs after rows are in the DOM
+  tbody.querySelectorAll('input[name="labelcost"], input[name="threePLcost"]').forEach(setupDollarInput);
 }
 
+// Helper to display existing numeric values as $x.xx
+function formatDollarCell(value) {
+  const num = parseFloat(value);
+  if (isNaN(num) || num === 0) return "$0.00";
+  return `$${num.toFixed(2)}`;
+}
 
 // 🧠 Status options renderer
 function renderStatusOptions(current) {
@@ -171,11 +207,18 @@ window.saveRecord = async function (recordId) {
   const record = allRecords.find(r => r.id === recordId);
   if (!record || !record._dirty) return;
 
+  // Sanitize currency fields to numbers before saving
+  const labelCostRaw = (record.labelcost || "").toString().replace(/[^0-9.]/g, "");
+  const threePLCostRaw = (record.threePLcost || "").toString().replace(/[^0-9.]/g, "");
+
+  const labelcostNum = parseFloat(labelCostRaw) || 0;
+  const threePLcostNum = parseFloat(threePLCostRaw) || 0;
+
   try {
     await updateDoc(doc(db, "inventory", recordId), {
       labelqty: Number(record.labelqty) || 0,
-      labelcost: record.labelcost || "",
-      threePLcost: record.threePLcost || "",
+      labelcost: labelcostNum,
+      threePLcost: threePLcostNum,
       status: record.status || "OrderPending",
       updatedAt: new Date()
     });
