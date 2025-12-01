@@ -1,10 +1,17 @@
-document.getElementById('hamburgerBtn').addEventListener('click', function() {
-  document.getElementById('navLinks').classList.toggle('active');
-  document.getElementById('navOverlay').classList.toggle('active');
-});
+document.addEventListener("DOMContentLoaded", () => {
+  const hamburgerBtn = document.getElementById("hamburgerBtn");
+  const navLinks = document.getElementById("navLinks");
 
-// Close on overlay click
-document.getElementById('navOverlay').addEventListener('click', function() {
-  document.getElementById('navLinks').classList.remove('active');
-  this.classList.remove('active');
+  console.log("hamburgerBtn:", hamburgerBtn);
+  console.log("navLinks:", navLinks);
+
+  if (!hamburgerBtn || !navLinks) {
+    console.warn("Navbar elements not found — script exiting.");
+    return;
+  }
+
+  // safe to attach listeners now
+  hamburgerBtn.addEventListener("click", () => {
+    console.log("Hamburger clicked");
+  });
 });
