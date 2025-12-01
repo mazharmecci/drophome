@@ -1,22 +1,10 @@
-document.addEventListener("DOMContentLoaded", () => {
-const hamburger = document.getElementById("hamburgerBtn");
-const navLinks = document.getElementById("navLinks");
-const overlay = document.getElementById("navOverlay");
+document.getElementById('hamburgerBtn').addEventListener('click', function() {
+  document.getElementById('navLinks').classList.toggle('active');
+  document.getElementById('navOverlay').classList.toggle('active');
+});
 
-if (!hamburger || !navLinks || !overlay) {
-console.warn("Navbar elements not found.");
-return;
-}
-
-const toggleMenu = () => {
-hamburger.classList.toggle("active");
-navLinks.classList.toggle("show");
-overlay.classList.toggle("show");
-};
-
-// Open / close on hamburger click
-hamburger.addEventListener("click", toggleMenu);
-
-// Close when clicking on overlay
-overlay.addEventListener("click", toggleMenu);
+// Close on overlay click
+document.getElementById('navOverlay').addEventListener('click', function() {
+  document.getElementById('navLinks').classList.remove('active');
+  this.classList.remove('active');
 });
