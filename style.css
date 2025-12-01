@@ -138,6 +138,55 @@ table tbody tr:hover,
   }
 }
 
+/* ------------------------------
+   Mobile Responsive Header & Breadcrumb
+------------------------------ */
+  .brand-header .logo-img {
+    max-width: 120px;
+    height: auto;
+  }
+
+  .brand-header span {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  /* Breadcrumb navigation */
+/* Breadcrumb navigation */
+.breadcrumb-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0;
+  margin: 12px 0;
+  justify-content: flex-start; /* always left-aligned */
+  align-items: center;
+}
+
+.breadcrumb-item {
+  display: inline-block;
+}
+
+.breadcrumb-link {
+  font-size: 0.95rem;
+  text-decoration: none;
+  color: #007bff;
+}
+
+.breadcrumb-current {
+  font-weight: 600;
+  color: #333;
+}
+
+/* Mobile refinement */
+@media (max-width: 768px) {
+  .breadcrumb-list {
+    flex-direction: row;   /* keep horizontal */
+    justify-content: flex-start; /* stay left */
+    align-items: flex-start;
+  }
+}
+
 /* Toast */
 
 .checkmark-circle {
