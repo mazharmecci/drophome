@@ -12,19 +12,19 @@
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
-/* Left side: logo + hamburger */
+/* Left side: hamburger + logo aligned horizontally */
 .navbar-left {
   display: flex;
-  flex-direction: column;   /* logo on top, hamburger below */
-  align-items: flex-start;
-  gap: 6px;
+  flex-direction: row; /* horizontal layout */
+  align-items: center;
+  gap: 12px;
 }
 
 /* Logo + Brand */
 .logo-container {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 .logo-img {
   height: 24px;
@@ -38,7 +38,7 @@
 
 /* Hamburger Icon */
 .hamburger {
-  display: none; /* shown only on mobile */
+  display: flex;
   flex-direction: column;
   justify-content: space-between;
   width: 22px;
@@ -51,7 +51,7 @@
   display: block;
   height: 2px;
   width: 100%;
-  background: #001f4d; /* dark navy blue lines */
+  background: #001f4d;
   border-radius: 2px;
   transition: all 0.3s ease;
 }
