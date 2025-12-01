@@ -108,25 +108,41 @@
           </button>
         </div>
 
-        <!-- Responsive Scroll Wrapper -->
-        <div class="table-scroll-wrapper" style="overflow-x: auto; max-width: 100%; border-radius: 8px; border: 1px solid #ccc;">
-          <table class="summary-table" style="width: 100%; border-collapse: collapse;">
-            <thead style="position: sticky; top: 0; background-color: #f8f8f8; z-index: 1;">
-              <tr>
-                <th style="padding: 12px;">📦 Product</th>
-                <th style="padding: 12px;">📍 Acc-Name</th>
-                <th style="padding: 12px;">📥 Inbd</th>
-                <th style="padding: 12px;">📤 Outd</th>
-                <th style="padding: 12px;">🧮 Quantity</th>
-              </tr>
-            </thead>
-            <tbody id="summaryBody">
-              <!-- Rows injected dynamically -->
-            </tbody>
-          </table>
-        </div>
-      </section>      
-    </main>
+    <!-- 📊 Responsive Scroll Wrapper -->
+    <div class="table-scroll-wrapper" style="
+      overflow-x: auto;
+      max-width: 100%;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    ">
+      <table class="summary-table" style="
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 15px;
+        background-color: #fff;
+      ">
+        <thead style="
+          position: sticky;
+          top: 0;
+          background-color: #007bff;
+          color: white;
+          z-index: 1;
+          text-align: left;
+        ">
+          <tr>
+            <th style="padding: 12px;">📦 Product</th>
+            <th style="padding: 12px;">🔑 Acc-Name</th>
+            <th style="padding: 12px;">🚚 Inbd</th>
+            <th style="padding: 12px;">🚚 Outd</th>
+            <th style="padding: 12px;">📅 Quantity</th>
+          </tr>
+        </thead>
+        <tbody id="summaryBody">
+          <!-- Rows injected dynamically -->
+        </tbody>
+      </table>
+    </div>
 
   <script>
     const originMap = {
