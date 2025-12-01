@@ -16,8 +16,11 @@
       const placeholder = document.getElementById("navbar-placeholder");
       if (!placeholder) return;
 
+      // Works both on root pages and /forms/ pages on GitHub Pages
       const isInForms = window.location.pathname.includes("/forms/");
-      const navbarPath = isInForms ? "https://mazharmecci.github.io/drophome/navbar.html" : "navbar.html";
+      const navbarPath = isInForms
+        ? "https://mazharmecci.github.io/drophome/navbar.html"
+        : "navbar.html";
 
       fetch(navbarPath)
         .then(res => {
@@ -26,10 +29,17 @@
         })
         .then(html => {
           placeholder.innerHTML = html;
+
           const hamburgerBtn = document.getElementById("hamburgerBtn");
           const navLinks = document.getElementById("navLinks");
           const overlay = document.getElementById("navOverlay");
           if (!hamburgerBtn || !navLinks || !overlay) return;
+
+          function closeDrawer() {
+            navLinks.classList.remove("active");
+            hamburgerBtn.classList.remove("active");
+            overlay.style.display = "none";
+          }
 
           hamburgerBtn.addEventListener("click", (e) => {
             e.stopPropagation();
@@ -50,25 +60,18 @@
           });
 
           overlay.addEventListener("click", () => closeDrawer());
-
-          function closeDrawer() {
-            navLinks.classList.remove("active");
-            hamburgerBtn.classList.remove("active");
-            overlay.style.display = "none";
-          }
         })
         .catch(err => console.error("Navbar load error:", err));
     })();
   </script>
-  
-  <main>
-    <!-- Form Container / Landing Section -->
-    <section class="form-container">
 
+  <main class="dashboard-container">
+    <!-- History-style wrapper so it inherits .history-container, .page-title, etc. -->
+    <section class="history-container">
       <!-- Logo + Brand -->
-      <header class="brand-header" style="display:flex;align-items:center;justify-content:center;gap:12px;">
+      <header class="brand-header form-header">
         <img src="images/DH-white.png" alt="Drophome Logo" class="logo-img">
-        <span>Sales</span>
+        <span class="page-title">Sales Summary</span>
       </header>
 
       <!-- Breadcrumb -->
@@ -77,30 +80,27 @@
           <li class="breadcrumb-item">
             <a href="https://mazharmecci.github.io/drophome/">Home</a>
           </li>
-          <li class="breadcrumb-item breadcrumb-current" aria-current="page">
-            Summary
+          <li class="breadcrumb-item active" aria-current="page">
+            <a href="#">Dashboard</a>
           </li>
         </ol>
       </nav>
 
-      <!-- Stock Summary Section -->
+      <!-- Filters (reuse global .filters + .filter-select/.filter-date styles) -->
+      <div class="filters">
+        <select id="filterProduct" class="filter-select">
+          <option value="" disabled selected>Choose product 📦</option>
+        </select>
+        <input id="filterStart" type="date" class="filter-date" />
+        <input id="filterEnd" type="date" class="filter-date" />
+      </div>
+
+      <div class="filters-actions">
+        <button id="resetFiltersBtn" class="reset-btn btn-clear">🔄 Reset Filters</button>
+      </div>
+
+      <!-- Summary Table using unified .summary-container + .summary-table -->
       <section class="summary-container">
-      
-        <!-- Filters -->
-        <div class="filters">
-          <select id="filterProduct" class="filter-select">
-            <option value="" disabled selected>Choose product 📦</option>
-          </select>
-          <input id="filterStart" type="date" class="filter-date" />
-          <input id="filterEnd" type="date" class="filter-date" />
-        </div>
-      
-        <!-- Reset Button -->
-        <div class="filters-actions">
-          <button id="resetFiltersBtn" class="reset-btn">🔄 Reset Filters</button>
-        </div>
-      
-        <!-- 📊 Responsive Scroll Wrapper -->
         <div class="table-scroll-wrapper">
           <table class="summary-table">
             <thead>
@@ -113,33 +113,15 @@
               </tr>
             </thead>
             <tbody id="summaryBody">
-              <!-- Rows injected dynamically -->
+              <!-- Rows injected dynamically by scripts/dashboard.js -->
             </tbody>
           </table>
         </div>
       </section>
-    </main>
+    </section>
+  </main>
 
-  <script>
-    const originMap = {
-      inbound: { label: "Inbound Form", href: "forms/inbound.html" },
-      outbound: { label: "Outbound Form", href: "forms/outbound.html" },
-      stock: { label: "Stock Form", href: "forms/stock.html" },
-      master: { label: "Master List Manager", href: "master.html" },
-      dashboard: { label: "Dashboard", href: "dashboard.html" }
-    };
-
-    const originLabel = originMap[origin]?.label || "Dashboard";
-    const originHref = originMap[origin]?.href || "dashboard.html";
-
-    const breadcrumbOrigin = document.getElementById("breadcrumb-origin");
-    if (breadcrumbOrigin) {
-      breadcrumbOrigin.innerHTML = `<a href="${originHref}">${originLabel}</a>`;
-    }
-  </script>
-
+  <!-- Dashboard logic -->
   <script type="module" src="scripts/dashboard.js"></script>
-  <script src="scripts/navbar.js" defer></script>
-
 </body>
 </html>
