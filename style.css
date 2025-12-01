@@ -1,11 +1,94 @@
-/* Inventory numeric fields */
-
-.compact-input {
-  width: 70px;
-  box-sizing: border-box;
-  padding: 2px 4px;
-  font-size: 0.85rem;
+/* ------------------------------
+   Unified Table Styling (Inventory Look & Feel)
+   Applies to all tables, including .summary-table
+------------------------------ */
+table,
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 30px auto;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
+
+/* Table cells */
+table th, table td,
+.summary-table th, .summary-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  white-space: normal;
+  word-wrap: break-word;
+  font-size: 0.9rem;
+}
+
+/* Table header */
+table thead,
+.summary-table thead {
+  position: sticky;
+  top: 0;
+  background-color: #007bff;
+  color: #fff;
+  z-index: 2;
+  font-weight: 600;
+}
+
+/* Zebra striping + hover */
+table tbody tr:nth-of-type(odd),
+.summary-table tbody tr:nth-of-type(odd) {
+  background-color: #f9fbff;
+}
+table tbody tr:nth-of-type(even),
+.summary-table tbody tr:nth-of-type(even) {
+  background-color: #f3f4f7;
+}
+table tbody tr:hover,
+.summary-table tbody tr:hover {
+  background-color: #e6f2ff;
+}
+
+/* ------------------------------
+   Mobile Responsive Tables
+------------------------------ */
+@media (max-width: 768px) {
+  table,
+  table thead,
+  table tbody,
+  table th,
+  table td,
+  table tr,
+  .summary-table,
+  .summary-table thead,
+  .summary-table tbody,
+  .summary-table th,
+  .summary-table td,
+  .summary-table tr {
+    display: block;
+  }
+
+  table tr,
+  .summary-table tr {
+    margin-bottom: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 8px;
+  }
+
+  table td,
+  .summary-table td {
+    display: flex;
+    justify-content: space-between;
+    text-align: left;
+  }
+
+  table th,
+  .summary-table th {
+    text-align: left;
+  }
+}
+
 
 /* Toast */
 
@@ -224,12 +307,6 @@
 /* ------------------------------
    Global Reset & Typography
 ------------------------------ */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 body {
   font-family: "Segoe UI", Arial, sans-serif;
   background: #f9f9f9;
@@ -575,30 +652,6 @@ button.btn-clear:hover { background-color: #e6b800; }
 .popup-content button:hover { background: #005bb5; }
 
 /* ------------------------------
-   Table Styling (Dashboard)
------------------------------- */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 30px auto;
-  background: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-table th, table td {
-  padding: 12px 15px;
-  text-align: left;
-  border-bottom: 1px solid #eee;
-}
-table th {
-  background: #0066cc;
-  color: #fff;
-  font-weight: 600;
-}
-table tr:hover { background: #f1f7ff; }
-
-/* ------------------------------
    Toast Messages (continued)
 ------------------------------ */
 .toast {
@@ -735,93 +788,6 @@ table tr:hover { background: #f1f7ff; }
     flex-direction: column;
     align-items: stretch;
   }
-}
-
-/* ------------------------------
-   Table Section
------------------------------- */
-.table-section { margin-bottom: 40px; }
-.table-section h2 { margin-bottom: 10px; }
-
-.summary-container {
-  margin: 20px auto;
-  max-width: 100%;
-  background: #fff;
-  border-radius: 8px;
-  padding: 16px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-
-.summary-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-/* ------------------------------
-   Table Scroll Wrapper
------------------------------- */
-.table-scroll-wrapper {
-  overflow-x: auto;
-  max-width: 100%;
-  border-radius: 8px;
-  box-shadow: inset 0 0 0 1px #eee;
-}
-
-/* ------------------------------
-   Summary Table
------------------------------- */
-.summary-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.summary-table th,
-.summary-table td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-  white-space: normal;
-  word-wrap: break-word;
-  font-size: 0.9rem;
-}
-
-.summary-table thead {
-  position: sticky;
-  top: 0;
-  background-color: #007bff;
-  color: white;
-  z-index: 2;
-}
-
-/* ------------------------------
-   Mobile Responsive Tables
------------------------------- */
-@media (max-width: 768px) {
-  .summary-table,
-  .summary-table thead,
-  .summary-table tbody,
-  .summary-table th,
-  .summary-table td,
-  .summary-table tr {
-    display: block;
-  }
-
-  .summary-table tr {
-    margin-bottom: 12px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    padding: 8px;
-  }
-
-  .summary-table td {
-    display: flex;
-    justify-content: space-between;
-    text-align: left;
-  }
-
-  .summary-table th { text-align: left; }
 }
 
 /* ------------------------------
