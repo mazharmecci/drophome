@@ -6,6 +6,8 @@ import {
   doc
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
+import { showSuccessPopup, showToast } from "./popupHandler.js";
+
 let allRecords = [];
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -91,7 +93,8 @@ window.saveRecord = async function(recordId) {
     updatedAt: new Date()
   });
 
-  alert(`✅ Record updated for ${record.orderId || record.id}`);
+  showToast(`✅ Record updated for ${record.orderId || record.id}`);
+  showSuccessPopup();
   record._dirty = false;
 
   // Refresh table to clear highlights
