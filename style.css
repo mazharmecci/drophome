@@ -22,6 +22,10 @@
    Unified Table Styling (Inventory Look & Feel)
    Applies to all tables, including .summary-table
 ------------------------------ */
+.summary-table {
+  table-layout: fixed;
+}
+
 table,
 .summary-table {
   width: 100%;
