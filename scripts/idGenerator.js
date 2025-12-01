@@ -13,54 +13,41 @@ import {
  * @param {string} collectionName - Firestore collection to scan.
  * @param {string} fieldId - DOM input field ID to populate.
  * @param {boolean} verbose - Optional: enable console logging.
- * @param {function} onComplete - Optional: callback after ID is set.
  */
-export async function generateId(prefix, collectionName, fieldId, verbose = true, onComplete = null) {
-  const field = document.getElementById(fieldId);
-  if (!field) {
-    console.warn(`⚠️ Field with ID "${fieldId}" not found.`);
-    return;
-  }
-
-  field.readOnly = true;
+export async function generateId(prefix, collectionName, fieldId, verbose = false) {
+  if (verbose) console.log(`🔍 Generating ID from collection: ${collectionName}`);
 
   try {
-    if (verbose) console.log(`🔍 Generating ID from collection: ${collectionName}`);
-
     const q = query(
       collection(db, collectionName),
-      orderBy("timestamp", "desc"),
+      orderBy("inboundId", "desc"),
       limit(1)
     );
-
     const snapshot = await getDocs(q);
-    if (verbose) console.log(`📦 Documents found: ${snapshot.size}`);
 
-    let nextId = 1;
+    let nextNumber = 1;
 
     if (!snapshot.empty) {
-      const lastDocData = snapshot.docs[0].data();
-      if (verbose) console.log("🧾 Last document data:", lastDocData);
+      const latestDoc = snapshot.docs[0].data();
+      const latestId = latestDoc.inboundId || "";
 
-      const lastIdField = Object.keys(lastDocData).find(key =>
-        key.toLowerCase().includes("id")
-      );
-
-      const lastIdValue = lastDocData[lastIdField];
-      const match = lastIdValue?.match(/\d+$/);
-
-      if (match) nextId = parseInt(match[0]) + 1;
+      const match = latestId.match(/\d+$/);
+      if (match) {
+        nextNumber = parseInt(match[0], 10) + 1;
+      }
     }
 
-    const finalId = `${prefix}-${String(nextId).padStart(3, '0')}`;
-    field.value = finalId;
+    const padded = String(nextNumber).padStart(3, "0");
+    const newId = `${prefix}-${padded}`;
 
-    if (typeof onComplete === "function") {
-      onComplete(finalId);
+    const input = document.getElementById(fieldId);
+    if (input) input.value = newId;
+
+    if (verbose) {
+      console.log(`📦 Documents found: ${snapshot.size}`);
+      console.log(`✅ Generated ID: ${newId}`);
     }
-
   } catch (err) {
     console.error("❌ Error generating ID:", err);
-    field.value = `${prefix}-001`; // fallback
   }
 }
