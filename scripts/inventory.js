@@ -80,12 +80,32 @@ function renderTable(records) {
       <td>${record.quantity || ""}</td>
       <td><img src="${record.prodpic || ""}" alt="Product" style="max-width:60px"/></td>
 
-      <td><input type="number" value="${record.labelqty ?? 0}"
-          onchange="updateField('${record.id}','labelqty',this.value,this)" /></td>
-      <td><input type="text" value="${record.labelcost ?? ''}" placeholder="$00.00"
-          onchange="updateField('${record.id}','labelcost',this.value,this)" /></td>
-      <td><input type="text" value="${record.threePLcost ?? ''}" placeholder="$00.00"
-          onchange="updateField('${record.id}','threePLcost',this.value,this)" /></td>
+      <td>
+        <input
+          class="compact-input"
+          type="number"
+          value="${record.labelqty ?? 0}"
+          onchange="updateField('${record.id}','labelqty',this.value,this)"
+        />
+      </td>
+      <td>
+        <input
+          class="compact-input"
+          type="text"
+          value="${record.labelcost ?? ''}"
+          placeholder="$00.00"
+          onchange="updateField('${record.id}','labelcost',this.value,this)"
+        />
+      </td>
+      <td>
+        <input
+          class="compact-input"
+          type="text"
+          value="${record.threePLcost ?? ''}"
+          placeholder="$00.00"
+          onchange="updateField('${record.id}','threePLcost',this.value,this)"
+        />
+      </td>
 
       <td>
         <select onchange="updateField('${record.id}','status',this.value,this)">
@@ -98,6 +118,7 @@ function renderTable(records) {
     tbody.appendChild(tr);
   });
 }
+
 
 // 🧠 Status options renderer
 function renderStatusOptions(current) {
