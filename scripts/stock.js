@@ -1,8 +1,6 @@
 import { db } from './firebase.js';
 import { showToast } from './popupHandler.js';
 import {
-  doc,
-  getDoc,
   collection,
   getDocs,
   query,
@@ -11,77 +9,106 @@ import {
 
 document.addEventListener("DOMContentLoaded", async () => {
   await loadProductDropdown();
+  await renderStockCards();
+
   const selector = document.getElementById("productName");
-  if (selector) selector.addEventListener("change", computeStockBalance);
+  if (selector) {
+    selector.addEventListener("change", async () => {
+      await renderStockCards();
+      await computeSelectedStock();
+    });
+  }
 });
 
-// 🔄 Load product options from masterList
+// 🔄 Load product dropdown with "All Products"
 async function loadProductDropdown() {
   const selector = document.getElementById("productName");
   if (!selector) return;
 
-  try {
-    const masterRef = doc(db, "masterList", "VwsEuQNJgfo5TXM6A0DA");
-    const masterSnap = await getDoc(masterRef);
+  const snapshot = await getDocs(collection(db, "stock"));
+  const uniqueNames = new Set();
 
-    if (!masterSnap.exists()) {
-      showToast("❌ masterList document not found.");
-      return;
-    }
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    if (data.productName) uniqueNames.add(data.productName);
+  });
 
-    const products = masterSnap.data().products || [];
-    selector.innerHTML = `<option value="" disabled selected>Choose your product</option>`;
-    products.forEach(({ name, sku }) => {
-      const opt = document.createElement("option");
-      opt.value = name;
-      opt.textContent = `${name} (${sku})`;
-      selector.appendChild(opt);
-    });
-
-    console.log("✅ Product dropdown loaded:", products.length);
-  } catch (err) {
-    console.error("❌ Error loading masterList:", err);
-    showToast("❌ Failed to load product list.");
-  }
+  selector.innerHTML = `<option value="__ALL__">All Products</option>`;
+  [...uniqueNames].forEach(name => {
+    const opt = document.createElement("option");
+    opt.value = name;
+    opt.textContent = name;
+    selector.appendChild(opt);
+  });
 }
 
-// 📊 Compute stock = inbound - outbound
-async function computeStockBalance() {
-  const product = document.getElementById("productName")?.value;
+// 🧾 Render stock cards
+async function renderStockCards() {
+  const selected = document.getElementById("productName")?.value;
+  const container = document.getElementById("stockCardsContainer");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  const stockSnapshot = await getDocs(collection(db, "stock"));
+  const inboundSnapshot = await getDocs(collection(db, "inbound"));
+
+  const imageMap = {};
+  inboundSnapshot.forEach(doc => {
+    const data = doc.data();
+    if (data.productName && data.prodpic) {
+      imageMap[data.productName] = data.prodpic;
+    }
+  });
+
+  stockSnapshot.forEach(doc => {
+    const data = doc.data();
+    if (!data.productName || data.availableQuantity == null) return;
+    if (selected !== "__ALL__" && data.productName !== selected) return;
+
+    const card = document.createElement("div");
+    card.className = "card inbound-card";
+    card.innerHTML = `
+      <img src="${imageMap[data.productName] || '../images/placeholder.png'}" alt="Product" style="max-width:100px; margin-bottom:10px;" />
+      <h2>${data.productName}</h2>
+      <p>Available Quantity: <strong>${data.availableQuantity}</strong></p>
+    `;
+    container.appendChild(card);
+  });
+}
+
+// 📊 Compute stock for selected product only
+async function computeSelectedStock() {
+  const selected = document.getElementById("productName")?.value;
   const qtyField = document.getElementById("availableQuantity");
-  if (!product || !qtyField) return;
+  if (!selected || selected === "__ALL__" || !qtyField) {
+    qtyField.value = "";
+    return;
+  }
 
   try {
-    console.log("🔍 Computing stock for:", product);
+    const inboundQuery = query(collection(db, "inbound"), where("productName", "==", selected));
+    const outboundQuery = query(collection(db, "outbound_orders"), where("productName", "==", selected));
 
-    const inboundTotal = await getTotal("inbound", "quantityReceived", product);
-    const outboundTotal = await getTotal("outbound_orders", "quantity", product);
+    const [inboundSnap, outboundSnap] = await Promise.all([
+      getDocs(inboundQuery),
+      getDocs(outboundQuery)
+    ]);
+
+    let inboundTotal = 0;
+    inboundSnap.forEach(doc => {
+      inboundTotal += parseInt(doc.data().quantityReceived || 0);
+    });
+
+    let outboundTotal = 0;
+    outboundSnap.forEach(doc => {
+      outboundTotal += parseInt(doc.data().quantity || 0);
+    });
+
     const balance = inboundTotal - outboundTotal;
-
     qtyField.value = balance >= 0 ? balance : 0;
-    console.log("✅ Stock computed:", { inboundTotal, outboundTotal, balance });
   } catch (err) {
     console.error("❌ Error computing stock:", err);
     showToast("❌ Failed to compute stock.");
-  }
-}
-
-// 🔢 Helper: get total quantity from a collection
-async function getTotal(collectionName, field, productName) {
-  try {
-    const q = query(collection(db, collectionName), where("productName", "==", productName));
-    const snapshot = await getDocs(q);
-
-    let total = 0;
-    snapshot.forEach(doc => {
-      total += parseInt(doc.data()[field] || 0);
-    });
-
-    console.log(`📦 ${collectionName} total:`, total);
-    return total;
-  } catch (err) {
-    console.error(`❌ Error fetching ${collectionName} records:`, err);
-    showToast(`❌ Failed to fetch ${collectionName} data.`);
-    return 0;
   }
 }
