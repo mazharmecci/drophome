@@ -16,11 +16,8 @@
       const placeholder = document.getElementById("navbar-placeholder");
       if (!placeholder) return;
 
-      // Works both on root pages and /forms/ pages on GitHub Pages
       const isInForms = window.location.pathname.includes("/forms/");
-      const navbarPath = isInForms
-        ? "https://mazharmecci.github.io/drophome/navbar.html"
-        : "navbar.html";
+      const navbarPath = isInForms ? "https://mazharmecci.github.io/drophome/navbar.html" : "navbar.html";
 
       fetch(navbarPath)
         .then(res => {
@@ -29,17 +26,10 @@
         })
         .then(html => {
           placeholder.innerHTML = html;
-
           const hamburgerBtn = document.getElementById("hamburgerBtn");
           const navLinks = document.getElementById("navLinks");
           const overlay = document.getElementById("navOverlay");
           if (!hamburgerBtn || !navLinks || !overlay) return;
-
-          function closeDrawer() {
-            navLinks.classList.remove("active");
-            hamburgerBtn.classList.remove("active");
-            overlay.style.display = "none";
-          }
 
           hamburgerBtn.addEventListener("click", (e) => {
             e.stopPropagation();
@@ -60,6 +50,12 @@
           });
 
           overlay.addEventListener("click", () => closeDrawer());
+
+          function closeDrawer() {
+            navLinks.classList.remove("active");
+            hamburgerBtn.classList.remove("active");
+            overlay.style.display = "none";
+          }
         })
         .catch(err => console.error("Navbar load error:", err));
     })();
