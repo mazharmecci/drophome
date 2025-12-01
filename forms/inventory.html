@@ -105,13 +105,21 @@
     </table>
 
     <!-- Success Popup -->
-  <div id="successPopup" class="popup hidden">
-    <div class="popup-content">
-      <h3>✅ Success</h3>
-      <p>Your outbound order has been submitted!</p>
-      <button id="closePopup">OK</button>
+    <div id="successPopup" class="hidden">
+      <div class="popup-content">
+        <div class="checkmark-circle"></div>
+        <div class="checkmark-check"></div>
+        <p>✅ Saved successfully!</p>
+        <button id="closePopup">Close</button>
+      </div>
     </div>
-  </div>
+    
+    <script type="module">
+      import { initPopupClose } from "/drophome/scripts/popupHandler.js";
+      document.addEventListener("DOMContentLoaded", () => {
+        initPopupClose();
+      });
+    </script>
 
   <script type="module" src="/drophome/scripts/inventory.js"></script>
   <script type="module" src="../scripts/popupHandler.js"></script>
