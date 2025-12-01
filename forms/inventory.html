@@ -7,15 +7,14 @@
   <link rel="stylesheet" href="/drophome/style.css" />
 </head>
 <body>
-    <!-- Shared Navbar -->
   <!-- Shared Navbar -->
   <div id="navbar-placeholder"></div>
   <script>
     (function () {
       const placeholder = document.getElementById("navbar-placeholder");
       if (!placeholder) return;
-  
-      // ✅ Correct path: go up one level to reach root navbar.html
+
+      // Load shared navbar
       fetch("../navbar.html")
         .then(res => {
           if (!res.ok) throw new Error("Navbar load failed");
@@ -23,16 +22,16 @@
         })
         .then(html => {
           placeholder.innerHTML = html;
-  
+
           const hamburgerBtn = document.getElementById("hamburgerBtn");
           const navLinks = document.getElementById("navLinks");
           if (!hamburgerBtn || !navLinks) return;
-  
+
           hamburgerBtn.addEventListener("click", (e) => {
             e.stopPropagation();
             navLinks.classList.toggle("show");
           });
-  
+
           document.addEventListener("click", (e) => {
             if (!navLinks.classList.contains("show")) return;
             if (!navLinks.contains(e.target) && !hamburgerBtn.contains(e.target)) {
@@ -43,9 +42,8 @@
         .catch(err => console.error(err));
     })();
   </script>
-   
-  <div class="history-container">   
-   
+
+  <div class="history-container">
     <!-- Breadcrumb Navigation -->
     <nav class="breadcrumb-nav" aria-label="Quick Links">
       <ol class="breadcrumb-list">
@@ -64,17 +62,17 @@
         <label for="filterClient">Client:</label>
         <input type="text" id="filterClient" placeholder="Enter client name" />
       </div>
-    
+
       <div class="filter-group">
         <label for="filterStart">From:</label>
         <input type="date" id="filterStart" />
       </div>
-    
+
       <div class="filter-group">
         <label for="filterEnd">To:</label>
         <input type="date" id="filterEnd" />
       </div>
-    
+
       <button id="applyFilters" class="btn-primary">🔍 Apply Filters</button>
       <button id="clearFilters" class="btn-clear">🧹 Clear</button>
     </div>
@@ -102,7 +100,6 @@
       </tbody>
     </table>
 
-
     <!-- Success Popup -->
     <div id="successPopup" class="hidden">
       <div class="popup-content">
@@ -112,16 +109,20 @@
         <button id="closePopup">Close</button>
       </div>
     </div>
-    
-    <script type="module">
-      import { initPopupClose } from "/drophome/scripts/popupHandler.js";
-      document.addEventListener("DOMContentLoaded", () => {
-        initPopupClose();
-      });
-    </script>
+  </div>
+
+  <!-- Modules -->
+  <script type="module">
+    import { initPopupClose } from "/drophome/scripts/popupHandler.js";
+
+    // Only popup close wiring; toast is triggered from inventory.js on actions
+    document.addEventListener("DOMContentLoaded", () => {
+      initPopupClose();
+    });
+  </script>
 
   <script type="module" src="/drophome/scripts/inventory.js"></script>
-  <script type="module" src="../scripts/popupHandler.js"></script>
-  
+  <!-- Removed duplicate popupHandler load to avoid unwanted toasts -->
+
 </body>
 </html>
