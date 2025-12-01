@@ -606,11 +606,10 @@ button.btn-clear:hover { background-color: #e6b800; }
    Landing Page Cards
 ------------------------------ */
 .card-container {
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 30px;
   margin: 40px auto;
-  flex-wrap: wrap;
   max-width: 1200px;
 }
 
