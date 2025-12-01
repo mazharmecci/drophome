@@ -566,7 +566,8 @@ button.btn-clear:hover { background-color: #e6b800; }
 .breadcrumb-list {
   display: flex;
   flex-wrap: nowrap;
-  gap: 16px;
+  align-items: center;
+  gap: 8px;
   list-style: none;
   padding: 0;
   margin: 0;
@@ -575,7 +576,7 @@ button.btn-clear:hover { background-color: #e6b800; }
 
 .breadcrumb-item + .breadcrumb-item::before {
   content: "›";
-  margin: 0 8px;
+  margin: 0 4px;
   color: #999;
 }
 
@@ -583,7 +584,7 @@ button.btn-clear:hover { background-color: #e6b800; }
   color: #0066cc;
   text-decoration: none;
   display: inline-flex;
-  align-items: left;
+  align-items: center;
   gap: 4px;
   font-weight: 500;
   transition: color 0.3s ease;
@@ -595,7 +596,7 @@ button.btn-clear:hover { background-color: #e6b800; }
 }
 
 .breadcrumb-item.active a {
-  font-weight: bold;
+  font-weight: 600;
   color: #ff5722 !important;
   border-bottom: 2px solid #ff5722;
   padding-bottom: 2px;
