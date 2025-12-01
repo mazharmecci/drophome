@@ -23,7 +23,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 // 🔄 Load and render inventory records
 async function loadAndRenderRecords(options) {
-  const { showErrorToast = true } = options || {};
+  const opts = options || {};
+  const showErrorToast = opts.showErrorToast !== undefined ? opts.showErrorToast : true;
 
   try {
     const snapshot = await getDocs(collection(db, "inventory"));
@@ -47,10 +48,10 @@ function renderTable(records) {
   tbody.innerHTML = "";
 
   if (!Array.isArray(records) || records.length === 0) {
-    tbody.innerHTML = `
-      <tr><td colspan="13" style="text-align:center; padding:20px; color:#888;">
-        🚫 No records found. Try adjusting your filters or check back later.
-      </td></tr>`;
+    tbody.innerHTML =
+      '<tr><td colspan="13" style="text-align:center; padding:20px; color:#888;">' +
+      "🚫 No records found. Try adjusting your filters or check back later." +
+      "</td></tr>";
     return;
   }
 
@@ -65,33 +66,58 @@ function renderTable(records) {
       <td>${record.quantity || ""}</td>
       <td><img src="${record.prodpic || ""}" alt="Product" style="max-width:60px"/></td>
 
-      <td><input class="compact-input" type="number" value="${record.labelqty ?? 0}"
-        onchange="updateField('${record.id}','labelqty',this.value,this)" /></td>
+      <td>
+        <input
+          class="compact-input"
+          type="number"
+          value="${record.labelqty != null ? record.labelqty : 0}"
+          onchange="updateField('${record.id}','labelqty',this.value,this)"
+        />
+      </td>
 
-      <td><input class="compact-input" type="text" name="labelcost"
-        value="${formatDollar(record.labelcost)}" placeholder="$0.00"
-        onchange="updateField('${record.id}','labelcost',this.value,this)" /></td>
+      <td>
+        <input
+          class="compact-input"
+          type="text"
+          name="labelcost"
+          value="${formatDollar(record.labelcost)}"
+          placeholder="$0.00"
+          onchange="updateField('${record.id}','labelcost',this.value,this)"
+        />
+      </td>
 
-      <td><input class="compact-input" type="text" name="threePLcost"
-        value="${formatDollar(record.threePLcost)}" placeholder="$0.00"
-        onchange="updateField('${record.id}','threePLcost',this.value,this)" /></td>
+      <td>
+        <input
+          class="compact-input"
+          type="text"
+          name="threePLcost"
+          value="${formatDollar(record.threePLcost)}"
+          placeholder="$0.00"
+          onchange="updateField('${record.id}','threePLcost',this.value,this)"
+        />
+      </td>
 
-      <td><select onchange="updateField('${record.id}','status',this.value,this)">
-        ${renderStatusOptions(record.status)}
-      </select></td>
+      <td>
+        <select onchange="updateField('${record.id}','status',this.value,this)">
+          ${renderStatusOptions(record.status)}
+        </select>
+      </td>
 
-      <td><button class="btn-save" onclick="saveRecord('${record.id}')">💾 Save</button></td>
+      <td>
+        <button class="btn-save" onclick="saveRecord('${record.id}')">💾 Save</button>
+      </td>
     `;
     tbody.appendChild(tr);
   });
 
-  tbody.querySelectorAll('input[name="labelcost"], input[name="threePLcost"]').forEach(setupDollarInput);
+  const costInputs = tbody.querySelectorAll('input[name="labelcost"], input[name="threePLcost"]');
+  costInputs.forEach(input => setupDollarInput(input));
 }
 
 // 💲 Format dollar values
 function formatDollar(value) {
   const num = parseFloat(value);
-  return isNaN(num) || num === 0 ? "$0.00" : `$${num.toFixed(2)}`;
+  return isNaN(num) || num === 0 ? "$0.00" : "$" + num.toFixed(2);
 }
 
 // 💲 Setup dollar input formatting
@@ -104,28 +130,37 @@ function setupDollarInput(input) {
 
   input.addEventListener("input", () => {
     const raw = input.value.replace(/[^0-9.]/g, "");
-    const [whole, decimal] = raw.split(".");
-    input.value = decimal ? `${whole}.${decimal.slice(0, 2)}` : whole;
+    const parts = raw.split(".");
+    const whole = parts[0];
+    const decimal = parts[1];
+    input.value = decimal ? whole + "." + decimal.slice(0, 2) : whole;
   });
 
   input.addEventListener("blur", () => {
     const num = parseFloat(input.value.replace(/[^0-9.]/g, ""));
-    input.value = isNaN(num) ? "$0.00" : `$${num.toFixed(2)}`;
+    input.value = isNaN(num) ? "$0.00" : "$" + num.toFixed(2);
   });
 }
 
 // 🧠 Render status options
 function renderStatusOptions(current) {
   const statuses = [
-    "OrderPending", "OrderDelivered", "OrderCompleted",
-    "CancelCompleted", "Refunded", "Shipped", "LabelsPrinted"
+    "OrderPending",
+    "OrderDelivered",
+    "OrderCompleted",
+    "CancelCompleted",
+    "Refunded",
+    "Shipped",
+    "LabelsPrinted"
   ];
 
-  return statuses.map(status => {
-    const label = status.replace(/([A-Z])/g, " $1").trim();
-    const selected = current === status ? "selected" : "";
-    return `<option value="${status}" ${selected}>${label}</option>`;
-  }).join("");
+  return statuses
+    .map(status => {
+      const label = status.replace(/([A-Z])/g, " $1").trim();
+      const selected = current === status ? "selected" : "";
+      return `<option value="${status}" ${selected}>${label}</option>`;
+    })
+    .join("");
 }
 
 // 🔍 Apply filters
@@ -135,9 +170,8 @@ function applyFilters() {
   const toInput = document.getElementById("filterEnd");
   const statusSelect = document.getElementById("filterStatus");
 
-  const client = clientInput && clientInput.value
-    ? clientInput.value.trim().toLowerCase()
-    : "";
+  const client =
+    clientInput && clientInput.value ? clientInput.value.trim().toLowerCase() : "";
   const fromDate = fromInput && fromInput.value ? fromInput.value : "";
   const toDate = toInput && toInput.value ? toInput.value : "";
   const status = statusSelect && statusSelect.value ? statusSelect.value : "";
@@ -168,7 +202,6 @@ function clearFilters() {
   if (statusSelect) statusSelect.value = "";
 
   renderTable(allRecords);
-  // Toast only when user clicks Clear
   showToast("🔄 Filters cleared. Showing all records.");
 }
 
@@ -187,8 +220,10 @@ window.saveRecord = async function (recordId) {
   const record = allRecords.find(r => r.id === recordId);
   if (!record || !record._dirty) return;
 
-  const labelCost = parseFloat(String(record.labelcost || "").replace(/[^0-9.]/g, "")) || 0;
-  const threePLCost = parseFloat(String(record.threePLcost || "").replace(/[^0-9.]/g, "")) || 0;
+  const labelCost =
+    parseFloat(String(record.labelcost || "").replace(/[^0-9.]/g, "")) || 0;
+  const threePLCost =
+    parseFloat(String(record.threePLcost || "").replace(/[^0-9.]/g, "")) || 0;
 
   try {
     await updateDoc(doc(db, "inventory", recordId), {
@@ -199,7 +234,7 @@ window.saveRecord = async function (recordId) {
       updatedAt: new Date()
     });
 
-    showToast(`✅ Record updated for ${record.orderId || record.id}`);
+    showToast("✅ Record updated for " + (record.orderId || record.id));
     showSuccessPopup();
     record._dirty = false;
 
