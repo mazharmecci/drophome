@@ -9,36 +9,37 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Shared Navbar -->
-    <div id="navbar-placeholder"></div>
-    <script>
-      (function () {
-        const placeholder = document.getElementById("navbar-placeholder");
-        if (!placeholder) return;
-    
-        fetch("navbar.html")
-          .then(res => {
-            if (!res.ok) throw new Error("Navbar load failed");
-            return res.text();
-          })
-          .then(html => {
-            placeholder.innerHTML = html;
-    
-            // Load navbar JS once navbar HTML is in place
-            const existing = document.querySelector('script[data-navbar="true"]');
-            if (!existing) {
-              const s = document.createElement("script");
-              s.src = "scripts/navbar.js";
-              s.defer = true;
-              s.dataset.navbar = "true";
-              document.body.appendChild(s);
-            }
-          })
-          .catch(err => {
-            console.error(err);
-          });
-      })();
-    </script>
+  <!-- Shared Navbar -->
+  <div id="navbar-placeholder"></div>
+  <script>
+    (function () {
+      const placeholder = document.getElementById("navbar-placeholder");
+      if (!placeholder) return;
+  
+      // Correct fetch call
+      fetch("https://mazharmecci.github.io/drophome/navbar.html")
+        .then(res => {
+          if (!res.ok) throw new Error("Navbar load failed");
+          return res.text();
+        })
+        .then(html => {
+          placeholder.innerHTML = html;
+  
+          // Load navbar JS once navbar HTML is in place
+          const existing = document.querySelector('script[data-navbar="true"]');
+          if (!existing) {
+            const s = document.createElement("script");
+            s.src = "scripts/navbar.js";
+            s.defer = true;
+            s.dataset.navbar = "true";
+            document.body.appendChild(s);
+          }
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    })();
+  </script>
   
   <main>
     <!-- Form Container / Landing Section -->
