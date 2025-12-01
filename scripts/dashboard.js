@@ -129,61 +129,77 @@ async function loadStockSummary() {
 // 🔍 Load product/location filters
 async function loadStockFilters() {
   const productFilter = document.getElementById("filterProduct");
-  const locationFilter = document.getElementById("filterLocation");
-  if (!productFilter || !locationFilter) return;
+  const accountFilter = document.getElementById("filterLocation"); // renamed for clarity
+  if (!productFilter || !accountFilter) return;
 
   try {
-    const snapshot = await getDoc(masterDocRef);
-    if (!snapshot.exists()) return;
+    const inboundSnapshot = await getDocs(collection(db, "inbound"));
 
-    const { products, locations } = snapshot.data();
+    const productSet = new Set();
+    const accountSet = new Set();
 
+    inboundSnapshot.forEach(doc => {
+      const data = doc.data();
+      if (data.productName) productSet.add(data.productName);
+      if (data.accountName) accountSet.add(data.accountName);
+    });
+
+    // Clear and populate product dropdown
     productFilter.innerHTML = `<option value="" disabled selected>Choose your product 📦</option>`;
-    locationFilter.innerHTML = `<option value="" disabled selected>Choose your location 📍</option>`;
-
-    products.forEach(product => {
+    [...productSet].sort().forEach(product => {
       const opt = document.createElement("option");
       opt.value = product;
       opt.textContent = product;
       productFilter.appendChild(opt);
     });
 
-    locations.forEach(location => {
+    // Clear and populate account dropdown
+    accountFilter.innerHTML = `<option value="" disabled selected>Choose your account 📍</option>`;
+    [...accountSet].sort().forEach(account => {
       const opt = document.createElement("option");
-      opt.value = location;
-      opt.textContent = location;
-      locationFilter.appendChild(opt);
+      opt.value = account;
+      opt.textContent = account;
+      accountFilter.appendChild(opt);
     });
+
+    console.log("✅ Filters loaded from inbound records.");
   } catch (err) {
-    console.error("❌ Error loading stock filters:", err);
+    console.error("❌ Error loading filters:", err);
+    showToast("❌ Failed to load filter options.");
   }
 }
 
-// 🧮 Apply stock filters
+// 🧮 Apply stock filters (using inbound data)
 async function applyStockFilters() {
   const productFilter = document.getElementById("filterProduct");
-  const locationFilter = document.getElementById("filterLocation");
+  const accountFilter = document.getElementById("filterLocation");
   const summaryBody = document.getElementById("summaryBody");
-  if (!productFilter || !locationFilter || !summaryBody) return;
 
-  const product = productFilter.value;
-  const location = locationFilter.value;
+  if (!productFilter || !accountFilter || !summaryBody) return;
+
+  const selectedProduct = productFilter.value;
+  const selectedAccount = accountFilter.value;
 
   summaryBody.innerHTML = "";
   animateStockTable();
 
   try {
-    const snapshot = await getDoc(masterDocRef);
-    if (!snapshot.exists()) {
-      showToast("❌ masterList document not found.");
-      return;
-    }
+    const inboundSnapshot = await getDocs(collection(db, "inbound"));
 
-    const { products, locations } = snapshot.data();
-    const filteredProducts = product ? [product] : products;
-    const filteredLocations = location ? [location] : locations;
+    // Extract unique products and accounts from inbound records
+    const allProducts = new Set();
+    const allAccounts = new Set();
 
-    await renderStockSummary(filteredProducts, filteredLocations, summaryBody);
+    inboundSnapshot.forEach(doc => {
+      const data = doc.data();
+      if (data.productName) allProducts.add(data.productName);
+      if (data.accountName) allAccounts.add(data.accountName);
+    });
+
+    const filteredProducts = selectedProduct ? [selectedProduct] : [...allProducts];
+    const filteredAccounts = selectedAccount ? [selectedAccount] : [...allAccounts];
+
+    await renderStockSummary(filteredProducts, filteredAccounts, summaryBody);
     console.log("✅ Filtered stock summary loaded.");
   } catch (err) {
     console.error("❌ Error applying stock filters:", err);
