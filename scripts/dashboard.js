@@ -122,6 +122,59 @@ export async function applySalesFilters() {
   }
 }
 
+/* ==========================
+   HELP MODAL TOGGLE
+   ========================== */
+
+function setupHelpModal() {
+  const helpBtn = document.getElementById("helpBtn");
+  const helpModal = document.getElementById("helpModal");
+  const closeHelpBtn = document.getElementById("closeHelpBtn");
+
+  if (!helpBtn || !helpModal || !closeHelpBtn) return;
+
+  helpBtn.addEventListener("click", () => {
+    helpModal.classList.remove("hidden");
+  });
+
+  closeHelpBtn.addEventListener("click", () => {
+    helpModal.classList.add("hidden");
+  });
+
+  // Close modal if user clicks outside content
+  helpModal.addEventListener("click", (e) => {
+    if (e.target === helpModal) {
+      helpModal.classList.add("hidden");
+    }
+  });
+}
+
+/* ==========================
+   RESET FILTERS
+   ========================== */
+
+function setupResetFilters() {
+  const resetBtn = document.getElementById("resetFiltersBtn");
+  if (!resetBtn) return;
+
+  resetBtn.addEventListener("click", async () => {
+    const productFilter = document.getElementById("filterProduct");
+    const fromInput = document.getElementById("filterStart");
+    const toInput = document.getElementById("filterEnd");
+
+    if (productFilter) productFilter.value = "";
+    if (fromInput) fromInput.value = "";
+    if (toInput) toInput.value = "";
+
+    await loadSalesSummary();
+    console.log("🔄 Filters reset for Sales Summary.");
+  });
+}
+
+/* ==========================
+   INIT
+   ========================== */
+
 document.addEventListener("DOMContentLoaded", async () => {
   await loadSalesSummary();
   await loadProductFilter();
@@ -129,4 +182,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("filterProduct")?.addEventListener("change", applySalesFilters);
   document.getElementById("filterStart")?.addEventListener("change", applySalesFilters);
   document.getElementById("filterEnd")?.addEventListener("change", applySalesFilters);
+
+  setupHelpModal();
+  setupResetFilters();
 });
