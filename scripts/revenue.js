@@ -40,6 +40,7 @@ export async function loadAccountDropdown() {
 }
 
 // 📊 Load revenue summary
+// 📊 Load revenue summary
 export async function loadRevenueSummary() {
   const tbody = document.getElementById("revenueSummaryBody");
   const totalQtyCell = document.getElementById("totalQtyCell");
@@ -74,12 +75,23 @@ export async function loadRevenueSummary() {
         threePLCost = 0
       } = data;
 
-      if (Status !== "OrderCompleted") return;
+      if (Status.toLowerCase() !== "ordercompleted") return;
+
+      // Handle both YYYY-MM-DD and DD-MM-YYYY formats
+      let monthStr = "";
+      if (Date.includes("-")) {
+        const parts = Date.split("-");
+        if (parts[0].length === 4) {
+          // YYYY-MM-DD
+          monthStr = parts[1];
+        } else {
+          // DD-MM-YYYY
+          monthStr = parts[1];
+        }
+      }
 
       const isAllAccounts = selectedAccountRaw === "__all__";
       const matchAccount = isAllAccounts || AccountName.toLowerCase() === selectedAccount;
-
-      const monthStr = Date?.split("-")[1] || "";
       const matchMonth = !selectedMonth || monthStr === selectedMonth;
 
       if (matchAccount && matchMonth) {
