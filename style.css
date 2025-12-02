@@ -937,21 +937,6 @@ button.btn-clear:hover { background-color: #e6b800; }
   position: relative;
 }
 
-.tab-btn[title]:hover::after {
-  content: attr(title);
-  position: absolute;
-  bottom: -28px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #333;
-  color: #fff;
-  padding: 6px 10px;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  white-space: nowrap;
-  z-index: 10;
-}
-
 /* Optional icon spacing */
 .tab-btn::before {
   margin-right: 6px;
