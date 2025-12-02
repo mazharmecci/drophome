@@ -19,7 +19,7 @@ function animateSalesTable() {
   }
 }
 
-async function renderSalesSummary(entries, summaryBody, fromDate, toDate, selectedProduct) {
+async function renderSalesSummary(entries, summaryBody, fromDate, toDate, selectedProduct, selectedStatus) {
   for (const entry of entries) {
     const {
       accountName = "-",
@@ -32,6 +32,7 @@ async function renderSalesSummary(entries, summaryBody, fromDate, toDate, select
     if (selectedProduct && productName !== selectedProduct) continue;
     if (fromDate && date < fromDate) continue;
     if (toDate && date > toDate) continue;
+    if (selectedStatus !== "__all__" && status !== selectedStatus) continue;
 
     const displayStatus = status.replace(/([a-z])([A-Z])/g, "$1 $2");
 
@@ -58,7 +59,7 @@ export async function loadSalesSummary() {
     const snapshot = await getDocs(collection(db, "inventory"));
     const entries = [];
     snapshot.forEach(doc => entries.push(doc.data()));
-    await renderSalesSummary(entries, summaryBody);
+    await renderSalesSummary(entries, summaryBody, "", "", "", "__all__");
     console.log("✅ Sales summary loaded.");
   } catch (err) {
     console.error("❌ Error loading sales summary:", err);
@@ -99,13 +100,15 @@ export async function applySalesFilters() {
   const productFilter = document.getElementById("filterProduct");
   const fromInput = document.getElementById("filterStart");
   const toInput = document.getElementById("filterEnd");
+  const statusFilter = document.getElementById("filterStatus");
   const summaryBody = document.getElementById("salesSummaryBody");
 
-  if (!productFilter || !summaryBody) return;
+  if (!productFilter || !summaryBody || !statusFilter) return;
 
   const selectedProduct = productFilter.value;
   const fromDate = fromInput?.value || "";
   const toDate = toInput?.value || "";
+  const selectedStatus = statusFilter?.value || "__all__";
 
   summaryBody.innerHTML = "";
   animateSalesTable();
@@ -114,7 +117,7 @@ export async function applySalesFilters() {
     const snapshot = await getDocs(collection(db, "inventory"));
     const entries = [];
     snapshot.forEach(doc => entries.push(doc.data()));
-    await renderSalesSummary(entries, summaryBody, fromDate, toDate, selectedProduct);
+    await renderSalesSummary(entries, summaryBody, fromDate, toDate, selectedProduct, selectedStatus);
     console.log("✅ Filtered sales summary loaded.");
   } catch (err) {
     console.error("❌ Error applying filters:", err);
@@ -141,7 +144,6 @@ function setupHelpModal() {
     helpModal.classList.add("hidden");
   });
 
-  // Close modal if user clicks outside content
   helpModal.addEventListener("click", (e) => {
     if (e.target === helpModal) {
       helpModal.classList.add("hidden");
@@ -161,10 +163,12 @@ function setupResetFilters() {
     const productFilter = document.getElementById("filterProduct");
     const fromInput = document.getElementById("filterStart");
     const toInput = document.getElementById("filterEnd");
+    const statusFilter = document.getElementById("filterStatus");
 
     if (productFilter) productFilter.value = "";
     if (fromInput) fromInput.value = "";
     if (toInput) toInput.value = "";
+    if (statusFilter) statusFilter.value = "__all__";
 
     await loadSalesSummary();
     console.log("🔄 Filters reset for Sales Summary.");
@@ -182,6 +186,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("filterProduct")?.addEventListener("change", applySalesFilters);
   document.getElementById("filterStart")?.addEventListener("change", applySalesFilters);
   document.getElementById("filterEnd")?.addEventListener("change", applySalesFilters);
+  document.getElementById("filterStatus")?.addEventListener("change", applySalesFilters);
 
   setupHelpModal();
   setupResetFilters();
