@@ -130,4 +130,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Default month = current month
   const now = new Date();
-  const currentMonth = String(now
+  const currentMonth = String(now.getMonth() + 1).padStart(2, "0");
+  if (monthSelect) monthSelect.value = currentMonth;
+  if (accountSelect) accountSelect.value = "__all__";
+
+  await loadRevenueSummary();
+
+  accountSelect?.addEventListener("change", loadRevenueSummary);
+  monthSelect?.addEventListener("change", loadRevenueSummary);
+});
