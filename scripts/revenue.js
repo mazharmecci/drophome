@@ -1,5 +1,5 @@
-import { db } from "./firebase.js";
-import { showToast } from "./popupHandler.js";
+import { db } from "../scripts/firebase.js";
+import { showToast } from "../scripts/popupHandler.js";
 import {
   collection,
   getDocs
@@ -10,7 +10,7 @@ import {
    ========================== */
 
 // 🔽 Load account dropdown from inventory
-async function loadAccountDropdown() {
+export async function loadAccountDropdown() {
   const dropdown = document.getElementById("filterAccount");
   if (!dropdown) return;
 
@@ -40,7 +40,7 @@ async function loadAccountDropdown() {
 }
 
 // 📊 Load revenue summary from inventory
-async function loadRevenueSummary() {
+export async function loadRevenueSummary() {
   const tbody = document.getElementById("revenueSummaryBody");
   const totalQtyCell = document.getElementById("totalQtyCell");
   const totalLabelCostCell = document.getElementById("totalLabelCostCell");
@@ -74,6 +74,7 @@ async function loadRevenueSummary() {
         threePLCost = 0
       } = data;
 
+      // Only include completed orders
       if (Status !== "OrderCompleted") return;
 
       const isAllAccounts = selectedAccountRaw === "__all__";
@@ -119,7 +120,7 @@ async function loadRevenueSummary() {
 }
 
 /* ==========================
-   INIT
+   INIT (Scoped to Revenue Tab)
    ========================== */
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -129,6 +130,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const monthSelect = document.getElementById("filterMonth");
   const resetBtn = document.getElementById("resetFiltersBtn");
 
+  // Default month = current month
   const now = new Date();
   const currentMonth = String(now.getMonth() + 1).padStart(2, "0");
   if (monthSelect) monthSelect.value = currentMonth;
