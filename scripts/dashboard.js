@@ -6,10 +6,9 @@ import {
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 /* ==========================
-   SALES SUMMARY (PRODUCT-LEVEL)
+   SALES SUMMARY
    ========================== */
 
-// ✨ Animate sales summary table
 function animateSalesTable() {
   const table = document.querySelector("#sales .summary-table");
   if (table) {
@@ -20,34 +19,34 @@ function animateSalesTable() {
   }
 }
 
-// 📊 Render sales summary rows
 async function renderSalesSummary(entries, summaryBody, fromDate, toDate, selectedProduct) {
   for (const entry of entries) {
     const {
-      AccountName = "-",
-      Date = "",
-      ProductName = "-",
-      Quantity = 0,
-      Status = "-"
+      accountName = "-",
+      date = "",
+      productName = "-",
+      quantity = 0,
+      status = "-"
     } = entry;
 
-    if (selectedProduct && ProductName !== selectedProduct) continue;
-    if (fromDate && Date < fromDate) continue;
-    if (toDate && Date > toDate) continue;
+    if (selectedProduct && productName !== selectedProduct) continue;
+    if (fromDate && date < fromDate) continue;
+    if (toDate && date > toDate) continue;
+
+    const displayStatus = status.replace(/([a-z])([A-Z])/g, "$1 $2");
 
     summaryBody.insertAdjacentHTML("beforeend", `
       <tr class="summary-row">
-        <td>${ProductName}</td>
-        <td>${AccountName}</td>
-        <td>${Date}</td>
-        <td>${Quantity}</td>
-        <td>${Status}</td>
+        <td>${productName}</td>
+        <td>${accountName}</td>
+        <td>${date}</td>
+        <td>${quantity}</td>
+        <td>${displayStatus}</td>
       </tr>
     `);
   }
 }
 
-// 📦 Load full sales summary
 export async function loadSalesSummary() {
   const summaryBody = document.getElementById("salesSummaryBody");
   if (!summaryBody) return;
@@ -59,7 +58,6 @@ export async function loadSalesSummary() {
     const snapshot = await getDocs(collection(db, "inventory"));
     const entries = [];
     snapshot.forEach(doc => entries.push(doc.data()));
-
     await renderSalesSummary(entries, summaryBody);
     console.log("✅ Sales summary loaded.");
   } catch (err) {
@@ -68,7 +66,6 @@ export async function loadSalesSummary() {
   }
 }
 
-// 🔍 Load product filter
 export async function loadProductFilter() {
   const productFilter = document.getElementById("filterProduct");
   if (!productFilter) return;
@@ -79,12 +76,8 @@ export async function loadProductFilter() {
 
     snapshot.forEach(doc => {
       const data = doc.data();
-      console.log("📦 Inventory record:", data); // DEBUG
-      if (data.ProductName) {
-        productSet.add(data.ProductName);
-      } else if (data.product) {
-        productSet.add(data.product); // fallback if schema uses lowercase
-      }
+      console.log("📦 Inventory record:", data);
+      if (data.productName) productSet.add(data.productName);
     });
 
     productFilter.innerHTML = `<option value="" disabled selected>Choose product name 📦</option>`;
@@ -102,7 +95,6 @@ export async function loadProductFilter() {
   }
 }
 
-// 🧮 Apply filters
 export async function applySalesFilters() {
   const productFilter = document.getElementById("filterProduct");
   const fromInput = document.getElementById("filterStart");
@@ -122,7 +114,6 @@ export async function applySalesFilters() {
     const snapshot = await getDocs(collection(db, "inventory"));
     const entries = [];
     snapshot.forEach(doc => entries.push(doc.data()));
-
     await renderSalesSummary(entries, summaryBody, fromDate, toDate, selectedProduct);
     console.log("✅ Filtered sales summary loaded.");
   } catch (err) {
@@ -131,19 +122,11 @@ export async function applySalesFilters() {
   }
 }
 
-/* ==========================
-   INIT (Scoped to Sales Tab)
-   ========================== */
-
 document.addEventListener("DOMContentLoaded", async () => {
   await loadSalesSummary();
   await loadProductFilter();
 
-  const productFilter = document.getElementById("filterProduct");
-  const fromInput = document.getElementById("filterStart");
-  const toInput = document.getElementById("filterEnd");
-
-  productFilter?.addEventListener("change", applySalesFilters);
-  fromInput?.addEventListener("change", applySalesFilters);
-  toInput?.addEventListener("change", applySalesFilters);
+  document.getElementById("filterProduct")?.addEventListener("change", applySalesFilters);
+  document.getElementById("filterStart")?.addEventListener("change", applySalesFilters);
+  document.getElementById("filterEnd")?.addEventListener("change", applySalesFilters);
 });
