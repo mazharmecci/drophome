@@ -62,7 +62,6 @@
   </script>
 
   <main class="dashboard-container">
-    <!-- History-style wrapper so it inherits .history-container, .page-title, etc. -->
     <section class="history-container">
       <!-- Logo + Brand -->
       <header class="form-header">
@@ -77,12 +76,12 @@
             <a href="https://mazharmecci.github.io/drophome/">Home</a>
           </li>
           <li class="breadcrumb-item breadcrumb-current" aria-current="page">
-            Dashboard
+            Sales Summary
           </li>
         </ol>
       </nav>
 
-      <!-- Filters (reuse global .filters + .filter-select/.filter-date styles) -->
+      <!-- Filters -->
       <div class="filters">
         <select id="filterProduct" class="filter-select">
           <option value="" disabled selected>Choose product 📦</option>
@@ -94,21 +93,22 @@
       <div class="filters-actions">
         <button id="resetFiltersBtn" class="reset-btn btn-clear">🔄 Reset Filters</button>
       </div>
-      
+
+      <!-- Summary Table -->
       <section class="summary-container">
         <div class="table-scroll-wrapper">
           <table class="summary-table">
             <thead>
               <tr>
                 <th>📦 Product</th>
-                <th>🧑‍💼 Client</th>
-                <th>🚚 Inbd</th>
-                <th>🚚 Outd</th>
-                <th>📅 Quantity</th>
+                <th>🧑‍💼 Account</th>
+                <th>📅 Date</th>
+                <th>🔢 Quantity</th>
+                <th>📌 Status</th>
               </tr>
             </thead>
             <tbody id="summaryBody">
-              <!-- Rows injected dynamically by scripts/dashboard.js -->
+              <!-- Rows injected dynamically by dashboard.js -->
             </tbody>
           </table>
         </div>
