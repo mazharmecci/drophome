@@ -22,7 +22,12 @@ export async function loadAccountDropdown() {
 
     snapshot.forEach(doc => {
       const data = doc.data();
-      if (data.AccountName) accountSet.add(data.AccountName);
+      console.log("👤 Inventory record:", data); // DEBUG
+      if (data.AccountName) {
+        accountSet.add(data.AccountName);
+      } else if (data.account) {
+        accountSet.add(data.account); // fallback if schema uses lowercase
+      }
     });
 
     [...accountSet].sort().forEach(account => {
@@ -32,7 +37,7 @@ export async function loadAccountDropdown() {
       dropdown.appendChild(opt);
     });
 
-    console.log("✅ Account dropdown loaded.");
+    console.log("✅ Account filter loaded with:", [...accountSet]);
   } catch (err) {
     console.error("❌ Error loading accounts:", err);
     showToast("❌ Failed to load accounts.");
