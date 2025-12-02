@@ -1,13 +1,17 @@
-import { db } from "./firebase.js";
-import { showToast } from "./popupHandler.js";
+import { db } from "../scripts/firebase.js";
+import { showToast } from "../scripts/popupHandler.js";
 import {
   collection,
   getDocs
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
+/* ==========================
+   SALES SUMMARY (PRODUCT-LEVEL)
+   ========================== */
+
 // ✨ Animate sales summary table
 function animateSalesTable() {
-  const table = document.querySelector(".summary-table");
+  const table = document.querySelector("#sales .summary-table");
   if (table) {
     table.style.opacity = "0.3";
     setTimeout(() => {
@@ -16,7 +20,7 @@ function animateSalesTable() {
   }
 }
 
-// 📊 Render sales summary rows from unified document
+// 📊 Render sales summary rows from inventory
 async function renderSalesSummary(entries, summaryBody, fromDate, toDate, selectedProduct) {
   for (const entry of entries) {
     const {
@@ -45,8 +49,8 @@ async function renderSalesSummary(entries, summaryBody, fromDate, toDate, select
 }
 
 // 📦 Load full sales summary
-async function loadSalesSummary() {
-  const summaryBody = document.getElementById("summaryBody");
+export async function loadSalesSummary() {
+  const summaryBody = document.getElementById("salesSummaryBody");
   if (!summaryBody) return;
 
   summaryBody.innerHTML = "";
@@ -69,8 +73,8 @@ async function loadSalesSummary() {
   }
 }
 
-// 🔍 Load product filter from inventory
-async function loadProductFilter() {
+// 🔍 Load product filter
+export async function loadProductFilter() {
   const productFilter = document.getElementById("filterProduct");
   if (!productFilter) return;
 
@@ -98,12 +102,12 @@ async function loadProductFilter() {
   }
 }
 
-// 🧮 Apply product + date filters
-async function applyFilters() {
+// 🧮 Apply filters
+export async function applySalesFilters() {
   const productFilter = document.getElementById("filterProduct");
   const fromInput = document.getElementById("filterStart");
   const toInput = document.getElementById("filterEnd");
-  const summaryBody = document.getElementById("summaryBody");
+  const summaryBody = document.getElementById("salesSummaryBody");
 
   if (!productFilter || !summaryBody) return;
 
@@ -131,7 +135,10 @@ async function applyFilters() {
   }
 }
 
-// 🔄 DOM Ready
+/* ==========================
+   INIT (Scoped to Sales Tab)
+   ========================== */
+
 document.addEventListener("DOMContentLoaded", async () => {
   await loadSalesSummary();
   await loadProductFilter();
@@ -141,9 +148,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   const toInput = document.getElementById("filterEnd");
   const resetBtn = document.getElementById("resetFiltersBtn");
 
-  if (productFilter) productFilter.addEventListener("change", applyFilters);
-  if (fromInput) fromInput.addEventListener("change", applyFilters);
-  if (toInput) toInput.addEventListener("change", applyFilters);
+  if (productFilter) productFilter.addEventListener("change", applySalesFilters);
+  if (fromInput) fromInput.addEventListener("change", applySalesFilters);
+  if (toInput) toInput.addEventListener("change", applySalesFilters);
 
   if (resetBtn) {
     resetBtn.addEventListener("click", () => {
