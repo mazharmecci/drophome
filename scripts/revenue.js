@@ -1,52 +1,48 @@
 import { db } from "./firebase.js";
 import { showToast } from "./popupHandler.js";
 import {
-  doc,
-  getDoc,
   collection,
   getDocs
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 /* ==========================
-   REVENUE SUMMARY (ACCOUNT)
+   REVENUE SUMMARY (ORDER COMPLETED)
    ========================== */
 
-// 🔽 Load account dropdown from masterList
+// 🔽 Load account dropdown from inventory
 async function loadAccountDropdown() {
   const dropdown = document.getElementById("filterAccount");
   if (!dropdown) return;
 
-  // Add "All accounts" at top
-  dropdown.innerHTML = `
-    <option value="__all__" selected>All accounts 👥</option>
-  `;
+  dropdown.innerHTML = `<option value="__all__" selected>All accounts 👥</option>`;
 
   try {
-    const masterRef = doc(db, "masterList", "VwsEuQNJgfo5TXM6A0DA");
-    const masterSnap = await getDoc(masterRef);
+    const snapshot = await getDocs(collection(db, "inventory"));
+    const accountSet = new Set();
 
-    if (masterSnap.exists()) {
-      const { accounts } = masterSnap.data();
-      accounts.forEach(account => {
-        const opt = document.createElement("option");
-        opt.value = account;
-        opt.textContent = account;
-        dropdown.appendChild(opt);
-      });
-      console.log("✅ Account dropdown loaded:", accounts);
-    } else {
-      console.warn("⚠️ masterList document not found.");
-    }
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      if (data.AccountName) accountSet.add(data.AccountName);
+    });
+
+    [...accountSet].sort().forEach(account => {
+      const opt = document.createElement("option");
+      opt.value = account;
+      opt.textContent = account;
+      dropdown.appendChild(opt);
+    });
+
+    console.log("✅ Account dropdown loaded.");
   } catch (err) {
     console.error("❌ Error loading accounts:", err);
     showToast("❌ Failed to load accounts.");
   }
 }
 
-// 📊 Load revenue summary with filters
+// 📊 Load revenue summary from inventory
 async function loadRevenueSummary() {
   const tbody = document.getElementById("revenueSummaryBody");
-  const totalProductsCell = document.getElementById("totalProductsCell");
+  const totalQtyCell = document.getElementById("totalQtyCell");
   const totalLabelCostCell = document.getElementById("totalLabelCostCell");
   const total3PLCostCell = document.getElementById("total3PLCostCell");
 
@@ -54,77 +50,67 @@ async function loadRevenueSummary() {
   const selectedAccount = selectedAccountRaw.toLowerCase();
   const selectedMonth = document.getElementById("filterMonth")?.value || "";
 
-  console.log("🎛 Current filters:", { selectedAccountRaw, selectedMonth });
-
-  if (!tbody || !totalProductsCell || !totalLabelCostCell || !total3PLCostCell) {
-    console.warn("⚠️ Missing table elements");
-    return;
-  }
+  if (!tbody || !totalQtyCell || !totalLabelCostCell || !total3PLCostCell) return;
 
   tbody.innerHTML = "";
-  let totalProducts = 0;
+  let totalQty = 0;
   let totalLabel = 0;
   let total3PL = 0;
   let matchCount = 0;
-  let skipCount = 0;
 
   try {
-    const snapshot = await getDocs(collection(db, "revenue_summary"));
+    const snapshot = await getDocs(collection(db, "inventory"));
 
     snapshot.forEach(docSnap => {
       const data = docSnap.data();
-      const accountName = data.accountName || "Unknown";
-      const products = parseInt(data.totalProducts || 0, 10);
+      const {
+        AccountName = "Unknown",
+        ProductName = "-",
+        Date = "",
+        Quantity = 0,
+        Status = "",
+        LabelCost = 0,
+        LabelQty = 0,
+        threePLCost = 0
+      } = data;
 
-      const labelCost = parseFloat(
-        data.labelCost ?? data.labelcost ?? 0
-      );
-      const threePLCost = parseFloat(
-        data.threePLCost ?? data.threePLcost ?? 0
-      );
-
-      const timestamp = data.timestamp;
-      const convertedTs = timestamp ? timestamp.toDate() : null;
-      const monthStr = convertedTs
-        ? String(convertedTs.getMonth() + 1).padStart(2, "0")
-        : null;
+      if (Status !== "OrderCompleted") return;
 
       const isAllAccounts = selectedAccountRaw === "__all__";
-      const matchAccount =
-        isAllAccounts || accountName.toLowerCase() === selectedAccount;
+      const matchAccount = isAllAccounts || AccountName.toLowerCase() === selectedAccount;
 
-      const matchMonth =
-        !selectedMonth || (monthStr ? monthStr === selectedMonth : true);
+      const monthStr = Date?.split("-")[1] || "";
+      const matchMonth = !selectedMonth || monthStr === selectedMonth;
 
       if (matchAccount && matchMonth) {
         matchCount++;
 
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td style="padding: 12px;">${accountName}</td>
-          <td style="padding: 12px;">${products}</td>
-          <td style="padding: 12px;">₹${labelCost.toFixed(2)}</td>
-          <td style="padding: 12px;">₹${threePLCost.toFixed(2)}</td>
-        `;
-        tbody.appendChild(row);
+        tbody.insertAdjacentHTML("beforeend", `
+          <tr>
+            <td>${AccountName}</td>
+            <td>${ProductName}</td>
+            <td>${Date}</td>
+            <td>${Quantity}</td>
+            <td>₹${LabelCost}</td>
+            <td>${LabelQty}</td>
+            <td>₹${threePLCost}</td>
+          </tr>
+        `);
 
-        totalProducts += products;
-        totalLabel += labelCost;
-        total3PL += threePLCost;
-      } else {
-        skipCount++;
+        totalQty += Quantity;
+        totalLabel += parseFloat(LabelCost);
+        total3PL += parseFloat(threePLCost);
       }
     });
 
-    totalProductsCell.textContent = totalProducts;
+    totalQtyCell.textContent = totalQty;
     totalLabelCostCell.textContent = `₹${totalLabel.toFixed(2)}`;
     total3PLCostCell.textContent = `₹${total3PL.toFixed(2)}`;
 
     if (matchCount === 0) {
       showToast("⚠️ No matching records found.");
-      console.warn(`⚠️ No records matched filters. Skipped: ${skipCount}`);
     } else {
-      console.log(`📊 Revenue summary loaded: ${matchCount} matched, ${skipCount} skipped`);
+      console.log(`📊 Revenue summary loaded: ${matchCount} matched`);
     }
   } catch (err) {
     console.error("❌ Failed to load revenue summary:", err);
@@ -143,33 +129,22 @@ document.addEventListener("DOMContentLoaded", async () => {
   const monthSelect = document.getElementById("filterMonth");
   const resetBtn = document.getElementById("resetFiltersBtn");
 
-  // Set month to current month (01–12)
   const now = new Date();
   const currentMonth = String(now.getMonth() + 1).padStart(2, "0");
-  if (monthSelect) {
-    monthSelect.value = currentMonth;
-  }
-
-  // Default to "All accounts"
-  if (accountSelect) {
-    accountSelect.value = "__all__";
-  }
+  if (monthSelect) monthSelect.value = currentMonth;
+  if (accountSelect) accountSelect.value = "__all__";
 
   await loadRevenueSummary();
 
   accountSelect?.addEventListener("change", loadRevenueSummary);
   monthSelect?.addEventListener("change", loadRevenueSummary);
 
-  // 🔄 Reset filters button
   if (resetBtn) {
     resetBtn.addEventListener("click", () => {
-      if (accountSelect) {
-        accountSelect.value = "__all__";
-      }
+      if (accountSelect) accountSelect.value = "__all__";
       if (monthSelect) {
         const now2 = new Date();
-        const currentMonth2 = String(now2.getMonth() + 1).padStart(2, "0");
-        monthSelect.value = currentMonth2;
+        monthSelect.value = String(now2.getMonth() + 1).padStart(2, "0");
       }
       loadRevenueSummary();
     });
