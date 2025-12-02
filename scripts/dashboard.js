@@ -79,7 +79,12 @@ export async function loadProductFilter() {
 
     snapshot.forEach(doc => {
       const data = doc.data();
-      if (data.ProductName) productSet.add(data.ProductName);
+      console.log("📦 Inventory record:", data); // DEBUG
+      if (data.ProductName) {
+        productSet.add(data.ProductName);
+      } else if (data.product) {
+        productSet.add(data.product); // fallback if schema uses lowercase
+      }
     });
 
     productFilter.innerHTML = `<option value="" disabled selected>Choose product name 📦</option>`;
@@ -90,7 +95,7 @@ export async function loadProductFilter() {
       productFilter.appendChild(opt);
     });
 
-    console.log("✅ Product filter loaded.");
+    console.log("✅ Product filter loaded with:", [...productSet]);
   } catch (err) {
     console.error("❌ Error loading product filter:", err);
     showToast("❌ Failed to load product options.");
