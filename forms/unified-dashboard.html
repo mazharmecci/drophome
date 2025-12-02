@@ -38,6 +38,42 @@
       <button class="tab-btn" data-tab="revenue" title="View completed orders only. Analyze revenue by account and month.">💰 Revenue Summary</button>
     </div>
 
+    <!-- Explanation of tabs -->
+    <button id="helpBtn" class="help-icon" title="What do these tabs do?">ℹ️</button>
+    <div id="helpModal" class="modal-overlay hidden">
+      
+    <div class="modal-content">
+      <h3>🧭 Tab Behavior Summary</h3>
+      <table class="modal-table">
+        <thead>
+          <tr>
+            <th>Tab</th>
+            <th>Purpose</th>
+            <th>Filters Active</th>
+            <th>Data Shown</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>📊 Sales Summary</td>
+            <td>Track all product orders</td>
+            <td>Product, Date Range</td>
+            <td>All statuses (Pending + Completed)</td>
+          </tr>
+          <tr>
+            <td>💰 Revenue Summary</td>
+            <td>Analyze completed orders and revenue</td>
+            <td>Account, Month</td>
+            <td>Only <code>OrderCompleted</code> entries</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="modal-actions">
+        <button id="closeHelpBtn">Got it!</button>
+      </div>
+    </div>
+  </div>
+
     <!-- Filters Wrapper -->
     <div class="filter-bar">
       <!-- Sales Filters -->
