@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Unified Dashboard – Drophome</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="images/DH-Black.png">
+  <link rel="apple-touch-icon" href="images/DH-Black.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Shared Navbar -->
+  <div id="navbar-placeholder"></div>
+  <script src="scripts/navbar.js" defer></script>
+
+  <main class="dashboard-container">
+    <!-- Header -->
+    <header class="form-header">
+      <img src="images/DH-white.png" alt="Drophome Logo" class="logo-img">
+      <span>Unified Dashboard</span>
+    </header>
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+      <ol class="breadcrumb-list">
+        <li class="breadcrumb-item">
+          <a href="https://mazharmecci.github.io/drophome/">🏠 Home</a>
+        </li>
+        <li class="breadcrumb-item breadcrumb-current" aria-current="page">
+          Unified Dashboard
+        </li>
+      </ol>
+    </nav>
+
+    <!-- Tabs -->
+    <div class="tab-container">
+      <button class="tab-btn active" data-tab="sales">📊 Sales Summary</button>
+      <button class="tab-btn" data-tab="revenue">💰 Revenue Summary</button>
+    </div>
+
+    <!-- Filters (shared) -->
+    <div class="filters">
+      <select id="filterProduct" class="filter-select">
+        <option value="" disabled selected>Choose product 📦</option>
+      </select>
+      <select id="filterAccount" class="filter-select">
+        <option value="" disabled selected>Choose account 👤</option>
+      </select>
+      <input id="filterStart" type="date" class="filter-date" />
+      <input id="filterEnd" type="date" class="filter-date" />
+      <select id="filterMonth" class="filter-select">
+        <option value="" disabled selected>Choose month 📅</option>
+        <option value="01">January</option>
+        <option value="02">February</option>
+        <!-- … -->
+        <option value="12">December</option>
+      </select>
+      <button id="resetFiltersBtn" class="reset-btn btn-clear">🔄 Reset Filters</button>
+    </div>
+
+    <!-- Sales Summary Section -->
+    <section id="sales" class="tab-content active">
+      <div class="table-scroll-wrapper">
+        <table class="summary-table">
+          <thead>
+            <tr>
+              <th>📦 Product</th>
+              <th>🧑‍💼 Account</th>
+              <th>📅 Date</th>
+              <th>🔢 Quantity</th>
+              <th>📌 Status</th>
+            </tr>
+          </thead>
+          <tbody id="salesSummaryBody">
+            <!-- Injected by dashboard.js -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Revenue Summary Section -->
+    <section id="revenue" class="tab-content">
+      <div class="table-scroll-wrapper">
+        <table class="summary-table">
+          <thead>
+            <tr>
+              <th>👤 Account</th>
+              <th>📦 Product</th>
+              <th>📅 Date</th>
+              <th>🔢 Quantity</th>
+              <th>🏷️ Label Cost</th>
+              <th>🏷️ Label Qty</th>
+              <th>🚚 3PL Cost</th>
+            </tr>
+          </thead>
+          <tbody id="revenueSummaryBody">
+            <!-- Injected by revenue.js -->
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="3">Total</td>
+              <td id="totalQtyCell">0</td>
+              <td id="totalLabelCostCell">₹0.00</td>
+              <td>–</td>
+              <td id="total3PLCostCell">₹0.00</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Scripts -->
+  <script type="module" src="scripts/dashboard.js"></script>
+  <script type="module" src="scripts/revenue.js"></script>
+  <script>
+    // Tab switching logic
+    document.addEventListener("DOMContentLoaded", () => {
+      const tabs = document.querySelectorAll(".tab-btn");
+      const contents = document.querySelectorAll(".tab-content");
+
+      tabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+          tabs.forEach(t => t.classList.remove("active"));
+          contents.forEach(c => c.classList.remove("active"));
+
+          tab.classList.add("active");
+          document.getElementById(tab.dataset.tab).classList.add("active");
+        });
+      });
+    });
+  </script>
+</body>
+</html>
