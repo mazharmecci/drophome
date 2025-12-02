@@ -20,7 +20,7 @@ function animateSalesTable() {
   }
 }
 
-// 📊 Render sales summary rows from inventory
+// 📊 Render sales summary rows
 async function renderSalesSummary(entries, summaryBody, fromDate, toDate, selectedProduct) {
   for (const entry of entries) {
     const {
@@ -31,7 +31,6 @@ async function renderSalesSummary(entries, summaryBody, fromDate, toDate, select
       Status = "-"
     } = entry;
 
-    // Apply filters
     if (selectedProduct && ProductName !== selectedProduct) continue;
     if (fromDate && Date < fromDate) continue;
     if (toDate && Date > toDate) continue;
@@ -59,11 +58,7 @@ export async function loadSalesSummary() {
   try {
     const snapshot = await getDocs(collection(db, "inventory"));
     const entries = [];
-
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      entries.push(data);
-    });
+    snapshot.forEach(doc => entries.push(doc.data()));
 
     await renderSalesSummary(entries, summaryBody);
     console.log("✅ Sales summary loaded.");
@@ -121,11 +116,7 @@ export async function applySalesFilters() {
   try {
     const snapshot = await getDocs(collection(db, "inventory"));
     const entries = [];
-
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      entries.push(data);
-    });
+    snapshot.forEach(doc => entries.push(doc.data()));
 
     await renderSalesSummary(entries, summaryBody, fromDate, toDate, selectedProduct);
     console.log("✅ Filtered sales summary loaded.");
@@ -146,19 +137,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const productFilter = document.getElementById("filterProduct");
   const fromInput = document.getElementById("filterStart");
   const toInput = document.getElementById("filterEnd");
-  const resetBtn = document.getElementById("resetFiltersBtn");
 
-  if (productFilter) productFilter.addEventListener("change", applySalesFilters);
-  if (fromInput) fromInput.addEventListener("change", applySalesFilters);
-  if (toInput) toInput.addEventListener("change", applySalesFilters);
-
-  if (resetBtn) {
-    resetBtn.addEventListener("click", () => {
-      productFilter.selectedIndex = 0;
-      if (fromInput) fromInput.value = "";
-      if (toInput) toInput.value = "";
-      loadSalesSummary();
-      showToast("🔄 Filters reset — full sales summary restored.");
-    });
-  }
+  productFilter?.addEventListener("change", applySalesFilters);
+  fromInput?.addEventListener("change", applySalesFilters);
+  toInput?.addEventListener("change", applySalesFilters);
 });
