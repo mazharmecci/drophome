@@ -5,8 +5,8 @@ import {
   getDocs
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-// ✨ Animate stock summary table
-function animateStockTable() {
+// ✨ Animate sales summary table
+function animateSalesTable() {
   const table = document.querySelector(".summary-table");
   if (table) {
     table.style.opacity = "0.3";
@@ -16,95 +16,71 @@ function animateStockTable() {
   }
 }
 
-// 📊 Render stock summary rows (product-level only)
-async function renderStockSummary(products, summaryBody, fromDate, toDate) {
-  for (const product of products) {
-    const inboundTotal = await computeInbound(product, fromDate, toDate);
-    const outboundTotal = await computeOutbound(product, fromDate, toDate);
-    const available = inboundTotal - outboundTotal;
+// 📊 Render sales summary rows from unified document
+async function renderSalesSummary(entries, summaryBody, fromDate, toDate, selectedProduct) {
+  for (const entry of entries) {
+    const {
+      AccountName = "-",
+      Date = "",
+      ProductName = "-",
+      Quantity = 0,
+      Status = "-"
+    } = entry;
+
+    // Apply filters
+    if (selectedProduct && ProductName !== selectedProduct) continue;
+    if (fromDate && Date < fromDate) continue;
+    if (toDate && Date > toDate) continue;
 
     summaryBody.insertAdjacentHTML("beforeend", `
       <tr class="summary-row">
-        <td>${product}</td>
-        <td>-</td>
-        <td>${inboundTotal}</td>
-        <td>${outboundTotal}</td>
-        <td>${available >= 0 ? available : 0}</td>
+        <td>${ProductName}</td>
+        <td>${AccountName}</td>
+        <td>${Date}</td>
+        <td>${Quantity}</td>
+        <td>${Status}</td>
       </tr>
     `);
   }
 }
 
-// 🔢 Compute inbound totals (product + date filter)
-async function computeInbound(product, fromDate, toDate) {
-  const snapshot = await getDocs(collection(db, "inbound"));
-  let total = 0;
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    if (data.productName === product) {
-      const recordDate = data.date || "";
-      if ((!fromDate || recordDate >= fromDate) && (!toDate || recordDate <= toDate)) {
-        total += parseInt(data.quantityReceived || 0, 10);
-      }
-    }
-  });
-  return total;
-}
-
-// 🔢 Compute outbound totals (product + date filter)
-async function computeOutbound(product, fromDate, toDate) {
-  const snapshot = await getDocs(collection(db, "outbound_orders"));
-  let total = 0;
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    if (data.productName === product) {
-      const recordDate = data.date || "";
-      if ((!fromDate || recordDate >= fromDate) && (!toDate || recordDate <= toDate)) {
-        total += parseInt(data.quantity || 0, 10);
-      }
-    }
-  });
-  return total;
-}
-
-// 📦 Load full stock summary
-async function loadStockSummary() {
+// 📦 Load full sales summary
+async function loadSalesSummary() {
   const summaryBody = document.getElementById("summaryBody");
   if (!summaryBody) return;
 
   summaryBody.innerHTML = "";
-  animateStockTable();
+  animateSalesTable();
 
   try {
-    const snapshot = await getDocs(collection(db, "inbound"));
-    const productSet = new Set();
+    const snapshot = await getDocs(collection(db, "inventory"));
+    const entries = [];
 
     snapshot.forEach(doc => {
       const data = doc.data();
-      if (data.productName) productSet.add(data.productName);
+      entries.push(data);
     });
 
-    const sortedProducts = [...productSet].sort();
-    await renderStockSummary(sortedProducts, summaryBody);
-    console.log("✅ Stock summary loaded.");
+    await renderSalesSummary(entries, summaryBody);
+    console.log("✅ Sales summary loaded.");
   } catch (err) {
-    console.error("❌ Error loading stock summary:", err);
-    showToast("❌ Failed to load stock summary.");
+    console.error("❌ Error loading sales summary:", err);
+    showToast("❌ Failed to load sales summary.");
   }
 }
 
-// 🔍 Load product filter
+// 🔍 Load product filter from inventory
 async function loadProductFilter() {
   const productFilter = document.getElementById("filterProduct");
   if (!productFilter) return;
 
   try {
-    const snapshot = await getDocs(collection(db, "inbound"));
+    const snapshot = await getDocs(collection(db, "inventory"));
     const productSet = new Set();
 
     snapshot.forEach(doc => {
       const data = doc.data();
-      if (data.productName) productSet.add(data.productName);
+      if (data.ProductName) productSet.add(data.ProductName);
     });
 
     productFilter.innerHTML = `<option value="" disabled selected>Choose product name 📦</option>`;
@@ -136,20 +112,19 @@ async function applyFilters() {
   const toDate = toInput?.value || "";
 
   summaryBody.innerHTML = "";
-  animateStockTable();
+  animateSalesTable();
 
   try {
-    const snapshot = await getDocs(collection(db, "inbound"));
-    const productSet = new Set();
+    const snapshot = await getDocs(collection(db, "inventory"));
+    const entries = [];
 
     snapshot.forEach(doc => {
       const data = doc.data();
-      if (data.productName) productSet.add(data.productName);
+      entries.push(data);
     });
 
-    const filteredProducts = selectedProduct ? [selectedProduct] : [...productSet];
-    await renderStockSummary(filteredProducts, summaryBody, fromDate, toDate);
-    console.log("✅ Filtered stock summary loaded.");
+    await renderSalesSummary(entries, summaryBody, fromDate, toDate, selectedProduct);
+    console.log("✅ Filtered sales summary loaded.");
   } catch (err) {
     console.error("❌ Error applying filters:", err);
     showToast("❌ Failed to apply filters.");
@@ -158,7 +133,7 @@ async function applyFilters() {
 
 // 🔄 DOM Ready
 document.addEventListener("DOMContentLoaded", async () => {
-  await loadStockSummary();
+  await loadSalesSummary();
   await loadProductFilter();
 
   const productFilter = document.getElementById("filterProduct");
@@ -175,8 +150,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       productFilter.selectedIndex = 0;
       if (fromInput) fromInput.value = "";
       if (toInput) toInput.value = "";
-      loadStockSummary();
-      showToast("🔄 Filters reset — full stock summary restored.");
+      loadSalesSummary();
+      showToast("🔄 Filters reset — full sales summary restored.");
     });
   }
 });
