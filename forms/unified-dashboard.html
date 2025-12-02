@@ -4,19 +4,19 @@
   <meta charset="UTF-8">
   <title>Unified Dashboard – Drophome</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="image/png" href="images/DH-Black.png">
-  <link rel="apple-touch-icon" href="images/DH-Black.png">
-  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="../images/DH-Black.png">
+  <link rel="apple-touch-icon" href="../images/DH-Black.png">
+  <link rel="stylesheet" href="../style.css">
 </head>
 <body>
   <!-- Shared Navbar -->
   <div id="navbar-placeholder"></div>
-  <script src="scripts/navbar.js" defer></script>
+  <script src="../scripts/navbar.js" defer></script>
 
   <main class="dashboard-container">
     <!-- Header -->
     <header class="form-header">
-      <img src="images/DH-white.png" alt="Drophome Logo" class="logo-img">
+      <img src="../images/DH-white.png" alt="Drophome Logo" class="logo-img">
       <span>Unified Dashboard</span>
     </header>
 
@@ -38,7 +38,7 @@
       <button class="tab-btn" data-tab="revenue">💰 Revenue Summary</button>
     </div>
 
-    <!-- Filters (shared) -->
+    <!-- Filters -->
     <div class="filters">
       <select id="filterProduct" class="filter-select">
         <option value="" disabled selected>Choose product 📦</option>
@@ -52,7 +52,15 @@
         <option value="" disabled selected>Choose month 📅</option>
         <option value="01">January</option>
         <option value="02">February</option>
-        <!-- … -->
+        <option value="03">March</option>
+        <option value="04">April</option>
+        <option value="05">May</option>
+        <option value="06">June</option>
+        <option value="07">July</option>
+        <option value="08">August</option>
+        <option value="09">September</option>
+        <option value="10">October</option>
+        <option value="11">November</option>
         <option value="12">December</option>
       </select>
       <button id="resetFiltersBtn" class="reset-btn btn-clear">🔄 Reset Filters</button>
@@ -72,7 +80,7 @@
             </tr>
           </thead>
           <tbody id="salesSummaryBody">
-            <!-- Injected by dashboard.js -->
+            <!-- Injected dynamically by dashboard.js -->
           </tbody>
         </table>
       </div>
@@ -94,7 +102,7 @@
             </tr>
           </thead>
           <tbody id="revenueSummaryBody">
-            <!-- Injected by revenue.js -->
+            <!-- Injected dynamically by revenue.js -->
           </tbody>
           <tfoot>
             <tr>
@@ -111,8 +119,8 @@
   </main>
 
   <!-- Scripts -->
-  <script type="module" src="scripts/dashboard.js"></script>
-  <script type="module" src="scripts/revenue.js"></script>
+  <script type="module" src="../scripts/dashboard.js"></script>
+  <script type="module" src="../scripts/revenue.js"></script>
   <script>
     // Tab switching logic
     document.addEventListener("DOMContentLoaded", () => {
