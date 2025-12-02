@@ -6,10 +6,9 @@ import {
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 /* ==========================
-   REVENUE SUMMARY (ORDER COMPLETED)
+   REVENUE SUMMARY
    ========================== */
 
-// 🔽 Load account dropdown
 export async function loadAccountDropdown() {
   const dropdown = document.getElementById("filterAccount");
   if (!dropdown) return;
@@ -22,12 +21,8 @@ export async function loadAccountDropdown() {
 
     snapshot.forEach(doc => {
       const data = doc.data();
-      console.log("👤 Inventory record:", data); // DEBUG
-      if (data.AccountName) {
-        accountSet.add(data.AccountName);
-      } else if (data.account) {
-        accountSet.add(data.account); // fallback if schema uses lowercase
-      }
+      console.log("👤 Inventory record:", data);
+      if (data.accountName) accountSet.add(data.accountName);
     });
 
     [...accountSet].sort().forEach(account => {
@@ -44,8 +39,6 @@ export async function loadAccountDropdown() {
   }
 }
 
-// 📊 Load revenue summary
-// 📊 Load revenue summary
 export async function loadRevenueSummary() {
   const tbody = document.getElementById("revenueSummaryBody");
   const totalQtyCell = document.getElementById("totalQtyCell");
@@ -70,53 +63,48 @@ export async function loadRevenueSummary() {
     snapshot.forEach(docSnap => {
       const data = docSnap.data();
       const {
-        AccountName = "Unknown",
-        ProductName = "-",
-        Date = "",
-        Quantity = 0,
-        Status = "",
-        LabelCost = 0,
-        LabelQty = 0,
-        threePLCost = 0
+        accountName = "Unknown",
+        productName = "-",
+        date = "",
+        quantity = 0,
+        status = "",
+        labelcost = 0,
+        labelqty = 0,
+        threePLcost = 0
       } = data;
 
-      if (Status.toLowerCase() !== "ordercompleted") return;
+      if (status !== "OrderCompleted") return;
 
-      // Handle both YYYY-MM-DD and DD-MM-YYYY formats
       let monthStr = "";
-      if (Date.includes("-")) {
-        const parts = Date.split("-");
-        if (parts[0].length === 4) {
-          // YYYY-MM-DD
-          monthStr = parts[1];
-        } else {
-          // DD-MM-YYYY
-          monthStr = parts[1];
-        }
+      if (date.includes("-")) {
+        const parts = date.split("-");
+        monthStr = parts[0].length === 4 ? parts[1] : parts[1];
       }
 
       const isAllAccounts = selectedAccountRaw === "__all__";
-      const matchAccount = isAllAccounts || AccountName.toLowerCase() === selectedAccount;
+      const matchAccount = isAllAccounts || accountName.toLowerCase() === selectedAccount;
       const matchMonth = !selectedMonth || monthStr === selectedMonth;
 
       if (matchAccount && matchMonth) {
         matchCount++;
 
+        const displayStatus = status.replace(/([a-z])([A-Z])/g, "$1 $2");
+
         tbody.insertAdjacentHTML("beforeend", `
           <tr>
-            <td>${AccountName}</td>
-            <td>${ProductName}</td>
-            <td>${Date}</td>
-            <td>${Quantity}</td>
-            <td>₹${LabelCost}</td>
-            <td>${LabelQty}</td>
-            <td>₹${threePLCost}</td>
+            <td>${accountName}</td>
+            <td>${productName}</td>
+            <td>${date}</td>
+            <td>${quantity}</td>
+            <td>₹${labelcost}</td>
+            <td>${labelqty}</td>
+            <td>₹${threePLcost}</td>
           </tr>
         `);
 
-        totalQty += Quantity;
-        totalLabel += parseFloat(LabelCost);
-        total3PL += parseFloat(threePLCost);
+        totalQty += quantity;
+        totalLabel += parseFloat(labelcost);
+        total3PL += parseFloat(threePLcost);
       }
     });
 
@@ -135,17 +123,12 @@ export async function loadRevenueSummary() {
   }
 }
 
-/* ==========================
-   INIT (Scoped to Revenue Tab)
-   ========================== */
-
 document.addEventListener("DOMContentLoaded", async () => {
   await loadAccountDropdown();
 
   const accountSelect = document.getElementById("filterAccount");
   const monthSelect = document.getElementById("filterMonth");
 
-  // Default month = current month
   const now = new Date();
   const currentMonth = String(now.getMonth() + 1).padStart(2, "0");
   if (monthSelect) monthSelect.value = currentMonth;
