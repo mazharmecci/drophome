@@ -13,7 +13,7 @@ export async function loadAccountDropdown() {
   const dropdown = document.getElementById("filterAccount");
   if (!dropdown) return;
 
-  dropdown.innerHTML = `<option value="__all__" selected>All accounts 👥</option>`;
+  dropdown.innerHTML = `<option value="__all__" selected>All accounts 👤</option>`;
 
   try {
     const snapshot = await getDocs(collection(db, "inventory"));
@@ -48,6 +48,7 @@ export async function loadRevenueSummary() {
   const selectedAccountRaw = document.getElementById("filterAccount")?.value || "__all__";
   const selectedAccount = selectedAccountRaw.toLowerCase();
   const selectedMonth = document.getElementById("filterMonth")?.value || "";
+  const selectedStatus = document.getElementById("filterStatus")?.value || "OrderCompleted";
 
   if (!tbody) return;
 
@@ -73,7 +74,7 @@ export async function loadRevenueSummary() {
         threePLcost = 0
       } = data;
 
-      if (status !== "OrderCompleted") return;
+      if (selectedStatus !== "__all__" && status !== selectedStatus) return;
 
       let monthStr = "";
       if (date.includes("-")) {
@@ -128,14 +129,17 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const accountSelect = document.getElementById("filterAccount");
   const monthSelect = document.getElementById("filterMonth");
+  const statusSelect = document.getElementById("filterStatus");
 
   const now = new Date();
   const currentMonth = String(now.getMonth() + 1).padStart(2, "0");
   if (monthSelect) monthSelect.value = currentMonth;
   if (accountSelect) accountSelect.value = "__all__";
+  if (statusSelect) statusSelect.value = "OrderCompleted";
 
   await loadRevenueSummary();
 
   accountSelect?.addEventListener("change", loadRevenueSummary);
   monthSelect?.addEventListener("change", loadRevenueSummary);
+  statusSelect?.addEventListener("change", loadRevenueSummary);
 });
