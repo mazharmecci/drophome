@@ -895,3 +895,91 @@ button.btn-clear:hover { background-color: #e6b800; }
 #confirmCancelBtn {
   background-color: #ccc;
 }
+
+/* ------------------------------
+   Tab Container + Buttons
+------------------------------ */
+
+.tab-container {
+  display: flex;
+  gap: 12px;
+  margin: 20px 0;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+/* Tab Buttons */
+.tab-btn {
+  padding: 10px 18px;
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+}
+
+.tab-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.tab-btn.active {
+  background-color: #0066cc;
+  color: #fff;
+  border-color: #0066cc;
+}
+
+/* Tooltip on hover */
+.tab-btn[title] {
+  position: relative;
+}
+
+.tab-btn[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+/* Optional icon spacing */
+.tab-btn::before {
+  margin-right: 6px;
+}
+
+/* Responsive stacking */
+@media (max-width: 600px) {
+  .tab-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .tab-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* ------------------------------
+   Tab Content Fade-In Animation
+------------------------------ */
+
+.tab-content {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.tab-content.active {
+  opacity: 1;
+  transform: translateY(0);
+}
