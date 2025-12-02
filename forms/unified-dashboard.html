@@ -74,57 +74,69 @@
     </div>
   </div>
 
-    <!-- Filters Wrapper -->
-    <div class="filter-bar">
-      <!-- Sales Filters -->
-      <div id="sales-filters" class="filter-group active">
-        <label>
-          Product:
-          <select id="filterProduct" class="filter-select">
-            <option value="" disabled selected>Choose product 📦</option>
-          </select>
-        </label>
-        <label>
-          From:
-          <input id="filterStart" type="date" class="filter-date" />
-        </label>
-        <label>
-          To:
-          <input id="filterEnd" type="date" class="filter-date" />
-        </label>
-      </div>
-    
-      <!-- Revenue Filters -->
-      <div id="revenue-filters" class="filter-group">
-        <label>
-          Account:
-          <select id="filterAccount" class="filter-select">
-            <option value="" disabled selected>Choose account 👤</option>
-          </select>
-        </label>
-        <label>
-          Month:
-          <select id="filterMonth" class="filter-select">
-            <option value="" disabled selected>Choose month 📅</option>
-            <option value="01">January</option>
-            <option value="02">February</option>
-            <option value="03">March</option>
-            <option value="04">April</option>
-            <option value="05">May</option>
-            <option value="06">June</option>
-            <option value="07">July</option>
-            <option value="08">August</option>
-            <option value="09">September</option>
-            <option value="10">October</option>
-            <option value="11">November</option>
-            <option value="12">December</option>
-          </select>
-        </label>
-      </div>
-    
-      <!-- Shared Reset Button -->
-      <button id="resetFiltersBtn" class="btn-reset">🔄 Reset Filters</button>
+  <!-- Filters Wrapper -->
+  <div class="filter-bar">
+    <!-- Sales Filters -->
+    <div id="sales-filters" class="filter-group active">
+      <label>
+        Product:
+        <select id="filterProduct" class="filter-select">
+          <option value="" disabled selected>Choose product 📦</option>
+        </select>
+      </label>
+      <label>
+        From:
+        <input id="filterStart" type="date" class="filter-date" />
+      </label>
+      <label>
+        To:
+        <input id="filterEnd" type="date" class="filter-date" />
+      </label>
     </div>
+  
+    <!-- Revenue Filters -->
+    <div id="revenue-filters" class="filter-group">
+      <label>
+        Account:
+        <select id="filterAccount" class="filter-select">
+          <option value="__all__" selected>All accounts 👤</option>
+        </select>
+      </label>
+      <label>
+        Month:
+        <select id="filterMonth" class="filter-select">
+          <option value="" disabled selected>Choose month 📅</option>
+          <option value="01">January</option>
+          <option value="02">February</option>
+          <option value="03">March</option>
+          <option value="04">April</option>
+          <option value="05">May</option>
+          <option value="06">June</option>
+          <option value="07">July</option>
+          <option value="08">August</option>
+          <option value="09">September</option>
+          <option value="10">October</option>
+          <option value="11">November</option>
+          <option value="12">December</option>
+        </select>
+      </label>
+    </div>
+  
+    <!-- Shared Status Filter -->
+    <div class="filter-group">
+      <label>
+        Status:
+        <select id="filterStatus" class="filter-select">
+          <option value="__all__" selected>All Statuses</option>
+          <option value="OrderCompleted">Order Completed</option>
+          <option value="OrderPending">Order Pending</option>
+        </select>
+      </label>
+    </div>
+  
+    <!-- Shared Reset Button -->
+    <button id="resetFiltersBtn" class="btn-reset">🔄 Reset Filters</button>
+  </div>
 
     <!-- Sales Summary Section -->
     <section id="sales" class="tab-content active">
