@@ -16,7 +16,6 @@
       const placeholder = document.getElementById("navbar-placeholder");
       if (!placeholder) return;
 
-      // Resolve path whether page is in root or /forms
       const isInForms = window.location.pathname.includes("/forms/");
       const navbarPath = isInForms ? "https://mazharmecci.github.io/drophome/navbar.html" : "navbar.html";
 
@@ -34,7 +33,6 @@
 
           if (!hamburgerBtn || !navLinks || !overlay) return;
 
-          // Toggle drawer
           hamburgerBtn.addEventListener("click", (e) => {
             e.stopPropagation();
             const isOpen = navLinks.classList.toggle("active");
@@ -42,12 +40,10 @@
             overlay.style.display = isOpen ? "block" : "none";
           });
 
-          // Close on link click
           navLinks.querySelectorAll("a").forEach(link =>
             link.addEventListener("click", () => closeDrawer())
           );
 
-          // Close on outside click
           document.addEventListener("click", (e) => {
             if (!navLinks.classList.contains("active")) return;
             if (!navLinks.contains(e.target) && !hamburgerBtn.contains(e.target)) {
@@ -55,7 +51,6 @@
             }
           });
 
-          // Close on overlay click
           overlay.addEventListener("click", () => closeDrawer());
 
           function closeDrawer() {
@@ -72,16 +67,13 @@
     <section class="form-container">
 
       <!-- Breadcrumb Navigation -->
-      <nav class="breadcrumb-nav" aria-label="Quick Links">
+      <nav class="breadcrumb-nav" aria-label="Breadcrumb">
         <ol class="breadcrumb-list">
           <li class="breadcrumb-item">
-          <a href="https://mazharmecci.github.io/drophome/">🏠 Home</a>
+            <a href="https://mazharmecci.github.io/drophome/">🏠 Home</a>
           </li>
-          <li class="breadcrumb-item">
-            <a href="master.html">🧾 Master List</a>
-          </li>
-          <li class="breadcrumb-item active">
-            <a href="revenue.html">💰 Revenue</a>
+          <li class="breadcrumb-item breadcrumb-current" aria-current="page">
+            💰 Revenue Summary
           </li>
         </ol>
       </nav>
@@ -119,8 +111,11 @@
           <thead style="background-color: #e8f0fe; position: sticky; top: 0; z-index: 1;">
             <tr>
               <th style="padding: 12px;">👤 Account</th>
-              <th style="padding: 12px;">📦 Total Products</th>
+              <th style="padding: 12px;">📦 Product</th>
+              <th style="padding: 12px;">📅 Date</th>
+              <th style="padding: 12px;">🔢 Quantity</th>
               <th style="padding: 12px;">🏷️ Label Cost</th>
+              <th style="padding: 12px;">🏷️ Label Qty</th>
               <th style="padding: 12px;">🚚 3PL Cost</th>
             </tr>
           </thead>
@@ -129,9 +124,10 @@
           </tbody>
           <tfoot style="background-color: #fff8e1; font-weight: bold;">
             <tr>
-              <td style="padding: 12px;">Total</td>
-              <td style="padding: 12px;" id="totalProductsCell">0</td>
+              <td colspan="3" style="padding: 12px;">Total</td>
+              <td style="padding: 12px;" id="totalQtyCell">0</td>
               <td style="padding: 12px;" id="totalLabelCostCell">₹0.00</td>
+              <td style="padding: 12px;">–</td>
               <td style="padding: 12px;" id="total3PLCostCell">₹0.00</td>
             </tr>
           </tfoot>
