@@ -9,7 +9,7 @@ import {
    REVENUE SUMMARY (ORDER COMPLETED)
    ========================== */
 
-// 🔽 Load account dropdown from inventory
+// 🔽 Load account dropdown
 export async function loadAccountDropdown() {
   const dropdown = document.getElementById("filterAccount");
   if (!dropdown) return;
@@ -39,7 +39,7 @@ export async function loadAccountDropdown() {
   }
 }
 
-// 📊 Load revenue summary from inventory
+// 📊 Load revenue summary
 export async function loadRevenueSummary() {
   const tbody = document.getElementById("revenueSummaryBody");
   const totalQtyCell = document.getElementById("totalQtyCell");
@@ -50,7 +50,7 @@ export async function loadRevenueSummary() {
   const selectedAccount = selectedAccountRaw.toLowerCase();
   const selectedMonth = document.getElementById("filterMonth")?.value || "";
 
-  if (!tbody || !totalQtyCell || !totalLabelCostCell || !total3PLCostCell) return;
+  if (!tbody) return;
 
   tbody.innerHTML = "";
   let totalQty = 0;
@@ -74,7 +74,6 @@ export async function loadRevenueSummary() {
         threePLCost = 0
       } = data;
 
-      // Only include completed orders
       if (Status !== "OrderCompleted") return;
 
       const isAllAccounts = selectedAccountRaw === "__all__";
@@ -128,27 +127,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const accountSelect = document.getElementById("filterAccount");
   const monthSelect = document.getElementById("filterMonth");
-  const resetBtn = document.getElementById("resetFiltersBtn");
 
   // Default month = current month
   const now = new Date();
-  const currentMonth = String(now.getMonth() + 1).padStart(2, "0");
-  if (monthSelect) monthSelect.value = currentMonth;
-  if (accountSelect) accountSelect.value = "__all__";
-
-  await loadRevenueSummary();
-
-  accountSelect?.addEventListener("change", loadRevenueSummary);
-  monthSelect?.addEventListener("change", loadRevenueSummary);
-
-  if (resetBtn) {
-    resetBtn.addEventListener("click", () => {
-      if (accountSelect) accountSelect.value = "__all__";
-      if (monthSelect) {
-        const now2 = new Date();
-        monthSelect.value = String(now2.getMonth() + 1).padStart(2, "0");
-      }
-      loadRevenueSummary();
-    });
-  }
-});
+  const currentMonth = String(now
