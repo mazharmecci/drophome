@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const placeholder = document.getElementById("navbar-placeholder");
   if (!placeholder) return;
 
-  fetch("/navbar.html")
+  fetch("/drophome/navbar.html")
     .then(res => res.text())
     .then(html => {
       placeholder.innerHTML = html;
