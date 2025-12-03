@@ -8,13 +8,84 @@
   font-size: 0.85rem;
 }
 
-/* ------------------------------
-   Hide NavBar on desktop
------------------------------- */
+/* Navbar */
+.vault-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: #ffb52a; /* mango gold */
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
 
-@media screen and (min-width: 1024px) {
-  #navbar-placeholder {
+.vault-navbar .nav-logo img {
+  height: 40px;
+  width: auto;
+}
+
+/* Desktop nav links */
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
+.nav-links li a {
+  text-decoration: none;
+  color: #1f2933;
+  font-weight: 600;
+}
+
+.nav-links li a:hover {
+  color: #111827;
+}
+
+/* Hamburger icon */
+.nav-toggle {
+  display: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #1f2933;
+}
+
+/* Mobile dropdown menu */
+@media (max-width: 768px) {
+  .nav-links {
     display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 60px;
+    right: 0;
+    width: 220px;
+    padding: 16px;
+    background-color: #fff;
+    border: 1px solid #eee;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    z-index: 1000;
+
+    /* Slide-in setup */
+    transform: translateX(100%);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  .nav-links.active {
+    display: flex;
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  .nav-links li a {
+    padding: 10px 0;
+    color: #333;
+    font-weight: 600;
+    border-bottom: 1px solid #eee;
+  }
+
+  .nav-toggle {
+    display: block;
+    font-size: 24px;
+    cursor: pointer;
   }
 }
 
