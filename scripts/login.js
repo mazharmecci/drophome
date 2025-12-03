@@ -6,7 +6,9 @@ import {
   signOut 
 } from "firebase/auth";
 
-// Firebase config for drophome
+// -----------------------------
+// Firebase Configuration
+// -----------------------------
 const firebaseConfig = {
   apiKey: "AIzaSyDqFJ85euyPb4QV863AmBF9zHv34WIdmrg",
   authDomain: "drophome-1cb76.firebaseapp.com",
@@ -20,21 +22,26 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-/**
- * Utility: Show message in loginMessage box
- */
+// -----------------------------
+// Utility Functions
+// -----------------------------
 function showMessage(text, color = "black") {
   const messageBox = document.getElementById("loginMessage");
-  if (messageBox) {
-    messageBox.textContent = text;
-    messageBox.classList.remove("hidden");
-    messageBox.style.color = color;
+  if (!messageBox) return;
+  messageBox.textContent = text;
+  messageBox.classList.remove("hidden");
+  messageBox.style.color = color;
+}
+
+function redirectTo(path) {
+  if (!window.location.pathname.includes(path)) {
+    window.location.href = `/drophome/forms/${path}`;
   }
 }
 
-/**
- * Handle login form submission
- */
+// -----------------------------
+// Login Form Handler
+// -----------------------------
 function setupLoginForm() {
   const loginForm = document.getElementById("loginForm");
   if (!loginForm) return;
@@ -47,41 +54,33 @@ function setupLoginForm() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       showMessage("✅ Login successful!", "green");
-      // Redirect handled by onAuthStateChanged
+      // Redirect handled by auth listener
     } catch (error) {
       showMessage(`❌ ${error.message}`, "red");
     }
   });
 }
 
-/**
- * Listen for auth state changes
- */
+// -----------------------------
+// Auth State Listener
+// -----------------------------
 function setupAuthListener() {
   onAuthStateChanged(auth, (user) => {
     if (user) {
       console.log("✅ Logged in:", user.email);
       showMessage(`Welcome back, ${user.email}`, "green");
-
-      // Redirect to dashboard if not already there
-      if (!window.location.pathname.includes("unified-dashboard.html")) {
-        window.location.href = "/drophome/forms/unified-dashboard.html";
-      }
+      redirectTo("unified-dashboard.html");
     } else {
       console.log("❌ No user logged in");
       showMessage("Please log in to continue.", "red");
-
-      // Redirect to login if not already there
-      if (!window.location.pathname.includes("login.html")) {
-        window.location.href = "/drophome/forms/login.html";
-      }
+      redirectTo("login.html");
     }
   });
 }
 
-/**
- * Setup logout button
- */
+// -----------------------------
+// Logout Button Handler
+// -----------------------------
 function setupLogoutButton() {
   const logoutBtn = document.getElementById("logoutBtn");
   if (!logoutBtn) return;
@@ -90,7 +89,7 @@ function setupLogoutButton() {
     try {
       await signOut(auth);
       console.log("✅ User logged out");
-      window.location.href = "/drophome/forms/login.html";
+      redirectTo("login.html");
     } catch (error) {
       console.error("❌ Logout failed:", error.message);
       showMessage(`❌ Logout failed: ${error.message}`, "red");
@@ -98,7 +97,9 @@ function setupLogoutButton() {
   });
 }
 
-// Initialize all handlers
+// -----------------------------
+// Initialize Handlers
+// -----------------------------
 setupLoginForm();
 setupAuthListener();
 setupLogoutButton();
