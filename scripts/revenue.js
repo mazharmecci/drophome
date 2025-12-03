@@ -97,9 +97,9 @@ export async function loadRevenueSummary() {
             <td>${productName}</td>
             <td>${date}</td>
             <td>${quantity}</td>
-            <td>₹${labelcost}</td>
+            <td>${labelcost}</td>
             <td>${labelqty}</td>
-            <td>₹${threePLcost}</td>
+            <td>${threePLcost}</td>
           </tr>
         `);
 
@@ -110,8 +110,8 @@ export async function loadRevenueSummary() {
     });
 
     totalQtyCell.textContent = totalQty;
-    totalLabelCostCell.textContent = `₹${totalLabel.toFixed(2)}`;
-    total3PLCostCell.textContent = `₹${total3PL.toFixed(2)}`;
+    totalLabelCostCell.textContent = `${totalLabel.toFixed(2)}`;
+    total3PLCostCell.textContent = `${total3PL.toFixed(2)}`;
 
     if (matchCount === 0) {
       showToast("⚠️ No matching records found.");
