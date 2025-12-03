@@ -14,22 +14,24 @@
   <div id="navbar-placeholder"></div>
   <script src="../scripts/navbar.js" defer></script>
 
-  <div class="form-container">
-    <!-- Header -->
-    <header class="form-header">
-      <img src="../images/DH-white.png" alt="Drophome Logo" class="logo-img" />
-      <span>Shipping</span>
-    </header>
+<div class="form-container">
+  <!-- Header -->
+  <header class="form-header">
+    <img src="../images/DH-white.png" alt="Drophome Logo" class="logo-img" />
+    <span>Shipping</span>
+  </header>
 
-    <!-- Breadcrumb -->
-    <nav class="breadcrumb-nav" aria-label="Breadcrumb">
-      <ol class="breadcrumb-list">
-        <li class="breadcrumb-item">
-          <a href="https://mazharmecci.github.io/drophome/">🏠 Home</a>
-        </li>
-      </ol>
-    </nav>
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+    <ol class="breadcrumb-list">
+      <li class="breadcrumb-item">
+        <a href="https://mazharmecci.github.io/drophome/">🏠 Home</a>
+      </li>
+    </ol>
+  </nav>
 
+  <!-- Inner Content Wrapper -->
+  <div class="form-body">
     <!-- Filter Bar -->
     <div class="filter-bar">
       <div class="filter-group">
@@ -81,21 +83,22 @@
           </tr>
         </thead>
         <tbody id="inboundTableBody">
-          <!-- Records injected here with compact-input on editable fields -->
+          <!-- Injected dynamically -->
         </tbody>
       </table>
     </div>
+  </div>
 
-    <!-- Success Popup -->
-    <div id="successPopup" class="hidden">
-      <div class="popup-content">
-        <div class="checkmark-circle"></div>
-        <div class="checkmark-check"></div>
-        <p>✅ Saved successfully!</p>
-        <button id="closePopup">Close</button>
-      </div>
+  <!-- Success Popup -->
+  <div id="successPopup" class="hidden">
+    <div class="popup-content">
+      <div class="checkmark-circle"></div>
+      <div class="checkmark-check"></div>
+      <p>✅ Saved successfully!</p>
+      <button id="closePopup">Close</button>
     </div>
   </div>
+</div>
 
   <!-- Modules -->
   <script type="module">
