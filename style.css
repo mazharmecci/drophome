@@ -89,6 +89,72 @@
 }
 
 /* Vault Navbar */
+
+/* Layout clusters */
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* spacing between hamburger, welcome, logout, icon */
+}
+
+/* Logout area */
+.logout-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.welcome-text {
+  font-weight: 600;
+  color: #fff;
+}
+
+.btn-logout {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.6);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-logout:hover {
+  background-color: rgba(255,255,255,0.12);
+  border-color: #ffd700; /* gold accent on hover */
+}
+
+.user-icon {
+  height: 24px;
+  width: 24px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.4);
+}
+
+/* Ensure right links stay horizontal */
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+/* Prevent the protected-links wrapper from breaking flex flow */
+#protected-links {
+  display: contents; /* keeps children in the flex row without extra box */
+}
+
+/* Mobile adjustments: keep left cluster tidy */
+@media (max-width: 768px) {
+  .nav-left {
+    gap: 10px;
+  }
+
+  .logout-wrapper {
+    gap: 6px;
+  }
+}
+
 .vault-navbar {
   display: flex;
   align-items: center;
