@@ -8,16 +8,35 @@
   font-size: 0.85rem;
 }
 
-/* Navbar */
+/* Vault Navbar */
 .vault-navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 16px;
-  background: #e5f7fc;
-  border-bottom: 1px solid rgba(0,0,0,0.05);
+  padding: 12px 20px;
+  background-color: #002b5c; /* Deep dark blue */
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 500;
+
+  /* Four distinct borders matching card colors */
+  border-top: 4px solid #add8e6;   /* Light Blue - Orders */
+  border-right: 4px solid #ffb6c1; /* Light Pink - Shipping */
+  border-bottom: 4px solid #90ee90;/* Light Green - Stock */
+  border-left: 4px solid #fffacd;  /* Light Yellow - Sales */
+
+  /* Subtle depth */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
+/* Hover effect for navbar */
+.vault-navbar:hover {
+  background-color: #003b7a; /* Slightly lighter dark blue */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+/* Logo */
 .vault-navbar .nav-logo img {
   height: 40px;
   width: auto;
@@ -32,12 +51,14 @@
 
 .nav-links li a {
   text-decoration: none;
-  color: #1f2933;
+  color: white;
   font-weight: 600;
+  transition: color 0.3s ease, border-bottom 0.3s ease;
 }
 
 .nav-links li a:hover {
-  color: #111827;
+  color: #ffd700; /* Gold hover for premium feel */
+  border-bottom: 2px solid #ffd700;
 }
 
 /* Hamburger icon (desktop hidden) */
@@ -45,7 +66,7 @@
   display: none;
   font-size: 24px;
   cursor: pointer;
-  color: #1f2933;
+  color: white;
 }
 
 /* ---------- Mobile dropdown menu ---------- */
@@ -62,7 +83,7 @@
     right: 0;
     width: 220px;
     padding: 16px;
-    background-color: #fff;
+    background-color: #002b5c; /* Match navbar */
     border: 1px solid #eee;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     z-index: 1000;
@@ -80,9 +101,14 @@
 
   .nav-links li a {
     padding: 10px 0;
-    color: #333;
+    color: white;
     font-weight: 600;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+  }
+
+  .nav-links li a:hover {
+    color: #ffd700;
+    border-bottom: 2px solid #ffd700;
   }
 }
 
