@@ -148,27 +148,7 @@
       <button id="resetFiltersBtn" class="btn-reset">🔄 Reset Filters</button>
     </div>
 
-    <!-- Sales Summary Section -->
-    <section id="sales" class="tab-content active">
-      <div class="table-scroll-wrapper">
-        <table class="summary-table">
-          <thead>
-            <tr>
-              <th>📦 Product</th>
-              <th>🧑‍💼 Account</th>
-              <th>📅 Date</th>
-              <th>🔢 Quantity</th>
-              <th>📌 Status</th>
-            </tr>
-          </thead>
-          <tbody id="salesSummaryBody">
-            <!-- Injected dynamically by dashboard.js -->
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- Revenue Summary Section -->
+    <!-- Revenue Summary Section (now first) -->
     <section id="revenue" class="tab-content">
       <div class="table-scroll-wrapper">
         <table class="summary-table">
@@ -198,7 +178,27 @@
         </table>
       </div>
     </section>
-  </div>
+
+    <!-- Sales Summary Section (now second, still active by default) -->
+    <section id="sales" class="tab-content active">
+      <div class="table-scroll-wrapper">
+        <table class="summary-table">
+          <thead>
+            <tr>
+              <th>📦 Product</th>
+              <th>🧑‍💼 Account</th>
+              <th>📅 Date</th>
+              <th>🔢 Quantity</th>
+              <th>📌 Status</th>
+            </tr>
+          </thead>
+          <tbody id="salesSummaryBody">
+            <!-- Injected dynamically by dashboard.js -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
 
   <!-- Scripts -->
   <script type="module" src="../scripts/dashboard.js"></script>
