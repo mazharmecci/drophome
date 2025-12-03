@@ -90,6 +90,29 @@
 
 /* Vault Navbar */
 
+/* Left cluster: hamburger + welcome + avatar + logout */
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 14px; /* spacing between items */
+}
+
+/* Logout wrapper keeps welcome, avatar, and button aligned */
+.logout-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Welcome text styling */
+.welcome-text {
+  font-weight: 600;
+  color: #fff;
+  font-size: 15px;
+  line-height: 1; /* keeps baseline consistent */
+}
+
+/* Avatar circle with initials */
 .user-avatar {
   display: inline-flex;
   align-items: center;
@@ -101,35 +124,18 @@
   color: #002b5c;            /* Dark blue text */
   font-weight: 700;
   font-size: 14px;
-  margin-left: 8px;
+  line-height: 1;
 }
 
-/* Layout clusters */
-.nav-left {
-  display: flex;
-  align-items: center;
-  gap: 12px; /* spacing between hamburger, welcome, logout, icon */
-}
-
-/* Logout area */
-.logout-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.welcome-text {
-  font-weight: 600;
-  color: #fff;
-}
-
+/* Logout button styling */
 .btn-logout {
   background: transparent;
   border: 1px solid rgba(255,255,255,0.6);
   color: #fff;
-  padding: 6px 10px;
+  padding: 6px 12px;
   border-radius: 6px;
   cursor: pointer;
+  font-size: 14px;
   transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
@@ -138,14 +144,7 @@
   border-color: #ffd700; /* gold accent on hover */
 }
 
-.user-icon {
-  height: 24px;
-  width: 24px;
-  border-radius: 50%;
-  border: 1px solid rgba(255,255,255,0.4);
-}
-
-/* Ensure right links stay horizontal */
+/* Ensure nav links stay horizontal on the right */
 .nav-links {
   list-style: none;
   display: flex;
@@ -153,19 +152,28 @@
   align-items: center;
 }
 
-/* Prevent the protected-links wrapper from breaking flex flow */
+/* Protected links flow inline without breaking layout */
 #protected-links {
-  display: contents; /* keeps children in the flex row without extra box */
+  display: contents;
 }
 
-/* Mobile adjustments: keep left cluster tidy */
+/* Mobile adjustments */
 @media (max-width: 768px) {
   .nav-left {
     gap: 10px;
   }
 
   .logout-wrapper {
-    gap: 6px;
+    gap: 8px;
+  }
+
+  .welcome-text {
+    font-size: 14px;
+  }
+
+  .btn-logout {
+    padding: 5px 10px;
+    font-size: 13px;
   }
 }
 
