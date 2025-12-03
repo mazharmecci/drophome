@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
 
 // Firebase config for drophome
 const firebaseConfig = {
@@ -15,7 +15,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 // Login form handler
-document.getElementById("loginForm").addEventListener("submit", async (e) => {
+document.getElementById("loginForm")?.addEventListener("submit", async (e) => {
   e.preventDefault();
   const email = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value.trim();
@@ -42,7 +42,6 @@ onAuthStateChanged(auth, (user) => {
   const messageBox = document.getElementById("loginMessage");
 
   if (user) {
-    // User is logged in
     console.log("✅ Logged in:", user.email);
     if (messageBox) {
       messageBox.textContent = `Welcome back, ${user.email}`;
@@ -54,7 +53,6 @@ onAuthStateChanged(auth, (user) => {
       window.location.href = "/drophome/forms/unified-dashboard.html";
     }
   } else {
-    // User is logged out
     console.log("❌ No user logged in");
     if (messageBox) {
       messageBox.textContent = "Please log in to continue.";
@@ -67,3 +65,17 @@ onAuthStateChanged(auth, (user) => {
     }
   }
 });
+
+// 🚪 Logout handler
+const logoutBtn = document.getElementById("logoutBtn");
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", async () => {
+    try {
+      await signOut(auth);
+      console.log("✅ User logged out");
+      window.location.href = "/drophome/forms/login.html";
+    } catch (error) {
+      console.error("❌ Logout failed:", error.message);
+    }
+  });
+}
