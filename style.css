@@ -304,53 +304,6 @@ table tbody tr:nth-of-type(even),
   height: 40px;
 }
 
-/* Default: desktop view */
-.hamburger {
-  display: none; /* hidden on desktop */
-}
-.nav-links {
-  display: flex; /* show full nav on desktop */
-  gap: 16px;
-}
-
-/* Mobile: show hamburger, hide nav until toggled */
-@media screen and (max-width: 768px) {
-  .hamburger {
-    display: flex; /* show hamburger button */
-    flex-direction: column;
-    justify-content: space-between;
-    width: 25px;
-    height: 20px;
-    background: none;
-    border: none;
-    cursor: pointer;
-  }
-
-  .hamburger span {
-    display: block;
-    width: 25px;
-    height: 3px;
-    margin: 4px 0;
-    background: #4da3ff; /* light blue lines */
-    transition: 0.3s;
-  }
-
-  .nav-links {
-    display: none; /* hidden until toggled */
-    flex-direction: column;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    background: white;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-  }
-
-  .nav-links.active {
-    display: flex; /* shown when JS adds 'active' class */
-  }
-}
-
 /* History Container */
 .history-container {
   max-width: 1200px;
