@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", async () => {
+  // Skip navbar injection on login page
   if (window.location.pathname.includes("login.html")) return;
 
   const placeholder = document.getElementById("navbar-placeholder");
@@ -11,12 +12,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const toggle = document.getElementById("nav-toggle");
     const links = document.getElementById("nav-links");
-    const protectedLinks = document.getElementById("protected-links");
     const logoutSection = document.getElementById("logout-section");
     const welcomeTag = document.getElementById("welcome-message");
     const avatarTag = document.getElementById("user-avatar");
     const logoutBtn = document.getElementById("logoutBtn");
 
+    // All protected links (class-based)
+    const protectedLinks = document.querySelectorAll(".protected-link");
+
+    // Load Firebase once
     const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js");
     const { getAuth, signOut, onAuthStateChanged } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
 
@@ -35,7 +39,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 🔒 Listen for auth state changes
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        if (protectedLinks) protectedLinks.style.display = "contents";
+        // Show all protected links
+        protectedLinks.forEach(link => link.style.display = "list-item");
+
         if (logoutSection) logoutSection.style.display = "flex";
 
         if (welcomeTag) {
@@ -58,7 +64,9 @@ document.addEventListener("DOMContentLoaded", async () => {
           }
         }
       } else {
-        if (protectedLinks) protectedLinks.style.display = "none";
+        // Hide protected links
+        protectedLinks.forEach(link => link.style.display = "none");
+
         if (logoutSection) logoutSection.style.display = "none";
         if (welcomeTag) welcomeTag.style.display = "none";
         if (avatarTag) avatarTag.style.display = "none";
