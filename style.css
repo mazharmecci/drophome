@@ -43,6 +43,41 @@
   font-weight: 600;
 }
 
+
+.logout-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  margin-top: 40px;
+  padding-right: 20px;
+}
+
+/* Logout button */
+.btn-logout {
+  background-color: #f3f4f6;
+  color: #1f2933;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-logout:hover {
+  background-color: #e5e7eb;
+}
+
+/* User icon */
+.user-icon {
+  height: 32px;
+  width: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 /* ------------------------------
    Inventory numeric fields
 ------------------------------ */
