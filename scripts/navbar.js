@@ -10,6 +10,16 @@ document.addEventListener("DOMContentLoaded", () => {
       const toggle = document.getElementById("nav-toggle");
       const links = document.getElementById("nav-links");
 
+      // 🔒 Hide protected links by default
+      const protectedLinks = document.getElementById("protected-links");
+      if (protectedLinks) {
+        if (sessionStorage.getItem("drophome-auth")) {
+          protectedLinks.style.display = "block";
+        } else {
+          protectedLinks.style.display = "none";
+        }
+      }
+
       if (toggle && links) {
         // Toggle menu on hamburger click
         toggle.addEventListener("click", () => {
