@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  // Skip navbar injection on login page
   if (window.location.pathname.includes("login.html")) return;
 
   const placeholder = document.getElementById("navbar-placeholder");
@@ -15,9 +14,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const protectedLinks = document.getElementById("protected-links");
     const logoutSection = document.getElementById("logout-section");
     const welcomeTag = document.getElementById("welcome-message");
+    const avatarTag = document.getElementById("user-avatar");
     const logoutBtn = document.getElementById("logoutBtn");
 
-    // Load Firebase once
     const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js");
     const { getAuth, signOut, onAuthStateChanged } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
 
@@ -40,21 +39,33 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (logoutSection) logoutSection.style.display = "flex";
 
         if (welcomeTag) {
-          // Use displayName if available, else username part of email
-          let name = user.displayName || user.email;
-          if (name && name.includes("@")) {
-            name = name.split("@")[0]; // take only part before @
-          }
-          welcomeTag.textContent = `Welcome, ${name}`;
+          let name = user.displayName || user.email || "User";
+          let shortName = name;
+          if (shortName.includes("@")) shortName = shortName.split("@")[0];
+          welcomeTag.textContent = `Welcome, ${shortName}`;
           welcomeTag.style.display = "inline-block";
+
+          // Generate initials
+          let initials = shortName
+            .split(/[\s._-]+/) // split on spaces, dots, underscores, hyphens
+            .map(part => part[0].toUpperCase())
+            .join("")
+            .slice(0, 2); // max 2 letters
+
+          if (avatarTag) {
+            avatarTag.textContent = initials;
+            avatarTag.style.display = "inline-flex";
+          }
         }
       } else {
         if (protectedLinks) protectedLinks.style.display = "none";
         if (logoutSection) logoutSection.style.display = "none";
+        if (welcomeTag) welcomeTag.style.display = "none";
+        if (avatarTag) avatarTag.style.display = "none";
       }
     });
 
-    // 🚪 Attach logout handler
+    // 🚪 Logout handler
     if (logoutBtn) {
       logoutBtn.addEventListener("click", async () => {
         try {
