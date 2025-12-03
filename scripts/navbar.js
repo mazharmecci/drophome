@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Load Firebase once
     const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js");
-    const { getAuth, signOut } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
+    const { getAuth, signOut, onAuthStateChanged } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
 
     const firebaseConfig = {
       apiKey: "AIzaSyDqFJ85euyPb4QV863AmBF9zHv34WIdmrg",
@@ -33,33 +33,38 @@ document.addEventListener("DOMContentLoaded", async () => {
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // 🔒 Show/hide protected links + logout section
-    if (sessionStorage.getItem("drophome-auth")) {
-      if (protectedLinks) protectedLinks.style.display = "contents";
-      if (logoutSection) logoutSection.style.display = "flex";
+    // 🔒 Listen for auth state changes
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        if (protectedLinks) protectedLinks.style.display = "contents";
+        if (logoutSection) logoutSection.style.display = "flex";
 
-      const user = auth.currentUser;
-      if (user && welcomeTag) {
-        const name = user.displayName || user.email || "Welcome back";
-        welcomeTag.textContent = `Welcome, ${name}`;
-        welcomeTag.style.display = "inline-block";
-      }
-
-      // 🚪 Attach logout handler
-      if (logoutBtn) {
-        logoutBtn.addEventListener("click", async () => {
-          try {
-            await signOut(auth);
-            sessionStorage.removeItem("drophome-auth");
-            window.location.href = "/drophome/forms/login.html";
-          } catch (err) {
-            console.error("❌ Logout failed:", err.message);
+        if (welcomeTag) {
+          // Use displayName if available, else username part of email
+          let name = user.displayName || user.email;
+          if (name && name.includes("@")) {
+            name = name.split("@")[0]; // take only part before @
           }
-        });
+          welcomeTag.textContent = `Welcome, ${name}`;
+          welcomeTag.style.display = "inline-block";
+        }
+      } else {
+        if (protectedLinks) protectedLinks.style.display = "none";
+        if (logoutSection) logoutSection.style.display = "none";
       }
-    } else {
-      if (protectedLinks) protectedLinks.style.display = "none";
-      if (logoutSection) logoutSection.style.display = "none";
+    });
+
+    // 🚪 Attach logout handler
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", async () => {
+        try {
+          await signOut(auth);
+          sessionStorage.removeItem("drophome-auth");
+          window.location.href = "/drophome/forms/login.html";
+        } catch (err) {
+          console.error("❌ Logout failed:", err.message);
+        }
+      });
     }
 
     // 🍔 Mobile toggle
