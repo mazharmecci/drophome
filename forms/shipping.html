@@ -14,100 +14,104 @@
   <div id="navbar-placeholder"></div>
   <script src="../scripts/navbar.js" defer></script>
 
-<div class="form-container">
-  <!-- Header -->
-  <header class="form-header">
-    <img src="../images/DH-white.png" alt="Drophome Logo" class="logo-img" />
-    <span>Shipping</span>
-  </header>
+  <main class="dashboard-container">
+    <!-- Header -->
+    <header class="form-header">
+      <img src="../images/DH-white.png" alt="Drophome Logo" class="logo-img" />
+      <span>Shipping</span>
+    </header>
 
-  <!-- Breadcrumb -->
-  <nav class="breadcrumb-nav" aria-label="Breadcrumb">
-    <ol class="breadcrumb-list">
-      <li class="breadcrumb-item">
-        <a href="https://mazharmecci.github.io/drophome/">🏠 Home</a>
-      </li>
-    </ol>
-  </nav>
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+      <ol class="breadcrumb-list">
+        <li class="breadcrumb-item">
+          <a href="https://mazharmecci.github.io/drophome/">🏠 Home</a>
+        </li>
+      </ol>
+    </nav>
 
-  <!-- Inner Content Wrapper -->
-  <div class="form-body">
-    <!-- Filter Bar -->
-    <div class="filter-bar">
-      <div class="filter-group">
-        <label for="filterClient">Client:</label>
-        <input type="text" id="filterClient" placeholder="Enter client name" />
+    <!-- Inner Content Wrapper -->
+    <div class="form-body">
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <div class="filter-group">
+          <label for="filterClient">Client:</label>
+          <input type="text" id="filterClient" placeholder="Enter client name" />
+        </div>
+
+        <div class="filter-group">
+          <label for="filterStart">From:</label>
+          <input type="date" id="filterStart" />
+        </div>
+
+        <div class="filter-group">
+          <label for="filterEnd">To:</label>
+          <input type="date" id="filterEnd" />
+        </div>
+
+        <div class="filter-group">
+          <label for="filterStatus">Status:</label>
+          <select id="filterStatus">
+            <option value="">All Statuses</option>
+            <option value="OrderPending">Order Pending</option>
+            <option value="OrderDelivered">Order Delivered</option>
+            <option value="OrderCompleted">Order Completed</option>
+            <option value="CancelCompleted">Cancel Completed</option>
+            <option value="Refunded">Refunded</option>
+            <option value="Shipped">Shipped</option>
+            <option value="LabelsPrinted">Labels Printed</option>
+          </select>
+        </div>
+
+        <button id="applyFilters" class="btn-primary">🔍 Apply Filters</button>
+        <button id="clearFilters" class="btn-clear">🧹 Clear</button>
       </div>
-      <div class="filter-group">
-        <label for="filterStart">From:</label>
-        <input type="date" id="filterStart" />
+
+      <!-- Table Wrapper -->
+      <div class="table-scroll-wrapper">
+        <table class="summary-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Date</th>
+              <th>Client Name</th>
+              <th>Product Name</th>
+              <th>SKU</th>
+              <th>Qty</th>
+              <th>ProdPic</th>
+              <th>Total Labels</th>
+              <th>Label Cost</th>
+              <th>3PL Cost</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="inboundTableBody">
+            <!-- Injected dynamically -->
+          </tbody>
+        </table>
       </div>
-      <div class="filter-group">
-        <label for="filterEnd">To:</label>
-        <input type="date" id="filterEnd" />
-      </div>
-      <div class="filter-group">
-        <label for="filterStatus">Status:</label>
-        <select id="filterStatus">
-          <option value="">All Statuses</option>
-          <option value="OrderPending">Order Pending</option>
-          <option value="OrderDelivered">Order Delivered</option>
-          <option value="OrderCompleted">Order Completed</option>
-          <option value="CancelCompleted">Cancel Completed</option>
-          <option value="Refunded">Refunded</option>
-          <option value="Shipped">Shipped</option>
-          <option value="LabelsPrinted">Labels Printed</option>
-        </select>
-      </div>
-      <button id="applyFilters" class="btn-primary">🔍 Apply Filters</button>
-      <button id="clearFilters" class="btn-clear">🧹 Clear</button>
     </div>
 
-    <!-- Table Wrapper -->
-    <div class="table-scroll-wrapper">
-      <table class="summary-table">
-        <thead>
-          <tr>
-            <th>Order ID</th>
-            <th>Date</th>
-            <th>Client Name</th>
-            <th>Product Name</th>
-            <th>SKU</th>
-            <th>Qty</th>
-            <th>ProdPic</th>
-            <th>Total Labels</th>
-            <th>Label Cost</th>
-            <th>3PL Cost</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody id="inboundTableBody">
-          <!-- Injected dynamically -->
-        </tbody>
-      </table>
+    <!-- Success Popup -->
+    <div id="successPopup" class="hidden">
+      <div class="popup-content">
+        <div class="checkmark-circle"></div>
+        <div class="checkmark-check"></div>
+        <p>✅ Saved successfully!</p>
+        <button id="closePopup">Close</button>
+      </div>
     </div>
-  </div>
-
-  <!-- Success Popup -->
-  <div id="successPopup" class="hidden">
-    <div class="popup-content">
-      <div class="checkmark-circle"></div>
-      <div class="checkmark-check"></div>
-      <p>✅ Saved successfully!</p>
-      <button id="closePopup">Close</button>
-    </div>
-  </div>
-</div>
+  </main>
 
   <!-- Modules -->
   <script type="module">
-    import { initPopupClose } from "/drophome/scripts/popupHandler.js";
+    import { initPopupClose } from "../scripts/popupHandler.js";
     document.addEventListener("DOMContentLoaded", () => {
       initPopupClose();
     });
   </script>
-  <script type="module" src="/drophome/scripts/inventory.js"></script>
+  <script type="module" src="../scripts/inventory.js"></script>
 
 </body>
 </html>
