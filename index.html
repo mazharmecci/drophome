@@ -2,14 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Drophome</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="image/png" href="images/DH-Black.png">
-  <link rel="apple-touch-icon" href="images/DH-Black.png">
+  <title>Drophome</title>
+  <link rel="icon" type="image/png" href="images/DH-Black.png" />
+  <link rel="apple-touch-icon" href="images/DH-Black.png" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
   <!-- Injected Navbar -->
   <div id="navbar-placeholder"></div>
   <script src="scripts/navbar.js" defer></script>
@@ -17,13 +16,12 @@
   <!-- Main Content -->
   <main>
     <section class="form-container">
-     
-        <!-- Logo + Brand -->
-        <div class="logo-brand">
-          <h3 class="brand-name">
-            DR<span class="logo-replace"><img src="images/DH-Black.png" alt="Logo" /></span>PHOME
-          </h3>          
-        </div>     
+      <!-- Logo + Brand -->
+      <div class="logo-brand">
+        <h3 class="brand-name">
+          DR<span class="logo-replace"><img src="images/DH-Black.png" alt="Logo" /></span>PHOME
+        </h3>
+      </div>
 
       <!-- Card Grid -->
       <section class="card-container" aria-label="Navigation cards">
@@ -51,6 +49,12 @@
           <p>View summary metrics and revenue reports.</p>
         </a>
       </section>
+
+      <!-- Logout Section -->
+      <div class="logout-wrapper">
+        <button id="logoutBtn" class="btn-logout">🚪 Logout</button>
+        <img src="images/user-icon.png" alt="User Icon" class="user-icon" />
+      </div>
     </section>
   </main>
 
@@ -59,5 +63,32 @@
     <img src="images/DH-Black.png" alt="Drophome Logo" class="footer-logo" />
     <span>© 2025 Drophome — Leader in E-commerce business</span>
   </footer>
+
+  <!-- Logout Logic -->
+  <script type="module">
+    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDqFJ85euyPb4QV863AmBF9zHv34WIdmrg",
+      authDomain: "drophome-1cb76.firebaseapp.com",
+      projectId: "drophome-1cb76",
+      storageBucket: "drophome-1cb76.appspot.com",
+      messagingSenderId: "268666785164",
+      appId: "1:268666785164:web:6b02f3242b9e21fad25aa9"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    document.getElementById("logoutBtn")?.addEventListener("click", async () => {
+      try {
+        await signOut(auth);
+        window.location.href = "/drophome/forms/login.html";
+      } catch (error) {
+        console.error("Logout failed:", error.message);
+      }
+    });
+  </script>
 </body>
 </html>
