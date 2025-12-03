@@ -177,5 +177,12 @@
       });
     });
   </script>
+
+  <script>
+  if (!sessionStorage.getItem("drophome-auth")) {
+    window.location.href = "/drophome/forms/login.html";
+  }
+  </script>
+
 </body>
 </html>
