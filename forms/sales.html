@@ -9,7 +9,6 @@
   <link rel="stylesheet" href="../style.css">
 </head>
 <body>
-  
   <!-- Injected Navbar -->
   <div id="navbar-placeholder"></div>
   <script src="../scripts/navbar.js" defer></script>
@@ -17,7 +16,7 @@
   <div class="history-container">
     <!-- we're using history container as standard for shipping, sales and order-history because of css settings-->
 
-     <!-- Breadcrumb -->
+    <!-- Breadcrumb -->
     <nav class="breadcrumb-nav" aria-label="Breadcrumb">
       <ol class="breadcrumb-list">
         <li class="breadcrumb-item">
@@ -28,115 +27,126 @@
 
     <!-- Tabs -->
     <div class="tab-container">
-      <button class="tab-btn active" data-tab="sales" title="View all product orders by date, product, and status. Includes pending and completed.">📊 Sales Summary</button>
-      <button class="tab-btn" data-tab="revenue" title="View completed orders only. Analyze revenue by account and month.">💰 Revenue Summary</button>
+      <button
+        class="tab-btn active"
+        data-tab="sales"
+        title="View all product orders by date, product, and status. Includes pending and completed."
+      >
+        📊 Sales Summary
+      </button>
+      <button
+        class="tab-btn"
+        data-tab="revenue"
+        title="View completed orders only. Analyze revenue by account and month."
+      >
+        💰 Revenue Summary
+      </button>
     </div>
 
     <!-- Explanation of tabs -->
     <button id="helpBtn" class="help-icon" title="What do these tabs do?">ℹ️</button>
     <div id="helpModal" class="modal-overlay hidden">
-      
-    <div class="modal-content">
-      <h3>🧭 Tab Behavior Summary</h3>
-      <table class="modal-table">
-        <thead>
-          <tr>
-            <th>Tab</th>
-            <th>Purpose</th>
-            <th>Filters Active</th>
-            <th>Data Shown</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>📊 Sales Summary</td>
-            <td>Track all product orders</td>
-            <td>Product, Date Range</td>
-            <td>All statuses (Pending + Completed)</td>
-          </tr>
-          <tr>
-            <td>💰 Revenue Summary</td>
-            <td>Analyze completed orders and revenue</td>
-            <td>Account, Month</td>
-            <td>Only <code>OrderCompleted</code> entries</td>
-          </tr>
-          <tr>
-            <td>⚙️ Shared Status Filter</td>
-            <td>Controls which order statuses are shown across both tabs</td>
-            <td>Status (All, Completed, Pending)</td>
-            <td>Applies globally to Sales and Revenue summaries</td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="modal-actions">
-        <button id="closeHelpBtn">Got it!</button>
+      <div class="modal-content">
+        <h3>🧭 Tab Behavior Summary</h3>
+        <table class="modal-table">
+          <thead>
+            <tr>
+              <th>Tab</th>
+              <th>Purpose</th>
+              <th>Filters Active</th>
+              <th>Data Shown</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>📊 Sales Summary</td>
+              <td>Track all product orders</td>
+              <td>Product, Date Range</td>
+              <td>All statuses (Pending + Completed)</td>
+            </tr>
+            <tr>
+              <td>💰 Revenue Summary</td>
+              <td>Analyze completed orders and revenue</td>
+              <td>Account, Month</td>
+              <td>Only de>OrderCompleted</code> entries</td>
+            </tr>
+            <tr>
+              <td>⚙️ Shared Status Filter</td>
+              <td>Controls which order statuses are shown across both tabs</td>
+              <td>Status (All, Completed, Pending)</td>
+              <td>Applies globally to Sales and Revenue summaries</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="modal-actions">
+          <button id="closeHelpBtn">Got it!</button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Filters Wrapper -->
-  <div class="filter-bar">
-    <!-- Sales Filters -->
-    <div id="sales-filters" class="filter-group active">
-      <label>
-        Product:
-        <select id="filterProduct" class="filter-select">
-          <option value="" disabled selected>Choose product 📦</option>
-        </select>
-      </label>
-      <label>
-        From:
-        <input id="filterStart" type="date" class="filter-date" />
-      </label>
-      <label>
-        To:
-        <input id="filterEnd" type="date" class="filter-date" />
-      </label>
+    <!-- Filters Wrapper -->
+    <div class="filter-bar">
+      <!-- Sales Filters -->
+      <div id="sales-filters" class="filter-group active">
+        <label>
+          Product:
+          <select id="filterProduct" class="filter-select">
+            <option value="" disabled selected>Choose product 📦</option>
+          </select>
+        </label>
+        <label>
+          From:
+          <input id="filterStart" type="date" class="filter-date" />
+        </label>
+        <label>
+          To:
+          <input id="filterEnd" type="date" class="filter-date" />
+        </label>
+      </div>
+
+      <!-- Revenue Filters -->
+      <div id="revenue-filters" class="filter-group">
+        <label>
+          Account:
+          <select id="filterAccount" class="filter-select">
+            <option value="__all__" selected>All accounts 👤</option>
+          </select>
+        </label>
+        <label>
+          Month:
+          <select id="filterMonth" class="filter-select">
+            <option value="" disabled selected>Choose month 📅</option>
+            <option value="01">January</option>
+            <option value="02">February</option>
+            <option value="03">March</option>
+            <option value="04">April</option>
+            <option value="05">May</option>
+            <option value="06">June</option>
+            <option value="07">July</option>
+            <option value="08">August</option>
+            <option value="09">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+          </select>
+        </label>
+      </div>
+
+      <!-- Shared Status Filter -->
+      <div class="filter-group">
+        <label>
+          Status:
+          <select id="filterStatus" class="filter-select">
+            <option value="__all__" selected>All Statuses</option>
+            <option value="OrderCompleted">Order Completed</option>
+            <option value="OrderPending">Order Pending</option>
+          </select>
+        </label>
+      </div>
+
+      <!-- Shared Reset Button -->
+      <button id="resetFiltersBtn" class="btn-reset">🔄 Reset Filters</button>
     </div>
-  
-    <!-- Revenue Filters -->
-    <div id="revenue-filters" class="filter-group">
-      <label>
-        Account:
-        <select id="filterAccount" class="filter-select">
-          <option value="__all__" selected>All accounts 👤</option>
-        </select>
-      </label>
-      <label>
-        Month:
-        <select id="filterMonth" class="filter-select">
-          <option value="" disabled selected>Choose month 📅</option>
-          <option value="01">January</option>
-          <option value="02">February</option>
-          <option value="03">March</option>
-          <option value="04">April</option>
-          <option value="05">May</option>
-          <option value="06">June</option>
-          <option value="07">July</option>
-          <option value="08">August</option>
-          <option value="09">September</option>
-          <option value="10">October</option>
-          <option value="11">November</option>
-          <option value="12">December</option>
-        </select>
-      </label>
-    </div>
-  
-    <!-- Shared Status Filter -->
-    <div class="filter-group">
-      <label>
-        Status:
-        <select id="filterStatus" class="filter-select">
-          <option value="__all__" selected>All Statuses</option>
-          <option value="OrderCompleted">Order Completed</option>
-          <option value="OrderPending">Order Pending</option>
-        </select>
-      </label>
-    </div>
-  
-    <!-- Shared Reset Button -->
-    <button id="resetFiltersBtn" class="btn-reset">🔄 Reset Filters</button>
-  </div>
 
     <!-- Sales Summary Section -->
     <section id="sales" class="tab-content active">
@@ -188,34 +198,40 @@
         </table>
       </div>
     </section>
-  </main>
+  </div>
 
   <!-- Scripts -->
   <script type="module" src="../scripts/dashboard.js"></script>
   <script type="module" src="../scripts/revenue.js"></script>
+
   <script>
-    // Tab switching logic
     document.addEventListener("DOMContentLoaded", () => {
       const tabs = document.querySelectorAll(".tab-btn");
       const contents = document.querySelectorAll(".tab-content");
       const salesFilters = document.getElementById("sales-filters");
       const revenueFilters = document.getElementById("revenue-filters");
-    
+      const resetBtn = document.getElementById("resetFiltersBtn");
+
       let activeTab = "sales";
-    
+
+      // Tab switching + filters + data reload + scroll
       tabs.forEach(tab => {
         tab.addEventListener("click", () => {
+          const targetId = tab.dataset.tab; // "sales" or "revenue"
+          const section = document.getElementById(targetId);
+
+          // 1) Active tab button / content
           tabs.forEach(t => t.classList.remove("active"));
           contents.forEach(c => c.classList.remove("active"));
           salesFilters.classList.remove("active");
           revenueFilters.classList.remove("active");
-    
+
           tab.classList.add("active");
-          document.getElementById(tab.dataset.tab).classList.add("active");
-    
-          activeTab = tab.dataset.tab;
-    
-          // Toggle filters
+          if (section) section.classList.add("active");
+
+          activeTab = targetId;
+
+          // 2) Toggle filter groups + reload data for that tab
           if (activeTab === "sales") {
             salesFilters.classList.add("active");
             import("../scripts/dashboard.js").then(mod => mod.loadSalesSummary());
@@ -223,128 +239,32 @@
             revenueFilters.classList.add("active");
             import("../scripts/revenue.js").then(mod => mod.loadRevenueSummary());
           }
+
+          // 3) Scroll the active section into view
+          if (section) {
+            section.scrollIntoView({
+              behavior: "smooth",
+              block: "start"
+            });
+          }
         });
+      });
+
+      // Reset filters depending on active tab
+      resetBtn.addEventListener("click", () => {
+        if (activeTab === "sales") {
+          document.getElementById("filterProduct").selectedIndex = 0;
+          document.getElementById("filterStart").value = "";
+          document.getElementById("filterEnd").value = "";
+          import("../scripts/dashboard.js").then(mod => mod.loadSalesSummary());
+        } else {
+          document.getElementById("filterAccount").value = "__all__";
+          const now = new Date();
+          document.getElementById("filterMonth").value = String(now.getMonth() + 1).padStart(2, "0");
+          import("../scripts/revenue.js").then(mod => mod.loadRevenueSummary());
+        }
       });
     });
   </script>
-
-  <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const tabs = document.querySelectorAll(".tab-btn");
-    const contents = document.querySelectorAll(".tab-content");
-    const resetBtn = document.getElementById("resetFiltersBtn");
-
-    // Track active tab
-    let activeTab = "sales";
-
-    tabs.forEach(tab => {
-      tab.addEventListener("click", () => {
-        tabs.forEach(t => t.classList.remove("active"));
-        contents.forEach(c => c.classList.remove("active"));
-
-        tab.classList.add("active");
-        document.getElementById(tab.dataset.tab).classList.add("active");
-
-        activeTab = tab.dataset.tab;
-
-        // Reload summary when switching tabs
-        if (activeTab === "sales") {
-          import("../scripts/dashboard.js").then(mod => mod.loadSalesSummary());
-        } else {
-          import("../scripts/revenue.js").then(mod => mod.loadRevenueSummary());
-        }
-      });
-    });
-
-    // Reset filters depending on active tab
-    resetBtn.addEventListener("click", () => {
-      if (activeTab === "sales") {
-        document.getElementById("filterProduct").selectedIndex = 0;
-        document.getElementById("filterStart").value = "";
-        document.getElementById("filterEnd").value = "";
-        import("../scripts/dashboard.js").then(mod => mod.loadSalesSummary());
-      } else {
-        document.getElementById("filterAccount").value = "__all__";
-        const now = new Date();
-        document.getElementById("filterMonth").value = String(now.getMonth() + 1).padStart(2, "0");
-        import("../scripts/revenue.js").then(mod => mod.loadRevenueSummary());
-      }
-    });
-  });
-</script>
-
-  <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const tabs = document.querySelectorAll(".tab-btn");
-    const contents = document.querySelectorAll(".tab-content");
-    const salesFilters = document.getElementById("sales-filters");
-    const revenueFilters = document.getElementById("revenue-filters");
-    const resetBtn = document.getElementById("resetFiltersBtn");
-
-    let activeTab = "sales";
-
-    // Tab switching
-    tabs.forEach(tab => {
-      tab.addEventListener("click", () => {
-        tabs.forEach(t => t.classList.remove("active"));
-        contents.forEach(c => c.classList.remove("active"));
-        salesFilters.classList.remove("active");
-        revenueFilters.classList.remove("active");
-
-        tab.classList.add("active");
-        document.getElementById(tab.dataset.tab).classList.add("active");
-
-        activeTab = tab.dataset.tab;
-
-        // Toggle filters
-        if (activeTab === "sales") {
-          salesFilters.classList.add("active");
-          import("../scripts/dashboard.js").then(mod => mod.loadSalesSummary());
-        } else {
-          revenueFilters.classList.add("active");
-          import("../scripts/revenue.js").then(mod => mod.loadRevenueSummary());
-        }
-      });
-    });
-
-    // Reset filters depending on active tab
-    resetBtn.addEventListener("click", () => {
-      if (activeTab === "sales") {
-        document.getElementById("filterProduct").selectedIndex = 0;
-        document.getElementById("filterStart").value = "";
-        document.getElementById("filterEnd").value = "";
-        import("../scripts/dashboard.js").then(mod => mod.loadSalesSummary());
-      } else {
-        document.getElementById("filterAccount").value = "__all__";
-        const now = new Date();
-        document.getElementById("filterMonth").value = String(now.getMonth() + 1).padStart(2, "0");
-        import("../scripts/revenue.js").then(mod => mod.loadRevenueSummary());
-      }
-    });
-  });
-</script>
-
-    // To be revenue records on top
-
-    <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const tabs = document.querySelectorAll(".tab-btn");
-
-    tabs.forEach(tab => {
-      tab.addEventListener("click", () => {
-        const targetId = tab.dataset.tab;      // "sales" or "revenue"
-        const section = document.getElementById(targetId);
-        if (!section) return;
-
-        // Scroll the section into view near the top
-        section.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
-      });
-    });
-  });
-</script>
-
 </body>
 </html>
