@@ -1,3 +1,48 @@
+.login-card {
+  max-width: 400px;
+  margin: 80px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  text-align: center;
+}
+
+.login-card header {
+  margin-bottom: 20px;
+}
+
+.login-card .logo-img {
+  height: 50px;
+  margin-bottom: 10px;
+}
+
+.login-card h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #002b5c; /* Dark blue brand color */
+  margin-bottom: 20px;
+}
+
+.login-card .filter-group {
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.login-card input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.login-card button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
 /* ------------------------------
    Inventory numeric fields
 ------------------------------ */
