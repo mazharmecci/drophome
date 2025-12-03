@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Unified Dashboard – Drophome</title>
+  <title>💰 Sales</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/png" href="../images/DH-Black.png">
   <link rel="apple-touch-icon" href="../images/DH-Black.png">
@@ -178,14 +178,14 @@
           </tfoot>
         </table>
       </div>
-    </section>
 
-<!-- Action button to jump back to Sales -->
-<div class="table-actions">
-  <button id="goToSalesBtn" class="btn-secondary">
-    📊 View Sales Summary
-  </button>
-</div>
+      <!-- Action button to jump back to Sales -->
+      <div class="table-actions">
+        <button id="goToSalesBtn" class="btn-secondary">
+          📊 View Sales Summary
+        </button>
+      </div>
+    </section>
 
     <!-- Sales Summary Section (now second, still active by default) -->
     <section id="sales" class="tab-content active">
@@ -206,15 +206,15 @@
           </tbody>
         </table>
       </div>
-    </section>
 
-<!-- Action button to jump to Revenue -->
-<div class="table-actions">
-  <button id="goToRevenueBtn" class="btn-secondary">
-    💰 View Revenue Summary
-  </button>
-</div>
-</section>
+      <!-- Action button to jump to Revenue -->
+      <div class="table-actions">
+        <button id="goToRevenueBtn" class="btn-secondary">
+          💰 View Revenue Summary
+        </button>
+      </div>
+    </section>
+  </div> <!-- close history-container (or parent) -->
 
 <!-- Scripts -->
 <script type="module" src="../scripts/dashboard.js"></script>
@@ -228,6 +228,7 @@
     const revenueFilters = document.getElementById("revenue-filters");
     const resetBtn = document.getElementById("resetFiltersBtn");
     const goToRevenueBtn = document.getElementById("goToRevenueBtn");
+    const goToSalesBtn = document.getElementById("goToSalesBtn");
 
     let activeTab = "sales";
 
@@ -277,13 +278,11 @@
       } else {
         document.getElementById("filterAccount").value = "__all__";
         const now = new Date();
-        document.getElementById("filterMonth").value = String(now.getMonth() + 1).padStart(2, "0");
+        document.getElementById("filterMonth").value =
+          String(now.getMonth() + 1).padStart(2, "0");
         import("../scripts/revenue.js").then(mod => mod.loadRevenueSummary());
       }
     });
-
-    const goToRevenueBtn = document.getElementById("goToRevenueBtn");
-    const goToSalesBtn = document.getElementById("goToSalesBtn");
 
     // "View Revenue Summary" button under Sales table
     if (goToRevenueBtn) {
@@ -308,6 +307,7 @@
         salesSection.scrollIntoView({ behavior: "smooth", block: "start" });
       });
     }
+  });
 </script>
     
 </body>
