@@ -1,6 +1,13 @@
 <nav class="vault-navbar">
-  <!-- Left: Hamburger -->
-  <div class="nav-toggle" id="nav-toggle">☰</div>
+  <!-- Left: Hamburger + Welcome + Logout -->
+  <div class="nav-left">
+    <div class="nav-toggle" id="nav-toggle">☰</div>
+    <div class="logout-wrapper" id="logout-section" style="display:none;">
+      <span id="welcome-message" class="welcome-text" style="display:none;"></span>
+      <button id="logoutBtn" class="btn-logout">🚪 Logout</button>
+      <img src="/drophome/images/user-icon.png" alt="User Icon" class="user-icon" />
+    </div>
+  </div>
 
   <!-- Center: Logo -->
   <div class="nav-logo">
@@ -11,9 +18,7 @@
 
   <!-- Right: Links -->
   <ul class="nav-links" id="nav-links">
-    <li><a href="/drophome/index.html">Home</a></li>
-
-    <!-- Protected Links -->
+    <li><a href="/drophome/index.html">Drophome - Leader In E-commerce</a></li>
     <div id="protected-links">
       <li><a href="/drophome/forms/orders.html">Orders</a></li>
       <li><a href="/drophome/forms/shipping.html">Shipping</a></li>
@@ -22,10 +27,4 @@
       <li><a href="/drophome/forms/order-history.html">Order-History</a></li>
     </div>
   </ul>
-
-  <!-- Logout Section -->
-  <div class="logout-wrapper" id="logout-section" style="display:none;">
-    <button id="logoutBtn" class="btn-logout">🚪 Logout</button>
-    <img src="/drophome/images/user-icon.png" alt="User Icon" class="user-icon" />
-  </div>
 </nav>
