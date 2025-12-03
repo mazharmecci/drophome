@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>📦 Shipping </title>
+  <title>📦 Shipping – Drophome</title>
+  <link rel="icon" href="../images/DH-Black.png" type="image/png" />
+  <link rel="apple-touch-icon" href="../images/DH-Black.png" />
   <link rel="stylesheet" href="../style.css" />
 </head>
 <body>
@@ -12,12 +14,13 @@
   <div id="navbar-placeholder"></div>
   <script src="../scripts/navbar.js" defer></script>
 
-  <div class="form-container">   
+  <div class="form-container">
+    <!-- Header -->
     <header class="form-header">
       <img src="../images/DH-white.png" alt="Drophome Logo" class="logo-img" />
       <span>Shipping</span>
     </header>
-    
+
     <!-- Breadcrumb -->
     <nav class="breadcrumb-nav" aria-label="Breadcrumb">
       <ol class="breadcrumb-list">
@@ -33,17 +36,14 @@
         <label for="filterClient">Client:</label>
         <input type="text" id="filterClient" placeholder="Enter client name" />
       </div>
-    
       <div class="filter-group">
         <label for="filterStart">From:</label>
         <input type="date" id="filterStart" />
       </div>
-    
       <div class="filter-group">
         <label for="filterEnd">To:</label>
         <input type="date" id="filterEnd" />
       </div>
-    
       <div class="filter-group">
         <label for="filterStatus">Status:</label>
         <select id="filterStatus">
@@ -57,33 +57,34 @@
           <option value="LabelsPrinted">Labels Printed</option>
         </select>
       </div>
-    
       <button id="applyFilters" class="btn-primary">🔍 Apply Filters</button>
       <button id="clearFilters" class="btn-clear">🧹 Clear</button>
     </div>
 
-    <!-- Records Table -->
-    <table class="summary-table">
-      <thead>
-        <tr>
-          <th>Order ID</th>
-          <th>Date</th>
-          <th>Client Name</th>
-          <th>Product Name</th>
-          <th>SKU</th>
-          <th>Qty</th>
-          <th>ProdPic</th>
-          <th>Total Labels</th>
-          <th>Label Cost</th>
-          <th>3PL Cost</th>
-          <th>Status</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody id="inboundTableBody">
-        <!-- Records injected here with compact-input on editable fields -->
-      </tbody>
-    </table>
+    <!-- Table Wrapper -->
+    <div class="table-scroll-wrapper">
+      <table class="summary-table">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Date</th>
+            <th>Client Name</th>
+            <th>Product Name</th>
+            <th>SKU</th>
+            <th>Qty</th>
+            <th>ProdPic</th>
+            <th>Total Labels</th>
+            <th>Label Cost</th>
+            <th>3PL Cost</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="inboundTableBody">
+          <!-- Records injected here with compact-input on editable fields -->
+        </tbody>
+      </table>
+    </div>
 
     <!-- Success Popup -->
     <div id="successPopup" class="hidden">
@@ -99,13 +100,10 @@
   <!-- Modules -->
   <script type="module">
     import { initPopupClose } from "/drophome/scripts/popupHandler.js";
-
-    // Only popup close wiring; toast is triggered from inventory.js on actions
     document.addEventListener("DOMContentLoaded", () => {
       initPopupClose();
     });
   </script>
-
   <script type="module" src="/drophome/scripts/inventory.js"></script>
 
 </body>
