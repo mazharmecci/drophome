@@ -180,6 +180,13 @@
       </div>
     </section>
 
+<!-- Action button to jump back to Sales -->
+<div class="table-actions">
+  <button id="goToSalesBtn" class="btn-secondary">
+    📊 View Sales Summary
+  </button>
+</div>
+
     <!-- Sales Summary Section (now second, still active by default) -->
     <section id="sales" class="tab-content active">
       <h2 class="table-title">📊 Sales Summary – Orders by Product & Status</h2>
@@ -275,6 +282,9 @@
       }
     });
 
+    const goToRevenueBtn = document.getElementById("goToRevenueBtn");
+    const goToSalesBtn = document.getElementById("goToSalesBtn");
+
     // "View Revenue Summary" button under Sales table
     if (goToRevenueBtn) {
       goToRevenueBtn.addEventListener("click", () => {
@@ -282,15 +292,22 @@
         const revenueSection = document.getElementById("revenue");
         if (!revenueTab || !revenueSection) return;
 
-        revenueTab.click(); // reuse existing logic
-
-        revenueSection.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
+        revenueTab.click();
+        revenueSection.scrollIntoView({ behavior: "smooth", block: "start" });
       });
     }
-  });
+
+    // "View Sales Summary" button under Revenue table
+    if (goToSalesBtn) {
+      goToSalesBtn.addEventListener("click", () => {
+        const salesTab = document.querySelector('.tab-btn[data-tab="sales"]');
+        const salesSection = document.getElementById("sales");
+        if (!salesTab || !salesSection) return;
+
+        salesTab.click();
+        salesSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
 </script>
     
 </body>
