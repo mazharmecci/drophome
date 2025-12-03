@@ -16,12 +16,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       const logoutSection = document.getElementById("logout-section");
       const welcomeTag = document.getElementById("welcome-message");
 
-      // 🔒 Show/hide protected links + logout section
+      // Show/hide protected links + logout section
       if (sessionStorage.getItem("drophome-auth")) {
-        if (protectedLinks) protectedLinks.style.display = "block";
+        if (protectedLinks) protectedLinks.style.display = "contents";
         if (logoutSection) logoutSection.style.display = "flex";
 
-        // Load Firebase auth and show welcome message
+        // Load Firebase and show welcome message
         try {
           const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js");
           const { getAuth } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
@@ -40,11 +40,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
           const user = auth.currentUser;
           if (user && welcomeTag) {
-            welcomeTag.textContent = `Welcome, ${user.email}`;
+            // Prefer displayName if present, else email
+            const name = user.displayName || user.email || "Welcome back";
+            welcomeTag.textContent = `Welcome, ${name}`;
             welcomeTag.style.display = "inline-block";
           }
         } catch (err) {
-          console.warn("⚠️ Failed to load Firebase or user info:", err.message);
+          console.warn("Failed to load Firebase or user info:", err?.message || err);
         }
       } else {
         if (protectedLinks) protectedLinks.style.display = "none";
@@ -52,7 +54,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       if (toggle && links) {
-        // Toggle menu on hamburger click
+        // Toggle menu on hamburger click (mobile)
         toggle.addEventListener("click", () => {
           links.classList.toggle("active");
         });
