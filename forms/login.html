@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🔐 Login – Drophome</title>
+  <link rel="icon" href="../images/DH-Black.png" type="image/png" />
+  <link rel="apple-touch-icon" href="../images/DH-Black.png" />
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body>
+  <!-- Injected Navbar -->
+  <div id="navbar-placeholder"></div>
+  <script src="../scripts/navbar.js" defer></script>
+
+  <div class="form-container">
+    <header class="form-header">
+      <img src="../images/DH-white.png" alt="Drophome Logo" class="logo-img" />
+      <span>Login</span>
+    </header>
+
+    <form id="loginForm" class="form-body">
+      <div class="filter-group">
+        <label for="username">Email:</label>
+        <input type="email" id="username" name="username" placeholder="Enter your email" required />
+      </div>
+
+      <div class="filter-group">
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" placeholder="Enter your password" required />
+      </div>
+
+      <button type="submit" class="btn-primary">🔓 Login</button>
+    </form>
+
+    <div id="loginMessage" class="hidden"></div>
+  </div>
+
+  <script type="module" src="../scripts/login.js"></script>
+</body>
+</html>
