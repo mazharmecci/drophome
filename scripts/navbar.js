@@ -9,15 +9,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const toggle = document.getElementById("nav-toggle");
       const links = document.getElementById("nav-links");
-
-      // 🔒 Hide protected links by default
       const protectedLinks = document.getElementById("protected-links");
-      if (protectedLinks) {
-        if (sessionStorage.getItem("drophome-auth")) {
-          protectedLinks.style.display = "block";
-        } else {
-          protectedLinks.style.display = "none";
-        }
+      const logoutSection = document.getElementById("logout-section");
+
+      // 🔒 Show/hide protected links + logout section
+      if (sessionStorage.getItem("drophome-auth")) {
+        if (protectedLinks) protectedLinks.style.display = "block";
+        if (logoutSection) logoutSection.style.display = "flex";
+      } else {
+        if (protectedLinks) protectedLinks.style.display = "none";
+        if (logoutSection) logoutSection.style.display = "none";
       }
 
       if (toggle && links) {
