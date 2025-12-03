@@ -90,6 +90,20 @@
 
 /* Vault Navbar */
 
+.user-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: #ffd700; /* Gold background */
+  color: #002b5c;            /* Dark blue text */
+  font-weight: 700;
+  font-size: 14px;
+  margin-left: 8px;
+}
+
 /* Layout clusters */
 .nav-left {
   display: flex;
