@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 
 // Firebase config for drophome
 const firebaseConfig = {
@@ -29,11 +29,41 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     messageBox.classList.remove("hidden");
     messageBox.style.color = "green";
 
-    // Redirect to dashboard or show next step
-    window.location.href = "/drophome/forms/unified-dashboard.html";
+    // Redirect handled by onAuthStateChanged
   } catch (error) {
     messageBox.textContent = `❌ ${error.message}`;
     messageBox.classList.remove("hidden");
     messageBox.style.color = "red";
+  }
+});
+
+// 🔄 Auth state listener
+onAuthStateChanged(auth, (user) => {
+  const messageBox = document.getElementById("loginMessage");
+
+  if (user) {
+    // User is logged in
+    console.log("✅ Logged in:", user.email);
+    if (messageBox) {
+      messageBox.textContent = `Welcome back, ${user.email}`;
+      messageBox.classList.remove("hidden");
+      messageBox.style.color = "green";
+    }
+    // Redirect to dashboard if not already there
+    if (!window.location.pathname.includes("unified-dashboard.html")) {
+      window.location.href = "/drophome/forms/unified-dashboard.html";
+    }
+  } else {
+    // User is logged out
+    console.log("❌ No user logged in");
+    if (messageBox) {
+      messageBox.textContent = "Please log in to continue.";
+      messageBox.classList.remove("hidden");
+      messageBox.style.color = "red";
+    }
+    // Redirect to login if not already there
+    if (!window.location.pathname.includes("login.html")) {
+      window.location.href = "/drophome/forms/login.html";
+    }
   }
 });
