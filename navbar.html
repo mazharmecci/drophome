@@ -14,7 +14,7 @@
     <li><a href="/drophome/index.html">Home</a></li>
 
     <!-- Protected Links -->
-    <div id="protected-links" style="display: none;">
+    <div id="protected-links">
       <li><a href="/drophome/forms/orders.html">Orders</a></li>
       <li><a href="/drophome/forms/shipping.html">Shipping</a></li>
       <li><a href="/drophome/forms/stock.html">Stock</a></li>
@@ -22,11 +22,10 @@
       <li><a href="/drophome/forms/order-history.html">Order-History</a></li>
     </div>
   </ul>
-</nav>
 
-<script>
-  // Show protected links only if user is logged in
-  if (sessionStorage.getItem("drophome-auth")) {
-    document.getElementById("protected-links").style.display = "block";
-  }
-</script>
+  <!-- Logout Section -->
+  <div class="logout-wrapper" id="logout-section" style="display:none;">
+    <button id="logoutBtn" class="btn-logout">🚪 Logout</button>
+    <img src="/drophome/images/user-icon.png" alt="User Icon" class="user-icon" />
+  </div>
+</nav>
