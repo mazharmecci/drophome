@@ -5,8 +5,8 @@
 
     <div class="logout-wrapper" id="logout-section" style="display:none;">
       <span id="welcome-message" class="welcome-text" style="display:none;"></span>
+      <span id="user-avatar" class="user-avatar" style="display:none;"></span>
       <button id="logoutBtn" class="btn-logout">🚪 Logout</button>
-      <img src="/drophome/images/user-icon.png" alt="User Icon" class="user-icon" />
     </div>
   </div>
 
@@ -20,12 +20,21 @@
   <!-- Right: Links -->
   <ul class="nav-links" id="nav-links">
     <li><a href="/drophome/index.html">Home</a></li>
-    <div id="protected-links">
-      <li><a href="/drophome/forms/orders.html">Orders</a></li>
-      <li><a href="/drophome/forms/shipping.html">Shipping</a></li>
-      <li><a href="/drophome/forms/stock.html">Stock</a></li>
-      <li><a href="/drophome/forms/sales.html">Sales</a></li>
-      <li><a href="/drophome/forms/order-history.html">Order-History</a></li>
-    </div>
+    <!-- Protected Links (hidden until login) -->
+    <li id="protected-links" style="display:none;">
+      <a href="/drophome/forms/orders.html">Orders</a>
+    </li>
+    <li id="protected-links" style="display:none;">
+      <a href="/drophome/forms/shipping.html">Shipping</a>
+    </li>
+    <li id="protected-links" style="display:none;">
+      <a href="/drophome/forms/stock.html">Stock</a>
+    </li>
+    <li id="protected-links" style="display:none;">
+      <a href="/drophome/forms/sales.html">Sales</a>
+    </li>
+    <li id="protected-links" style="display:none;">
+      <a href="/drophome/forms/order-history.html">Order-History</a>
+    </li>
   </ul>
 </nav>
