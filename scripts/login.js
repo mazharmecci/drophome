@@ -1,5 +1,10 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
+import { 
+  getAuth, 
+  signInWithEmailAndPassword, 
+  onAuthStateChanged, 
+  signOut 
+} from "firebase/auth";
 
 // Firebase config for drophome
 const firebaseConfig = {
@@ -11,64 +16,76 @@ const firebaseConfig = {
   appId: "1:268666785164:web:6b02f3242b9e21fad25aa9"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// Login form handler
-document.getElementById("loginForm")?.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const email = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value.trim();
+/**
+ * Utility: Show message in loginMessage box
+ */
+function showMessage(text, color = "black") {
   const messageBox = document.getElementById("loginMessage");
-
-  try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
-
-    messageBox.textContent = "✅ Login successful!";
+  if (messageBox) {
+    messageBox.textContent = text;
     messageBox.classList.remove("hidden");
-    messageBox.style.color = "green";
-
-    // Redirect handled by onAuthStateChanged
-  } catch (error) {
-    messageBox.textContent = `❌ ${error.message}`;
-    messageBox.classList.remove("hidden");
-    messageBox.style.color = "red";
+    messageBox.style.color = color;
   }
-});
+}
 
-// 🔄 Auth state listener
-onAuthStateChanged(auth, (user) => {
-  const messageBox = document.getElementById("loginMessage");
+/**
+ * Handle login form submission
+ */
+function setupLoginForm() {
+  const loginForm = document.getElementById("loginForm");
+  if (!loginForm) return;
 
-  if (user) {
-    console.log("✅ Logged in:", user.email);
-    if (messageBox) {
-      messageBox.textContent = `Welcome back, ${user.email}`;
-      messageBox.classList.remove("hidden");
-      messageBox.style.color = "green";
-    }
-    // Redirect to dashboard if not already there
-    if (!window.location.pathname.includes("unified-dashboard.html")) {
-      window.location.href = "/drophome/forms/unified-dashboard.html";
-    }
-  } else {
-    console.log("❌ No user logged in");
-    if (messageBox) {
-      messageBox.textContent = "Please log in to continue.";
-      messageBox.classList.remove("hidden");
-      messageBox.style.color = "red";
-    }
-    // Redirect to login if not already there
-    if (!window.location.pathname.includes("login.html")) {
-      window.location.href = "/drophome/forms/login.html";
-    }
-  }
-});
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
 
-// 🚪 Logout handler
-const logoutBtn = document.getElementById("logoutBtn");
-if (logoutBtn) {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      showMessage("✅ Login successful!", "green");
+      // Redirect handled by onAuthStateChanged
+    } catch (error) {
+      showMessage(`❌ ${error.message}`, "red");
+    }
+  });
+}
+
+/**
+ * Listen for auth state changes
+ */
+function setupAuthListener() {
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      console.log("✅ Logged in:", user.email);
+      showMessage(`Welcome back, ${user.email}`, "green");
+
+      // Redirect to dashboard if not already there
+      if (!window.location.pathname.includes("unified-dashboard.html")) {
+        window.location.href = "/drophome/forms/unified-dashboard.html";
+      }
+    } else {
+      console.log("❌ No user logged in");
+      showMessage("Please log in to continue.", "red");
+
+      // Redirect to login if not already there
+      if (!window.location.pathname.includes("login.html")) {
+        window.location.href = "/drophome/forms/login.html";
+      }
+    }
+  });
+}
+
+/**
+ * Setup logout button
+ */
+function setupLogoutButton() {
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (!logoutBtn) return;
+
   logoutBtn.addEventListener("click", async () => {
     try {
       await signOut(auth);
@@ -76,6 +93,12 @@ if (logoutBtn) {
       window.location.href = "/drophome/forms/login.html";
     } catch (error) {
       console.error("❌ Logout failed:", error.message);
+      showMessage(`❌ Logout failed: ${error.message}`, "red");
     }
   });
 }
+
+// Initialize all handlers
+setupLoginForm();
+setupAuthListener();
+setupLogoutButton();
