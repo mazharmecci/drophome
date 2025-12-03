@@ -112,6 +112,19 @@
   }
 }
 
+/* Center the logo between toggle and links */
+.nav-logo {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+/* Control logo size (finger-tip-ish; tweak as you like) */
+.vault-navbar .nav-logo img {
+  height: 28px;   /* you can change this */
+  width: auto;
+}
+
 /* ------------------------------
    Unified Table Styling (Inventory Look & Feel)
    Applies to all tables, including .summary-table
