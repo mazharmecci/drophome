@@ -1,23 +1,12 @@
-<header class="navbar">
-  <div class="navbar-left">
-    <!-- Hamburger -->
-    <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
+<nav class="vault-navbar">
+  <!-- Hamburger icon -->
+  <div class="nav-toggle" id="nav-toggle">☰</div>
 
-  <nav class="nav-links" id="navLinks">
-    <a href="index.html">🏠 Home</a>
-    <a href="master.html">🧾 Master List</a>
-    <a href="dashboard.html">📊 Sales</a>
-    <a href="forms/inbound-history.html">📥 Inbound History</a>
-    <a href="forms/inventory.html">📦 Inventory</a>
-    <a href="revenue.html">💰 Revenue</a>
-  </nav>
-
-  <div id="navOverlay"></div>
-</header>
-
-<!-- Load navbar behavior exactly once, here -->
-<script type="module" src="/drophome/scripts/navbar.js"></script>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="/index.html">Home</a></li>
+    <li><a href="/forms/inbound.html">Orders</a></li>
+    <li><a href="/forms/inventory.html">Shipping</a></li>
+    <li><a href="/forms/stock.html">Stock</a></li>
+    <li><a href="/forms/unified-dashboard.html">Sales</a></li>
+  </ul>
+</nav>
