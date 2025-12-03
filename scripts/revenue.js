@@ -2,8 +2,31 @@ import { db } from "../scripts/firebase.js";
 import { showToast } from "../scripts/popupHandler.js";
 import {
   collection,
-  getDocs
+  getDocs,
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
+/* ==========================
+   Helpers
+   ========================== */
+
+// Safe USD formatter
+function formatUSD(value) {
+  const num = Number(value) || 0;
+  return num.toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
+// Extract MM from a YYYY-MM-DD or DD-MM-YYYY string
+function extractMonth(dateStr) {
+  if (!dateStr || !dateStr.includes("-")) return "";
+  const parts = dateStr.split("-");
+  // supports both YYYY-MM-DD and DD-MM-YYYY
+  return parts[0].length === 4 ? parts[1] : parts[1];
+}
 
 /* ==========================
    REVENUE SUMMARY
@@ -19,13 +42,12 @@ export async function loadAccountDropdown() {
     const snapshot = await getDocs(collection(db, "inventory"));
     const accountSet = new Set();
 
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      console.log("👤 Inventory record:", data);
+    snapshot.forEach((docSnap) => {
+      const data = docSnap.data();
       if (data.accountName) accountSet.add(data.accountName);
     });
 
-    [...accountSet].sort().forEach(account => {
+    [...accountSet].sort().forEach((account) => {
       const opt = document.createElement("option");
       opt.value = account;
       opt.textContent = account;
@@ -45,12 +67,19 @@ export async function loadRevenueSummary() {
   const totalLabelCostCell = document.getElementById("totalLabelCostCell");
   const total3PLCostCell = document.getElementById("total3PLCostCell");
 
-  const selectedAccountRaw = document.getElementById("filterAccount")?.value || "__all__";
-  const selectedAccount = selectedAccountRaw.toLowerCase();
-  const selectedMonth = document.getElementById("filterMonth")?.value || "";
-  const selectedStatus = document.getElementById("filterStatus")?.value || "OrderCompleted";
+  if (!tbody || !totalQtyCell || !totalLabelCostCell || !total3PLCostCell) {
+    console.warn("Revenue summary elements not found in DOM");
+    return;
+  }
 
-  if (!tbody) return;
+  const accountSelectEl = document.getElementById("filterAccount");
+  const monthSelectEl = document.getElementById("filterMonth");
+  const statusSelectEl = document.getElementById("filterStatus");
+
+  const selectedAccountRaw = accountSelectEl?.value || "__all__";
+  const selectedAccount = selectedAccountRaw.toLowerCase();
+  const selectedMonth = monthSelectEl?.value || "";
+  const selectedStatus = statusSelectEl?.value || "OrderCompleted";
 
   tbody.innerHTML = "";
   let totalQty = 0;
@@ -61,7 +90,7 @@ export async function loadRevenueSummary() {
   try {
     const snapshot = await getDocs(collection(db, "inventory"));
 
-    snapshot.forEach(docSnap => {
+    snapshot.forEach((docSnap) => {
       const data = docSnap.data();
       const {
         accountName = "Unknown",
@@ -71,47 +100,45 @@ export async function loadRevenueSummary() {
         status = "",
         labelcost = 0,
         labelqty = 0,
-        threePLcost = 0
+        threePLcost = 0,
       } = data;
 
+      // Status filter
       if (selectedStatus !== "__all__" && status !== selectedStatus) return;
 
-      let monthStr = "";
-      if (date.includes("-")) {
-        const parts = date.split("-");
-        monthStr = parts[0].length === 4 ? parts[1] : parts[1];
-      }
-
+      const monthStr = extractMonth(date);
       const isAllAccounts = selectedAccountRaw === "__all__";
-      const matchAccount = isAllAccounts || accountName.toLowerCase() === selectedAccount;
+      const matchAccount =
+        isAllAccounts || accountName.toLowerCase() === selectedAccount;
       const matchMonth = !selectedMonth || monthStr === selectedMonth;
 
-      if (matchAccount && matchMonth) {
-        matchCount++;
+      if (!matchAccount || !matchMonth) return;
 
-        const displayStatus = status.replace(/([a-z])([A-Z])/g, "$1 $2");
+      matchCount++;
 
-        tbody.insertAdjacentHTML("beforeend", `
+      tbody.insertAdjacentHTML(
+        "beforeend",
+        `
           <tr>
             <td>${accountName}</td>
             <td>${productName}</td>
             <td>${date}</td>
             <td>${quantity}</td>
-            <td>${labelcost}</td>
+            <td>${formatUSD(labelcost)}</td>
             <td>${labelqty}</td>
-            <td>${threePLcost}</td>
+            <td>${formatUSD(threePLcost)}</td>
           </tr>
-        `);
+        `
+      );
 
-        totalQty += quantity;
-        totalLabel += parseFloat(labelcost);
-        total3PL += parseFloat(threePLcost);
-      }
+      totalQty += Number(quantity) || 0;
+      totalLabel += Number(labelcost) || 0;
+      total3PL += Number(threePLcost) || 0;
     });
 
     totalQtyCell.textContent = totalQty;
-    totalLabelCostCell.textContent = `${totalLabel.toFixed(2)}`;
-    total3PLCostCell.textContent = `${total3PL.toFixed(2)}`;
+    totalLabelCostCell.textContent = formatUSD(totalLabel);
+    total3PLCostCell.textContent = formatUSD(total3PL);
 
     if (matchCount === 0) {
       showToast("⚠️ No matching records found.");
