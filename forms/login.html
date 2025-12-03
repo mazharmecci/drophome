@@ -89,10 +89,10 @@
         const password = document.getElementById("password").value.trim();
 
         try {
-          await signInWithEmailAndPassword(auth, email, password);
-          sessionStorage.setItem("drophome-auth", "true");
-          showMessage("✅ Login successful!", "green");
-          redirectTo("unified-dashboard.html");
+        await signInWithEmailAndPassword(auth, email, password);
+        sessionStorage.setItem("drophome-auth", "true");
+        showMessage("✅ Login successful!", "green");
+        window.location.href = "/drophome/index.html";   // ✅ correct redirect
         } catch (error) {
           showMessage(`❌ ${error.message}`, "red");
         }
