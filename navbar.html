@@ -12,10 +12,21 @@
   <!-- Right: Links -->
   <ul class="nav-links" id="nav-links">
     <li><a href="/drophome/index.html">Home</a></li>
-    <li><a href="/drophome/forms/orders.html">Orders</a></li>
-    <li><a href="/drophome/forms/shipping.html">Shipping</a></li>
-    <li><a href="/drophome/forms/stock.html">Stock</a></li>
-    <li><a href="/drophome/forms/sales.html">Sales</a></li>
-    <li><a href="/drophome/forms/order-history.html">Order-History</a></li>
+
+    <!-- Protected Links -->
+    <div id="protected-links" style="display: none;">
+      <li><a href="/drophome/forms/orders.html">Orders</a></li>
+      <li><a href="/drophome/forms/shipping.html">Shipping</a></li>
+      <li><a href="/drophome/forms/stock.html">Stock</a></li>
+      <li><a href="/drophome/forms/sales.html">Sales</a></li>
+      <li><a href="/drophome/forms/order-history.html">Order-History</a></li>
+    </div>
   </ul>
 </nav>
+
+<script>
+  // Show protected links only if user is logged in
+  if (sessionStorage.getItem("drophome-auth")) {
+    document.getElementById("protected-links").style.display = "block";
+  }
+</script>
