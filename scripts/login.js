@@ -1,14 +1,12 @@
 import { initializeApp } from "firebase/app";
-import { 
-  getAuth, 
-  signInWithEmailAndPassword, 
-  onAuthStateChanged, 
-  signOut 
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut
 } from "firebase/auth";
 
-// -----------------------------
-// Firebase Configuration
-// -----------------------------
+// Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyDqFJ85euyPb4QV863AmBF9zHv34WIdmrg",
   authDomain: "drophome-1cb76.firebaseapp.com",
@@ -18,13 +16,10 @@ const firebaseConfig = {
   appId: "1:268666785164:web:6b02f3242b9e21fad25aa9"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// -----------------------------
-// Utility Functions
-// -----------------------------
+// Utility
 function showMessage(text, color = "black") {
   const messageBox = document.getElementById("loginMessage");
   if (!messageBox) return;
@@ -34,14 +29,10 @@ function showMessage(text, color = "black") {
 }
 
 function redirectTo(path) {
-  if (!window.location.pathname.includes(path)) {
-    window.location.href = `/drophome/forms/${path}`;
-  }
+  window.location.href = `/drophome/forms/${path}`;
 }
 
-// -----------------------------
-// Login Form Handler
-// -----------------------------
+// Login Handler
 function setupLoginForm() {
   const loginForm = document.getElementById("loginForm");
   if (!loginForm) return;
@@ -53,34 +44,28 @@ function setupLoginForm() {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      sessionStorage.setItem("drophome-auth", "true");
       showMessage("✅ Login successful!", "green");
-      // Redirect handled by auth listener
+      redirectTo("unified-dashboard.html");
     } catch (error) {
       showMessage(`❌ ${error.message}`, "red");
     }
   });
 }
 
-// -----------------------------
-// Auth State Listener
-// -----------------------------
+// Auth Listener
 function setupAuthListener() {
   onAuthStateChanged(auth, (user) => {
-    if (user) {
-      console.log("✅ Logged in:", user.email);
-      showMessage(`Welcome back, ${user.email}`, "green");
-      redirectTo("unified-dashboard.html");
-    } else {
-      console.log("❌ No user logged in");
-      showMessage("Please log in to continue.", "red");
-      redirectTo("login.html");
+    if (!user) {
+      sessionStorage.removeItem("drophome-auth");
+      if (!window.location.pathname.includes("login.html")) {
+        window.location.href = "/drophome/forms/login.html";
+      }
     }
   });
 }
 
-// -----------------------------
-// Logout Button Handler
-// -----------------------------
+// Logout Handler
 function setupLogoutButton() {
   const logoutBtn = document.getElementById("logoutBtn");
   if (!logoutBtn) return;
@@ -88,18 +73,15 @@ function setupLogoutButton() {
   logoutBtn.addEventListener("click", async () => {
     try {
       await signOut(auth);
-      console.log("✅ User logged out");
-      redirectTo("login.html");
+      sessionStorage.removeItem("drophome-auth");
+      window.location.href = "/drophome/forms/login.html";
     } catch (error) {
-      console.error("❌ Logout failed:", error.message);
       showMessage(`❌ Logout failed: ${error.message}`, "red");
     }
   });
 }
 
-// -----------------------------
-// Initialize Handlers
-// -----------------------------
+// Init
 setupLoginForm();
 setupAuthListener();
 setupLogoutButton();
