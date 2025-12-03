@@ -199,72 +199,97 @@
       </div>
     </section>
 
+<!-- Action button to jump to Revenue -->
+<div class="table-actions">
+  <button id="goToRevenueBtn" class="btn-secondary">
+    💰 View Revenue Summary
+  </button>
+</div>
+</section>
 
-  <!-- Scripts -->
-  <script type="module" src="../scripts/dashboard.js"></script>
-  <script type="module" src="../scripts/revenue.js"></script>
+<!-- Scripts -->
+<script type="module" src="../scripts/dashboard.js"></script>
+<script type="module" src="../scripts/revenue.js"></script>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const tabs = document.querySelectorAll(".tab-btn");
-      const contents = document.querySelectorAll(".tab-content");
-      const salesFilters = document.getElementById("sales-filters");
-      const revenueFilters = document.getElementById("revenue-filters");
-      const resetBtn = document.getElementById("resetFiltersBtn");
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const tabs = document.querySelectorAll(".tab-btn");
+    const contents = document.querySelectorAll(".tab-content");
+    const salesFilters = document.getElementById("sales-filters");
+    const revenueFilters = document.getElementById("revenue-filters");
+    const resetBtn = document.getElementById("resetFiltersBtn");
+    const goToRevenueBtn = document.getElementById("goToRevenueBtn");
 
-      let activeTab = "sales";
+    let activeTab = "sales";
 
-      // Tab switching + filters + data reload + scroll
-      tabs.forEach(tab => {
-        tab.addEventListener("click", () => {
-          const targetId = tab.dataset.tab; // "sales" or "revenue"
-          const section = document.getElementById(targetId);
+    // Tab switching + filters + data reload + scroll
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        const targetId = tab.dataset.tab; // "sales" or "revenue"
+        const section = document.getElementById(targetId);
 
-          // 1) Active tab button / content
-          tabs.forEach(t => t.classList.remove("active"));
-          contents.forEach(c => c.classList.remove("active"));
-          salesFilters.classList.remove("active");
-          revenueFilters.classList.remove("active");
+        // 1) Active tab button / content
+        tabs.forEach(t => t.classList.remove("active"));
+        contents.forEach(c => c.classList.remove("active"));
+        salesFilters.classList.remove("active");
+        revenueFilters.classList.remove("active");
 
-          tab.classList.add("active");
-          if (section) section.classList.add("active");
+        tab.classList.add("active");
+        if (section) section.classList.add("active");
 
-          activeTab = targetId;
+        activeTab = targetId;
 
-          // 2) Toggle filter groups + reload data for that tab
-          if (activeTab === "sales") {
-            salesFilters.classList.add("active");
-            import("../scripts/dashboard.js").then(mod => mod.loadSalesSummary());
-          } else {
-            revenueFilters.classList.add("active");
-            import("../scripts/revenue.js").then(mod => mod.loadRevenueSummary());
-          }
-
-          // 3) Scroll the active section into view
-          if (section) {
-            section.scrollIntoView({
-              behavior: "smooth",
-              block: "start"
-            });
-          }
-        });
-      });
-
-      // Reset filters depending on active tab
-      resetBtn.addEventListener("click", () => {
+        // 2) Toggle filter groups + reload data for that tab
         if (activeTab === "sales") {
-          document.getElementById("filterProduct").selectedIndex = 0;
-          document.getElementById("filterStart").value = "";
-          document.getElementById("filterEnd").value = "";
+          salesFilters.classList.add("active");
           import("../scripts/dashboard.js").then(mod => mod.loadSalesSummary());
         } else {
-          document.getElementById("filterAccount").value = "__all__";
-          const now = new Date();
-          document.getElementById("filterMonth").value = String(now.getMonth() + 1).padStart(2, "0");
+          revenueFilters.classList.add("active");
           import("../scripts/revenue.js").then(mod => mod.loadRevenueSummary());
+        }
+
+        // 3) Scroll the active section into view
+        if (section) {
+          section.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
         }
       });
     });
-  </script>
+
+    // Reset filters depending on active tab
+    resetBtn.addEventListener("click", () => {
+      if (activeTab === "sales") {
+        document.getElementById("filterProduct").selectedIndex = 0;
+        document.getElementById("filterStart").value = "";
+        document.getElementById("filterEnd").value = "";
+        import("../scripts/dashboard.js").then(mod => mod.loadSalesSummary());
+      } else {
+        document.getElementById("filterAccount").value = "__all__";
+        const now = new Date();
+        document.getElementById("filterMonth").value = String(now.getMonth() + 1).padStart(2, "0");
+        import("../scripts/revenue.js").then(mod => mod.loadRevenueSummary());
+      }
+    });
+
+    // "View Revenue Summary" button under Sales table
+    if (goToRevenueBtn) {
+      goToRevenueBtn.addEventListener("click", () => {
+        const revenueTab = document.querySelector('.tab-btn[data-tab="revenue"]');
+        const revenueSection = document.getElementById("revenue");
+        if (!revenueTab || !revenueSection) return;
+
+        revenueTab.click(); // reuse existing logic
+
+        revenueSection.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      });
+    }
+  });
+</script>
+    
 </body>
 </html>
