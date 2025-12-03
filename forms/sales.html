@@ -323,5 +323,28 @@
     });
   });
 </script>
+
+    // To be revenue records on top
+
+    <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const tabs = document.querySelectorAll(".tab-btn");
+
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        const targetId = tab.dataset.tab;      // "sales" or "revenue"
+        const section = document.getElementById(targetId);
+        if (!section) return;
+
+        // Scroll the section into view near the top
+        section.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      });
+    });
+  });
+</script>
+
 </body>
 </html>
