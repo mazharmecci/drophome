@@ -1,12 +1,20 @@
+// scripts/navbar.js
 document.addEventListener("DOMContentLoaded", async () => {
-  // Skip navbar injection on login page
+  // Skip navbar on login page
   if (window.location.pathname.includes("login.html")) return;
 
   const placeholder = document.getElementById("navbar-placeholder");
   if (!placeholder) return;
 
   try {
-    const res = await fetch("../navbar.html");
+    // Work both on root and /forms/
+    const isInForms = window.location.pathname.includes("/forms/");
+    const navbarPath = isInForms
+      ? "https://mazharmecci.github.io/drophome/navbar.html"
+      : "navbar.html";
+
+    const res = await fetch(navbarPath);
+    if (!res.ok) throw new Error("Navbar load failed");
     const html = await res.text();
     placeholder.innerHTML = html;
 
@@ -16,35 +24,41 @@ document.addEventListener("DOMContentLoaded", async () => {
     const welcomeTag = document.getElementById("welcome-message");
     const avatarTag = document.getElementById("user-avatar");
     const logoutBtn = document.getElementById("logoutBtn");
+    const overlay = document.getElementById("navOverlay");
 
-    // ✅ Modular function to filter links
     function filterNavLinks(role, allowedPages) {
-      const protectedLinks = document.querySelectorAll(".protected-link");
+      const items = document.querySelectorAll(".protected-link");
 
       console.log("🔍 Role:", role);
       console.log("🔍 Allowed Pages:", allowedPages);
 
-      protectedLinks.forEach(link => {
-        const href = link.getAttribute("href");
-        if (!href) {
-          console.warn("⚠️ Skipping link without href:", link);
+      items.forEach(item => {
+        const a = item.querySelector("a");
+        if (!a) {
+          console.warn("⚠️ Skipping item without <a>:", item);
           return;
         }
 
-        const normalizedHref = href.replace(/^(\.\.\/)?/, ""); // strip ../ if present
-        console.log("🔗 Checking link:", href, "→ normalized:", normalizedHref);
+        const href = a.getAttribute("href");
+        if (!href) {
+          console.warn("⚠️ Skipping link without href:", a);
+          return;
+        }
 
-        if (role === "limited" && !allowedPages.includes(normalizedHref)) {
-          console.log("❌ Hiding link:", normalizedHref);
-          link.style.display = "none";
+        const normalized = href.split("/").pop().replace(/^(\.\.\/)?/, "");
+        console.log("🔗 Checking:", href, "→", normalized);
+
+        if (role === "limited" && !allowedPages.includes(normalized)) {
+          console.log("❌ Hiding link:", normalized);
+          item.style.display = "none";
         } else {
-          console.log("✅ Showing link:", normalizedHref);
-          link.style.display = "list-item";
+          console.log("✅ Showing link:", normalized);
+          item.style.display = "list-item";
         }
       });
     }
 
-    // Load Firebase once
+    // Firebase auth for navbar avatar/welcome + role-based UI
     const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js");
     const { getAuth, signOut, onAuthStateChanged } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
 
@@ -60,13 +74,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // 🔒 Listen for auth state changes
     onAuthStateChanged(auth, (user) => {
       if (user) {
         const role = sessionStorage.getItem("userRole");
         const allowedPages = JSON.parse(sessionStorage.getItem("allowedPages") || "[]");
 
-        // ✅ Apply filtering with logs
         filterNavLinks(role, allowedPages);
 
         if (logoutSection) logoutSection.style.display = "flex";
@@ -77,10 +89,9 @@ document.addEventListener("DOMContentLoaded", async () => {
           welcomeTag.textContent = `Welcome, ${shortName}`;
           welcomeTag.style.display = "inline-block";
 
-          // Generate initials
           let initials = shortName
             .split(/[\s._-]+/)
-            .map(part => part[0].toUpperCase())
+            .map(p => p[0]?.toUpperCase() || "")
             .join("")
             .slice(0, 2);
 
@@ -90,17 +101,16 @@ document.addEventListener("DOMContentLoaded", async () => {
           }
         }
       } else {
-        // Hide protected links if not logged in
-        const protectedLinks = document.querySelectorAll(".protected-link");
-        protectedLinks.forEach(link => link.style.display = "none");
-
+        // Not logged in: hide all protected links
+        document.querySelectorAll(".protected-link").forEach(li => {
+          li.style.display = "none";
+        });
         if (logoutSection) logoutSection.style.display = "none";
         if (welcomeTag) welcomeTag.style.display = "none";
         if (avatarTag) avatarTag.style.display = "none";
       }
     });
 
-    // 🚪 Logout handler
     if (logoutBtn) {
       logoutBtn.addEventListener("click", async () => {
         try {
@@ -113,18 +123,33 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
     }
 
-    // 🍔 Mobile toggle
-    if (toggle && links) {
-      toggle.addEventListener("click", () => {
-        links.classList.toggle("active");
+    // Mobile drawer
+    if (toggle && links && overlay) {
+      function closeDrawer() {
+        links.classList.remove("active");
+        toggle.classList.remove("active");
+        overlay.style.display = "none";
+      }
+
+      toggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const open = links.classList.toggle("active");
+        toggle.classList.toggle("active", open);
+        overlay.style.display = open ? "block" : "none";
       });
 
-      const navItems = links.querySelectorAll("a");
-      navItems.forEach(link => {
-        link.addEventListener("click", () => {
-          links.classList.remove("active");
-        });
+      links.querySelectorAll("a").forEach(a => {
+        a.addEventListener("click", () => closeDrawer());
       });
+
+      document.addEventListener("click", (e) => {
+        if (!links.classList.contains("active")) return;
+        if (!links.contains(e.target) && !toggle.contains(e.target)) {
+          closeDrawer();
+        }
+      });
+
+      overlay.addEventListener("click", () => closeDrawer());
     }
   } catch (err) {
     console.error("❌ Failed to load navbar or Firebase:", err.message);
