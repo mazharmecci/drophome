@@ -17,25 +17,28 @@ document.addEventListener("DOMContentLoaded", async () => {
     const avatarTag = document.getElementById("user-avatar");
     const logoutBtn = document.getElementById("logoutBtn");
 
-    // All protected links (class-based)
-    const protectedLinks = document.querySelectorAll(".protected-link");
-
     // ✅ Modular function to filter links
     function filterNavLinks(role, allowedPages) {
       const protectedLinks = document.querySelectorAll(".protected-link");
-    
+
+      console.log("🔍 Role:", role);
+      console.log("🔍 Allowed Pages:", allowedPages);
+
       protectedLinks.forEach(link => {
         const href = link.getAttribute("href");
         if (!href) {
-          // Skip links without href
+          console.warn("⚠️ Skipping link without href:", link);
           return;
         }
-    
+
         const normalizedHref = href.replace(/^(\.\.\/)?/, ""); // strip ../ if present
-    
+        console.log("🔗 Checking link:", href, "→ normalized:", normalizedHref);
+
         if (role === "limited" && !allowedPages.includes(normalizedHref)) {
+          console.log("❌ Hiding link:", normalizedHref);
           link.style.display = "none";
         } else {
+          console.log("✅ Showing link:", normalizedHref);
           link.style.display = "list-item";
         }
       });
@@ -63,7 +66,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const role = sessionStorage.getItem("userRole");
         const allowedPages = JSON.parse(sessionStorage.getItem("allowedPages") || "[]");
 
-        // ✅ Apply filtering
+        // ✅ Apply filtering with logs
         filterNavLinks(role, allowedPages);
 
         if (logoutSection) logoutSection.style.display = "flex";
@@ -88,6 +91,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
       } else {
         // Hide protected links if not logged in
+        const protectedLinks = document.querySelectorAll(".protected-link");
         protectedLinks.forEach(link => link.style.display = "none");
 
         if (logoutSection) logoutSection.style.display = "none";
