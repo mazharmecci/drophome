@@ -1,16 +1,18 @@
+// scripts/main.js
 document.addEventListener("DOMContentLoaded", () => {
-  // 🔐 Role-based access enforcement
   const role = sessionStorage.getItem("userRole");
   const allowedPages = JSON.parse(sessionStorage.getItem("allowedPages") || "[]");
-  const currentPage = window.location.pathname.split("/").pop();
 
-  if (role === "limited" && !allowedPages.includes(currentPage)) {
+  // Normalize current path to filename (e.g. "master.html")
+  const currentFile = window.location.pathname.split("/").pop() || "index.html";
+
+  if (role === "limited" && !allowedPages.includes(currentFile)) {
     alert("Access denied: You are not authorized to view this page.");
     window.location.href = "index.html";
-    return; // stop further execution
+    return;
   }
 
-  // 📦 Load metadata from /drophome/meta.json
+  // Optional meta.json footer version (unchanged)
   fetch("../meta.json")
     .then(response => {
       if (!response.ok) {
@@ -23,7 +25,6 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log(`Name: ${meta.name}`);
       console.log(`Version: ${meta.version}`);
 
-      // Inject version into footer
       const footer = document.querySelector("footer");
       if (footer && meta.version) {
         const versionTag = document.createElement("span");
