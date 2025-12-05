@@ -22,10 +22,17 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // ✅ Modular function to filter links
     function filterNavLinks(role, allowedPages) {
+      const protectedLinks = document.querySelectorAll(".protected-link");
+    
       protectedLinks.forEach(link => {
         const href = link.getAttribute("href");
+        if (!href) {
+          // Skip links without href
+          return;
+        }
+    
         const normalizedHref = href.replace(/^(\.\.\/)?/, ""); // strip ../ if present
-
+    
         if (role === "limited" && !allowedPages.includes(normalizedHref)) {
           link.style.display = "none";
         } else {
