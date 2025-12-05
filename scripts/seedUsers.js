@@ -1,44 +1,46 @@
 /**
  * seedUsers.js
- * Script to create Firebase Auth users (if missing) and seed Firestore roles + allowed pages.
+ * Script to create Firebase Auth users (if missing)
+ * and seed Firestore roles + allowed pages.
  */
 
-const admin = require('firebase-admin');
+const admin = require("firebase-admin");
 
-// Initialize Firebase Admin SDK
+// Initialize Firebase Admin SDK (ensure GOOGLE_APPLICATION_CREDENTIALS is set)
 admin.initializeApp({
   credential: admin.credential.applicationDefault()
 });
 
 const db = admin.firestore();
 
-// 🔁 Define users to seed
+// 🔁 Users to seed
 const usersToSeed = [
   {
-    email: 'ahmadmanj40@gmail.com',
-    password: 'TempPass123!', // temporary password, user should reset later
-    role: 'limited',
+    email: "ahmadmanj40@gmail.com",
+    password: "TempPass123!",       // temporary password
+    role: "limited",
+    // IMPORTANT: filenames only, not paths
     allowedPages: [
-      'index.html',
-      'master.html',
-      'forms/orders.html',
-      'forms/order-history.html',
-      'forms/stock.html'
+      "index.html",
+      "master.html",
+      "orders.html",
+      "order-history.html",
+      "stock.html"
     ]
   },
   {
-    email: 'newemployee@example.com',
-    password: 'TempPass123!',
-    role: 'limited',
+    email: "newemployee@example.com",
+    password: "TempPass123!",
+    role: "limited",
     allowedPages: [
-      'index.html',
-      'forms/orders.html'
+      "index.html",
+      "orders.html"
     ]
   }
   // ➕ Add more users here as needed
 ];
 
-// 🔐 Seed function
+// 🔐 Seed a single user
 async function seedUser(user) {
   let uid;
 
@@ -48,7 +50,7 @@ async function seedUser(user) {
     uid = userRecord.uid;
     console.log(`ℹ️ User already exists in Auth: ${user.email}`);
   } catch (error) {
-    if (error.code === 'auth/user-not-found') {
+    if (error.code === "auth/user-not-found") {
       // Create new Auth user if not found
       const newUser = await admin.auth().createUser({
         email: user.email,
@@ -62,23 +64,27 @@ async function seedUser(user) {
     }
   }
 
-  // Seed Firestore role document
+  // Seed / update Firestore user document
   try {
-    await db.collection('users').doc(uid).set({
-      email: user.email,
-      role: user.role,
-      allowedPages: user.allowedPages
-    });
+    await db.collection("users").doc(uid).set(
+      {
+        email: user.email,
+        role: user.role,
+        allowedPages: user.allowedPages  // stored as array of strings
+      },
+      { merge: true }                    // keep any existing extra fields
+    );
     console.log(`✅ Seeded Firestore role for ${user.email}`);
   } catch (error) {
     console.error(`❌ Failed to seed Firestore for ${user.email}:`, error.message);
   }
 }
 
-// Run seeding for all users
+// 🚀 Run seeding for all users
 (async () => {
   for (const user of usersToSeed) {
     await seedUser(user);
   }
-  console.log('🎉 Seeding complete!');
+  console.log("🎉 Seeding complete!");
+  process.exit(0);
 })();
