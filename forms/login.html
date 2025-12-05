@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="../style.css" />
 </head>
 <body>
-  <!-- No navbar on login, placeholder kept empty -->
+  <!-- No navbar on login -->
   <div id="navbar-placeholder"></div>
 
   <div class="login-card">
@@ -62,7 +62,7 @@
       getFirestore, 
       doc, 
       getDoc 
-    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"; [web:124]
 
     // -----------------------------
     // Firebase Configuration
@@ -81,7 +81,7 @@
     const db = getFirestore(app);
 
     // -----------------------------
-    // Utility
+    // Helpers
     // -----------------------------
     function showMessage(text, color = "black") {
       const box = document.getElementById("loginMessage");
@@ -91,6 +91,7 @@
       box.style.color = color;
     }
 
+    // Read role + allowedPages from Firestore and mirror to sessionStorage
     async function setUserAccess(uid) {
       try {
         const snap = await getDoc(doc(db, "users", uid));
@@ -102,8 +103,8 @@
         }
 
         const data = snap.data();
-        const role = data.role || "full";                 // "limited" or "full"
-        const allowedPages = data.allowedPages || [];     // e.g. ["index.html","orders.html",...]
+        const role = data.role || "full";               // "limited" or "full"/"admin"
+        const allowedPages = data.allowedPages || [];   // ["index.html", "orders.html", ...]
 
         sessionStorage.setItem("userRole", role);
         sessionStorage.setItem("allowedPages", JSON.stringify(allowedPages));
@@ -130,6 +131,7 @@
           const cred = await signInWithEmailAndPassword(auth, email, password);
           sessionStorage.setItem("drophome-auth", "true");
 
+          // load role + allowedPages into sessionStorage
           await setUserAccess(cred.user.uid);
 
           showMessage("✅ Login successful!", "green");
