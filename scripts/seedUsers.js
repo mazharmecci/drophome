@@ -19,7 +19,7 @@ const usersToSeed = [
     email: "ahmadmanj40@gmail.com",
     password: "TempPass123!",       // temporary password
     role: "limited",
-    // IMPORTANT: filenames only, not paths
+    // Filenames only – this matches navbar.js + main.js checks
     allowedPages: [
       "index.html",
       "master.html",
