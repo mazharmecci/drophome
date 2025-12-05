@@ -2,34 +2,50 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>📥 Orders Form</title>
+  <title>📥 Orders – Drophome</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="../style.css" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-  
-  <!-- Injected Navbar -->
+  <!-- Navbar placeholder -->
   <div id="navbar-placeholder"></div>
   <script src="../scripts/navbar.js" defer></script>
 
-  <div class="form-container">  
-
+  <main class="form-container">
     <!-- Breadcrumb -->
     <nav class="breadcrumb-nav" aria-label="Breadcrumb">
       <ol class="breadcrumb-list">
         <li class="breadcrumb-item">
-          <span>Orders</span>
+          <a href="/drophome/index.html">Home</a>
+        </li>
+        <li class="breadcrumb-item breadcrumb-current" aria-current="page">
+          Orders
         </li>
       </ol>
     </nav>
 
-    <form id="inboundForm">
-      <label for="inboundId">Inbound ID (Auto-generated)</label>
-      <input type="text" id="inboundId" name="inboundId" readonly class="input-readonly-error" />
-      
-      <label for="dateReceived">Date Received</label>
-      <input type="date" id="dateReceived" name="dateReceived" required />
-      
+    <h1 class="page-title">Orders Form</h1>
+
+    <form id="ordersForm">
+      <label for="orderId">
+        Order ID (Auto-generated)
+      </label>
+      <input
+        type="text"
+        id="orderId"
+        name="orderId"
+        readonly
+        class="input-readonly-error"
+      />
+
+      <label for="orderDate">Order Date</label>
+      <input
+        type="date"
+        id="orderDate"
+        name="orderDate"
+        required
+      />
+
       <label for="clientName">Client Name</label>
       <select id="clientName" name="clientName" required>
         <option value="" hidden>Client name</option>
@@ -39,52 +55,89 @@
       <select id="productName" name="productName" required>
         <option value="" hidden>Choose product name</option>
       </select>
-      
-      <!-- SKU with info icon -->
+
       <label for="sku">
         SKU (Auto-filled)
-        <span class="hint-icon" data-tooltip="This SKU is auto-filled when you select a product from the list.">ℹ️</span>
+        <span
+          class="hint-icon"
+          data-tooltip="This SKU is auto-filled when you select a product from the list."
+        >ℹ️</span>
       </label>
-      <input type="text" id="sku" name="sku" readonly class="input-readonly" />
+      <input
+        type="text"
+        id="sku"
+        name="sku"
+        readonly
+        class="input-readonly"
+      />
 
       <label for="prodpic">Product Picture URL</label>
-      <input type="text" id="prodpic" name="prodpic" class="input-highlight" />
+      <input
+        type="text"
+        id="prodpic"
+        name="prodpic"
+        class="input-highlight"
+      />
 
       <label for="labellink">Label Link URL</label>
-      <input type="text" id="labellink" name="labellink" class="input-highlight" />
-      
-      <label for="quantityReceived">Quantity</label>
-      <input type="number" id="quantityReceived" name="quantityReceived" required />
-      
-      <label for="receivingNotes">Receiving Notes</label>
-      <textarea id="receivingNotes" name="receivingNotes" placeholder="Optional notes or remarks..." class="textarea-large"></textarea>
-    
+      <input
+        type="text"
+        id="labellink"
+        name="labellink"
+        class="input-highlight"
+      />
+
+      <label for="quantity">Quantity</label>
+      <input
+        type="number"
+        id="quantity"
+        name="quantity"
+        min="1"
+        required
+      />
+
+      <label for="orderNotes">Order Notes</label>
+      <textarea
+        id="orderNotes"
+        name="orderNotes"
+        placeholder="Optional notes or remarks..."
+        class="textarea-large"
+      ></textarea>
+
       <div class="form-actions">
-        <button type="submit" class="btn-primary">Submit</button>
-        <button type="button" class="btn-orange" onclick="window.location.href='../master.html?origin=inbound'">
+        <button type="submit" class="btn-primary">Submit Order</button>
+        <button
+          type="button"
+          class="btn-orange"
+          onclick="window.location.href='../master.html?origin=orders'"
+        >
           ⚙️ Master List
         </button>
       </div>
     </form>
-  </div>
+  </main>
 
   <!-- Shared Success Popup -->
   <div id="successPopup" class="popup hidden">
     <div class="popup-content">
       <h3>✅ Success</h3>
-      <p>Your inbound record has been submitted!</p>
+      <p>Your order has been submitted!</p>
       <button id="closePopup">OK</button>
     </div>
   </div>
 
-    <script>
-  if (!sessionStorage.getItem("drophome-auth")) {
-    window.location.href = "/drophome/forms/login.html";
-  }
+  <!-- Simple auth check (optional) -->
+  <script>
+    if (!sessionStorage.getItem("drophome-auth")) {
+      window.location.href = "/drophome/forms/login.html";
+    }
   </script>
 
-  <!-- Scripts -->
-  <script type="module" src="../scripts/inbound.js"></script>
+  <!-- Role-based access + meta.json footer -->
+  <script src="../scripts/main.js" defer></script>
+
+  <!-- Page scripts (adjust filenames to your actual JS modules) -->
+  <script type="module" src="../scripts/orders.js"></script>
   <script type="module" src="../scripts/popupHandler.js"></script>
   <script type="module" src="../scripts/dropdownLoader.js"></script>
 </body>
