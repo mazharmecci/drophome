@@ -7,7 +7,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (!placeholder) return;
 
   try {
-    // Work both on root and /forms/
     const isInForms = window.location.pathname.includes("/forms/");
     const navbarPath = isInForms
       ? "https://mazharmecci.github.io/drophome/navbar.html"
@@ -58,7 +57,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
     }
 
-    // Firebase auth for navbar avatar/welcome + role-based UI
     const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js");
     const { getAuth, signOut, onAuthStateChanged } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
 
@@ -101,7 +99,6 @@ document.addEventListener("DOMContentLoaded", async () => {
           }
         }
       } else {
-        // Not logged in: hide all protected links
         document.querySelectorAll(".protected-link").forEach(li => {
           li.style.display = "none";
         });
