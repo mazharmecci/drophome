@@ -18,7 +18,8 @@
       <h4 style="color: white;">Welcome to Drophome</h4>
     </header>
   
-    <form id="loginForm">
+    <!-- use POST so email/password do not appear in URL -->
+    <form id="loginForm" method="post">
       <div class="filter-group">
         <label for="username">Email:</label>
         <input type="email" id="username" name="username" autocomplete="off" required />
@@ -62,7 +63,7 @@
       getFirestore, 
       doc, 
       getDoc 
-    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"; [web:124]
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"; [web:153][web:159]
 
     // -----------------------------
     // Firebase Configuration
