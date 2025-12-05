@@ -17,7 +17,7 @@
       <img src="../images/DH-white.png" alt="Drophome Logo" class="logo-img" />
       <h4 style="color: white;">Welcome to Drophome</h4>
     </header>
-  
+
     <!-- use POST so email/password do not appear in URL -->
     <form id="loginForm" method="post">
       <div class="filter-group">
@@ -30,7 +30,7 @@
       </div>
       <button type="submit" class="btn-primary">🔓 Login</button>
     </form>
-    
+
     <!-- 🔑 Forgot Password Button -->
     <div style="margin-top: 12px;">
       <button id="forgotPwdBtn" style="
@@ -50,8 +50,7 @@
   </div>
 
   <script type="module">
-    import { initializeApp } 
-      from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { 
       getAuth, 
       signInWithEmailAndPassword, 
@@ -63,7 +62,7 @@
       getFirestore, 
       doc, 
       getDoc 
-    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"; [web:153][web:159]
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     // -----------------------------
     // Firebase Configuration
@@ -92,7 +91,6 @@
       box.style.color = color;
     }
 
-    // Read role + allowedPages from Firestore and mirror to sessionStorage
     async function setUserAccess(uid) {
       try {
         const snap = await getDoc(doc(db, "users", uid));
@@ -104,8 +102,8 @@
         }
 
         const data = snap.data();
-        const role = data.role || "full";               // "limited" or "full"/"admin"
-        const allowedPages = data.allowedPages || [];   // ["index.html", "orders.html", ...]
+        const role = data.role || "full";
+        const allowedPages = data.allowedPages || [];
 
         sessionStorage.setItem("userRole", role);
         sessionStorage.setItem("allowedPages", JSON.stringify(allowedPages));
@@ -131,10 +129,7 @@
         try {
           const cred = await signInWithEmailAndPassword(auth, email, password);
           sessionStorage.setItem("drophome-auth", "true");
-
-          // load role + allowedPages into sessionStorage
           await setUserAccess(cred.user.uid);
-
           showMessage("✅ Login successful!", "green");
           window.location.href = "/drophome/index.html";
         } catch (error) {
