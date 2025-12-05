@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Optional meta.json versioning
-  fetch("../meta.json")
+  fetch("/drophome/meta.json")
     .then(response => {
       if (!response.ok) {
         throw new Error(`Failed to load meta.json: ${response.status}`);
