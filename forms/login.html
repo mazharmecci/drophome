@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="../style.css" />
 </head>
 <body>
-  <!-- Navbar is not needed on login, so placeholder left blank on purpose -->
+  <!-- No navbar on login, placeholder kept empty -->
   <div id="navbar-placeholder"></div>
 
   <div class="login-card">
@@ -102,8 +102,8 @@
         }
 
         const data = snap.data();
-        const role = data.role || "full";
-        const allowedPages = data.allowedPages || [];
+        const role = data.role || "full";                 // "limited" or "full"
+        const allowedPages = data.allowedPages || [];     // e.g. ["index.html","orders.html",...]
 
         sessionStorage.setItem("userRole", role);
         sessionStorage.setItem("allowedPages", JSON.stringify(allowedPages));
@@ -170,7 +170,6 @@
       onAuthStateChanged(auth, (user) => {
         if (!user) {
           sessionStorage.clear();
-          // if user somehow reaches other pages, main.js will redirect
         }
       });
     }
