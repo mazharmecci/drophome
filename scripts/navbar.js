@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (!placeholder) return;
 
   try {
-    const res = await fetch("/drophome/navbar.html");
+    const res = await fetch("../navbar.html");
     const html = await res.text();
     placeholder.innerHTML = html;
 
