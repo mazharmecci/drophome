@@ -60,6 +60,11 @@
       signOut,
       sendPasswordResetEmail
     } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { 
+      getFirestore, 
+      doc, 
+      getDoc 
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     // -----------------------------
     // Firebase Configuration
@@ -76,6 +81,7 @@
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const db = getFirestore(app);
 
     // -----------------------------
     // Utility Functions
@@ -86,6 +92,22 @@
       messageBox.textContent = text;
       messageBox.classList.remove("hidden");
       messageBox.style.color = color;
+    }
+
+    async function setUserAccess(uid) {
+      try {
+        const userDoc = await getDoc(doc(db, "users", uid));
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          sessionStorage.setItem("userRole", data.role);
+          sessionStorage.setItem("allowedPages", JSON.stringify(data.allowedPages || []));
+          console.log("✅ Access set:", data);
+        } else {
+          console.warn("⚠️ No Firestore doc found for user:", uid);
+        }
+      } catch (err) {
+        console.error("❌ Failed to fetch user access:", err.message);
+      }
     }
 
     // -----------------------------
@@ -101,8 +123,12 @@
         const password = document.getElementById("password").value.trim();
 
         try {
-          await signInWithEmailAndPassword(auth, email, password);
+          const userCredential = await signInWithEmailAndPassword(auth, email, password);
           sessionStorage.setItem("drophome-auth", "true");
+
+          // 🔑 Fetch role + allowedPages from Firestore
+          await setUserAccess(userCredential.user.uid);
+
           showMessage("✅ Login successful!", "green");
           window.location.href = "/drophome/index.html";   // ✅ correct redirect
         } catch (error) {
@@ -141,6 +167,8 @@
       onAuthStateChanged(auth, (user) => {
         if (!user) {
           sessionStorage.removeItem("drophome-auth");
+          sessionStorage.removeItem("userRole");
+          sessionStorage.removeItem("allowedPages");
           if (!window.location.pathname.includes("login.html")) {
             window.location.href = "/drophome/forms/login.html";
           }
@@ -158,7 +186,7 @@
       logoutBtn.addEventListener("click", async () => {
         try {
           await signOut(auth);
-          sessionStorage.removeItem("drophome-auth");
+          sessionStorage.clear();
           window.location.href = "/drophome/forms/login.html";
         } catch (error) {
           showMessage(`❌ Logout failed: ${error.message}`, "red");
