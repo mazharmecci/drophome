@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  // Skip navbar injection on login page
   if (window.location.pathname.includes("login.html")) return;
 
   const placeholder = document.getElementById("navbar-placeholder");
@@ -16,13 +15,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     const welcomeTag = document.getElementById("welcome-message");
     const avatarTag = document.getElementById("user-avatar");
     const logoutBtn = document.getElementById("logoutBtn");
+    const changePwdBtn = document.getElementById("changePwdBtn"); // 🔑 new button
 
-    // All protected links (class-based)
     const protectedLinks = document.querySelectorAll(".protected-link");
 
-    // Load Firebase once
     const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js");
-    const { getAuth, signOut, onAuthStateChanged } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
+    const { getAuth, signOut, onAuthStateChanged, updatePassword } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
 
     const firebaseConfig = {
       apiKey: "AIzaSyDqFJ85euyPb4QV863AmBF9zHv34WIdmrg",
@@ -36,14 +34,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // 🔒 Listen for auth state changes
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        // Get role + allowed pages from sessionStorage
         const role = sessionStorage.getItem("userRole");
         const allowedPages = JSON.parse(sessionStorage.getItem("allowedPages") || "[]");
 
-        // Show/hide links based on allowedPages
         protectedLinks.forEach(link => {
           const href = link.getAttribute("href");
           if (role === "limited" && !allowedPages.includes(href)) {
@@ -57,17 +52,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         if (welcomeTag) {
           let name = user.displayName || user.email || "User";
-          let shortName = name;
-          if (shortName.includes("@")) shortName = shortName.split("@")[0];
+          let shortName = name.includes("@") ? name.split("@")[0] : name;
           welcomeTag.textContent = `Welcome, ${shortName}`;
           welcomeTag.style.display = "inline-block";
 
-          // Generate initials
           let initials = shortName
-            .split(/[\s._-]+/) // split on spaces, dots, underscores, hyphens
+            .split(/[\s._-]+/)
             .map(part => part[0].toUpperCase())
             .join("")
-            .slice(0, 2); // max 2 letters
+            .slice(0, 2);
 
           if (avatarTag) {
             avatarTag.textContent = initials;
@@ -75,9 +68,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           }
         }
       } else {
-        // Hide protected links if not logged in
         protectedLinks.forEach(link => link.style.display = "none");
-
         if (logoutSection) logoutSection.style.display = "none";
         if (welcomeTag) welcomeTag.style.display = "none";
         if (avatarTag) avatarTag.style.display = "none";
@@ -89,12 +80,27 @@ document.addEventListener("DOMContentLoaded", async () => {
       logoutBtn.addEventListener("click", async () => {
         try {
           await signOut(auth);
-          sessionStorage.removeItem("drophome-auth");
-          sessionStorage.removeItem("userRole");
-          sessionStorage.removeItem("allowedPages");
+          sessionStorage.clear();
           window.location.href = "/drophome/forms/login.html";
         } catch (err) {
           console.error("❌ Logout failed:", err.message);
+        }
+      });
+    }
+
+    // 🔑 Change Password handler
+    if (changePwdBtn) {
+      changePwdBtn.addEventListener("click", async () => {
+        const newPwd = prompt("Enter your new password:");
+        if (!newPwd) return;
+
+        try {
+          const user = auth.currentUser;
+          await updatePassword(user, newPwd);
+          alert("✅ Password updated successfully. Please use the new password next time you log in.");
+        } catch (err) {
+          console.error("❌ Password update failed:", err.message);
+          alert("Password update failed. You may need to re-login before changing your password.");
         }
       });
     }
