@@ -2,42 +2,57 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>📊 Stock Viewer</title>
+  <title>📊 Stock Viewer – Drophome</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="../style.css" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-  
   <!-- Injected Navbar -->
   <div id="navbar-placeholder"></div>
-  <script src="../scripts/navbar.js" defer></script>   
+  <script src="../scripts/navbar.js" defer></script>
 
-  <div class="form-container">
-    <!-- Header -->
-    
+  <main class="form-container">
     <!-- Breadcrumb -->
     <nav class="breadcrumb-nav" aria-label="Breadcrumb">
       <ol class="breadcrumb-list">
         <li class="breadcrumb-item">
-          <span>Stock</span>
+          <a href="/drophome/index.html">Home</a>
+        </li>
+        <li class="breadcrumb-item breadcrumb-current" aria-current="page">
+          Stock
         </li>
       </ol>
     </nav>
 
-      <!-- Product Name Dropdown -->
+    <h1 class="page-title">Stock Viewer</h1>
+
+    <!-- Stock lookup controls -->
+    <section>
       <label for="productName">Product Name</label>
       <select id="productName" name="productName" required>
         <option value="" disabled selected>Choose your product</option>
-        <!-- Populate dynamically -->
+        <!-- Populated dynamically by stock.js -->
       </select>
 
-      <!-- Available Quantity (readonly) -->
       <label for="availableQuantity">Available Quantity</label>
-      <input type="number" id="availableQuantity" name="availableQuantity" readonly style="background-color: #ffe6e6;" placeholder="Auto-calculated" />
-    </form>
-  </div>
+      <input
+        type="number"
+        id="availableQuantity"
+        name="availableQuantity"
+        readonly
+        class="input-readonly-error"
+        placeholder="Auto-calculated"
+      />
+    </section>
 
-  <!-- Success Popup -->
+    <!-- Stock Cards -->
+    <section>
+      <h2 class="section-title">Stock Summary</h2>
+      <div id="stockCardsContainer" class="card-container"></div>
+    </section>
+  </main>
+
+  <!-- Success Popup (used if stock.js triggers it) -->
   <div id="successPopup" class="popup hidden">
     <div class="popup-content">
       <h3>✅ Success</h3>
@@ -46,17 +61,18 @@
     </div>
   </div>
 
-    <script>
-  if (!sessionStorage.getItem("drophome-auth")) {
-    window.location.href = "/drophome/forms/login.html";
-  }
+  <!-- Simple auth check -->
+  <script>
+    if (!sessionStorage.getItem("drophome-auth")) {
+      window.location.href = "/drophome/forms/login.html";
+    }
   </script>
-  
+
+  <!-- Role-based access + optional meta version -->
+  <script src="../scripts/main.js" defer></script>
+
+  <!-- Page logic -->
   <script type="module" src="../scripts/stock.js"></script>
   <script type="module" src="../scripts/popupHandler.js"></script>
-
-  <!-- Stock Cards -->
-<div id="stockCardsContainer" class="card-container"></div>
-
 </body>
 </html>
