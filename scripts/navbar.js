@@ -20,6 +20,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     // All protected links (class-based)
     const protectedLinks = document.querySelectorAll(".protected-link");
 
+    // ✅ Modular function to filter links
+    function filterNavLinks(role, allowedPages) {
+      protectedLinks.forEach(link => {
+        const href = link.getAttribute("href");
+        const normalizedHref = href.replace(/^(\.\.\/)?/, ""); // strip ../ if present
+
+        if (role === "limited" && !allowedPages.includes(normalizedHref)) {
+          link.style.display = "none";
+        } else {
+          link.style.display = "list-item";
+        }
+      });
+    }
+
     // Load Firebase once
     const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js");
     const { getAuth, signOut, onAuthStateChanged } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
@@ -39,35 +53,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 🔒 Listen for auth state changes
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        // Get role + allowed pages from sessionStorage
         const role = sessionStorage.getItem("userRole");
         const allowedPages = JSON.parse(sessionStorage.getItem("allowedPages") || "[]");
 
-        // Show/hide links based on allowedPages
-        protectedLinks.forEach(link => {
-          const href = link.getAttribute("href");
-          if (role === "limited" && !allowedPages.includes(href)) {
-            link.style.display = "none";
-          } else {
-            link.style.display = "list-item";
-          }
-        });
+        // ✅ Apply filtering
+        filterNavLinks(role, allowedPages);
 
         if (logoutSection) logoutSection.style.display = "flex";
 
         if (welcomeTag) {
           let name = user.displayName || user.email || "User";
-          let shortName = name;
-          if (shortName.includes("@")) shortName = shortName.split("@")[0];
+          let shortName = name.includes("@") ? name.split("@")[0] : name;
           welcomeTag.textContent = `Welcome, ${shortName}`;
           welcomeTag.style.display = "inline-block";
 
           // Generate initials
           let initials = shortName
-            .split(/[\s._-]+/) // split on spaces, dots, underscores, hyphens
+            .split(/[\s._-]+/)
             .map(part => part[0].toUpperCase())
             .join("")
-            .slice(0, 2); // max 2 letters
+            .slice(0, 2);
 
           if (avatarTag) {
             avatarTag.textContent = initials;
@@ -89,9 +94,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       logoutBtn.addEventListener("click", async () => {
         try {
           await signOut(auth);
-          sessionStorage.removeItem("drophome-auth");
-          sessionStorage.removeItem("userRole");
-          sessionStorage.removeItem("allowedPages");
+          sessionStorage.clear();
           window.location.href = "/drophome/forms/login.html";
         } catch (err) {
           console.error("❌ Logout failed:", err.message);
