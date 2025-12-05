@@ -39,8 +39,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 🔒 Listen for auth state changes
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        // Show all protected links
-        protectedLinks.forEach(link => link.style.display = "list-item");
+        // Get role + allowed pages from sessionStorage
+        const role = sessionStorage.getItem("userRole");
+        const allowedPages = JSON.parse(sessionStorage.getItem("allowedPages") || "[]");
+
+        // Show/hide links based on allowedPages
+        protectedLinks.forEach(link => {
+          const href = link.getAttribute("href");
+          if (role === "limited" && !allowedPages.includes(href)) {
+            link.style.display = "none";
+          } else {
+            link.style.display = "list-item";
+          }
+        });
 
         if (logoutSection) logoutSection.style.display = "flex";
 
@@ -64,7 +75,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           }
         }
       } else {
-        // Hide protected links
+        // Hide protected links if not logged in
         protectedLinks.forEach(link => link.style.display = "none");
 
         if (logoutSection) logoutSection.style.display = "none";
@@ -79,6 +90,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         try {
           await signOut(auth);
           sessionStorage.removeItem("drophome-auth");
+          sessionStorage.removeItem("userRole");
+          sessionStorage.removeItem("allowedPages");
           window.location.href = "/drophome/forms/login.html";
         } catch (err) {
           console.error("❌ Logout failed:", err.message);
