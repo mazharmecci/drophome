@@ -1,5 +1,16 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Load metadata from /drophome/meta.json
+  // 🔐 Role-based access enforcement
+  const role = sessionStorage.getItem("userRole");
+  const allowedPages = JSON.parse(sessionStorage.getItem("allowedPages") || "[]");
+  const currentPage = window.location.pathname.split("/").pop();
+
+  if (role === "limited" && !allowedPages.includes(currentPage)) {
+    alert("Access denied: You are not authorized to view this page.");
+    window.location.href = "index.html";
+    return; // stop further execution
+  }
+
+  // 📦 Load metadata from /drophome/meta.json
   fetch("/drophome/meta.json")
     .then(response => {
       if (!response.ok) {
@@ -12,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log(`Name: ${meta.name}`);
       console.log(`Version: ${meta.version}`);
 
-      // Optional: inject version into footer or header
+      // Inject version into footer
       const footer = document.querySelector("footer");
       if (footer && meta.version) {
         const versionTag = document.createElement("span");
