@@ -2,8 +2,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   const role = sessionStorage.getItem("userRole");
   const allowedPages = JSON.parse(sessionStorage.getItem("allowedPages") || "[]");
-
-  // Normalize current path to filename (e.g. "master.html")
   const currentFile = window.location.pathname.split("/").pop() || "index.html";
 
   if (role === "limited" && !allowedPages.includes(currentFile)) {
@@ -12,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  // Optional meta.json footer version (unchanged)
+  // Optional meta.json versioning
   fetch("../meta.json")
     .then(response => {
       if (!response.ok) {
