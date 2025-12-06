@@ -96,8 +96,7 @@
   <header class="hero">
     <div class="hero-content">
       <h1>Welcome to <span class="brand">Drophome.delivery</span></h1>
-      <p>Where essentials meet excellence — shop smarter, live better.</p>
-      <a href="/forms/orders.html" class="cta-btn">Start Shopping</a>
+      <p>Where essentials meet excellence — shop smarter, live better.</p>      
     </div>
   </header>
 
