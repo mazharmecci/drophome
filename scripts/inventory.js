@@ -1,4 +1,3 @@
-// scripts/inventory.js
 import { db } from "./firebase.js";
 import { showToast, showSuccessPopup } from "./popupHandler.js";
 import {
@@ -67,10 +66,10 @@ function renderTable(records) {
       <td>${record.accountName || ""}</td>
       <td>${record.dispatchLocation || ""}</td>
       <td>${record.productName || ""}</td>
+      <td>${priceDisplay}</td> <!-- ✅ Price column -->
       <td>${record.sku || ""}</td>
       <td>${record.quantity || ""}</td>
       <td><img src="${record.prodpic || ""}" alt="Product" style="max-width:60px"/></td>
-      <td>${priceDisplay}</td> <!-- ✅ NEW PRICE COLUMN -->
 
       <td>
         <input
@@ -116,7 +115,6 @@ function renderTable(records) {
     tbody.appendChild(tr);
   });
 
-  // Attach currency formatting to cost fields
   const costInputs = tbody.querySelectorAll('input[name="labelcost"], input[name="threePLcost"]');
   costInputs.forEach(setupDollarInput);
 }
