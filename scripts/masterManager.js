@@ -79,7 +79,11 @@ function renderProductList(products = []) {
 
   products.forEach((p) => {
     const li = document.createElement("li");
-    const priceDisplay = p.price ? `$${parseFloat(p.price).toFixed(2)}` : "$0.00";
+
+    const priceDisplay = typeof p.price === "number"
+      ? `$${p.price.toFixed(2)}`
+      : "$0.00";
+
     li.textContent = `${p.name} (${p.sku}) — ${priceDisplay}`;
 
     const removeBtn = document.createElement("button");
