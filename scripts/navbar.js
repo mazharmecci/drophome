@@ -52,8 +52,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           // ✅ Page-level guard for restricted user
           const restrictedPages = [
             "/drophome/forms/shipping.html",
-            "/drophome/forms/sales.html",
-            "/drophome/forms/stock.html",
+            "/drophome/forms/sales.html",            
             "/drophome/revenue.html",
             "/drophome/dashboard.html"
           ];
