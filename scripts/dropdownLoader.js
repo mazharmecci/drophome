@@ -15,17 +15,20 @@ export async function loadDropdowns() {
     const data = snapshot.data();
 
     // Populate client names
-    populateDropdown("clientName", data.clients ?? []);
+    populateDropdown("clientName", data.clients ?? [], "client name");
 
     // Populate product dropdown with name, and wire SKU auto-fill
     populateProductDropdown("productName", data.products ?? []);
+
+    // Populate dispatch locations
+    populateDropdown("dispatchLocation", data.locations ?? [], "dispatch location");
   } catch (err) {
     console.error("Error loading master list:", err);
   }
 }
 
 // Generic dropdown population for string arrays
-function populateDropdown(fieldId, options) {
+function populateDropdown(fieldId, options, placeholderLabel) {
   const select = document.getElementById(fieldId);
   if (!select) return;
   select.innerHTML = "";
@@ -33,7 +36,7 @@ function populateDropdown(fieldId, options) {
   // Add placeholder option
   const placeholder = document.createElement("option");
   placeholder.value = "";
-  placeholder.textContent = `Choose ${fieldId.replace("Name", "").toLowerCase()}`;
+  placeholder.textContent = `Choose ${placeholderLabel}`;
   placeholder.hidden = true;
   select.appendChild(placeholder);
 
