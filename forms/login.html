@@ -12,34 +12,47 @@
       position: relative;
       margin-bottom: 16px;
     }
+    
     .input-wrapper input {
       width: 100%;
-      padding: 10px 12px 10px 36px;
+      padding: 10px 12px 10px 40px; /* extra left padding for icon */
       border: 1px solid #ccc;
       border-radius: 6px;
       font-size: 1rem;
     }
+    
     .input-icon {
       position: absolute;
       top: 50%;
       left: 10px;
       transform: translateY(-50%);
-      font-size: 1.1rem;
-      color: #555;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
+    
+    .icon-img {
+      width: 20px;
+      height: 20px;
+      opacity: 0.8;
+    }
+
     .forgot-password {
       text-align: right;
       margin-top: -8px;
       margin-bottom: 16px;
       font-size: 0.9rem;
     }
+    
     .forgot-password a {
       color: #007bff;
       text-decoration: none;
     }
+    
     .forgot-password a:hover {
       text-decoration: underline;
     }
+    
   </style>
 </head>
 <body>
@@ -55,13 +68,19 @@
   
     <form id="loginForm">
       <div class="input-wrapper">
-        <span class="input-icon">👤</span>
+        <span class="input-icon">
+          <img src="../images/user-icon.png" alt="User Icon" class="icon-img" />
+        </span>
         <input type="email" id="username" name="username" placeholder="Email" autocomplete="off" required />
       </div>
+      
       <div class="input-wrapper">
-        <span class="input-icon">🔒</span>
+        <span class="input-icon">
+          <img src="../images/password.png" alt="Password Icon" class="icon-img" />
+        </span>
         <input type="password" id="password" name="password" placeholder="Password" autocomplete="current-password" required />
       </div>
+
 
       <p class="forgot-password">
         <a href="#" id="forgotPasswordLink">🔑 Forgot Password?</a>
