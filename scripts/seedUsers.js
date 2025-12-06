@@ -21,11 +21,10 @@ const usersToSeed = [
     role: "limited",
     // Filenames only – this matches navbar.js + main.js checks
     allowedPages: [
-      "index.html",
-      "master.html",
-      "orders.html",
-      "order-history.html",
-      "stock.html"
+      "/index.html",
+      "/forms/orders.html",
+      "/forms/order-history.html",
+      "/forms/stock.html"
     ]
   },
   {
@@ -59,7 +58,7 @@ async function seedUser(user) {
       uid = newUser.uid;
       console.log(`✅ Created new Auth user: ${user.email}`);
     } else {
-      console.error(`❌ Error fetching user ${user.email}:`, error.message);
+      console.error(`❌ Error for ${user.email}:`, error.code, error.message);
       return;
     }
   }
