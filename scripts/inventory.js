@@ -11,20 +11,17 @@ import {
 let allRecords = [];
 let hasInitialLoadCompleted = false;
 
-// 🔄 DOM ready
+// DOM ready
 document.addEventListener("DOMContentLoaded", async () => {
   await loadAndRenderRecords({ showErrorToast: false });
 
-  const applyBtn = document.getElementById("applyFilters");
-  if (applyBtn) applyBtn.addEventListener("click", applyFilters);
-
-  const clearBtn = document.getElementById("clearFilters");
-  if (clearBtn) clearBtn.addEventListener("click", clearFilters);
+  document.getElementById("applyFilters")?.addEventListener("click", applyFilters);
+  document.getElementById("clearFilters")?.addEventListener("click", clearFilters);
 
   hasInitialLoadCompleted = true;
 });
 
-// 🔄 Load and render inventory records
+// Load and render inventory records
 async function loadAndRenderRecords(options) {
   const { showErrorToast = true } = options || {};
 
@@ -41,16 +38,17 @@ async function loadAndRenderRecords(options) {
   }
 }
 
-// 📊 Render inventory table
+// Render inventory table
 function renderTable(records) {
   const tbody = document.getElementById("inboundTableBody");
   if (!tbody) return;
   tbody.innerHTML = "";
 
+  // 13 columns total: matches header
   if (!Array.isArray(records) || records.length === 0) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="14" style="text-align:center; padding:20px; color:#888;">
+        <td colspan="13" style="text-align:center; padding:20px; color:#888;">
           🚫 No records found. Try adjusting your filters or check back later.
         </td>
       </tr>`;
@@ -63,7 +61,7 @@ function renderTable(records) {
       <td>${record.orderId || ""}</td>
       <td>${record.date || ""}</td>
       <td>${record.accountName || ""}</td>
-      <td>${record.dispatchLocation || ""}</td> <!-- NEW COLUMN -->
+      <td>${record.dispatchLocation || ""}</td>
       <td>${record.productName || ""}</td>
       <td>${record.sku || ""}</td>
       <td>${record.quantity || ""}</td>
@@ -118,14 +116,14 @@ function renderTable(records) {
   costInputs.forEach(setupDollarInput);
 }
 
-// 💲 Format dollar values for display
+// Format dollar values for display
 function formatDollar(value) {
   const num = parseFloat(value);
   if (isNaN(num) || num === 0) return "$0.00";
   return "$" + num.toFixed(2);
 }
 
-// 💲 Setup dollar input formatting
+// Setup dollar input formatting
 function setupDollarInput(input) {
   if (!input) return;
 
@@ -135,10 +133,8 @@ function setupDollarInput(input) {
 
   input.addEventListener("input", () => {
     const raw = input.value.replace(/[^0-9.]/g, "");
-    const parts = raw.split(".");
-    const whole = parts[0];
-    const decimal = parts[1];
-    input.value = decimal ? whole + "." + decimal.slice(0, 2) : whole;
+    const [whole, decimal] = raw.split(".");
+    input.value = decimal ? `${whole}.${decimal.slice(0, 2)}` : whole;
   });
 
   input.addEventListener("blur", () => {
@@ -147,7 +143,7 @@ function setupDollarInput(input) {
   });
 }
 
-// 🧠 Render status options
+// Render status options
 function renderStatusOptions(current) {
   const statuses = [
     "OrderPending",
@@ -168,21 +164,21 @@ function renderStatusOptions(current) {
     .join("");
 }
 
-// 🔍 Apply filters
+// Apply filters
 function applyFilters() {
   const client = (document.getElementById("filterClient")?.value || "").trim().toLowerCase();
   const fromDate = document.getElementById("filterStart")?.value || "";
   const toDate = document.getElementById("filterEnd")?.value || "";
   const status = document.getElementById("filterStatus")?.value || "";
-  const location = (document.getElementById("filterLocation")?.value || "").trim().toLowerCase(); // NEW
+  const location = (document.getElementById("filterLocation")?.value || ""); // dropdown exact match
 
   const filtered = allRecords.filter(record => {
     const recordClient = (record.accountName || "").toLowerCase();
-    const recordLocation = (record.dispatchLocation || "").toLowerCase();
+    const recordLocation = record.dispatchLocation || "";
     const recordDate = record.date || "";
 
     const matchClient = !client || recordClient.includes(client);
-    const matchLocation = !location || recordLocation.includes(location); // NEW
+    const matchLocation = !location || recordLocation === location; // exact match from dropdown
     const matchStart = !fromDate || recordDate >= fromDate;
     const matchEnd = !toDate || recordDate <= toDate;
     const matchStatus = !status || record.status === status;
@@ -193,7 +189,7 @@ function applyFilters() {
   renderTable(filtered);
 }
 
-// 🧹 Clear filters
+// Clear filters
 function clearFilters() {
   ["filterClient", "filterStart", "filterEnd", "filterStatus", "filterLocation"].forEach(id => {
     const el = document.getElementById(id);
@@ -204,7 +200,7 @@ function clearFilters() {
   showToast("🔄 Filters cleared. Showing all records.");
 }
 
-// ✏️ Track edits
+// Track edits
 window.updateField = function (recordId, field, value, element) {
   const record = allRecords.find(r => r.id === recordId);
   if (!record) return;
@@ -214,12 +210,11 @@ window.updateField = function (recordId, field, value, element) {
   if (element) element.style.backgroundColor = "#fff3cd";
 };
 
-// 💾 Save record
+// Save record
 window.saveRecord = async function (recordId) {
   const record = allRecords.find(r => r.id === recordId);
   if (!record || !record._dirty) return;
 
-  // Sanitize currency fields
   const labelCost = parseFloat(String(record.labelcost || "").replace(/[^0-9.]/g, "")) || 0;
   const threePLCost = parseFloat(String(record.threePLcost || "").replace(/[^0-9.]/g, "")) || 0;
 
