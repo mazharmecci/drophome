@@ -9,75 +9,41 @@
   <link rel="stylesheet" href="../style.css" />
 </head>
 <body>
-  <!-- No navbar on login -->
+  <!-- Injected Navbar -->
   <div id="navbar-placeholder"></div>
+  <script src="../scripts/navbar.js" defer></script>
 
   <div class="login-card">
     <header>
       <img src="../images/DH-white.png" alt="Drophome Logo" class="logo-img" />
       <h4 style="color: white;">Welcome to Drophome</h4>
     </header>
-
-    <!-- use POST so email/password do not appear in URL -->
-    <form id="loginForm" method="post">
+  
+    <form id="loginForm">
       <div class="filter-group">
         <label for="username">Email:</label>
-        <input
-          type="email"
-          id="username"
-          name="username"
-          autocomplete="off"
-          required
-        />
+        <input type="email" id="username" name="username" autocomplete="off" required />
       </div>
       <div class="filter-group">
         <label for="password">Password:</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          autocomplete="current-password"
-          required
-        />
+        <input type="password" id="password" name="password" autocomplete="current-password" required />
       </div>
       <button type="submit" class="btn-primary">🔓 Login</button>
     </form>
-
-    <!-- 🔑 Forgot Password Button -->
-    <div style="margin-top: 12px;">
-      <button
-        id="forgotPwdBtn"
-        style="
-          background-color: #ffc56e;
-          color: black;
-          border: none;
-          padding: 8px 16px;
-          border-radius: 4px;
-          cursor: pointer;
-          font-weight: 500;
-        "
-      >
-        Forgot Password?
-      </button>
-    </div>
 
     <div id="loginMessage" class="hidden"></div>
   </div>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import {
-      getAuth,
-      signInWithEmailAndPassword,
-      onAuthStateChanged,
-      signOut,
-      sendPasswordResetEmail
+    // Import Firebase modules from CDN
+    import { initializeApp } 
+      from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { 
+      getAuth, 
+      signInWithEmailAndPassword, 
+      onAuthStateChanged, 
+      signOut 
     } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import {
-      getFirestore,
-      doc,
-      getDoc
-    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     // -----------------------------
     // Firebase Configuration
@@ -91,89 +57,44 @@
       appId: "1:268666785164:web:6b02f3242b9e21fad25aa9"
     };
 
+    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app);
 
     // -----------------------------
-    // Helpers
+    // Utility Functions
     // -----------------------------
     function showMessage(text, color = "black") {
-      const box = document.getElementById("loginMessage");
-      if (!box) return;
-      box.textContent = text;
-      box.classList.remove("hidden");
-      box.style.color = color;
+      const messageBox = document.getElementById("loginMessage");
+      if (!messageBox) return;
+      messageBox.textContent = text;
+      messageBox.classList.remove("hidden");
+      messageBox.style.color = color;
     }
 
-    async function setUserAccess(uid) {
-      try {
-        const snap = await getDoc(doc(db, "users", uid));
-        if (!snap.exists()) {
-          console.warn("⚠️ No Firestore doc found for user:", uid);
-          sessionStorage.removeItem("userRole");
-          sessionStorage.removeItem("allowedPages");
-          return;
-        }
-
-        const data = snap.data();
-        const role = data.role || "full";
-        const allowedPages = data.allowedPages || [];
-
-        sessionStorage.setItem("userRole", role);
-        sessionStorage.setItem("allowedPages", JSON.stringify(allowedPages));
-
-        console.log("✅ Access set:", { role, allowedPages });
-      } catch (err) {
-        console.error("❌ Failed to fetch user access:", err.message);
-      }
+    function redirectTo(path) {
+      window.location.href = `/drophome/forms/${path}`;
     }
 
     // -----------------------------
-    // Login Form
+    // Login Form Handler
     // -----------------------------
     function setupLoginForm() {
-      const form = document.getElementById("loginForm");
-      if (!form) return;
+      const loginForm = document.getElementById("loginForm");
+      if (!loginForm) return;
 
-      form.addEventListener("submit", async (e) => {
+      loginForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         const email = document.getElementById("username").value.trim();
         const password = document.getElementById("password").value.trim();
 
         try {
-          const cred = await signInWithEmailAndPassword(auth, email, password);
-          sessionStorage.setItem("drophome-auth", "true");
-
-          await setUserAccess(cred.user.uid);
-
-          showMessage("✅ Login successful!", "green");
-          window.location.href = "/drophome/index.html";
+        await signInWithEmailAndPassword(auth, email, password);
+        sessionStorage.setItem("drophome-auth", "true");
+        showMessage("✅ Login successful!", "green");
+        window.location.href = "/drophome/index.html";   // ✅ correct redirect
         } catch (error) {
           showMessage(`❌ ${error.message}`, "red");
-        }
-      });
-    }
-
-    // -----------------------------
-    // Forgot Password
-    // -----------------------------
-    function setupForgotPassword() {
-      const btn = document.getElementById("forgotPwdBtn");
-      if (!btn) return;
-
-      btn.addEventListener("click", async () => {
-        const email = document.getElementById("username").value.trim();
-        if (!email) {
-          showMessage("⚠️ Please enter your email first.", "orange");
-          return;
-        }
-
-        try {
-          await sendPasswordResetEmail(auth, email);
-          showMessage("📧 Password reset email sent. Check your inbox.", "green");
-        } catch (error) {
-          showMessage(`❌ Reset failed: ${error.message}`, "red");
         }
       });
     }
@@ -184,13 +105,16 @@
     function setupAuthListener() {
       onAuthStateChanged(auth, (user) => {
         if (!user) {
-          sessionStorage.clear();
+          sessionStorage.removeItem("drophome-auth");
+          if (!window.location.pathname.includes("login.html")) {
+            window.location.href = "/drophome/forms/login.html";
+          }
         }
       });
     }
 
     // -----------------------------
-    // Optional Logout
+    // Logout Button Handler
     // -----------------------------
     function setupLogoutButton() {
       const logoutBtn = document.getElementById("logoutBtn");
@@ -199,7 +123,7 @@
       logoutBtn.addEventListener("click", async () => {
         try {
           await signOut(auth);
-          sessionStorage.clear();
+          sessionStorage.removeItem("drophome-auth");
           window.location.href = "/drophome/forms/login.html";
         } catch (error) {
           showMessage(`❌ Logout failed: ${error.message}`, "red");
@@ -208,10 +132,9 @@
     }
 
     // -----------------------------
-    // Init
+    // Initialize Handlers
     // -----------------------------
     setupLoginForm();
-    setupForgotPassword();
     setupAuthListener();
     setupLogoutButton();
   </script>
