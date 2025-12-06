@@ -40,6 +40,12 @@
         <option value="" hidden>Choose product name</option>
       </select>
 
+      <label for="price">
+      Price (Auto-filled in dollars)
+      <span class="hint-icon" data-tooltip="This price is pulled from the master list when you select a product.">ℹ️</span>
+      </label>
+      <input type="text" id="price" name="price" readonly class="input-readonly" />
+
       <label for="dispatchLocation">Order Dispatch Location</label>
       <select id="dispatchLocation" name="dispatchLocation" required>
         <option value="" hidden>Select dispatch location</option>
