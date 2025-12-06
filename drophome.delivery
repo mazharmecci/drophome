@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Drophome.delivery — Shopping Experience Redefined</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Hero Section -->
+  <header class="hero">
+    <div class="hero-content">
+      <h1>Welcome to <span class="brand">Drophome.delivery</span></h1>
+      <p>Where essentials meet excellence — shop smarter, live better.</p>      
+    </div>
+  </header>
+
+  <!-- Why Choose Us -->
+  <section class="benefits">
+    <h2>🌟 Why Shop With Us?</h2>
+    <ul>
+      <li>Curated Quality — only products we trust</li>
+      <li>Transparent Inventory — real-time stock updates</li>
+      <li>Fast Fulfillment — quick, safe shipping</li>
+      <li>Customer-Centric Support — always here for you</li>
+      <li>Secure Checkout — shop with confidence</li>
+    </ul>
+  </section>
+
+  <!-- Featured Products -->
+  <section class="products">
+    <h2>🛍️ Featured Products</h2>
+    <div class="product-grid">
+      <div class="product-card">
+        <img src="images/cheese-grater.jpg" alt="Cheese Grater">
+        <h3>Cheese Grater</h3>
+        <p>Available: 27</p>
+      </div>
+      <div class="product-card">
+        <img src="images/thank-you-card.jpg" alt="Thank You Card">
+        <h3>Thank You Card</h3>
+        <p>Available: 92</p>
+      </div>
+      <!-- Add more product cards dynamically -->
+    </div>
+  </section>
+
+  <!-- Exclusive Benefits -->
+  <section class="offers">
+    <h2>🎁 Exclusive Benefits</h2>
+    <p>Bulk discounts, seasonal offers, referral rewards, and early access to new arrivals.</p>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2025 Drophome.delivery — Where Essentials Meet Excellence.</p>
+    <p><a href="/forms/contact.html">Contact Us</a> | <a href="/forms/login.html">Login</a></p>
+  </footer>
+</body>
+</html>
