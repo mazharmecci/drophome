@@ -11,7 +11,7 @@ import {
 let allRecords = [];
 let hasInitialLoadCompleted = false;
 
-// DOM ready
+// 🔄 DOM ready
 document.addEventListener("DOMContentLoaded", async () => {
   await loadAndRenderRecords({ showErrorToast: false });
 
@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   hasInitialLoadCompleted = true;
 });
 
-// Load and render inventory records
+// 🔄 Load and render inventory records
 async function loadAndRenderRecords(options) {
   const { showErrorToast = true } = options || {};
 
@@ -38,17 +38,16 @@ async function loadAndRenderRecords(options) {
   }
 }
 
-// Render inventory table
+// 📊 Render inventory table
 function renderTable(records) {
   const tbody = document.getElementById("inboundTableBody");
   if (!tbody) return;
   tbody.innerHTML = "";
 
-  // 13 columns total: matches header
   if (!Array.isArray(records) || records.length === 0) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="13" style="text-align:center; padding:20px; color:#888;">
+        <td colspan="14" style="text-align:center; padding:20px; color:#888;">
           🚫 No records found. Try adjusting your filters or check back later.
         </td>
       </tr>`;
@@ -57,6 +56,11 @@ function renderTable(records) {
 
   records.forEach(record => {
     const tr = document.createElement("tr");
+
+    const priceDisplay = record.price != null
+      ? `$${parseFloat(record.price).toFixed(2)}`
+      : "$0.00";
+
     tr.innerHTML = `
       <td>${record.orderId || ""}</td>
       <td>${record.date || ""}</td>
@@ -66,6 +70,7 @@ function renderTable(records) {
       <td>${record.sku || ""}</td>
       <td>${record.quantity || ""}</td>
       <td><img src="${record.prodpic || ""}" alt="Product" style="max-width:60px"/></td>
+      <td>${priceDisplay}</td> <!-- ✅ NEW PRICE COLUMN -->
 
       <td>
         <input
@@ -116,14 +121,14 @@ function renderTable(records) {
   costInputs.forEach(setupDollarInput);
 }
 
-// Format dollar values for display
+// 💲 Format dollar values for display
 function formatDollar(value) {
   const num = parseFloat(value);
   if (isNaN(num) || num === 0) return "$0.00";
   return "$" + num.toFixed(2);
 }
 
-// Setup dollar input formatting
+// 💲 Setup dollar input formatting
 function setupDollarInput(input) {
   if (!input) return;
 
@@ -143,7 +148,7 @@ function setupDollarInput(input) {
   });
 }
 
-// Render status options
+// 🧠 Render status options
 function renderStatusOptions(current) {
   const statuses = [
     "OrderPending",
@@ -164,13 +169,13 @@ function renderStatusOptions(current) {
     .join("");
 }
 
-// Apply filters
+// 🔍 Apply filters
 function applyFilters() {
   const client = (document.getElementById("filterClient")?.value || "").trim().toLowerCase();
   const fromDate = document.getElementById("filterStart")?.value || "";
   const toDate = document.getElementById("filterEnd")?.value || "";
   const status = document.getElementById("filterStatus")?.value || "";
-  const location = (document.getElementById("filterLocation")?.value || ""); // dropdown exact match
+  const location = document.getElementById("filterLocation")?.value || "";
 
   const filtered = allRecords.filter(record => {
     const recordClient = (record.accountName || "").toLowerCase();
@@ -178,7 +183,7 @@ function applyFilters() {
     const recordDate = record.date || "";
 
     const matchClient = !client || recordClient.includes(client);
-    const matchLocation = !location || recordLocation === location; // exact match from dropdown
+    const matchLocation = !location || recordLocation === location;
     const matchStart = !fromDate || recordDate >= fromDate;
     const matchEnd = !toDate || recordDate <= toDate;
     const matchStatus = !status || record.status === status;
@@ -189,7 +194,7 @@ function applyFilters() {
   renderTable(filtered);
 }
 
-// Clear filters
+// 🧹 Clear filters
 function clearFilters() {
   ["filterClient", "filterStart", "filterEnd", "filterStatus", "filterLocation"].forEach(id => {
     const el = document.getElementById(id);
@@ -200,7 +205,7 @@ function clearFilters() {
   showToast("🔄 Filters cleared. Showing all records.");
 }
 
-// Track edits
+// ✏️ Track edits
 window.updateField = function (recordId, field, value, element) {
   const record = allRecords.find(r => r.id === recordId);
   if (!record) return;
@@ -210,7 +215,7 @@ window.updateField = function (recordId, field, value, element) {
   if (element) element.style.backgroundColor = "#fff3cd";
 };
 
-// Save record
+// 💾 Save record
 window.saveRecord = async function (recordId) {
   const record = allRecords.find(r => r.id === recordId);
   if (!record || !record._dirty) return;
