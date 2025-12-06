@@ -306,6 +306,7 @@ table,
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  table-layout: fixed; /* ✅ Prevents column stretching */
 }
 
 /* Table cells */
@@ -493,6 +494,7 @@ table tbody tr:nth-of-type(even),
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  overflow-x: auto; /* ✅ Enables horizontal scroll if needed */
 }
 
 /* Page Title */
