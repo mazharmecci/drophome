@@ -2,29 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>📥 Order History – Drophome</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>📥 Order History</title>
   <link rel="stylesheet" href="../style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
+  
   <!-- Injected Navbar -->
   <div id="navbar-placeholder"></div>
   <script src="../scripts/navbar.js" defer></script>
+   
+  <div class="history-container">   
+    <!-- we're using history container as standard for shipping, sales and order-history because of css settings-->
 
-  <main class="history-container">
     <!-- Breadcrumb -->
     <nav class="breadcrumb-nav" aria-label="Breadcrumb">
       <ol class="breadcrumb-list">
         <li class="breadcrumb-item">
-          <a href="/drophome/index.html">Home</a>
-        </li>
-        <li class="breadcrumb-item breadcrumb-current" aria-current="page">
-          Order History
+          <spam>Order-History</spam>
         </li>
       </ol>
     </nav>
-
-    <h1 class="page-title">Order History</h1>
 
     <!-- Filter Bar -->
     <div class="filter-bar">
@@ -32,55 +30,53 @@
         <label for="filterClient">Client:</label>
         <input type="text" id="filterClient" placeholder="Enter client name" />
       </div>
-
+    
       <div class="filter-group">
         <label for="filterStart">From:</label>
         <input type="date" id="filterStart" />
       </div>
-
+    
       <div class="filter-group">
         <label for="filterEnd">To:</label>
         <input type="date" id="filterEnd" />
       </div>
-
+    
       <button id="applyFilters" class="btn-primary">🔍 Apply Filters</button>
       <button id="clearFilters" class="btn-clear">🧹 Clear</button>
     </div>
 
     <!-- Records Table -->
-    <div class="table-scroll-wrapper">
-      <table class="summary-table">
-        <thead>
-          <tr>
-            <th>Inbound ID</th>
-            <th>Date Received</th>
-            <th>Client Name</th>
-            <th>Product Name</th>
-            <th>SKU</th>
-            <th>Quantity</th>
-            <th>Product Picture</th>
-            <th>Label Link</th>
-            <th>Notes</th>
-          </tr>
-        </thead>
-        <tbody id="inboundTableBody">
-          <!-- Records injected here -->
-        </tbody>
-      </table>
-    </div>
+    <table class="summary-table">
+      <thead>
+        <tr>
+          <th>Inbound ID</th>
+          <th>Date Received</th>
+          <th>Client Name</th>
+          <th>Product Name</th>
+          <th>SKU</th>
+          <th>Quantity</th>
+          <th>Product Picture</th>
+          <th>Label Link</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody id="inboundTableBody">
+        <!-- Records will be injected here -->
+      </tbody>
+    </table>
 
     <!-- Pagination Controls -->
     <div class="pagination" id="paginationControls"></div>
-  </main>
+  </div>
 
-  <!-- Firebase + history logic -->
+  <!-- Scripts -->
   <script type="module">
-    import { db } from "../scripts/firebase.js";
+    import { db } from '../scripts/firebase.js';
     import { collection, getDocs } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
     let allRecords = [];
     let currentPage = 1;
-    const pageSize = 10;
+    const pageSize = 10; // records per page
 
     async function loadInboundHistory() {
       try {
@@ -89,7 +85,6 @@
         snapshot.forEach(docSnap => {
           allRecords.push(docSnap.data());
         });
-        currentPage = 1;
         renderTable(allRecords);
         renderPagination(allRecords.length);
       } catch (err) {
@@ -101,6 +96,7 @@
       const table = document.getElementById("inboundTableBody");
       table.innerHTML = "";
 
+      // Pagination slice
       const start = (currentPage - 1) * pageSize;
       const end = start + pageSize;
       const pageRecords = records.slice(start, end);
@@ -127,7 +123,6 @@
       controls.innerHTML = "";
 
       const totalPages = Math.ceil(totalRecords / pageSize);
-      if (totalPages <= 1) return;
 
       for (let i = 1; i <= totalPages; i++) {
         const btn = document.createElement("button");
@@ -148,11 +143,9 @@
       const endDate = document.getElementById("filterEnd").value;
 
       const filtered = allRecords.filter(r => {
-        const name = (r.clientName || "").toLowerCase();
-        const date = r.dateReceived || "";
-        const matchesClient = clientFilter ? name.includes(clientFilter) : true;
-        const matchesStart = startDate ? date >= startDate : true;
-        const matchesEnd = endDate ? date <= endDate : true;
+        const matchesClient = clientFilter ? (r.clientName || "").toLowerCase().includes(clientFilter) : true;
+        const matchesStart = startDate ? (r.dateReceived >= startDate) : true;
+        const matchesEnd = endDate ? (r.dateReceived <= endDate) : true;
         return matchesClient && matchesStart && matchesEnd;
       });
 
@@ -170,20 +163,26 @@
       renderPagination(allRecords.length);
     }
 
-    // Init
-    loadInboundHistory();
-    document.getElementById("applyFilters").addEventListener("click", applyFilters);
-    document.getElementById("clearFilters").addEventListener("click", clearFilters);
+    document.addEventListener("DOMContentLoaded", () => {
+      loadInboundHistory();
+      document.getElementById("applyFilters").addEventListener("click", applyFilters);
+      document.getElementById("clearFilters").addEventListener("click", clearFilters);
+
+      // Breadcrumb active highlight
+      const currentPath = window.location.pathname.split("/").pop();
+      document.querySelectorAll(".breadcrumb-link").forEach(link => {
+        if (link.getAttribute("href").includes(currentPath)) {
+          link.classList.add("active");
+        }
+      });
+    });
   </script>
 
-  <!-- Simple auth check -->
   <script>
-    if (!sessionStorage.getItem("drophome-auth")) {
-      window.location.href = "/drophome/forms/login.html";
-    }
+  if (!sessionStorage.getItem("drophome-auth")) {
+    window.location.href = "/drophome/forms/login.html";
+  }
   </script>
 
-  <!-- Role-based access + optional meta version -->
-  <script src="../scripts/main.js" defer></script>
 </body>
 </html>
