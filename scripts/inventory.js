@@ -1,3 +1,4 @@
+// scripts/inventory.js
 import { db } from "./firebase.js";
 import { showToast, showSuccessPopup } from "./popupHandler.js";
 import {
@@ -47,11 +48,12 @@ function renderTable(records) {
   tbody.innerHTML = "";
 
   if (!Array.isArray(records) || records.length === 0) {
-    tbody.innerHTML = (
-      '<tr><td colspan="13" style="text-align:center; padding:20px; color:#888;">' +
-      '🚫 No records found. Try adjusting your filters or check back later.' +
-      "</td></tr>"
-    );
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="14" style="text-align:center; padding:20px; color:#888;">
+          🚫 No records found. Try adjusting your filters or check back later.
+        </td>
+      </tr>`;
     return;
   }
 
@@ -61,6 +63,7 @@ function renderTable(records) {
       <td>${record.orderId || ""}</td>
       <td>${record.date || ""}</td>
       <td>${record.accountName || ""}</td>
+      <td>${record.dispatchLocation || ""}</td> <!-- NEW COLUMN -->
       <td>${record.productName || ""}</td>
       <td>${record.sku || ""}</td>
       <td>${record.quantity || ""}</td>
@@ -111,15 +114,13 @@ function renderTable(records) {
   });
 
   // Attach currency formatting to cost fields
-  var costInputs = tbody.querySelectorAll('input[name="labelcost"], input[name="threePLcost"]');
-  costInputs.forEach(function (input) {
-    setupDollarInput(input);
-  });
+  const costInputs = tbody.querySelectorAll('input[name="labelcost"], input[name="threePLcost"]');
+  costInputs.forEach(setupDollarInput);
 }
 
 // 💲 Format dollar values for display
 function formatDollar(value) {
-  var num = parseFloat(value);
+  const num = parseFloat(value);
   if (isNaN(num) || num === 0) return "$0.00";
   return "$" + num.toFixed(2);
 }
@@ -128,27 +129,27 @@ function formatDollar(value) {
 function setupDollarInput(input) {
   if (!input) return;
 
-  input.addEventListener("focus", function () {
+  input.addEventListener("focus", () => {
     input.value = input.value.replace(/[^0-9.]/g, "");
   });
 
-  input.addEventListener("input", function () {
-    var raw = input.value.replace(/[^0-9.]/g, "");
-    var parts = raw.split(".");
-    var whole = parts[0];
-    var decimal = parts[1];
+  input.addEventListener("input", () => {
+    const raw = input.value.replace(/[^0-9.]/g, "");
+    const parts = raw.split(".");
+    const whole = parts[0];
+    const decimal = parts[1];
     input.value = decimal ? whole + "." + decimal.slice(0, 2) : whole;
   });
 
-  input.addEventListener("blur", function () {
-    var num = parseFloat(input.value.replace(/[^0-9.]/g, ""));
+  input.addEventListener("blur", () => {
+    const num = parseFloat(input.value.replace(/[^0-9.]/g, ""));
     input.value = isNaN(num) ? "$0.00" : "$" + num.toFixed(2);
   });
 }
 
 // 🧠 Render status options
 function renderStatusOptions(current) {
-  var statuses = [
+  const statuses = [
     "OrderPending",
     "OrderDelivered",
     "OrderCompleted",
@@ -159,34 +160,34 @@ function renderStatusOptions(current) {
   ];
 
   return statuses
-    .map(function (status) {
-      var label = status.replace(/([A-Z])/g, " $1").trim();
-      var selected = current === status ? "selected" : "";
-      return '<option value="' + status + '" ' + selected + ">" + label + "</option>";
+    .map(status => {
+      const label = status.replace(/([A-Z])/g, " $1").trim();
+      const selected = current === status ? "selected" : "";
+      return `<option value="${status}" ${selected}>${label}</option>`;
     })
     .join("");
 }
 
 // 🔍 Apply filters
 function applyFilters() {
-  var clientInput = document.getElementById("filterClient");
-  var fromInput = document.getElementById("filterStart");
-  var toInput = document.getElementById("filterEnd");
-  var statusSelect = document.getElementById("filterStatus");
+  const client = (document.getElementById("filterClient")?.value || "").trim().toLowerCase();
+  const fromDate = document.getElementById("filterStart")?.value || "";
+  const toDate = document.getElementById("filterEnd")?.value || "";
+  const status = document.getElementById("filterStatus")?.value || "";
+  const location = (document.getElementById("filterLocation")?.value || "").trim().toLowerCase(); // NEW
 
-  var client = clientInput && clientInput.value ? clientInput.value.trim().toLowerCase() : "";
-  var fromDate = fromInput && fromInput.value ? fromInput.value : "";
-  var toDate = toInput && toInput.value ? toInput.value : "";
-  var status = statusSelect && statusSelect.value ? statusSelect.value : "";
+  const filtered = allRecords.filter(record => {
+    const recordClient = (record.accountName || "").toLowerCase();
+    const recordLocation = (record.dispatchLocation || "").toLowerCase();
+    const recordDate = record.date || "";
 
-  var filtered = allRecords.filter(function (record) {
-    var recordClient = (record.accountName || "").toLowerCase();
-    var recordDate = record.date || "";
-    var matchClient = !client || recordClient.includes(client);
-    var matchStart = !fromDate || recordDate >= fromDate;
-    var matchEnd = !toDate || recordDate <= toDate;
-    var matchStatus = !status || record.status === status;
-    return matchClient && matchStart && matchEnd && matchStatus;
+    const matchClient = !client || recordClient.includes(client);
+    const matchLocation = !location || recordLocation.includes(location); // NEW
+    const matchStart = !fromDate || recordDate >= fromDate;
+    const matchEnd = !toDate || recordDate <= toDate;
+    const matchStatus = !status || record.status === status;
+
+    return matchClient && matchLocation && matchStart && matchEnd && matchStatus;
   });
 
   renderTable(filtered);
@@ -194,15 +195,10 @@ function applyFilters() {
 
 // 🧹 Clear filters
 function clearFilters() {
-  var cf = document.getElementById("filterClient");
-  var fs = document.getElementById("filterStart");
-  var fe = document.getElementById("filterEnd");
-  var st = document.getElementById("filterStatus");
-
-  if (cf) cf.value = "";
-  if (fs) fs.value = "";
-  if (fe) fe.value = "";
-  if (st) st.value = "";
+  ["filterClient", "filterStart", "filterEnd", "filterStatus", "filterLocation"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = "";
+  });
 
   renderTable(allRecords);
   showToast("🔄 Filters cleared. Showing all records.");
@@ -210,7 +206,7 @@ function clearFilters() {
 
 // ✏️ Track edits
 window.updateField = function (recordId, field, value, element) {
-  var record = allRecords.find(function (r) { return r.id === recordId; });
+  const record = allRecords.find(r => r.id === recordId);
   if (!record) return;
 
   record[field] = value;
@@ -220,12 +216,12 @@ window.updateField = function (recordId, field, value, element) {
 
 // 💾 Save record
 window.saveRecord = async function (recordId) {
-  var record = allRecords.find(function (r) { return r.id === recordId; });
+  const record = allRecords.find(r => r.id === recordId);
   if (!record || !record._dirty) return;
 
   // Sanitize currency fields
-  var labelCost = parseFloat(String(record.labelcost || "").replace(/[^0-9.]/g, "")) || 0;
-  var threePLCost = parseFloat(String(record.threePLcost || "").replace(/[^0-9.]/g, "")) || 0;
+  const labelCost = parseFloat(String(record.labelcost || "").replace(/[^0-9.]/g, "")) || 0;
+  const threePLCost = parseFloat(String(record.threePLcost || "").replace(/[^0-9.]/g, "")) || 0;
 
   try {
     await updateDoc(doc(db, "inventory", recordId), {
@@ -236,7 +232,7 @@ window.saveRecord = async function (recordId) {
       updatedAt: new Date()
     });
 
-    showToast("✅ Record updated for " + (record.orderId || record.id));
+    showToast(`✅ Record updated for ${record.orderId || record.id}`);
     showSuccessPopup();
     record._dirty = false;
 
