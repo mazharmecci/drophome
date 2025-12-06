@@ -30,10 +30,14 @@
     <div class="form-body">
       <!-- Filter Bar -->
 
-          <div class="filter-group">
-          <label for="filterLocation">Location:</label>
-          <input type="text" id="filterLocation" placeholder="Enter dispatch location" />
-        </div>
+      <div class="filter-group">
+        <label for="filterLocation">Location:</label>
+        <select id="filterLocation">
+          <option value="">All Locations</option>
+          <option value="Dallas Epic Mosque">Dallas Epic Mosque</option>
+          <option value="Round Rock HQ">Round Rock HQ</option>
+        </select>
+      </div>
 
       <div class="filter-bar">
         <div class="filter-group">
@@ -77,8 +81,8 @@
               <th>Order ID</th>
               <th>Date</th>
               <th>Client Name</th>
+              <th>Location</th> <!-- NEW -->
               <th>Product Name</th>
-              <th>Location</th>
               <th>SKU</th>
               <th>Qty</th>
               <th>ProdPic</th>
@@ -89,7 +93,7 @@
               <th>Action</th>
             </tr>
           </thead>
-          <tbody id="inboundTableBody">
+         <tbody id="inboundTableBody">
             <!-- Injected dynamically -->
           </tbody>
         </table>
