@@ -8,7 +8,6 @@
   <link rel="apple-touch-icon" href="/images/DH-Black.png" />
 
   <!-- Embedded CSS -->
-  
   <style>
     /* Animated Tagline */
     .tagline-container {
@@ -67,14 +66,14 @@
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-8px); }
     }
-    
+
     /* Slogan Section */
     .slogan {
       text-align: center;
       padding: 40px 20px;
       background-color: #000; /* solid black background */
     }
-    
+
     .slogan-text {
       font-size: clamp(1.2rem, 4vw, 2rem); /* responsive scaling */
       font-weight: 700;
@@ -87,12 +86,12 @@
       padding: 20px;
       text-shadow: 0 2px 6px rgba(255, 215, 0, 0.5);
     }
-    
+
     @keyframes fadeInSlogan {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    
+
     /* Trust Badges */
     .trust-badges {
       display: flex;
@@ -102,7 +101,7 @@
       padding: 40px 20px;
       background: #f4f4f4;
     }
-    
+
     .badge {
       background: #fff;
       border-radius: 8px;
@@ -112,7 +111,7 @@
       font-weight: 500;
       color: #333;
     }
-    
+
     /* Sections */
     .benefits,
     .products,
@@ -123,24 +122,24 @@
       transform: translateY(30px);
       transition: all 1s ease;
     }
-    
+
     .benefits.visible,
     .products.visible,
     .offers.visible {
       opacity: 1;
       transform: translateY(0);
     }
-    
+
     .benefits ul {
       list-style: none;
       padding: 0;
     }
-    
+
     .benefits li {
       margin: 8px 0;
       font-size: 1.1em;
     }
-    
+
     /* Benefit Grid Cards */
     .benefit-grid {
       display: grid;
@@ -149,7 +148,7 @@
       margin-top: 30px;
       padding: 0 10px;
     }
-    
+
     .benefit-card {
       background: #fff;
       border-radius: 10px;
@@ -160,29 +159,29 @@
       animation: fadeInBenefit 1s ease forwards;
       opacity: 0;
     }
-    
+
     .benefit-card span {
       font-size: 2rem;
       display: block;
       margin-bottom: 10px;
     }
-    
+
     .benefit-card p {
       font-size: 1rem;
       color: #333;
       line-height: 1.4;
     }
-    
+
     .benefit-card:hover {
       transform: translateY(-5px);
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
     }
-    
+
     @keyframes fadeInBenefit {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    
+
     /* Product Grid */
     .product-grid {
       display: grid;
@@ -191,7 +190,7 @@
       margin-top: 20px;
       padding: 0 10px;
     }
-    
+
     .product-card {
       background: #fff;
       border-radius: 8px;
@@ -199,16 +198,16 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       transition: transform 0.2s ease;
     }
-    
+
     .product-card:hover {
       transform: translateY(-5px);
     }
-    
+
     .product-card img {
       max-width: 100%;
       border-radius: 6px;
     }
-    
+
     /* Footer */
     .footer {
       background: #2b2d42;
@@ -216,16 +215,16 @@
       text-align: center;
       padding: 20px;
     }
-    
+
     .footer a {
       color: #ef233c;
       text-decoration: none;
     }
-    
+
     .footer a:hover {
       text-decoration: underline;
     }
-</script>
+  </style>
 </head>
 <body>
 
@@ -249,9 +248,6 @@
     </div>
   </section> 
 
-  <!-- Why Choose Us -->
-  <section class="benefits">
-    
   <!-- Why Shop With Us -->
   <section class="benefits">
     <h2>🌟 Why Shop With Us?</h2>
@@ -309,7 +305,7 @@
     <p><a href="forms/login.html">Login</a></p>
   </footer>
 
-  <!-- Inline Script -->
+  <!-- Inline Script: Product cards -->
   <script>
     const products = [
       { name: "Cheese Grater", qty: 27, img: "images/cheese-grater.jpg" },
@@ -334,19 +330,20 @@
     });
   </script>
 
-<script>
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-      }
-    });
-  }, { threshold: 0.1 });
+  <!-- Inline Script: Intersection observer for fade-in -->
+  <script>
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
 
-  document.querySelectorAll('.benefits, .products, .offers').forEach(section => {
-    observer.observe(section);
-  });
-</script>
+    document.querySelectorAll('.benefits, .products, .offers').forEach(section => {
+      observer.observe(section);
+    });
+  </script>
 
 </body>
 </html>
