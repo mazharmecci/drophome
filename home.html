@@ -29,17 +29,51 @@
 
     /* Hero Background with Animated Gradient */
     .hero {
-      background: linear-gradient(270deg, #2b2d42, #8d99ae, #4169e1);
+      position: relative;
+      background: linear-gradient(
+        270deg,
+        #2b2d42,   /* dark slate */
+        #8d99ae,   /* soft gray */
+        #4169e1,   /* royal blue */
+        #3e2723,   /* dark chocolate */
+        #5d4037    /* milk chocolate brown */
+      );
       background-size: 600% 600%;
       animation: gradientShift 20s ease infinite;
       color: #fff;
       text-align: center;
       padding: 100px 20px;
+      overflow: hidden;
     }
+    
     @keyframes gradientShift {
       0% {background-position:0% 50%}
       50% {background-position:100% 50%}
       100% {background-position:0% 50%}
+    }
+    
+    /* Chocolate Accent Overlay */
+    .hero::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: linear-gradient(
+        135deg,
+        rgba(62, 39, 35, 0.6),   /* dark chocolate accent */
+        rgba(93, 64, 55, 0.4)    /* milk chocolate accent */
+      );
+      pointer-events: none;
+    }
+    
+    /* Vignette Effect */
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: radial-gradient(circle, rgba(0,0,0,0) 70%, rgba(0,0,0,0.6) 100%);
+      pointer-events: none;
     }
 
     /* Logo Styling */
@@ -184,29 +218,34 @@
     }
 
     /* Product Grid */
+
+    .product-card {
+      background: linear-gradient(135deg, #4169e1, #2b2d42); /* gradient blue */
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      color: #fff; /* ensure text is readable */
+    }
+    
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.25);
+    }
+    
+    .product-card img {
+      max-width: 100%;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
     .product-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
       gap: 20px;
       margin-top: 20px;
       padding: 0 10px;
-    }
-
-    .product-card {
-      background: #fff;
-      border-radius: 8px;
-      padding: 20px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      transition: transform 0.2s ease;
-    }
-
-    .product-card:hover {
-      transform: translateY(-5px);
-    }
-
-    .product-card img {
-      max-width: 100%;
-      border-radius: 6px;
     }
 
     /* Footer */
