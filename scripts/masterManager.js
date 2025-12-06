@@ -9,67 +9,53 @@ import {
 
 const docRef = doc(db, "masterList", "VwsEuQNJgfo5TXM6A0DA");
 
-// Modal confirmation helper
+// ---------- Helpers ----------
+
+// Ensure master list exists
+async function ensureMasterList() {
+  const snapshot = await getDoc(docRef);
+  if (!snapshot.exists()) {
+    await setDoc(docRef, {
+      accounts: [],
+      products: [],
+      clients: [],
+      locations: []
+    });
+    showToast("✅ Master list initialized.");
+    return { accounts: [], products: [], clients: [], locations: [] };
+  }
+  return snapshot.data();
+}
+
+// Modal confirmation
 function showModal({ title, message, confirmText, cancelText }) {
   return new Promise((resolve) => {
     const modal = document.getElementById("confirmBox");
-    const modalTitle = document.getElementById("confirmTitle");
-    const modalMessage = document.getElementById("confirmMessage");
-    const yesBtn = document.getElementById("confirmYesBtn");
-    const cancelBtn = document.getElementById("confirmCancelBtn");
-
-    modalTitle.textContent = title;
-    modalMessage.textContent = message;
-    yesBtn.textContent = confirmText;
-    cancelBtn.textContent = cancelText;
+    modal.querySelector("#confirmTitle").textContent = title;
+    modal.querySelector("#confirmMessage").textContent = message;
+    modal.querySelector("#confirmYesBtn").textContent = confirmText;
+    modal.querySelector("#confirmCancelBtn").textContent = cancelText;
 
     modal.style.display = "flex";
 
-    yesBtn.onclick = () => {
+    modal.querySelector("#confirmYesBtn").onclick = () => {
       modal.style.display = "none";
       resolve(true);
     };
-
-    cancelBtn.onclick = () => {
+    modal.querySelector("#confirmCancelBtn").onclick = () => {
       modal.style.display = "none";
       resolve(false);
     };
   });
 }
 
-// Load and render master list
-async function loadMasterList() {
-  try {
-    const snapshot = await getDoc(docRef);
-    if (!snapshot.exists()) {
-      showToast("⚠️ Master list not initialized.");
-      return;
-    }
+// ---------- Rendering ----------
 
-    const data = snapshot.data();
-    renderList("accountList", data.accounts ?? [], "accounts");
-    renderProductList(data.products ?? []); // SKU–Name pairs
-    renderList("clientList", data.clients ?? [], "clients");
-    renderList("locationList", data.locations ?? [], "locations");
-
-    console.log("✅ Master list loaded:", {
-      accounts: data.accounts?.length,
-      products: data.products?.length,
-      clients: data.clients?.length,
-      locations: data.locations?.length
-    });
-  } catch (error) {
-    console.error("Error loading master list:", error);
-    showToast("❌ Failed to load master list.");
-  }
-}
-
-// Render generic list items
 function renderList(listId, items = [], fieldName) {
   const ul = document.getElementById(listId);
   if (!ul) return;
-
   ul.innerHTML = "";
+
   items.forEach((item) => {
     const li = document.createElement("li");
     li.textContent = item;
@@ -85,12 +71,11 @@ function renderList(listId, items = [], fieldName) {
   });
 }
 
-// Render product list with SKU–Name pairs
 function renderProductList(products = []) {
   const ul = document.getElementById("productList");
   if (!ul) return;
-
   ul.innerHTML = "";
+
   products.forEach((p) => {
     const li = document.createElement("li");
     li.textContent = `${p.name} (${p.sku})`;
@@ -106,82 +91,28 @@ function renderProductList(products = []) {
   });
 }
 
-// Add new product (SKU + Name)
-async function addProduct() {
-  const skuInput = document.getElementById("newSKU");
-  const nameInput = document.getElementById("newProductName");
-  if (!skuInput || !nameInput) return;
+// ---------- CRUD Operations ----------
 
-  const sku = skuInput.value.trim();
-  const name = nameInput.value.trim();
-  if (!sku || !name) {
-    showToast("⚠️ Please enter both SKU and Product Name.");
-    return;
-  }
-
+async function loadMasterList() {
   try {
-    const snapshot = await getDoc(docRef);
+    const data = await ensureMasterList();
+    renderList("accountList", data.accounts, "accounts");
+    renderProductList(data.products);
+    renderList("clientList", data.clients, "clients");
+    renderList("locationList", data.locations, "locations");
 
-    if (!snapshot.exists()) {
-      await setDoc(docRef, {
-        accounts: [],
-        products: [],
-        clients: [],
-        locations: [],
-      });
-      showToast("✅ Master list initialized.");
-    }
-
-    const current = snapshot.data()?.products || [];
-    if (current.some(p => p.sku === sku || p.name === name)) {
-      showToast("⚠️ Product with same SKU or Name already exists.");
-      return;
-    }
-
-    const updated = [...current, { sku, name }];
-    await updateDoc(docRef, { products: updated });
-
-    skuInput.value = "";
-    nameInput.value = "";
-    await loadMasterList();
-    showToast(`✅ Product "${name}" (${sku}) added.`);
+    console.log("✅ Master list loaded:", {
+      accounts: data.accounts.length,
+      products: data.products.length,
+      clients: data.clients.length,
+      locations: data.locations.length
+    });
   } catch (error) {
-    console.error("Error adding product:", error);
-    showToast("❌ Failed to add product.");
+    console.error("Error loading master list:", error);
+    showToast("❌ Failed to load master list.");
   }
 }
 
-// Remove product with confirmation
-async function removeProduct(product) {
-  const confirmed = await showModal({
-    title: "Confirm Removal",
-    message: `Are you sure you want to remove "${product.name}" (${product.sku})?`,
-    confirmText: "Yes, remove it",
-    cancelText: "Cancel"
-  });
-
-  if (!confirmed) return;
-
-  try {
-    const snapshot = await getDoc(docRef);
-    if (!snapshot.exists()) {
-      showToast("❌ Master list document not found.");
-      return;
-    }
-
-    const current = snapshot.data()?.products || [];
-    const updated = current.filter((p) => p.sku !== product.sku);
-
-    await updateDoc(docRef, { products: updated });
-    await loadMasterList();
-    showToast(`✅ "${product.name}" removed.`);
-  } catch (error) {
-    console.error("Error removing product:", error);
-    showToast("❌ Failed to remove product.");
-  }
-}
-
-// Generic add item
 async function addItem(field, inputId) {
   const input = document.getElementById(inputId);
   if (!input) return;
@@ -193,27 +124,15 @@ async function addItem(field, inputId) {
   }
 
   try {
-    const snapshot = await getDoc(docRef);
+    const data = await ensureMasterList();
+    const current = data[field] || [];
 
-    if (!snapshot.exists()) {
-      await setDoc(docRef, {
-        accounts: [],
-        products: [],
-        clients: [],
-        locations: [],
-      });
-      showToast("✅ Master list initialized.");
-    }
-
-    const current = snapshot.data()[field] || [];
     if (current.includes(newValue)) {
       showToast("⚠️ Value already exists.");
       return;
     }
 
-    const updated = [...current, newValue];
-    await updateDoc(docRef, { [field]: updated });
-
+    await updateDoc(docRef, { [field]: [...current, newValue] });
     input.value = "";
     await loadMasterList();
     showToast(`✅ "${newValue}" added to ${field}.`);
@@ -223,7 +142,79 @@ async function addItem(field, inputId) {
   }
 }
 
-// Clear UI only
+async function addProduct() {
+  const sku = document.getElementById("newSKU")?.value.trim();
+  const name = document.getElementById("newProductName")?.value.trim();
+
+  if (!sku || !name) {
+    showToast("⚠️ Please enter both SKU and Product Name.");
+    return;
+  }
+
+  try {
+    const data = await ensureMasterList();
+    const current = data.products || [];
+
+    if (current.some(p => p.sku === sku || p.name === name)) {
+      showToast("⚠️ Product with same SKU or Name already exists.");
+      return;
+    }
+
+    await updateDoc(docRef, { products: [...current, { sku, name }] });
+    document.getElementById("newSKU").value = "";
+    document.getElementById("newProductName").value = "";
+    await loadMasterList();
+    showToast(`✅ Product "${name}" (${sku}) added.`);
+  } catch (error) {
+    console.error("Error adding product:", error);
+    showToast("❌ Failed to add product.");
+  }
+}
+
+async function removeProduct(product) {
+  const confirmed = await showModal({
+    title: "Confirm Removal",
+    message: `Remove "${product.name}" (${product.sku})?`,
+    confirmText: "Yes, remove it",
+    cancelText: "Cancel"
+  });
+  if (!confirmed) return;
+
+  try {
+    const data = await ensureMasterList();
+    const updated = data.products.filter((p) => p.sku !== product.sku);
+    await updateDoc(docRef, { products: updated });
+    await loadMasterList();
+    showToast(`✅ "${product.name}" removed.`);
+  } catch (error) {
+    console.error("Error removing product:", error);
+    showToast("❌ Failed to remove product.");
+  }
+}
+
+async function removeItem(field, value) {
+  const confirmed = await showModal({
+    title: "Confirm Removal",
+    message: `Remove "${value}" from ${field}?`,
+    confirmText: "Yes, remove it",
+    cancelText: "Cancel"
+  });
+  if (!confirmed) return;
+
+  try {
+    const data = await ensureMasterList();
+    const updated = (data[field] || []).filter((item) => item !== value);
+    await updateDoc(docRef, { [field]: updated });
+    await loadMasterList();
+    showToast(`✅ "${value}" removed from ${field}.`);
+  } catch (error) {
+    console.error("Error removing item:", error);
+    showToast("❌ Failed to remove item.");
+  }
+}
+
+// ---------- Misc ----------
+
 function clearUIOnly() {
   ["accountList", "productList", "clientList", "locationList"].forEach(id => {
     const el = document.getElementById(id);
@@ -232,28 +223,25 @@ function clearUIOnly() {
   showToast("🧹 UI cleared — backend data untouched.");
 }
 
-// Navigate back
 function goBack() {
-  const params = new URLSearchParams(window.location.search);
-  const origin = params.get("origin");
-
   const originMap = {
     inbound: "forms/inbound.html",
     outbound: "forms/outbound.html",
-    stock: "forms/stock.html",
+    stock: "forms/stock.html"
   };
-
-  const targetFile = origin && originMap[origin] ? originMap[origin] : "forms/inbound.html";
+  const origin = new URLSearchParams(window.location.search).get("origin");
+  const targetFile = originMap[origin] || "forms/inbound.html";
   window.location.href = `${targetFile}?updated=true`;
 }
 
-// Bind event listeners
+// ---------- Init ----------
+
 document.addEventListener("DOMContentLoaded", () => {
   loadMasterList();
 
   const bindings = [
     { id: "addAccountBtn", handler: () => addItem("accounts", "newAccount") },
-    { id: "addProductBtn", handler: addProduct }, // special handler
+    { id: "addProductBtn", handler: addProduct },
     { id: "addClientBtn", handler: () => addItem("clients", "newClient") },
     { id: "addLocationBtn", handler: () => addItem("locations", "newLocation") },
     { id: "backToFormBtn", handler: goBack },
