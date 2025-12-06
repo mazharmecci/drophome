@@ -1,3 +1,4 @@
+// scripts/masterManager.js
 import { db } from "./firebase.js";
 import { showToast } from "./popupHandler.js";
 import {
@@ -78,7 +79,8 @@ function renderProductList(products = []) {
 
   products.forEach((p) => {
     const li = document.createElement("li");
-    li.textContent = `${p.name} (${p.sku})`;
+    const priceDisplay = p.price ? `$${parseFloat(p.price).toFixed(2)}` : "$0.00";
+    li.textContent = `${p.name} (${p.sku}) — ${priceDisplay}`;
 
     const removeBtn = document.createElement("button");
     removeBtn.type = "button";
@@ -145,9 +147,11 @@ async function addItem(field, inputId) {
 async function addProduct() {
   const sku = document.getElementById("newSKU")?.value.trim();
   const name = document.getElementById("newProductName")?.value.trim();
+  const priceRaw = document.getElementById("newProductPrice")?.value.trim();
+  const price = parseFloat(priceRaw);
 
-  if (!sku || !name) {
-    showToast("⚠️ Please enter both SKU and Product Name.");
+  if (!sku || !name || isNaN(price)) {
+    showToast("⚠️ Please enter SKU, Product Name, and Price in dollars.");
     return;
   }
 
@@ -160,11 +164,12 @@ async function addProduct() {
       return;
     }
 
-    await updateDoc(docRef, { products: [...current, { sku, name }] });
+    await updateDoc(docRef, { products: [...current, { sku, name, price }] });
     document.getElementById("newSKU").value = "";
     document.getElementById("newProductName").value = "";
+    document.getElementById("newProductPrice").value = "";
     await loadMasterList();
-    showToast(`✅ Product "${name}" (${sku}) added.`);
+    showToast(`✅ Product "${name}" (${sku}) added at $${price.toFixed(2)}.`);
   } catch (error) {
     console.error("Error adding product:", error);
     showToast("❌ Failed to add product.");
