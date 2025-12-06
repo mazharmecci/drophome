@@ -9,46 +9,49 @@
   <link rel="stylesheet" href="../style.css" />
   <style>
     
-    .input-wrapper {
-      position: relative;
-      margin-bottom: 18px;
-      width: 100%;
-      max-width: 100%;
-    }
-    
-    .input-wrapper input {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 10px 14px 10px 44px; /* extra left padding for icon */
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 1rem;
-      background-color: #fff;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    }
-    
-    .input-wrapper input:focus {
-      border-color: #007bff;
-      box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
-      outline: none;
-    }
-    
-    .input-icon {
-      position: absolute;
-      top: 50%;
-      left: 12px;
-      transform: translateY(-50%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
-    }
-    
-    .icon-img {
-      width: 22px;
-      height: 22px;
-      opacity: 0.85;
-    }
+   .input-wrapper {
+    position: relative;
+    margin-bottom: 18px;
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .input-wrapper input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 14px 10px 44px; /* space for icon */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: #fff;
+    line-height: 1.4;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .input-wrapper input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+    outline: none;
+  }
+  
+  .input-icon {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+  
+  .icon-img {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+    display: block;
+  }
 
     .forgot-password {
       text-align: right;
