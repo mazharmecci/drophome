@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Password Reset – Drophome</title>
+  <link rel="icon" href="../images/DH-Black.png" type="image/png" />
+  <link rel="apple-touch-icon" href="../images/DH-Black.png" />
+  <link rel="stylesheet" href="../style.css" />
+  <style>
+    body {
+      background: linear-gradient(135deg, #007bff, #00c6ff);
+      font-family: "Segoe UI", Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .reset-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 40px 30px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      animation: fadeIn 0.6s ease-in-out;
+    }
+
+    .reset-card img {
+      width: 60px;
+      margin-bottom: 20px;
+    }
+
+    .reset-card h2 {
+      margin: 0 0 12px;
+      font-size: 1.6rem;
+      color: #333;
+    }
+
+    .reset-card p {
+      font-size: 1rem;
+      color: #555;
+      margin-bottom: 24px;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      background: #007bff;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background: #0056b3;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="reset-card">
+    <img src="../images/password.png" alt="Password Reset Icon" />
+    <h2>Password Reset Successful</h2>
+    <p>Your password has been updated. You can now log in with your new credentials.</p>
+    <a href="/drophome/forms/login.html" class="btn-primary">🔓 Back to Login</a>
+  </div>
+</body>
+</html>
