@@ -69,10 +69,31 @@
         <h4><strong>Products:</strong></h4>
         <div class="input-row">
           <span class="emoji">📦</span>
-          <input type="text" id="newSKU" placeholder="Enter SKU" />
-          <input type="text" id="newProductName" placeholder="Enter Product Name" />
-          <button type="button" id="addProductBtn">Add Product</button>
+          <input 
+            type="text" 
+            id="newSKU" 
+            placeholder="Enter SKU" 
+            class="input-sku"
+          />
+          <input 
+            type="text" 
+            id="newProductName" 
+            placeholder="Enter Product Name" 
+            class="input-name"
+          />
+          <input 
+            type="number" 
+            id="newProductPrice" 
+            placeholder="Enter Price (USD)" 
+            step="0.01" 
+            min="0" 
+            class="input-price"
+          />
+          <button type="button" id="addProductBtn" class="btn-primary">
+            ➕ Add Product
+          </button>
         </div>
+        <small class="hint-text">Enter SKU, product name, and price in dollars.</small>
         <ul id="productList" class="list-display"></ul>
       </div>
   
