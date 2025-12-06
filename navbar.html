@@ -19,19 +19,11 @@
 
   <!-- Right: Navigation Links -->
   <ul class="nav-links" id="nav-links">
-    <!-- Home is always visible, no restriction -->
     <li><a href="/drophome/index.html">Home</a></li>
-
-    <!-- These must be VISIBLE for limited users, so DO NOT mark as protected -->
-    <li><a href="/drophome/forms/orders.html">Orders</a></li>
-    <li><a href="/drophome/forms/stock.html">Stock</a></li>
-    <li><a href="/drophome/forms/order-history.html">Order History</a></li>
-
-    <!-- These are restricted: only show if NOT limited -->
+    <li class="protected-link"><a href="/drophome/forms/orders.html">Orders</a></li>
     <li class="protected-link"><a href="/drophome/forms/shipping.html">Shipping</a></li>
+    <li class="protected-link"><a href="/drophome/forms/stock.html">Stock</a></li>
     <li class="protected-link"><a href="/drophome/forms/sales.html">Sales</a></li>
+    <li class="protected-link"><a href="/drophome/forms/order-history.html">Order-History</a></li>
   </ul>
-
-  <!-- Overlay for mobile drawer (navbar.js expects this) -->
-  <div id="navOverlay" class="nav-overlay" style="display:none;"></div>
 </nav>
