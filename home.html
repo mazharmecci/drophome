@@ -6,43 +6,44 @@
   <title>Drophome.delivery — Premium Shopping</title>
 
   <!-- Embedded CSS -->
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      color: #333;
-      background: #f9f9f9;
-    }
-
+    <style>
+    /* Hero Background with Animated Gradient */
     .hero {
-      background: linear-gradient(135deg, #2b2d42, #8d99ae);
+      background: linear-gradient(270deg, #2b2d42, #8d99ae, #4169e1);
+      background-size: 600% 600%;
+      animation: gradientShift 20s ease infinite;
       color: #fff;
       text-align: center;
-      padding: 80px 20px;
+      padding: 100px 20px;
     }
     
+    @keyframes gradientShift {
+      0% {background-position:0% 50%}
+      50% {background-position:100% 50%}
+      100% {background-position:0% 50%}
+    }
+    
+    /* Logo Styling */
     .hero-logo {
-      max-width: 120px;
-      margin-bottom: 20px;
+      max-width: 140px;
+      margin-bottom: 30px; /* subtle gap after logo */
     }
     
+    /* Brand Name Styling */
     .brand {
-      color: #f1c40f; /* Royal Gold */
+      color: #4169e1; /* Royal Blue */
       font-weight: bold;
     }
-
-    .cta-btn {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 12px 24px;
-      background: #ef233c;
-      color: #fff;
-      text-decoration: none;
-      border-radius: 6px;
-      transition: background 0.3s ease;
+    
+    /* Fade-in Animation for Text */
+    .fade-in {
+      opacity: 0;
+      animation: fadeInText 2s ease forwards;
     }
-    .cta-btn:hover {
-      background: #d90429;
+    
+    @keyframes fadeInText {
+      from {opacity: 0; transform: translateY(20px);}
+      to {opacity: 1; transform: translateY(0);}
     }
 
     .benefits, .products, .offers {
