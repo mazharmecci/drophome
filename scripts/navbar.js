@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", async () => {
+  // Skip navbar injection on login page
   if (window.location.pathname.includes("login.html")) return;
 
   const placeholder = document.getElementById("navbar-placeholder");
@@ -9,11 +10,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     const html = await res.text();
     placeholder.innerHTML = html;
 
+    const toggle = document.getElementById("nav-toggle");
+    const links = document.getElementById("nav-links");
     const logoutSection = document.getElementById("logout-section");
     const welcomeTag = document.getElementById("welcome-message");
+    const avatarTag = document.getElementById("user-avatar");
     const logoutBtn = document.getElementById("logoutBtn");
+
+    // All protected links
     const protectedLinks = document.querySelectorAll(".protected-link");
 
+    // Firebase imports
     const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js");
     const { getAuth, signOut, onAuthStateChanged } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
 
@@ -29,43 +36,52 @@ document.addEventListener("DOMContentLoaded", async () => {
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
+    // 🔒 Listen for auth state changes
     onAuthStateChanged(auth, (user) => {
       if (user) {
+        // Show logout section
         if (logoutSection) logoutSection.style.display = "flex";
 
-        if (welcomeTag) {
-          let name = user.displayName || user.email || "User";
-          let shortName = name.includes("@") ? name.split("@")[0] : name;
-          welcomeTag.textContent = `Welcome, ${shortName}`;
+        // Show avatar + welcome message
+        if (welcomeTag && avatarTag) {
+          const email = user.email || "User";
+          const initials = email.substring(0, 2).toUpperCase(); // first two letters
+          avatarTag.textContent = initials;
+          avatarTag.style.display = "inline-flex";
+          welcomeTag.textContent = email;
+          welcomeTag.style.display = "inline";
         }
 
+        // Restrict Ahmad's nav links
         if (user.email === "ahmadmanj40@gmail.com") {
           protectedLinks.forEach(link => {
-            const id = link.getAttribute("id");
-            if (id === "orders-link" || id === "orderHistory-link") {
-              link.style.display = "list-item";
+            const anchor = link.querySelector("a");
+            const href = anchor ? anchor.getAttribute("href") : "";
+
+            if (href.includes("orders.html") || href.includes("order-history.html")) {
+              link.style.display = "list-item"; // ✅ Only show Orders + Order History
             } else {
-              link.style.display = "none";
+              link.style.display = "none"; // Hide all other links
             }
           });
 
-          // ✅ Page-level guard for restricted user
+          // ✅ Extra page-level guard
           const restrictedPages = [
             "/drophome/forms/shipping.html",
-            "/drophome/forms/sales.html",            
+            "/drophome/forms/sales.html",
+            "/drophome/forms/stock.html",
             "/drophome/revenue.html",
             "/drophome/dashboard.html"
           ];
           if (restrictedPages.includes(window.location.pathname)) {
             window.location.href = "/drophome/forms/orders.html";
-            import("./popupHandler.js").then(({ showToast }) => {
-              showToast("⚠️ You don’t have access to this page. Redirected to Orders.");
-            });
           }
         } else {
+          // Default: show all protected links
           protectedLinks.forEach(link => link.style.display = "list-item");
         }
 
+        // Logout button
         if (logoutBtn) {
           logoutBtn.addEventListener("click", async () => {
             try {
@@ -74,13 +90,11 @@ document.addEventListener("DOMContentLoaded", async () => {
               window.location.href = "/drophome/forms/login.html";
             } catch (err) {
               console.error("❌ Logout failed:", err);
-              import("./popupHandler.js").then(({ showToast }) => {
-                showToast("⚠️ Failed to log out. Please try again.");
-              });
             }
           });
         }
       } else {
+        // Not logged in → redirect to login
         window.location.href = "/drophome/forms/login.html";
       }
     });
