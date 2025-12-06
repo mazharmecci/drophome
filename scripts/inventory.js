@@ -46,7 +46,7 @@ function renderTable(records) {
   if (!Array.isArray(records) || records.length === 0) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="14" style="text-align:center; padding:20px; color:#888;">
+        <td colspan="15" style="text-align:center; padding:20px; color:#888;">
           🚫 No records found. Try adjusting your filters or check back later.
         </td>
       </tr>`;
@@ -56,9 +56,12 @@ function renderTable(records) {
   records.forEach(record => {
     const tr = document.createElement("tr");
 
-    const priceDisplay = record.price != null
-      ? `$${parseFloat(record.price).toFixed(2)}`
-      : "$0.00";
+    const price = record.price != null ? parseFloat(record.price) : 0;
+    const quantity = record.quantity != null ? parseInt(record.quantity, 10) : 0;
+    const totalCost = price * quantity;
+
+    const priceDisplay = `$${price.toFixed(2)}`;
+    const totalCostDisplay = `$${totalCost.toFixed(2)}`;
 
     tr.innerHTML = `
       <td>${record.orderId || ""}</td>
@@ -66,10 +69,11 @@ function renderTable(records) {
       <td>${record.accountName || ""}</td>
       <td>${record.dispatchLocation || ""}</td>
       <td>${record.productName || ""}</td>
-      <td>${priceDisplay}</td> <!-- ✅ Price column -->
+      <td>${priceDisplay}</td>
       <td>${record.sku || ""}</td>
-      <td>${record.quantity || ""}</td>
+      <td>${quantity}</td>
       <td><img src="${record.prodpic || ""}" alt="Product" style="max-width:60px"/></td>
+      <td>${totalCostDisplay}</td> <!-- ✅ NEW TOTAL COST COLUMN -->
 
       <td>
         <input
