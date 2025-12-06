@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (!placeholder) return;
 
   try {
+    // ✅ Root-relative fetch (works with custom domain)
     const res = await fetch("/navbar.html");
     const html = await res.text();
     placeholder.innerHTML = html;
@@ -65,16 +66,16 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
           });
 
-          // ✅ Extra page-level guard
+          // ✅ Extra page-level guard (root-relative paths only)
           const restrictedPages = [
-            "/drophome/forms/shipping.html",
-            "/drophome/forms/sales.html",
-            "/drophome/forms/stock.html",
-            "/drophome/revenue.html",
-            "/drophome/dashboard.html"
+            "/forms/shipping.html",
+            "/forms/sales.html",
+            "/forms/stock.html",
+            "/revenue.html",
+            "/dashboard.html"
           ];
           if (restrictedPages.includes(window.location.pathname)) {
-            window.location.href = "/drophome/forms/orders.html";
+            window.location.href = "/forms/orders.html";
           }
         } else {
           // Default: show all protected links
@@ -87,7 +88,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             try {
               await signOut(auth);
               sessionStorage.removeItem("drophome-auth");
-              window.location.href = "/drophome/forms/login.html";
+              // ✅ Redirect to root-relative login page
+              window.location.href = "/forms/login.html";
             } catch (err) {
               console.error("❌ Logout failed:", err);
             }
@@ -95,7 +97,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
       } else {
         // Not logged in → redirect to login
-        window.location.href = "/drophome/forms/login.html";
+        window.location.href = "/forms/login.html";
       }
     });
   } catch (err) {
