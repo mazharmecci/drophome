@@ -7,6 +7,20 @@
   <link rel="icon" type="image/png" href="images/DH-Black.png" />
   <link rel="apple-touch-icon" href="images/DH-Black.png" />
   <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Tooltip styling */
+    .restricted-tooltip {
+      margin-top: 6px;
+      font-size: 0.85rem;
+      color: #d9534f; /* red tone for restriction */
+      text-align: center;
+    }
+    .restricted-card {
+      opacity: 0.5;
+      pointer-events: none;
+      cursor: not-allowed;
+    }
+  </style>
 </head>
 <body>
   <!-- Injected Navbar -->
@@ -25,30 +39,48 @@
 
       <!-- Card Grid -->
       <section class="card-container" aria-label="Navigation cards">
-        <a href="forms/orders.html" class="card inbound-card">
-          <div class="emoji">📥</div>
-          <h2>Orders</h2>
-          <p>Record incoming stock from suppliers.</p>
-        </a>
+        <div id="orders-card-wrapper">
+          <a href="forms/orders.html" class="card inbound-card" id="orders-card">
+            <div class="emoji">📥</div>
+            <h2>Orders</h2>
+            <p>Record incoming stock from suppliers.</p>
+          </a>
+        </div>
 
-        <a href="forms/shipping.html" class="card outbound-card">
-          <div class="emoji">📤</div>
-          <h2>Shipping</h2>
-          <p>Action outbound shipments and track status.</p>
-        </a>
+        <div id="shipping-card-wrapper">
+          <a href="forms/shipping.html" class="card outbound-card" id="shipping-card">
+            <div class="emoji">📤</div>
+            <h2>Shipping</h2>
+            <p>Action outbound shipments and track status.</p>
+          </a>
+          <!-- Tooltip placeholder -->
+          <div class="restricted-tooltip" id="shipping-tooltip" style="display:none;">
+            ⚠️ Access restricted for your account
+          </div>
+        </div>
 
-        <a href="forms/stock.html" class="card stock-card">
-          <div class="emoji">📊</div>
-          <h2>Stock</h2>
-          <p>View current stock levels.</p>
-        </a>
+        <div id="stock-card-wrapper">
+          <a href="forms/stock.html" class="card stock-card" id="stock-card">
+            <div class="emoji">📊</div>
+            <h2>Stock</h2>
+            <p>View current stock levels.</p>
+          </a>
+        </div>
 
-        <a href="forms/sales.html" class="card audit-card">
-          <div class="emoji">📈</div>
-          <h2>Sales</h2>
-          <p>View summary metrics and revenue reports.</p>
-        </a>
+        <div id="sales-card-wrapper">
+          <a href="forms/sales.html" class="card audit-card" id="sales-card">
+            <div class="emoji">📈</div>
+            <h2>Sales</h2>
+            <p>View summary metrics and revenue reports.</p>
+          </a>
+          <!-- Tooltip placeholder -->
+          <div class="restricted-tooltip" id="sales-tooltip" style="display:none;">
+            ⚠️ Access restricted for your account
+          </div>
+        </div>
       </section>
+    </section>
+  </main>
 
   <!-- Footer -->
   <footer class="footer-with-logo">
@@ -58,7 +90,7 @@
 
   <!-- Logout Logic -->
   <script type="module">
-    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 
     const firebaseConfig = {
@@ -73,6 +105,7 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
+    // Logout button logic
     document.getElementById("logoutBtn")?.addEventListener("click", async () => {
       try {
         await signOut(auth);
@@ -81,12 +114,38 @@
         console.error("Logout failed:", error.message);
       }
     });
+
+    // Restrict Ahmad's cards
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.href = "/drophome/forms/login.html";
+        return;
+      }
+
+      if (user.email === "ahmadmanj40@gmail.com") {
+        const shippingCard = document.getElementById("shipping-card");
+        const salesCard = document.getElementById("sales-card");
+        const shippingTooltip = document.getElementById("shipping-tooltip");
+        const salesTooltip = document.getElementById("sales-tooltip");
+
+        if (shippingCard) {
+          shippingCard.classList.add("restricted-card");
+          if (shippingTooltip) shippingTooltip.style.display = "block";
+        }
+
+        if (salesCard) {
+          salesCard.classList.add("restricted-card");
+          if (salesTooltip) salesTooltip.style.display = "block";
+        }
+      }
+    });
   </script>
 
-    <script>
-  if (!sessionStorage.getItem("drophome-auth")) {
-    window.location.href = "/drophome/forms/login.html";
-  }
+  <!-- Session check -->
+  <script>
+    if (!sessionStorage.getItem("drophome-auth")) {
+      window.location.href = "/drophome/forms/login.html";
+    }
   </script>
 </body>
 </html>
