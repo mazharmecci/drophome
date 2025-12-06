@@ -8,6 +8,7 @@
   <link rel="apple-touch-icon" href="/images/DH-Black.png" />
 
   <!-- Embedded CSS -->
+  
   <style>
     /* Animated Tagline */
     .tagline-container {
@@ -66,9 +67,8 @@
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-8px); }
     }
-
-    /* Slogan Section */
     
+    /* Slogan Section */
     .slogan {
       text-align: center;
       padding: 40px 20px;
@@ -78,21 +78,21 @@
     .slogan-text {
       font-size: clamp(1.2rem, 4vw, 2rem); /* responsive scaling */
       font-weight: 700;
-      color: #FFD700;
+      color: #FFD700;   /* gold */
       background-color: #000;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       margin: 0 auto;
       padding: 20px;
-      text-shadow: 0 2px 6px rgba(255,215,0,0.5);
+      text-shadow: 0 2px 6px rgba(255, 215, 0, 0.5);
     }
-
+    
     @keyframes fadeInSlogan {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
+    
     /* Trust Badges */
     .trust-badges {
       display: flex;
@@ -102,38 +102,88 @@
       padding: 40px 20px;
       background: #f4f4f4;
     }
+    
     .badge {
       background: #fff;
       border-radius: 8px;
       padding: 16px 24px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       font-size: 1rem;
       font-weight: 500;
       color: #333;
     }
-
+    
     /* Sections */
-    .benefits, .products, .offers {
+    .benefits,
+    .products,
+    .offers {
       padding: 40px 20px;
       text-align: center;
       opacity: 0;
       transform: translateY(30px);
       transition: all 1s ease;
     }
-    .benefits.visible, .products.visible, .offers.visible {
+    
+    .benefits.visible,
+    .products.visible,
+    .offers.visible {
       opacity: 1;
       transform: translateY(0);
     }
-
+    
     .benefits ul {
       list-style: none;
       padding: 0;
     }
+    
     .benefits li {
       margin: 8px 0;
       font-size: 1.1em;
     }
-
+    
+    /* Benefit Grid Cards */
+    .benefit-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+      padding: 0 10px;
+    }
+    
+    .benefit-card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      animation: fadeInBenefit 1s ease forwards;
+      opacity: 0;
+    }
+    
+    .benefit-card span {
+      font-size: 2rem;
+      display: block;
+      margin-bottom: 10px;
+    }
+    
+    .benefit-card p {
+      font-size: 1rem;
+      color: #333;
+      line-height: 1.4;
+    }
+    
+    .benefit-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    @keyframes fadeInBenefit {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Product Grid */
     .product-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -141,36 +191,41 @@
       margin-top: 20px;
       padding: 0 10px;
     }
-
+    
     .product-card {
       background: #fff;
       border-radius: 8px;
       padding: 20px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       transition: transform 0.2s ease;
     }
+    
     .product-card:hover {
       transform: translateY(-5px);
     }
+    
     .product-card img {
       max-width: 100%;
       border-radius: 6px;
     }
-
+    
+    /* Footer */
     .footer {
       background: #2b2d42;
       color: #fff;
       text-align: center;
       padding: 20px;
     }
+    
     .footer a {
       color: #ef233c;
       text-decoration: none;
     }
+    
     .footer a:hover {
       text-decoration: underline;
     }
-  </style>
+</script>
 </head>
 <body>
 
@@ -196,14 +251,32 @@
 
   <!-- Why Choose Us -->
   <section class="benefits">
+    
+  <!-- Why Shop With Us -->
+  <section class="benefits">
     <h2>🌟 Why Shop With Us?</h2>
-    <ul>
-      <li>Curated Quality — only products we trust</li>
-      <li>Transparent Inventory — real-time stock updates</li>
-      <li>Fast Fulfillment — quick, safe shipping</li>
-      <li>Customer-Centric Support — always here for you</li>
-      <li>Secure Checkout — shop with confidence</li>
-    </ul>
+    <div class="benefit-grid">
+      <div class="benefit-card">
+        <span>🛒</span>
+        <p><strong>Curated Quality</strong><br>Only products we trust</p>
+      </div>
+      <div class="benefit-card">
+        <span>📊</span>
+        <p><strong>Transparent Inventory</strong><br>Real-time stock updates</p>
+      </div>
+      <div class="benefit-card">
+        <span>⚡</span>
+        <p><strong>Fast Fulfillment</strong><br>Quick, safe shipping</p>
+      </div>
+      <div class="benefit-card">
+        <span>🤝</span>
+        <p><strong>Customer-Centric Support</strong><br>Always here for you</p>
+      </div>
+      <div class="benefit-card">
+        <span>🔒</span>
+        <p><strong>Secure Checkout</strong><br>Shop with confidence</p>
+      </div>
+    </div>
   </section>
 
   <!-- Featured Products -->
