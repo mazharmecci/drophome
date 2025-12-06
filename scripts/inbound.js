@@ -1,3 +1,4 @@
+// scripts/inbound.js
 import { generateId } from './idGenerator.js';
 import { db } from './firebase.js';
 import { loadDropdowns } from './dropdownLoader.js';
@@ -34,12 +35,15 @@ function collectFormData() {
     dateReceived: getValue("dateReceived"),
     clientName: getValue("clientName"),
     productName: getValue("productName"),
-    dispatchLocation: getValue("dispatchLocation"), // ✅ NEW
+    dispatchLocation: getValue("dispatchLocation"),
     sku: getValue("sku"),
     prodpic: getValue("prodpic"),
     labellink: getValue("labellink"),
     quantityReceived: parseInt(getValue("quantityReceived") || "0", 10),
-    receivingNotes: getValue("receivingNotes")
+    receivingNotes: getValue("receivingNotes"),
+    price: parseFloat(
+      (getValue("price") || "").replace(/[^0-9.]/g, "")
+    ) || 0 // ✅ NEW: ensure numeric price
   };
 }
 
@@ -64,11 +68,12 @@ async function handleSubmit(e) {
       date: data.dateReceived,
       accountName: data.clientName,
       productName: data.productName,
-      dispatchLocation: data.dispatchLocation, // ✅ NEW
+      dispatchLocation: data.dispatchLocation,
       sku: data.sku,
       quantity: data.quantityReceived,
       prodpic: data.prodpic,
       labellink: data.labellink,
+      price: data.price, // ✅ NEW
       status: "OrderPending",
       labelqty: 0,
       labelcost: "",
