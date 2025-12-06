@@ -3,15 +3,101 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Drophome.delivery — Shopping Experience Redefined</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Drophome.delivery — Premium Shopping</title>
+
+  <!-- Embedded CSS -->
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      color: #333;
+      background: #f9f9f9;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #2b2d42, #8d99ae);
+      color: #fff;
+      text-align: center;
+      padding: 80px 20px;
+    }
+
+    .hero .brand {
+      color: #ef233c;
+      font-weight: bold;
+    }
+
+    .cta-btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 24px;
+      background: #ef233c;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 6px;
+      transition: background 0.3s ease;
+    }
+    .cta-btn:hover {
+      background: #d90429;
+    }
+
+    .benefits, .products, .offers {
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .benefits ul {
+      list-style: none;
+      padding: 0;
+    }
+    .benefits li {
+      margin: 8px 0;
+      font-size: 1.1em;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .product-card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease;
+    }
+    .product-card:hover {
+      transform: translateY(-5px);
+    }
+    .product-card img {
+      max-width: 100%;
+      border-radius: 6px;
+    }
+
+    .footer {
+      background: #2b2d42;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+    .footer a {
+      color: #ef233c;
+      text-decoration: none;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
   <!-- Hero Section -->
   <header class="hero">
     <div class="hero-content">
       <h1>Welcome to <span class="brand">Drophome.delivery</span></h1>
-      <p>Where essentials meet excellence — shop smarter, live better.</p>      
+      <p>Where essentials meet excellence — shop smarter, live better.</p>
+      <a href="/forms/orders.html" class="cta-btn">Start Shopping</a>
     </div>
   </header>
 
@@ -30,19 +116,7 @@
   <!-- Featured Products -->
   <section class="products">
     <h2>🛍️ Featured Products</h2>
-    <div class="product-grid">
-      <div class="product-card">
-        <img src="images/cheese-grater.jpg" alt="Cheese Grater">
-        <h3>Cheese Grater</h3>
-        <p>Available: 27</p>
-      </div>
-      <div class="product-card">
-        <img src="images/thank-you-card.jpg" alt="Thank You Card">
-        <h3>Thank You Card</h3>
-        <p>Available: 92</p>
-      </div>
-      <!-- Add more product cards dynamically -->
-    </div>
+    <div id="product-grid" class="product-grid"></div>
   </section>
 
   <!-- Exclusive Benefits -->
@@ -56,5 +130,31 @@
     <p>© 2025 Drophome.delivery — Where Essentials Meet Excellence.</p>
     <p><a href="/forms/contact.html">Contact Us</a> | <a href="/forms/login.html">Login</a></p>
   </footer>
+
+  <!-- Inline Script -->
+  <script>
+    const products = [      
+      { name: "Cheese Grater", qty: 27, img: "images/cheese-grater.jpg" },
+      { name: "Thank You Card", qty: 92, img: "images/thank-you-card.jpg" },
+      { name: "Magnetic Phone Holder", qty: 19, img: "images/phone-holder.jpg" },
+      { name: "3-in-1 Sink Drain", qty: 7, img: "images/sink-drain.jpg" },
+      { name: "Cable Organizer Pouch", qty: 15, img: "images/cable-pouch.jpg" },
+      { name: "Oil Sprayer", qty: 185, img: "images/oil-sprayer.jpg" },
+      { name: "Fruit Washing Bowl", qty: 6, img: "images/fruit-bowl.jpg" }
+    ];
+
+    const grid = document.getElementById("product-grid");
+
+    products.forEach(p => {
+      const card = document.createElement("div");
+      card.className = "product-card";
+      card.innerHTML = `
+        <img src="${p.img}" alt="${p.name}">
+        <h3>${p.name}</h3>
+        <p>Available: ${p.qty}</p>
+      `;
+      grid.appendChild(card);
+    });
+  </script>
 </body>
 </html>
