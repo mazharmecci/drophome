@@ -39,67 +39,51 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 🔒 Listen for auth state changes
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        // Show all protected links
-        protectedLinks.forEach(link => link.style.display = "list-item");
-
+        // Always show logout section
         if (logoutSection) logoutSection.style.display = "flex";
 
+        // Welcome message
         if (welcomeTag) {
           let name = user.displayName || user.email || "User";
           let shortName = name;
           if (shortName.includes("@")) shortName = shortName.split("@")[0];
           welcomeTag.textContent = `Welcome, ${shortName}`;
-          welcomeTag.style.display = "inline-block";
+        }
 
-          // Generate initials
-          let initials = shortName
-            .split(/[\s._-]+/) // split on spaces, dots, underscores, hyphens
-            .map(part => part[0].toUpperCase())
-            .join("")
-            .slice(0, 2); // max 2 letters
+        // Restrict nav links for specific user
+        if (user.email === "ahmadmanj40@gmail.com") {
+          protectedLinks.forEach(link => {
+            const id = link.getAttribute("id");
+            if (id === "orders-link" || id === "orderHistory-link") {
+              link.style.display = "list-item"; // ✅ Only show Orders + Order History
+            } else {
+              link.style.display = "none"; // Hide all other links
+            }
+          });
+        } else {
+          // Default: show all protected links
+          protectedLinks.forEach(link => link.style.display = "list-item");
+        }
 
-          if (avatarTag) {
-            avatarTag.textContent = initials;
-            avatarTag.style.display = "inline-flex";
-          }
+        // Logout button
+        if (logoutBtn) {
+          logoutBtn.addEventListener("click", async () => {
+            try {
+              await signOut(auth);
+              sessionStorage.removeItem("drophome-auth");
+              window.location.href = "/drophome/forms/login.html";
+            } catch (err) {
+              console.error("❌ Logout failed:", err);
+              showToast("⚠️ Failed to log out. Please try again.");
+            }
+          });
         }
       } else {
-        // Hide protected links
-        protectedLinks.forEach(link => link.style.display = "none");
-
-        if (logoutSection) logoutSection.style.display = "none";
-        if (welcomeTag) welcomeTag.style.display = "none";
-        if (avatarTag) avatarTag.style.display = "none";
+        // Not logged in → redirect to login
+        window.location.href = "/drophome/forms/login.html";
       }
     });
-
-    // 🚪 Logout handler
-    if (logoutBtn) {
-      logoutBtn.addEventListener("click", async () => {
-        try {
-          await signOut(auth);
-          sessionStorage.removeItem("drophome-auth");
-          window.location.href = "/drophome/forms/login.html";
-        } catch (err) {
-          console.error("❌ Logout failed:", err.message);
-        }
-      });
-    }
-
-    // 🍔 Mobile toggle
-    if (toggle && links) {
-      toggle.addEventListener("click", () => {
-        links.classList.toggle("active");
-      });
-
-      const navItems = links.querySelectorAll("a");
-      navItems.forEach(link => {
-        link.addEventListener("click", () => {
-          links.classList.remove("active");
-        });
-      });
-    }
   } catch (err) {
-    console.error("❌ Failed to load navbar or Firebase:", err.message);
+    console.error("❌ Navbar injection failed:", err);
   }
 });
