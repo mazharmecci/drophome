@@ -34,6 +34,7 @@ function collectFormData() {
     dateReceived: getValue("dateReceived"),
     clientName: getValue("clientName"),
     productName: getValue("productName"),
+    dispatchLocation: getValue("dispatchLocation"), // ✅ NEW
     sku: getValue("sku"),
     prodpic: getValue("prodpic"),
     labellink: getValue("labellink"),
@@ -63,9 +64,11 @@ async function handleSubmit(e) {
       date: data.dateReceived,
       accountName: data.clientName,
       productName: data.productName,
+      dispatchLocation: data.dispatchLocation, // ✅ NEW
       sku: data.sku,
       quantity: data.quantityReceived,
       prodpic: data.prodpic,
+      labellink: data.labellink,
       status: "OrderPending",
       labelqty: 0,
       labelcost: "",
