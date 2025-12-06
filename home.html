@@ -66,22 +66,19 @@
     }
 
     /* Slogan Section */
-    
     .slogan {
       text-align: center;
       padding: 40px 20px;
       background-color: #000; /* solid black background */
     }
-    
     .slogan-text {
       font-size: 2rem;
       font-weight: 700; /* bold */
       color: #FFD700;   /* gold */
-      white-space: nowrap; /* force text into a single row */
+      white-space: nowrap; /* single row */
       margin: 0 auto;
-      text-shadow: 0 2px 6px rgba(255,215,0,0.5); /* subtle gold glow */
+      text-shadow: 0 2px 6px rgba(255,215,0,0.5);
     }
-    
     @keyframes fadeInSlogan {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
@@ -211,14 +208,14 @@
   </section>
 
   <!-- Slogan Section -->
-    <section class="slogan">
-      <h2 class="slogan-text">Where essentials meet excellence — shop smarter, live better.</h2>
-    </section>
+  <section class="slogan">
+    <h2 class="slogan-text">Where essentials meet excellence — shop smarter, live better.</h2>
+  </section>
 
   <!-- Trust Badges -->
   <section class="trust-badges">
     <div class="badge">✅ Trusted by 500+ customers</div>
-    <div class="badge">📦 99.9% delivery success rate</div>
+    <div class="badge">📦 100.0% delivery success rate</div>
     <div class="badge">🔒 Secure checkout guaranteed</div>
   </section>
 
@@ -230,13 +227,29 @@
 
   <!-- Inline Script -->
   <script>
-    const products = [      
+    const products = [
       { name: "Cheese Grater", qty: 27, img: "images/cheese-grater.jpg" },
       { name: "Thank You Card", qty: 92, img: "images/thank-you-card.jpg" },
       { name: "Magnetic Phone Holder", qty: 19, img: "images/phone-holder.jpg" },
-      { name: "3-in-1 Sink Drain", qty: 7, img: "images/sink-drain.jpg" },
-      { name: "Cable Organizer Pouch", qty: 15, img: "images/cable-pouch.jpg" },
+      { name: "3-in-1 Sink Drain", qty: 7, img: "images/sink-drain.jpeg" },
+      { name: "Cable Organizer Pouch", qty: 15, img: "images/cable-pouch.webp" },
       { name: "Oil Sprayer", qty: 185, img: "images/oil-sprayer.jpg" },
-      { name: "Fruit Washing Bowl", qty: 6, img: "images/fruit-bowl.jpg" }
+      { name: "Fruit Washing Bowl", qty: 6, img: "images/fruit-bowl.jpeg" }
     ];
 
+    const grid = document.getElementById("product-grid");
+
+    products.forEach(p => {
+      const card = document.createElement("div");
+      card.className = "product-card";
+      card.innerHTML = `
+        <img src="${p.img}" alt="${p.name}" onerror="this.src='images/placeholder.png';">
+        <h3>${p.name}</h3>
+        <p>Available: ${p.qty}</p>
+      `;
+      grid.appendChild(card);
+    });
+  </script>
+
+</body>
+</html>
