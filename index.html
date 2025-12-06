@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Drophome</title>
-  <link rel="icon" type="image/png" href="images/DH-Black.png" />
-  <link rel="apple-touch-icon" href="images/DH-Black.png" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" href="/images/DH-Black.png" />
+  <link rel="apple-touch-icon" href="/images/DH-Black.png" />
+  <link rel="stylesheet" href="/style.css" />
   <style>
     /* Dimmed card style */
     .restricted-card {
@@ -19,7 +19,7 @@
 <body>
   <!-- Injected Navbar -->
   <div id="navbar-placeholder"></div>
-  <script src="scripts/navbar.js" defer></script>
+  <script src="/scripts/navbar.js" defer></script>
 
   <!-- Main Content -->
   <main>
@@ -27,31 +27,31 @@
       <!-- Logo + Brand -->
       <div class="logo-brand">
         <h3 class="brand-name">
-          DR<span class="logo-replace"><img src="images/DH-Black.png" alt="Logo" /></span>PHOME
+          DR<span class="logo-replace"><img src="/images/DH-Black.png" alt="Logo" /></span>PHOME
         </h3>
       </div>
 
       <!-- Card Grid -->
       <section class="card-container" aria-label="Navigation cards">
-        <a href="forms/orders.html" class="card inbound-card" id="orders-card">
+        <a href="/forms/orders.html" class="card inbound-card" id="orders-card">
           <div class="emoji">📥</div>
           <h2>Orders</h2>
           <p>Record incoming stock from suppliers.</p>
         </a>
 
-        <a href="forms/shipping.html" class="card outbound-card" id="shipping-card">
+        <a href="/forms/shipping.html" class="card outbound-card" id="shipping-card">
           <div class="emoji">📤</div>
           <h2>Shipping</h2>
           <p>Action outbound shipments and track status.</p>
         </a>
 
-        <a href="forms/stock.html" class="card stock-card" id="stock-card">
+        <a href="/forms/stock.html" class="card stock-card" id="stock-card">
           <div class="emoji">📊</div>
           <h2>Stock</h2>
           <p>View current stock levels.</p>
         </a>
 
-        <a href="forms/sales.html" class="card audit-card" id="sales-card">
+        <a href="/forms/sales.html" class="card audit-card" id="sales-card">
           <div class="emoji">📈</div>
           <h2>Sales</h2>
           <p>View summary metrics and revenue reports.</p>
@@ -62,7 +62,7 @@
 
   <!-- Footer -->
   <footer class="footer-with-logo">
-    <img src="images/DH-Black.png" alt="Drophome Logo" class="footer-logo" />
+    <img src="/images/DH-Black.png" alt="Drophome Logo" class="footer-logo" />
     <span>© 2025 Drophome — Leader in E-commerce business</span>
   </footer>
 
@@ -87,7 +87,7 @@
     document.getElementById("logoutBtn")?.addEventListener("click", async () => {
       try {
         await signOut(auth);
-        window.location.href = "/drophome/forms/login.html";
+        window.location.href = "/forms/login.html";
       } catch (error) {
         console.error("Logout failed:", error.message);
       }
@@ -96,7 +96,7 @@
     // Restrict Ahmad's cards
     onAuthStateChanged(auth, (user) => {
       if (!user) {
-        window.location.href = "/drophome/forms/login.html";
+        window.location.href = "/forms/login.html";
         return;
       }
 
@@ -113,7 +113,7 @@
   <!-- Session check -->
   <script>
     if (!sessionStorage.getItem("drophome-auth")) {
-      window.location.href = "/drophome/forms/login.html";
+      window.location.href = "/forms/login.html";
     }
   </script>
 </body>
