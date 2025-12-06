@@ -60,6 +60,17 @@ document.addEventListener("DOMContentLoaded", async () => {
               link.style.display = "none"; // Hide all other links
             }
           });
+
+          // ✅ Extra page-level guard
+          const restrictedPages = [
+            "/drophome/forms/shipping.html",
+            "/drophome/forms/sales.html",
+            "/drophome/forms/admin.html",
+            "/drophome/forms/stock.html"
+          ];
+          if (restrictedPages.includes(window.location.pathname)) {
+            window.location.href = "/drophome/forms/orders.html";
+          }
         } else {
           // Default: show all protected links
           protectedLinks.forEach(link => link.style.display = "list-item");
