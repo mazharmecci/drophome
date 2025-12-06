@@ -4,98 +4,89 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>🔐 Login – Drophome</title>
-  <link rel="icon" href="../images/DH-Black.png" type="image/png" />
-  <link rel="apple-touch-icon" href="../images/DH-Black.png" />
-  <link rel="stylesheet" href="../style.css" />
+  <link rel="icon" href="/images/DH-Black.png" type="image/png" />
+  <link rel="apple-touch-icon" href="/images/DH-Black.png" />
+  <link rel="stylesheet" href="/style.css" />
   <style>
-    
-   .input-wrapper {
-    position: relative;
-    margin-bottom: 18px;
-    width: 100%;
-    max-width: 100%;
-  }
-  
-  .input-wrapper input {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 10px 14px 10px 44px; /* space for icon */
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 1rem;
-    background-color: #fff;
-    line-height: 1.4;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  .input-wrapper input:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
-    outline: none;
-  }
-  
-  .input-icon {
-    position: absolute;
-    top: 50%;
-    left: 12px;
-    transform: translateY(-50%);
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
-  }
-  
-  .icon-img {
-    width: 22px;
-    height: 22px;
-    object-fit: contain;
-    display: block;
-  }
-
+    .input-wrapper {
+      position: relative;
+      margin-bottom: 18px;
+      width: 100%;
+      max-width: 100%;
+    }
+    .input-wrapper input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px 14px 10px 44px; /* space for icon */
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+      background-color: #fff;
+      line-height: 1.4;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .input-wrapper input:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+      outline: none;
+    }
+    .input-icon {
+      position: absolute;
+      top: 50%;
+      left: 12px;
+      transform: translateY(-50%);
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+    .icon-img {
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
+      display: block;
+    }
     .forgot-password {
       text-align: right;
       margin-top: -8px;
       margin-bottom: 16px;
       font-size: 0.9rem;
     }
-    
     .forgot-password a {
       color: #007bff;
       text-decoration: none;
     }
-    
     .forgot-password a:hover {
       text-decoration: underline;
-    }    
+    }
   </style>
 </head>
 <body>
   <!-- Injected Navbar -->
   <div id="navbar-placeholder"></div>
-  <script src="../scripts/navbar.js" defer></script>
+  <script src="/scripts/navbar.js" defer></script>
 
   <div class="login-card">
     <header>
-      <img src="../images/DH-white.png" alt="Drophome Logo" class="logo-img" />
+      <img src="/images/DH-white.png" alt="Drophome Logo" class="logo-img" />
       <h4 style="color: white;">Welcome to Drophome</h4>
     </header>
   
     <form id="loginForm">
       <div class="input-wrapper">
         <span class="input-icon">
-          <img src="../images/user-icon.png" alt="User Icon" class="icon-img" />
+          <img src="/images/user-icon.png" alt="User Icon" class="icon-img" />
         </span>
         <input type="email" id="username" name="username" placeholder="Email" autocomplete="off" required />
       </div>
       
       <div class="input-wrapper">
         <span class="input-icon">
-          <img src="../images/password.png" alt="Password Icon" class="icon-img" />
+          <img src="/images/password.png" alt="Password Icon" class="icon-img" />
         </span>
         <input type="password" id="password" name="password" placeholder="Password" autocomplete="current-password" required />
       </div>
-
 
       <p class="forgot-password">
         <a href="#" id="forgotPasswordLink">🔑 Forgot Password?</a>
@@ -138,7 +129,7 @@
     }
 
     function redirectTo(path) {
-      window.location.href = `/drophome/forms/${path}`;
+      window.location.href = `/forms/${path}`;
     }
 
     function setupLoginForm() {
@@ -154,7 +145,7 @@
           await signInWithEmailAndPassword(auth, email, password);
           sessionStorage.setItem("drophome-auth", "true");
           showMessage("✅ Login successful!", "green");
-          window.location.href = "/drophome/index.html";
+          window.location.href = "/index.html";
         } catch (error) {
           showMessage(`❌ ${error.message}`, "red");
         }
@@ -186,7 +177,7 @@
         if (!user) {
           sessionStorage.removeItem("drophome-auth");
           if (!window.location.pathname.includes("login.html")) {
-            window.location.href = "/drophome/forms/login.html";
+            window.location.href = "/forms/login.html";
           }
         }
       });
@@ -200,7 +191,7 @@
         try {
           await signOut(auth);
           sessionStorage.removeItem("drophome-auth");
-          window.location.href = "/drophome/forms/login.html";
+          window.location.href = "/forms/login.html";
         } catch (error) {
           showMessage(`❌ Logout failed: ${error.message}`, "red");
         }
