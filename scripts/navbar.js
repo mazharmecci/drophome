@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  // Skip navbar injection on login page
   if (window.location.pathname.includes("login.html")) return;
 
   const placeholder = document.getElementById("navbar-placeholder");
@@ -13,11 +12,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const logoutSection = document.getElementById("logout-section");
     const welcomeTag = document.getElementById("welcome-message");
     const logoutBtn = document.getElementById("logoutBtn");
-
-    // All protected links (class-based)
     const protectedLinks = document.querySelectorAll(".protected-link");
 
-    // Load Firebase once
     const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js");
     const { getAuth, signOut, onAuthStateChanged } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
 
@@ -33,52 +29,44 @@ document.addEventListener("DOMContentLoaded", async () => {
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // 🔒 Listen for auth state changes
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        // Always show logout section
         if (logoutSection) logoutSection.style.display = "flex";
 
-        // Welcome message
         if (welcomeTag) {
           let name = user.displayName || user.email || "User";
-          let shortName = name;
-          if (shortName.includes("@")) shortName = shortName.split("@")[0];
+          let shortName = name.includes("@") ? name.split("@")[0] : name;
           welcomeTag.textContent = `Welcome, ${shortName}`;
         }
 
-        // Restrict nav links for specific user
         if (user.email === "ahmadmanj40@gmail.com") {
           protectedLinks.forEach(link => {
             const id = link.getAttribute("id");
             if (id === "orders-link" || id === "orderHistory-link") {
-              link.style.display = "list-item"; // ✅ Only show Orders + Order History
+              link.style.display = "list-item";
             } else {
-              link.style.display = "none"; // Hide all other links
+              link.style.display = "none";
             }
           });
 
-          // ✅ Extra page-level guard
+          // ✅ Page-level guard for restricted user
           const restrictedPages = [
             "/drophome/forms/shipping.html",
             "/drophome/forms/sales.html",
-            "/drophome/forms/admin.html",
-            "/drophome/forms/stock.html"
+            "/drophome/forms/stock.html",
+            "/drophome/revenue.html",
+            "/drophome/dashboard.html"
           ];
           if (restrictedPages.includes(window.location.pathname)) {
-            // Redirect to Orders
             window.location.href = "/drophome/forms/orders.html";
-            // Show toast message
             import("./popupHandler.js").then(({ showToast }) => {
               showToast("⚠️ You don’t have access to this page. Redirected to Orders.");
             });
           }
         } else {
-          // Default: show all protected links
           protectedLinks.forEach(link => link.style.display = "list-item");
         }
 
-        // Logout button
         if (logoutBtn) {
           logoutBtn.addEventListener("click", async () => {
             try {
@@ -94,7 +82,6 @@ document.addEventListener("DOMContentLoaded", async () => {
           });
         }
       } else {
-        // Not logged in → redirect to login
         window.location.href = "/drophome/forms/login.html";
       }
     });
