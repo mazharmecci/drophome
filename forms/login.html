@@ -7,6 +7,40 @@
   <link rel="icon" href="../images/DH-Black.png" type="image/png" />
   <link rel="apple-touch-icon" href="../images/DH-Black.png" />
   <link rel="stylesheet" href="../style.css" />
+  <style>
+    .input-wrapper {
+      position: relative;
+      margin-bottom: 16px;
+    }
+    .input-wrapper input {
+      width: 100%;
+      padding: 10px 12px 10px 36px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+    .input-icon {
+      position: absolute;
+      top: 50%;
+      left: 10px;
+      transform: translateY(-50%);
+      font-size: 1.1rem;
+      color: #555;
+    }
+    .forgot-password {
+      text-align: right;
+      margin-top: -8px;
+      margin-bottom: 16px;
+      font-size: 0.9rem;
+    }
+    .forgot-password a {
+      color: #007bff;
+      text-decoration: none;
+    }
+    .forgot-password a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
   <!-- Injected Navbar -->
@@ -20,14 +54,19 @@
     </header>
   
     <form id="loginForm">
-      <div class="filter-group">
-        <label for="username">Email:</label>
-        <input type="email" id="username" name="username" autocomplete="off" required />
+      <div class="input-wrapper">
+        <span class="input-icon">👤</span>
+        <input type="email" id="username" name="username" placeholder="Email" autocomplete="off" required />
       </div>
-      <div class="filter-group">
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" autocomplete="current-password" required />
+      <div class="input-wrapper">
+        <span class="input-icon">🔒</span>
+        <input type="password" id="password" name="password" placeholder="Password" autocomplete="current-password" required />
       </div>
+
+      <p class="forgot-password">
+        <a href="#" id="forgotPasswordLink">🔑 Forgot Password?</a>
+      </p>
+
       <button type="submit" class="btn-primary">🔓 Login</button>
     </form>
 
@@ -35,19 +74,15 @@
   </div>
 
   <script type="module">
-    // Import Firebase modules from CDN
-    import { initializeApp } 
-      from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { 
       getAuth, 
       signInWithEmailAndPassword, 
       onAuthStateChanged, 
-      signOut 
+      signOut,
+      sendPasswordResetEmail
     } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-    // -----------------------------
-    // Firebase Configuration
-    // -----------------------------
     const firebaseConfig = {
       apiKey: "AIzaSyDqFJ85euyPb4QV863AmBF9zHv34WIdmrg",
       authDomain: "drophome-1cb76.firebaseapp.com",
@@ -57,13 +92,9 @@
       appId: "1:268666785164:web:6b02f3242b9e21fad25aa9"
     };
 
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // -----------------------------
-    // Utility Functions
-    // -----------------------------
     function showMessage(text, color = "black") {
       const messageBox = document.getElementById("loginMessage");
       if (!messageBox) return;
@@ -76,9 +107,6 @@
       window.location.href = `/drophome/forms/${path}`;
     }
 
-    // -----------------------------
-    // Login Form Handler
-    // -----------------------------
     function setupLoginForm() {
       const loginForm = document.getElementById("loginForm");
       if (!loginForm) return;
@@ -89,19 +117,36 @@
         const password = document.getElementById("password").value.trim();
 
         try {
-        await signInWithEmailAndPassword(auth, email, password);
-        sessionStorage.setItem("drophome-auth", "true");
-        showMessage("✅ Login successful!", "green");
-        window.location.href = "/drophome/index.html";   // ✅ correct redirect
+          await signInWithEmailAndPassword(auth, email, password);
+          sessionStorage.setItem("drophome-auth", "true");
+          showMessage("✅ Login successful!", "green");
+          window.location.href = "/drophome/index.html";
         } catch (error) {
           showMessage(`❌ ${error.message}`, "red");
         }
       });
     }
 
-    // -----------------------------
-    // Auth State Listener
-    // -----------------------------
+    function setupForgotPassword() {
+      const link = document.getElementById("forgotPasswordLink");
+      if (!link) return;
+
+      link.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const email = document.getElementById("username").value.trim();
+        if (!email) {
+          showMessage("⚠️ Please enter your email to reset password.", "orange");
+          return;
+        }
+        try {
+          await sendPasswordResetEmail(auth, email);
+          showMessage("✅ Password reset link sent to your email.", "green");
+        } catch (err) {
+          showMessage(`❌ ${err.message}`, "red");
+        }
+      });
+    }
+
     function setupAuthListener() {
       onAuthStateChanged(auth, (user) => {
         if (!user) {
@@ -113,9 +158,6 @@
       });
     }
 
-    // -----------------------------
-    // Logout Button Handler
-    // -----------------------------
     function setupLogoutButton() {
       const logoutBtn = document.getElementById("logoutBtn");
       if (!logoutBtn) return;
@@ -131,10 +173,8 @@
       });
     }
 
-    // -----------------------------
-    // Initialize Handlers
-    // -----------------------------
     setupLoginForm();
+    setupForgotPassword();
     setupAuthListener();
     setupLogoutButton();
   </script>
