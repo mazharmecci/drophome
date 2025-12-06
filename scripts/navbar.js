@@ -10,11 +10,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const html = await res.text();
     placeholder.innerHTML = html;
 
-    const toggle = document.getElementById("nav-toggle");
-    const links = document.getElementById("nav-links");
     const logoutSection = document.getElementById("logout-section");
     const welcomeTag = document.getElementById("welcome-message");
-    const avatarTag = document.getElementById("user-avatar");
     const logoutBtn = document.getElementById("logoutBtn");
 
     // All protected links (class-based)
@@ -69,7 +66,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             "/drophome/forms/stock.html"
           ];
           if (restrictedPages.includes(window.location.pathname)) {
+            // Redirect to Orders
             window.location.href = "/drophome/forms/orders.html";
+            // Show toast message
+            import("./popupHandler.js").then(({ showToast }) => {
+              showToast("⚠️ You don’t have access to this page. Redirected to Orders.");
+            });
           }
         } else {
           // Default: show all protected links
@@ -85,7 +87,9 @@ document.addEventListener("DOMContentLoaded", async () => {
               window.location.href = "/drophome/forms/login.html";
             } catch (err) {
               console.error("❌ Logout failed:", err);
-              showToast("⚠️ Failed to log out. Please try again.");
+              import("./popupHandler.js").then(({ showToast }) => {
+                showToast("⚠️ Failed to log out. Please try again.");
+              });
             }
           });
         }
