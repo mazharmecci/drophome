@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <title>📥 Orders Form</title>
-  <link rel="stylesheet" href="../style.css" />
+  <link rel="stylesheet" href="/style.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
   
   <!-- Injected Navbar -->
   <div id="navbar-placeholder"></div>
-  <script src="../scripts/navbar.js" defer></script>
+  <script src="/scripts/navbar.js" defer></script>
 
   <div class="form-container">  
 
@@ -46,8 +46,8 @@
       </select>
 
       <label for="price">
-      Price (Auto-filled in dollars)
-      <span class="hint-icon" data-tooltip="This price is pulled from the master list when you select a product.">ℹ️</span>
+        Price (Auto-filled in dollars)
+        <span class="hint-icon" data-tooltip="This price is pulled from the master list when you select a product.">ℹ️</span>
       </label>
       <input type="text" id="price" name="price" readonly class="input-readonly" />
 
@@ -72,7 +72,7 @@
     
       <div class="form-actions">
         <button type="submit" class="btn-primary">Submit</button>
-        <button type="button" class="btn-orange" onclick="window.location.href='../master.html?origin=inbound'">
+        <button type="button" class="btn-orange" onclick="window.location.href='/master.html?origin=inbound'">
           ⚙️ Master List
         </button>
       </div>
@@ -88,15 +88,16 @@
     </div>
   </div>
 
-    <script>
-  if (!sessionStorage.getItem("drophome-auth")) {
-    window.location.href = "/drophome/forms/login.html";
-  }
+  <!-- Session check -->
+  <script>
+    if (!sessionStorage.getItem("drophome-auth")) {
+      window.location.href = "/forms/login.html";
+    }
   </script>
 
   <!-- Scripts -->
-  <script type="module" src="../scripts/inbound.js"></script>
-  <script type="module" src="../scripts/popupHandler.js"></script>
-  <script type="module" src="../scripts/dropdownLoader.js"></script>
+  <script type="module" src="/scripts/inbound.js"></script>
+  <script type="module" src="/scripts/popupHandler.js"></script>
+  <script type="module" src="/scripts/dropdownLoader.js"></script>
 </body>
 </html>
