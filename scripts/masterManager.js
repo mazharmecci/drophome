@@ -1,4 +1,3 @@
-// scripts/masterManager.js
 import { db } from "./firebase.js";
 import { showToast } from "./popupHandler.js";
 import {
@@ -12,7 +11,6 @@ const docRef = doc(db, "masterList", "VwsEuQNJgfo5TXM6A0DA");
 
 // ---------- Helpers ----------
 
-// Ensure master list exists
 async function ensureMasterList() {
   const snapshot = await getDoc(docRef);
   if (!snapshot.exists()) {
@@ -28,7 +26,6 @@ async function ensureMasterList() {
   return snapshot.data();
 }
 
-// Modal confirmation
 function showModal({ title, message, confirmText, cancelText }) {
   return new Promise((resolve) => {
     const modal = document.getElementById("confirmBox");
