@@ -52,11 +52,11 @@ function populateDropdown(fieldId, options, placeholderLabel) {
 function populateProductDropdown(fieldId, products) {
   const select = document.getElementById(fieldId);
   const skuField = document.getElementById("sku");
+  const priceField = document.getElementById("price");
   if (!select) return;
 
   select.innerHTML = "";
 
-  // Add placeholder option
   const placeholder = document.createElement("option");
   placeholder.value = "";
   placeholder.textContent = "Choose product name";
@@ -70,12 +70,11 @@ function populateProductDropdown(fieldId, products) {
     select.appendChild(option);
   });
 
-  // Auto-fill SKU when product is selected
   select.addEventListener("change", () => {
     const selectedName = select.value;
     const matched = products.find(p => p.name === selectedName);
-    if (skuField) {
-      skuField.value = matched ? matched.sku : "";
-    }
+    if (skuField) skuField.value = matched?.sku || "";
+    if (priceField) priceField.value = matched?.price != null ? `$${matched.price.toFixed(2)}` : "$0.00";
   });
 }
+
