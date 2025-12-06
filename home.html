@@ -6,32 +6,24 @@
   <title>Drophome.delivery — Premium Shopping</title>
 
   <!-- Embedded CSS -->
-    <style>
-
-          .slogan {
+  <style>
+    /* Animated Tagline */
+    .tagline-container {
       text-align: center;
-      padding: 60px 20px;
-      background-color: #1f1f1f; /* dark backdrop */
+      padding: 20px 10px 0;
     }
-    
-    .slogan-text {
-      font-size: 2rem;
-      font-weight: 500;
-      color: #ffffff;
-      max-width: 800px;
-      margin: 0 auto;
-      line-height: 1.5;
-      letter-spacing: 0.5px;
-      text-shadow: 0 2px 6px rgba(0,0,0,0.3), 0 0 10px rgba(65,105,225,0.3); /* soft glow */
-      animation: fadeInSlogan 2s ease-out forwards;
+    .tagline-text {
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: #f1c40f;
+      animation: fadeInTagline 2s ease-out forwards;
       opacity: 0;
     }
-    
-    @keyframes fadeInSlogan {
-      from { opacity: 0; transform: translateY(20px); }
+    @keyframes fadeInTagline {
+      from { opacity: 0; transform: translateY(-10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-      
+
     /* Hero Background with Animated Gradient */
     .hero {
       background: linear-gradient(270deg, #2b2d42, #8d99ae, #4169e1);
@@ -41,39 +33,91 @@
       text-align: center;
       padding: 100px 20px;
     }
-    
     @keyframes gradientShift {
       0% {background-position:0% 50%}
       50% {background-position:100% 50%}
       100% {background-position:0% 50%}
     }
-    
+
     /* Logo Styling */
     .hero-logo {
       max-width: 140px;
-      margin-bottom: 30px; /* subtle gap after logo */
+      margin-bottom: 30px;
     }
-    
+
     /* Brand Name Styling */
     .brand {
       color: #f1c40f; /* Royal Gold */
       font-weight: bold;
     }
-    
-    /* Fade-in Animation for Text */
-    .fade-in {
-      opacity: 0;
-      animation: fadeInText 2s ease forwards;
+
+    /* Floating Icons */
+    .floating-icons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      font-size: 1.5rem;
+      margin-top: 20px;
+      animation: floatIcons 6s ease-in-out infinite;
     }
-    
-    @keyframes fadeInText {
-      from {opacity: 0; transform: translateY(20px);}
-      to {opacity: 1; transform: translateY(0);}
+    @keyframes floatIcons {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
     }
 
+    /* Slogan Section */
+    .slogan {
+      text-align: center;
+      padding: 60px 20px;
+      background-color: #1f1f1f;
+    }
+    .slogan-text {
+      font-size: 2rem;
+      font-weight: 500;
+      color: #ffffff;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.5;
+      letter-spacing: 0.5px;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.3), 0 0 10px rgba(65,105,225,0.3);
+      animation: fadeInSlogan 2s ease-out forwards;
+      opacity: 0;
+    }
+    @keyframes fadeInSlogan {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Trust Badges */
+    .trust-badges {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      padding: 40px 20px;
+      background: #f4f4f4;
+    }
+    .badge {
+      background: #fff;
+      border-radius: 8px;
+      padding: 16px 24px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      font-size: 1rem;
+      font-weight: 500;
+      color: #333;
+    }
+
+    /* Sections */
     .benefits, .products, .offers {
       padding: 40px 20px;
       text-align: center;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 1s ease;
+    }
+    .benefits.visible, .products.visible, .offers.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     .benefits ul {
@@ -91,7 +135,6 @@
       gap: 20px;
       margin-top: 20px;
     }
-
     .product-card {
       background: #fff;
       border-radius: 8px;
@@ -124,11 +167,23 @@
 </head>
 <body>
 
-    <section class="hero">
+  <!-- Animated Tagline -->
+  <div class="tagline-container">
+    <p class="tagline-text">Delivering essentials with elegance.</p>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero">
     <div class="hero-content">
-      <img src="../images/DH-white.png" alt="Logo" class="hero-logo" />
+      <img src="images/DH-Black.png" alt="Logo" class="hero-logo" />
       <h1>Welcome to <span class="brand">Drophome.delivery</span></h1>
       <p>Where essentials meet excellence — shop smarter, live better.</p>
+      <!-- Floating Icons -->
+      <div class="floating-icons">
+        <span>✨</span>
+        <span>📦</span>
+        <span>🚚</span>
+      </div>
     </div>
   </section> 
 
@@ -156,36 +211,33 @@
     <p>Bulk discounts, seasonal offers, referral rewards, and early access to new arrivals.</p>
   </section>
 
+  <!-- Slogan Section -->
+  <section class="slogan">
+    <h2 class="slogan-text">Where essentials meet excellence — shop smarter, live better.</h2>
+  </section>
+
+  <!-- Trust Badges -->
+  <section class="trust-badges">
+    <div class="badge">✅ Trusted by 500+ customers</div>
+    <div class="badge">📦 99.9% delivery success rate</div>
+    <div class="badge">🔒 Secure checkout guaranteed</div>
+  </section>
+
   <!-- Footer -->
   <footer class="footer">
     <p>© 2025 Drophome.delivery — Where Essentials Meet Excellence.</p>
-    <p><a href="/forms/contact.html">Contact Us</a> | <a href="/forms/login.html">Login</a></p>
+    <p><a href="forms/contact.html">Contact Us</a> | <a href="forms/login.html">Login</a></p>
   </footer>
 
   <!-- Inline Script -->
   <script>
     const products = [      
-      { name: "Cheese Grater", qty: 27, img: "../images/cheese-grater.jpg" },
-      { name: "Thank You Card", qty: 92, img: "../images/thank-you-card.jpg" },
-      { name: "Magnetic Phone Holder", qty: 19, img: "../images/phone-holder.jpg" },
-      { name: "3-in-1 Sink Drain", qty: 7, img: "../images/sink-drain.jpg" },
-      { name: "Cable Organizer Pouch", qty: 15, img: "../images/cable-pouch.jpg" },
-      { name: "Oil Sprayer", qty: 185, img: "../images/oil-sprayer.jpg" },
-      { name: "Fruit Washing Bowl", qty: 6, img: "../images/fruit-bowl.jpg" }
+      { name: "Cheese Grater", qty: 27, img: "images/cheese-grater.jpg" },
+      { name: "Thank You Card", qty: 92, img: "images/thank-you-card.jpg" },
+      { name: "Magnetic Phone Holder", qty: 19, img: "images/phone-holder.jpg" },
+      { name: "3-in-1 Sink Drain", qty: 7, img: "images/sink-drain.jpg" },
+      { name: "Cable Organizer Pouch", qty: 15, img: "images/cable-pouch.jpg" },
+      { name: "Oil Sprayer", qty: 185, img: "images/oil-sprayer.jpg" },
+      { name: "Fruit Washing Bowl", qty: 6, img: "images/fruit-bowl.jpg" }
     ];
 
-    const grid = document.getElementById("product-grid");
-
-    products.forEach(p => {
-      const card = document.createElement("div");
-      card.className = "product-card";
-      card.innerHTML = `
-        <img src="${p.img}" alt="${p.name}">
-        <h3>${p.name}</h3>
-        <p>Available: ${p.qty}</p>
-      `;
-      grid.appendChild(card);
-    });
-  </script>
-</body>
-</html>
