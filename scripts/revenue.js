@@ -53,8 +53,6 @@ export async function loadAccountDropdown() {
       opt.textContent = account;
       dropdown.appendChild(opt);
     });
-
-    console.log("✅ Account filter loaded with:", [...accountSet]);
   } catch (err) {
     console.error("❌ Error loading accounts:", err);
     showToast("❌ Failed to load accounts.");
@@ -142,8 +140,6 @@ export async function loadRevenueSummary() {
 
     if (matchCount === 0) {
       showToast("⚠️ No matching records found.");
-    } else {
-      console.log(`📊 Revenue summary loaded: ${matchCount} matched`);
     }
   } catch (err) {
     console.error("❌ Failed to load revenue summary:", err);
