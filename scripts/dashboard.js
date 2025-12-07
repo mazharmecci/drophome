@@ -60,7 +60,6 @@ export async function loadSalesSummary() {
     const entries = [];
     snapshot.forEach(doc => entries.push(doc.data()));
     await renderSalesSummary(entries, summaryBody, "", "", "", "__all__");
-    console.log("✅ Sales summary loaded.");
   } catch (err) {
     console.error("❌ Error loading sales summary:", err);
     showToast("❌ Failed to load sales summary.");
@@ -77,7 +76,6 @@ export async function loadProductFilter() {
 
     snapshot.forEach(doc => {
       const data = doc.data();
-      console.log("📦 Inventory record:", data);
       if (data.productName) productSet.add(data.productName);
     });
 
@@ -88,8 +86,6 @@ export async function loadProductFilter() {
       opt.textContent = product;
       productFilter.appendChild(opt);
     });
-
-    console.log("✅ Product filter loaded with:", [...productSet]);
   } catch (err) {
     console.error("❌ Error loading product filter:", err);
     showToast("❌ Failed to load product options.");
@@ -118,7 +114,6 @@ export async function applySalesFilters() {
     const entries = [];
     snapshot.forEach(doc => entries.push(doc.data()));
     await renderSalesSummary(entries, summaryBody, fromDate, toDate, selectedProduct, selectedStatus);
-    console.log("✅ Filtered sales summary loaded.");
   } catch (err) {
     console.error("❌ Error applying filters:", err);
     showToast("❌ Failed to apply filters.");
@@ -171,7 +166,6 @@ function setupResetFilters() {
     if (statusFilter) statusFilter.value = "__all__";
 
     await loadSalesSummary();
-    console.log("🔄 Filters reset for Sales Summary.");
   });
 }
 
