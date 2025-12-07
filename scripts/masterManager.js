@@ -103,13 +103,6 @@ async function loadMasterList() {
     renderProductList(data.products);
     renderList("clientList", data.clients, "clients");
     renderList("locationList", data.locations, "locations");
-
-    console.log("✅ Master list loaded:", {
-      accounts: data.accounts.length,
-      products: data.products.length,
-      clients: data.clients.length,
-      locations: data.locations.length
-    });
   } catch (error) {
     console.error("Error loading master list:", error);
     showToast("❌ Failed to load master list.");
