@@ -211,22 +211,47 @@
       border: 1px solid var(--gold);
       cursor: pointer;
     }
+    
+    /* Flag icons */
+    .flags {
+      display: flex;
+      align-items: center;
+      gap: 8px; /* subtle gap between flags */
+    }
+    
+    .flag-icon {
+      height: 24px;   /* finger-tip size */
+      width: auto;
+      border-radius: 3px; /* optional subtle rounding */
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15); /* subtle shadow for polish */
+    }
   </style>
 </head>
 <body>
   <!-- Navbar -->
   <header class="navbar">
     <div class="nav-inner">
+      <!-- Brand logo + name -->
       <div class="brand-wrap">
         <img src="/images/DH-Black.png" alt="Drophome logo" class="brand-logo" onerror="this.src='images/placeholder.png'">
         <div class="brand-name">DROPHOME</div>
       </div>
+  
+      <!-- Navigation links -->
       <nav class="nav-links">
         <a href="#products">Products</a>
         <a href="#benefits">Benefits</a>
         <a href="#trust">Trust</a>
       </nav>
-      <a class="login-link" href="forms/login.html">Login</a>
+  
+      <!-- Flags + Login -->
+      <div class="nav-actions">
+        <div class="flags">
+          <img src="/images/US.png" alt="US Flag" class="flag-icon">
+          <img src="/images/UK.png" alt="UK Flag" class="flag-icon">
+        </div>
+        <a class="login-link" href="forms/login.html">Login</a>
+      </div>
     </div>
   </header>
 
