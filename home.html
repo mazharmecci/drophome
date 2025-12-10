@@ -27,7 +27,8 @@
       background: var(--surface);
       color: var(--text);
       font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
-      margin: 0; padding: 0;
+      margin: 0;
+      padding: 0;
     }
 
     a { color: var(--brand-blue); text-decoration: none; }
@@ -35,13 +36,18 @@
 
     /* Navbar */
     .navbar {
-      position: sticky; top: 0; z-index: 50;
+      position: sticky;
+      top: 0;
+      z-index: 50;
       background: var(--surface);
       border-bottom: 1px solid var(--border);
     }
     .nav-inner {
-      max-width: 1100px; margin: 0 auto;
-      display: flex; align-items: center; justify-content: space-between;
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;           /* allow wrapping */
+      align-items: center;
       padding: 10px 16px;
     }
     .brand-wrap { display: flex; align-items: center; gap: 10px; }
@@ -50,87 +56,152 @@
     .nav-links { display: flex; gap: 16px; }
     .nav-links a { color: var(--muted); font-weight: 600; }
     .login-link {
-      padding: 8px 12px; border-radius: 8px;
-      border: 1px solid var(--border); color: var(--muted);
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      color: var(--muted);
       background: var(--surface);
+    }
+    .login-link {
+     margin-left: auto;         /* push login to the right on the first row */
+    }
+    .brand-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-right: 16px;        /* small space after logo + brand */
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 16px;
+      width: 100%;               /* force onto next line */
+      margin-top: 6px;           /* subtle vertical gap below logo */
+    }
+    
+    .nav-links a {
+      color: var(--muted);
+      font-weight: 600;
     }
 
     /* Hero */
     .hero {
       background: linear-gradient(270deg, var(--slate), #8d99ae, var(--brand-blue));
-      color: #fff; text-align: center; padding: 100px 20px;
+      color: #fff;
+      text-align: center;
+      padding: 100px 20px;
     }
     .hero h1 { font-size: clamp(1.6rem, 4vw, 2.6rem); }
     .brand { color: var(--gold-strong); font-weight: 800; }
     .tagline { font-size: 1rem; color: var(--gold-strong); margin-bottom: 18px; }
 
     /* Sections */
-    section.section { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+    section.section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
 
     /* Benefits */
     .benefits h2 { text-align: center; margin-bottom: 10px; }
     .benefit-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px; margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 18px;
     }
     .benefit-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; padding: 18px; text-align: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      text-align: center;
       box-shadow: 0 4px 8px var(--shadow);
     }
-    .benefit-card span { font-size: 1.8rem; display: block; margin-bottom: 10px; }
+    .benefit-card span {
+      font-size: 1.8rem;
+      display: block;
+      margin-bottom: 10px;
+    }
     .benefit-card p { margin: 6px 0 0; color: var(--muted); }
 
     /* Products */
     .products h2 { text-align: center; }
     .product-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px; margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 18px;
     }
     .product-card {
       background: var(--surface-soft);
       border: 1px solid var(--border);
-      border-radius: 12px; padding: 14px;
+      border-radius: 12px;
+      padding: 14px;
       box-shadow: 0 4px 8px var(--shadow);
     }
     .product-card img {
-      width: 100%; height: 150px; object-fit: cover;
-      border-radius: 10px; margin-bottom: 10px;
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 10px;
     }
     .product-name { font-weight: 800; margin: 4px 0; }
     .product-meta { font-size: 0.95rem; color: var(--muted); }
 
     /* Trust badges */
     .trust-badges {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 14px; padding: 32px 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-top: 18px;
     }
     .badge {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 10px; padding: 16px; text-align: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
       box-shadow: 0 4px 8px var(--shadow);
+      font-size: 0.95rem;
+      color: var(--muted);
     }
 
     /* Footer */
     .footer {
-      background: #f3f4f6; color: var(--text);
+      background: #f3f4f6;
+      color: var(--text);
       border-top: 1px solid var(--border);
     }
     .footer-inner {
-      max-width: 1100px; margin: 0 auto; padding: 20px;
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
     }
     .footer h4 { margin: 0 0 8px; }
     .footer ul { list-style: none; margin: 0; padding: 0; }
     .footer li { margin: 6px 0; }
     .newsletter { display: flex; gap: 8px; margin-top: 8px; }
     .newsletter input {
-      flex: 1; padding: 10px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.2);
-      background: var(--surface); color: var(--text);
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(0,0,0,0.2);
+      background: var(--surface);
+      color: var(--text);
     }
     .newsletter button {
-      padding: 10px 14px; border-radius: 8px; background: var(--gold); color: #111; font-weight: 800;
+      padding: 10px 14px;
+      border-radius: 8px;
+      background: var(--gold);
+      color: #111;
+      font-weight: 800;
       border: 1px solid var(--gold);
+      cursor: pointer;
     }
   </style>
 </head>
@@ -151,31 +222,58 @@
     </div>
   </header>
 
-  <!-- Hero -->
-  <section class="hero">
-    <h1>Welcome to <span class="brand">Drophome.delivery</span></h1>
-    <p class="tagline">Delivering essentials with elegance.</p>
-  </section>
+  <main role="main">
+    <!-- Hero -->
+    <section class="hero">
+      <h1>Welcome to <span class="brand">Drophome.delivery</span></h1>
+      <p class="tagline">Delivering essentials with elegance.</p>
+    </section>
 
-  <!-- Benefits -->
-  <section id="benefits" class="section benefits">
-    <h2>🌟 Why Shop With Us?</h2>
-    <div class="benefit-grid">
-      <div class="benefit-card"><span>🛒</span><p><strong>Curated Quality</strong><br>Only products we trust</p></div>
-      <div class="benefit-card"><span>📊</span><p><strong>Transparent Inventory</strong><br>Real-time stock updates</p></div>
-      <div class="benefit-card"><span>⚡</span><p><strong>Fast Fulfillment</strong><br>Quick, safe shipping</p></div>
-      <div class="benefit-card"><span>🤝</span><p><strong>Customer-Centric Support</strong><br>Always here for you</p></div>
-      <div class="benefit-card"><span>🔒</span><p><strong>Secure Checkout</strong><br>Shop with confidence</p></div>
-    </div>
-  </section>
+    <!-- Benefits -->
+    <section id="benefits" class="section benefits">
+      <h2>🌟 Why Shop With Us?</h2>
+      <div class="benefit-grid">
+        <div class="benefit-card">
+          <span>🛒</span>
+          <p><strong>Curated Quality</strong><br>Only products we trust</p>
+        </div>
+        <div class="benefit-card">
+          <span>📊</span>
+          <p><strong>Transparent Inventory</strong><br>Real-time stock updates</p>
+        </div>
+        <div class="benefit-card">
+          <span>⚡</span>
+          <p><strong>Fast Fulfillment</strong><br>Quick, safe shipping</p>
+        </div>
+        <div class="benefit-card">
+          <span>🤝</span>
+          <p><strong>Customer-Centric Support</strong><br>Always here for you</p>
+        </div>
+        <div class="benefit-card">
+          <span>🔒</span>
+          <p><strong>Secure Checkout</strong><br>Shop with confidence</p>
+        </div>
+      </div>
+    </section>
 
- <!-- Products -->
-  <section id="products" class="section products">
-    <h2>🛍️ Featured Products</h2>
-    <div id="product-grid" class="product-grid"></div>
-  </section>
-  
-  <!-- Inline JS -->
+    <!-- Products -->
+    <section id="products" class="section products">
+      <h2>🛍️ Featured Products</h2>
+      <div id="product-grid" class="product-grid"></div>
+    </section>
+
+    <!-- Trust -->
+    <section id="trust" class="section">
+      <h2>Trusted By</h2>
+      <div class="trust-badges">
+        <div class="badge">⭐ Rated by thousands of happy customers</div>
+        <div class="badge">🏬 Partnered with verified local suppliers</div>
+        <div class="badge">🔐 Secure payments and data protection</div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Scripts -->
   <script>
     const products = [
       { name: "Cheese Grater", img: "images/cheese-grater.jpg", desc: "Stainless steel, fine & coarse blades." },
@@ -185,18 +283,28 @@
       { name: "Oil Sprayer", img: "images/oil-sprayer.jpg", desc: "Even mist, low oil consumption." },
       { name: "Fruit Washing Bowl", img: "images/fruit-bowl.jpeg", desc: "Drain-and-rinse ergonomic design." }
     ];
-  
+
     const grid = document.getElementById("product-grid");
-    products.forEach(p => {
+    products.forEach((p) => {
       const card = document.createElement("div");
       card.className = "product-card";
-      card.innerHTML = `
-        <img src="${p.img}" alt="${p.name}" onerror="this.src='images/placeholder.png'">
-        <div class="product-name">${p.name}</div>
-        <div class="product-meta">${p.desc}</div>
-      `;
+      card.innerHTML = [
+        `<img src="${p.img}" alt="${p.name}" onerror="this.src='images/placeholder.png'">`,
+        `<div class="product-name">${p.name}</div>`,
+        `<div class="product-meta">${p.desc}</div>`
+      ].join("");
       grid.appendChild(card);
     });
+
+    function subscribeNewsletter() {
+      const email = document.getElementById("newsletter-email").value;
+      const statusEl = document.getElementById("newsletter-status");
+      if (!email) {
+        statusEl.textContent = "Please enter a valid email.";
+        return;
+      }
+      statusEl.textContent = "Thanks for subscribing!";
+    }
   </script>
 
   <!-- Footer -->
@@ -230,26 +338,11 @@
         <p class="muted">Get early access to new arrivals.</p>
         <div class="newsletter">
           <input type="email" id="newsletter-email" placeholder="Your email" aria-label="Newsletter email">
-          <button onclick="subscribeNewsletter()">Subscribe</button>
+          <button type="button" onclick="subscribeNewsletter()">Subscribe</button>
         </div>
         <p id="newsletter-status" class="muted" aria-live="polite"></p>
       </div>
     </div>
-
-    <section id="trust" class="section">
-      <h2>Trusted By</h2>
-      <div class="trust-badges">
-        <!-- Add badge content -->
-      </div>
-    </section>
-    
-    <script>
-    function subscribeNewsletter() {
-      const email = document.getElementById('newsletter-email').value;
-      document.getElementById('newsletter-status').textContent = 'Thanks for subscribing!';
-    }
-    </script>
-    
     <div style="text-align:center;padding:12px;border-top:1px solid rgba(255,255,255,0.1)">
       © 2025 Drophome.delivery — Where Essentials Meet Excellence.
     </div>
