@@ -10,9 +10,7 @@
   <!-- Embedded CSS -->
   <style>
     :root {
-      --bg-dark: #0b0c10;
       --bg-deep: #1f2833;
-      --text: #ffffff;
       --muted: #d1d5db;
       --gold: #f1c40f;
       --gold-strong: #ffd700;
@@ -24,6 +22,11 @@
       --card-shadow: rgba(0,0,0,0.15);
     }
 
+    body {
+      background: #ffffff; /* white background */
+      color: #000000;      /* black text */
+    }
+    
     * { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; background: var(--bg-dark); color: var(--text); font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; }
 
@@ -129,6 +132,10 @@
     .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.35); }
     .btn-outline { border: 1px solid rgba(255,255,255,0.3); color: #fff; }
     .btn-outline:hover { transform: translateY(-2px); }
+
+    .btn-outline {
+    color: #fff !important;
+    }
 
     .floating-icons { display: flex; justify-content: center; gap: 14px; font-size: 1.4rem; margin-top: 18px; animation: floatIcons 6s ease-in-out infinite; }
     @keyframes floatIcons { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
@@ -274,7 +281,7 @@
   <header class="navbar">
     <div class="nav-inner">
       <div class="brand-wrap">
-        <img src="/images/DH-Black.png" alt="Drophome logo" class="brand-logo" onerror="this.src='images/placeholder.png'">
+        <img src="/images/DH-white.png" alt="Drophome logo" class="brand-logo" onerror="this.src='images/placeholder.png'">
         <div class="brand-name">DROPHOME</div>
       </div>
       <nav class="nav-links" aria-label="Primary">
