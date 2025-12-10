@@ -2,42 +2,92 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>🏡 Drophome.delivery — Premium Shopping</title>
   <link rel="icon" href="/images/DH-Black.png" type="image/png" />
   <link rel="apple-touch-icon" href="/images/DH-Black.png" />
-  <link rel="stylesheet" href="/style.css" />  
 
   <!-- Embedded CSS -->
   <style>
-    /* Animated Tagline */
-    .tagline-container {
-      text-align: center;
-      padding: 20px 10px 0;
-    }
-    .tagline-text {
-      font-size: 1.2rem;
-      font-weight: 400;
-      color: #f1c40f;
-      animation: fadeInTagline 2s ease-out forwards;
-      opacity: 0;
-    }
-    @keyframes fadeInTagline {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
+    :root {
+      --bg-dark: #0b0c10;
+      --bg-deep: #1f2833;
+      --text: #ffffff;
+      --muted: #d1d5db;
+      --gold: #f1c40f;
+      --gold-strong: #ffd700;
+      --brand-blue: #4169e1;
+      --slate: #2b2d42;
+      --accent-red: #ef233c;
+      --choc-dark: #3e2723;
+      --choc-milk: #5d4037;
+      --card-shadow: rgba(0,0,0,0.15);
     }
 
-    /* Hero Background with Animated Gradient */
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--bg-dark); color: var(--text); font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; }
+
+    a { color: var(--gold-strong); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Navbar */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(10, 11, 15, 0.8);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+    }
+    .brand-wrap {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .brand-logo {
+      width: 32px; height: 32px;
+      border-radius: 6px;
+      background: #000;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    .brand-name {
+      font-weight: 800; letter-spacing: 0.8px;
+      color: var(--gold);
+    }
+    .nav-links {
+      display: flex; gap: 16px;
+    }
+    .nav-links a {
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .nav-actions {
+      display: flex; align-items: center; gap: 14px;
+    }
+    .cart {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 10px; border-radius: 8px;
+      background: rgba(255,255,255,0.06);
+    }
+    .cart-count {
+      background: var(--accent-red);
+      color: #fff; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 700;
+    }
+    .login-link {
+      padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);
+      color: var(--muted);
+    }
+
+    /* Hero */
     .hero {
       position: relative;
-      background: linear-gradient(
-        270deg,
-        #2b2d42,   /* dark slate */
-        #8d99ae,   /* soft gray */
-        #4169e1,   /* royal blue */
-        #3e2723,   /* dark chocolate */
-        #5d4037    /* milk chocolate brown */
-      );
+      background: linear-gradient(270deg, var(--slate), #8d99ae, var(--brand-blue), var(--choc-dark), var(--choc-milk));
       background-size: 600% 600%;
       animation: gradientShift 20s ease infinite;
       color: #fff;
@@ -45,358 +95,466 @@
       padding: 100px 20px;
       overflow: hidden;
     }
-    
     @keyframes gradientShift {
       0% {background-position:0% 50%}
       50% {background-position:100% 50%}
       100% {background-position:0% 50%}
     }
-    
-    /* Chocolate Accent Overlay */
     .hero::after {
       content: "";
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: linear-gradient(
-        135deg,
-        rgba(62, 39, 35, 0.6),   /* dark chocolate accent */
-        rgba(93, 64, 55, 0.4)    /* milk chocolate accent */
-      );
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(62, 39, 35, 0.55), rgba(93, 64, 55, 0.35));
       pointer-events: none;
     }
-    
-    /* Vignette Effect */
     .hero::before {
       content: "";
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      position: absolute; inset: 0;
       background: radial-gradient(circle, rgba(0,0,0,0) 70%, rgba(0,0,0,0.6) 100%);
       pointer-events: none;
     }
+    .hero-content { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; }
+    .hero-logo { width: 120px; height: 120px; border-radius: 16px; margin-bottom: 20px; }
+    .hero h1 { margin: 0 0 10px; font-size: clamp(1.6rem, 4vw, 2.6rem); }
+    .brand { color: var(--gold); font-weight: 800; }
+    .tagline { font-size: 1rem; color: var(--gold-strong); margin-bottom: 18px; opacity: 0; animation: fadeInTagline 1.2s ease-out forwards; }
+    @keyframes fadeInTagline { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Logo Styling */
-    .hero-logo {
-      max-width: 140px;
-      margin-bottom: 30px;
+    .hero-ctas {
+      display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 16px;
     }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px; font-weight: 700; border-radius: 10px; padding: 12px 16px; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .btn-primary { background: var(--gold); color: #1a1a1a; box-shadow: 0 6px 12px rgba(0,0,0,0.25); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.35); }
+    .btn-outline { border: 1px solid rgba(255,255,255,0.3); color: #fff; }
+    .btn-outline:hover { transform: translateY(-2px); }
 
-    /* Brand Name Styling */
-    .brand {
-      color: #f1c40f; /* Royal Gold */
-      font-weight: bold;
-    }
+    .floating-icons { display: flex; justify-content: center; gap: 14px; font-size: 1.4rem; margin-top: 18px; animation: floatIcons 6s ease-in-out infinite; }
+    @keyframes floatIcons { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 
-    /* Floating Icons */
-    .floating-icons {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      font-size: 1.5rem;
-      margin-top: 20px;
-      animation: floatIcons 6s ease-in-out infinite;
-    }
-    @keyframes floatIcons {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
-    }
-
-    /* Slogan Section */
-    .slogan {
-      text-align: center;
-      padding: 40px 20px;
-      background-color: #000; /* solid black background */
-    }
-
-    .slogan-text {
-      font-size: clamp(1.2rem, 4vw, 2rem); /* responsive scaling */
-      font-weight: 700;
-      color: #FFD700;   /* gold */
-      background-color: #000;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    /* Section base */
+    section.section {
+      max-width: 1100px;
       margin: 0 auto;
-      padding: 20px;
-      text-shadow: 0 2px 6px rgba(255, 215, 0, 0.5);
+      padding: 40px 20px;
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 700ms ease, transform 700ms ease;
     }
+    section.section.visible { opacity: 1; transform: translateY(0); }
 
-    @keyframes fadeInSlogan {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    /* Benefits */
+    .benefits h2 { text-align: center; margin-bottom: 10px; }
+    .benefit-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px; margin-top: 18px;
     }
+    .benefit-card {
+      background: #0f1116; border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px; padding: 18px; text-align: center;
+      box-shadow: 0 6px 12px var(--card-shadow);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .benefit-card:hover { transform: translateY(-3px); box-shadow: 0 12px 24px rgba(0,0,0,0.25); }
+    .benefit-card span { font-size: 1.8rem; display: block; margin-bottom: 10px; }
+    .benefit-card p { margin: 6px 0 0; color: var(--muted); }
+    .benefits .cta-wrap { text-align: center; margin-top: 16px; }
+
+    /* Products */
+    .products h2 { text-align: center; }
+    .product-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px; margin-top: 18px;
+    }
+    .product-card {
+      position: relative;
+      background: linear-gradient(135deg, var(--brand-blue), var(--slate));
+      border-radius: 12px;
+      color: #fff;
+      padding: 14px;
+      box-shadow: 0 6px 12px var(--card-shadow);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .product-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.25); }
+    .product-card img {
+      width: 100%; height: 150px; object-fit: cover;
+      border-radius: 10px; margin-bottom: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    .product-name { font-weight: 800; margin: 4px 0; }
+    .product-meta { display: flex; align-items: center; justify-content: space-between; color: #e5e7eb; font-size: 0.95rem; }
+    .price { font-weight: 800; color: var(--gold-strong); }
+    .stock { font-size: 0.85rem; color: #f3f4f6; }
+    .card-actions { display: flex; gap: 8px; margin-top: 10px; }
+    .btn-cart { background: #111; color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+    .btn-buy { background: var(--accent-red); color: #fff; }
+    .quick-view {
+      position: absolute; inset: 0; border-radius: 12px;
+      background: rgba(0,0,0,0.55); opacity: 0; pointer-events: none;
+      display: flex; align-items: center; justify-content: center; text-align: center; padding: 16px;
+      transition: opacity 0.25s ease;
+    }
+    .product-card:hover .quick-view { opacity: 1; }
+
+    /* Offers */
+    .offers {
+      background: linear-gradient(180deg, rgba(255,215,0,0.08), rgba(255,215,0,0));
+      border-top: 1px solid rgba(255,255,255,0.08);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .offer-banner {
+      display: grid; grid-template-columns: 1.4fr 1fr; gap: 18px;
+      align-items: center; background: #0f1116; border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px; padding: 20px;
+    }
+    .offer-left h3 { margin: 0 0 6px; }
+    .countdown { font-weight: 800; color: var(--gold-strong); margin-top: 6px; }
+    .offer-right { text-align: right; }
+    .offer-right .btn { min-width: 160px; }
+
+    /* Slogan */
+    .slogan {
+      text-align: center; padding: 34px 20px; background: #000;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .slogan-text {
+      display: inline-block;
+      font-size: clamp(1.2rem, 4vw, 2rem);
+      font-weight: 800; color: var(--gold-strong);
+      text-shadow: 0 2px 6px rgba(255, 215, 0, 0.45);
+      animation: glowPulse 3s ease-in-out infinite;
+    }
+    @keyframes glowPulse { 0%,100% { text-shadow: 0 2px 6px rgba(255,215,0,0.45); } 50% { text-shadow: 0 4px 14px rgba(255,215,0,0.75); } }
 
     /* Trust Badges */
     .trust-badges {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 20px;
-      padding: 40px 20px;
-      background: #f4f4f4;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px; padding: 32px 20px;
     }
-
     .badge {
-      background: #fff;
-      border-radius: 8px;
-      padding: 16px 24px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      font-size: 1rem;
-      font-weight: 500;
-      color: #333;
-    }
-
-    /* Sections */
-    .benefits,
-    .products,
-    .offers {
-      padding: 40px 20px;
-      text-align: center;
-      opacity: 0;
-      transform: translateY(30px);
-      transition: all 1s ease;
-    }
-
-    .benefits.visible,
-    .products.visible,
-    .offers.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .benefits ul {
-      list-style: none;
-      padding: 0;
-    }
-
-    .benefits li {
-      margin: 8px 0;
-      font-size: 1.1em;
-    }
-
-    /* Benefit Grid Cards */
-    .benefit-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 20px;
-      margin-top: 30px;
-      padding: 0 10px;
-    }
-
-    .benefit-card {
-      background: #fff;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-      text-align: center;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      animation: fadeInBenefit 1s ease forwards;
-      opacity: 0;
-    }
-
-    .benefit-card span {
-      font-size: 2rem;
-      display: block;
-      margin-bottom: 10px;
-    }
-
-    .benefit-card p {
-      font-size: 1rem;
-      color: #333;
-      line-height: 1.4;
-    }
-
-    .benefit-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-    }
-
-    @keyframes fadeInBenefit {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Product Grid */
-
-    .product-card {
-      background: linear-gradient(135deg, #4169e1, #2b2d42); /* gradient blue */
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      color: #fff; /* ensure text is readable */
-    }
-    
-    .product-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 24px rgba(0,0,0,0.25);
-    }
-    
-    .product-card img {
-      max-width: 100%;
-      border-radius: 8px;
-      margin-bottom: 12px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
-
-    .product-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 20px;
-      margin-top: 20px;
-      padding: 0 10px;
+      background: #0f1116; border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px; padding: 16px; text-align: center; color: #e5e7eb;
+      box-shadow: 0 6px 12px var(--card-shadow);
     }
 
     /* Footer */
     .footer {
-      background: #2b2d42;
+      background: var(--slate);
       color: #fff;
-      text-align: center;
-      padding: 20px;
+      border-top: 1px solid rgba(255,255,255,0.1);
     }
-
-    .footer a {
-      color: #ef233c;
-      text-decoration: none;
+    .footer-inner {
+      max-width: 1100px; margin: 0 auto; padding: 20px;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;
     }
+    .footer h4 { margin: 0 0 8px; }
+    .footer ul { list-style: none; margin: 0; padding: 0; }
+    .footer li { margin: 6px 0; }
+    .newsletter { display: flex; gap: 8px; margin-top: 8px; }
+    .newsletter input {
+      flex: 1; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.05); color: #fff;
+    }
+    .newsletter button { padding: 10px 14px; border-radius: 8px; background: var(--gold); color: #1a1a1a; font-weight: 800; }
 
-    .footer a:hover {
-      text-decoration: underline;
+    /* Utility */
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .offer-banner { grid-template-columns: 1fr; text-align: center; }
+      .offer-right { text-align: center; }
     }
   </style>
-</head>  
-  
+</head>
 <body>
-  <script src="/scripts/navbar.js" defer></script>
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="nav-inner">
+      <div class="brand-wrap">
+        <img src="/images/DH-Black.png" alt="Drophome logo" class="brand-logo" onerror="this.src='images/placeholder.png'">
+        <div class="brand-name">DROPHOME</div>
+      </div>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#benefits">Benefits</a>
+        <a href="#products">Products</a>
+        <a href="#offers">Offers</a>
+        <a href="#trust">Trust</a>
+      </nav>
+      <div class="nav-actions">
+        <a class="login-link" href="forms/login.html">Login</a>
+        <div class="cart" role="button" aria-label="View cart" onclick="scrollToProducts()">
+          <span>🛒 Cart</span>
+          <span id="cart-count" class="cart-count">0</span>
+        </div>
+      </div>
+    </div>
+  </header>
 
-  <main>
-    <section class="form-container">
-      <!-- Logo + Brand -->
-      <div class="logo-brand">
-        <h3 class="brand-name">
-          DR<span class="logo-replace"><img src="/images/DH-Black.png" alt="Logo" /></span>PHOME
-        </h3>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content">
+      <img src="/images/DH-Black.png" alt="Brand logo" class="hero-logo" onerror="this.src='images/placeholder.png'">
+      <h1>Welcome to <span class="brand">Drophome.delivery</span></h1>
+      <p class="tagline">Delivering essentials with elegance.</p>
+
+      <div class="hero-ctas">
+        <button class="btn btn-primary" onclick="scrollToProducts()">Shop Essentials Now</button>
+        <button class="btn btn-outline" onclick="scrollToCategories()">Browse Categories</button>
       </div>
 
-      <!-- Animated Tagline -->
-      <div class="tagline-container">
-        <p class="tagline-text">Delivering essentials with elegance.</p>
+      <div class="floating-icons" aria-hidden="true">
+        <span>✨</span><span>📦</span><span>🚚</span>
       </div>
+    </div>
+  </section>
 
-      <!-- Hero Section -->
-      <section class="hero">
-        <div class="hero-content">
-          <img src="images/DH-Black.png" alt="Logo" class="hero-logo" />
-          <h1>Welcome to <span class="brand">Drophome.delivery</span></h1>
-          <p>Where essentials meet excellence — shop smarter, live better.</p>
-          <!-- Floating Icons -->
-          <div class="floating-icons">
-            <span>✨</span>
-            <span>📦</span>
-            <span>🚚</span>
-          </div>
+  <!-- Benefits -->
+  <section id="benefits" class="section benefits">
+    <h2>🌟 Why shop with us?</h2>
+    <div class="benefit-grid">
+      <div class="benefit-card">
+        <span>🛒</span>
+        <p><strong>Curated quality</strong><br>Only products we trust</p>
+      </div>
+      <div class="benefit-card">
+        <span>📊</span>
+        <p><strong>Transparent inventory</strong><br>Real-time stock updates</p>
+      </div>
+      <div class="benefit-card">
+        <span>⚡</span>
+        <p><strong>Fast fulfillment</strong><br>Quick, safe shipping</p>
+      </div>
+      <div class="benefit-card">
+        <span>🤝</span>
+        <p><strong>Customer-centric support</strong><br>Always here for you</p>
+      </div>
+      <div class="benefit-card">
+        <span>🔒</span>
+        <p><strong>Secure checkout</strong><br>Shop with confidence</p>
+      </div>
+    </div>
+    <div class="cta-wrap">
+      <button class="btn btn-outline" onclick="scrollToProducts()">See all products</button>
+    </div>
+  </section>
+
+  <!-- Products -->
+  <section id="products" class="section products">
+    <h2>🛍️ Featured products</h2>
+    <div id="product-grid" class="product-grid"></div>
+  </section>
+
+  <!-- Offers -->
+  <section id="offers" class="section offers">
+    <div class="offer-banner">
+      <div class="offer-left">
+        <h3>🎁 Holiday sale — up to 30% off</h3>
+        <p class="muted">Bulk discounts, seasonal offers, referral rewards, and early access to new arrivals.</p>
+        <div id="countdown" class="countdown" aria-live="polite">Offer ends in 00d 00h 00m 00s</div>
+      </div>
+      <div class="offer-right">
+        <button class="btn btn-primary" onclick="highlightDeals()">Claim offer</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slogan -->
+  <section class="slogan">
+    <span class="slogan-text">Where essentials meet excellence.</span>
+  </section>
+
+  <!-- Trust badges -->
+  <section id="trust" class="section trust-badges">
+    <div class="badge">✅ Trusted by 500+ customers</div>
+    <div class="badge">📦 100% delivery success rate</div>
+    <div class="badge">🔒 Secure checkout guaranteed</div>
+    <div class="badge">💳 Verified payments</div>
+    <div class="badge">♻️ Easy returns</div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Press</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Support</h4>
+        <ul>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="#">Returns</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Stay in the loop</h4>
+        <p class="muted">Get early access to new arrivals.</p>
+        <div class="newsletter">
+          <input type="email" id="newsletter-email" placeholder="Your email" aria-label="Newsletter email">
+          <button onclick="subscribeNewsletter()">Subscribe</button>
         </div>
-      </section> 
+        <p id="newsletter-status" class="muted" aria-live="polite"></p>
+      </div>
+    </div>
+    <div style="text-align:center;padding:12px;border-top:1px solid rgba(255,255,255,0.1)">
+      © 2025 Drophome.delivery — Where Essentials Meet Excellence.
+    </div>
+  </footer>
 
-      <!-- Why Shop With Us -->
-      <section class="benefits">
-        <h2>🌟 Why Shop With Us?</h2>
-        <div class="benefit-grid">
-          <div class="benefit-card">
-            <span>🛒</span>
-            <p><strong>Curated Quality</strong><br>Only products we trust</p>
-          </div>
-          <div class="benefit-card">
-            <span>📊</span>
-            <p><strong>Transparent Inventory</strong><br>Real-time stock updates</p>
-          </div>
-          <div class="benefit-card">
-            <span>⚡</span>
-            <p><strong>Fast Fulfillment</strong><br>Quick, safe shipping</p>
-          </div>
-          <div class="benefit-card">
-            <span>🤝</span>
-            <p><strong>Customer-Centric Support</strong><br>Always here for you</p>
-          </div>
-          <div class="benefit-card">
-            <span>🔒</span>
-            <p><strong>Secure Checkout</strong><br>Shop with confidence</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- Featured Products -->
-      <section class="products">
-        <h2>🛍️ Featured Products</h2>
-        <div id="product-grid" class="product-grid"></div>
-      </section>
-
-      <!-- Exclusive Benefits -->
-      <section class="offers">
-        <h2>🎁 Exclusive Benefits</h2>
-        <p>Bulk discounts, seasonal offers, referral rewards, and early access to new arrivals.</p>
-      </section>
-
-      <!-- Slogan Section -->
-      <section class="slogan">
-        <h2 class="slogan-text">Where essentials meet excellence..</h2>
-      </section>
-
-      <!-- Trust Badges -->
-      <section class="trust-badges">
-        <div class="badge">✅ Trusted by 500+ customers</div>
-        <div class="badge">📦 100.0% delivery success rate</div>
-        <div class="badge">🔒 Secure checkout guaranteed</div>
-      </section>
-
-      <!-- Footer -->
-      <footer class="footer">
-        <p>© 2025 Drophome.delivery — Where Essentials Meet Excellence.</p>
-        <p><a href="forms/login.html">Login</a></p>
-      </footer>
-    </section> <!-- end .form-container -->
-  </main>
-
-  <!-- Inline Script: Product cards -->
+  <!-- Inline JavaScript -->
   <script>
+    // Starter dataset: extendable via API later
     const products = [
-      { name: "Cheese Grater", qty: 27, img: "images/cheese-grater.jpg" },
-      { name: "Thank You Card", qty: 92, img: "images/thank-you-card.jpg" },      
-      { name: "3-in-1 Sink Drain", qty: 7, img: "images/sink-drain.jpeg" },
-      { name: "Cable Organizer Pouch", qty: 15, img: "images/cable-pouch.webp" },
-      { name: "Oil Sprayer", qty: 185, img: "images/oil-sprayer.jpg" },
-      { name: "Fruit Washing Bowl", qty: 6, img: "images/fruit-bowl.jpeg" }
+      { id: "grater", name: "Cheese Grater", qty: 27, price: 299, img: "images/cheese-grater.jpg", desc: "Stainless steel, fine & coarse blades." },
+      { id: "thankyou", name: "Thank You Card", qty: 92, price: 49, img: "images/thank-you-card.jpg", desc: "Premium cardstock, gold foil finishing." },
+      { id: "drain", name: "3-in-1 Sink Drain", qty: 7, price: 449, img: "images/sink-drain.jpeg", desc: "Multi-filter design, easy clean." },
+      { id: "pouch", name: "Cable Organizer Pouch", qty: 15, price: 599, img: "images/cable-pouch.webp", desc: "Modular pockets, travel-ready." },
+      { id: "sprayer", name: "Oil Sprayer", qty: 185, price: 399, img: "images/oil-sprayer.jpg", desc: "Even mist, low oil consumption." },
+      { id: "bowl", name: "Fruit Washing Bowl", qty: 6, price: 349, img: "images/fruit-bowl.jpeg", desc: "Drain-and-rinse ergonomic design." }
     ];
 
-    const grid = document.getElementById("product-grid");
+    // Cart state with localStorage
+    const CART_KEY = "dh_cart";
+    const cart = JSON.parse(localStorage.getItem(CART_KEY) || "{}");
+    const cartCountEl = document.getElementById("cart-count");
+    updateCartCount();
 
+    // Render products
+    const grid = document.getElementById("product-grid");
     products.forEach(p => {
       const card = document.createElement("div");
       card.className = "product-card";
       card.innerHTML = `
-        <img src="${p.img}" alt="${p.name}" onerror="this.src='images/placeholder.png';">
-        <h3>${p.name}</h3>
-        <p>Available: ${p.qty}</p>
+        <img src="${p.img}" alt="${p.name}" onerror="this.src='images/placeholder.png'">
+        <div class="product-name">${p.name}</div>
+        <div class="product-meta">
+          <div class="price">₹ ${p.price}</div>
+          <div class="stock">Available: ${p.qty}</div>
+        </div>
+        <div class="card-actions">
+          <button class="btn btn-cart" aria-label="Add ${p.name} to cart">Add to cart</button>
+          <button class="btn btn-buy" aria-label="Buy ${p.name} now">Buy now</button>
+        </div>
+        <div class="quick-view">
+          <div>
+            <strong>${p.name}</strong><br>
+            <span style="color:#e5e7eb">${p.desc}</span>
+          </div>
+        </div>
       `;
+      const [btnCart, btnBuy] = card.querySelectorAll(".btn");
+      btnCart.addEventListener("click", () => addToCart(p));
+      btnBuy.addEventListener("click", () => {
+        addToCart(p);
+        // Placeholder for checkout route
+        alert("Added to cart. Proceeding to checkout soon.");
+      });
       grid.appendChild(card);
     });
-  </script>
 
-  <!-- Inline Script: Intersection observer for fade-in -->
-  <script>
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
+    // Intersection Observer for section fades
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) entry.target.classList.add("visible");
       });
     }, { threshold: 0.1 });
+    document.querySelectorAll("section.section").forEach(section => observer.observe(section));
 
-    document.querySelectorAll('.benefits, .products, .offers').forEach(section => {
-      observer.observe(section);
+    // Smooth scroll helpers
+    function scrollToProducts() {
+      document.getElementById("products").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    function scrollToCategories() {
+      // Placeholder: currently scrolls to products
+      scrollToProducts();
+    }
+
+    // Cart helpers
+    function addToCart(product) {
+      const current = cart[product.id] || { qty: 0, product };
+      if (current.qty < product.qty) {
+        current.qty += 1;
+        cart[product.id] = current;
+        persistCart();
+        updateCartCount();
+        feedbackToast(`${product.name} added to cart`);
+      } else {
+        feedbackToast(`Only ${product.qty} in stock`);
+      }
+    }
+    function updateCartCount() {
+      const total = Object.values(cart).reduce((sum, item) => sum + item.qty, 0);
+      cartCountEl.textContent = total;
+    }
+    function persistCart() {
+      localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    }
+
+    // Lightweight toast
+    function feedbackToast(text) {
+      const toast = document.createElement("div");
+      toast.textContent = text;
+      toast.style.position = "fixed";
+      toast.style.bottom = "16px";
+      toast.style.left = "50%";
+      toast.style.transform = "translateX(-50%)";
+      toast.style.background = "rgba(0,0,0,0.75)";
+      toast.style.color = "#fff";
+      toast.style.padding = "10px 14px";
+      toast.style.borderRadius = "10px";
+      toast.style.boxShadow = "0 6px 12px rgba(0,0,0,0.25)";
+      toast.style.zIndex = "100";
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 1400);
+    }
+
+    // Offers countdown (ends in 5 days from now)
+    const offerEnd = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000);
+    const countdownEl = document.getElementById("countdown");
+    setInterval(() => {
+      const diff = offerEnd.getTime() - Date.now();
+      if (diff <= 0) {
+        countdownEl.textContent = "Offer ended";
+        return;
+      }
+      const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const m = Math.floor((diff / (1000 * 60)) % 60);
+      const s = Math.floor((diff / 1000) % 60);
+      countdownEl.textContent = `Offer ends in ${pad(d)}d ${pad(h)}h ${pad(m)}m ${pad(s)}s`;
+    }, 1000);
+    function pad(n) { return n.toString().padStart(2, "0"); }
+
+    // Highlight deals: simple visual pulse on product cards
+    function highlightDeals() {
+      document.querySelectorAll(".product-card").forEach(card => {
+        card.style.boxShadow = "0 0 0 2px rgba(255,215,0,0.7), 0 12px 24px rgba(0,0,0,0.25)";
+        setTimeout(() => {
+          card.style.boxShadow = "";
+        }, 1200);
+      });
+      scrollToProducts();
+    }
+
+    // Accessibility: announce section arrivals (optional UX polish)
+    document.addEventListener("keydown", (e) => {
+      if (e.key.toLowerCase() === "g") scrollToProducts();
     });
   </script>
-
 </body>
 </html>
