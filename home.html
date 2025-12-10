@@ -142,29 +142,28 @@
   </footer>
 
   <!-- Inline JS -->
-  <script>
-    const products = [
-      { name: "Cheese Grater", img: "images/cheese-grater.jpg", desc: "Stainless steel, fine & coarse blades." },
-      { name: "Thank You Card", img: "images/thank-you-card.jpg", desc: "Premium cardstock, gold foil finishing." },
-      { name: "3-in-1 Sink Drain", img: "images/sink-drain.jpeg", desc: "Multi-filter design, easy clean." },
-      { name: "Cable Organizer Pouch", img: "images/cable-pouch.webp", desc: "Modular pockets, travel-ready." },
-      { name: "Oil Sprayer", img: "images/oil-sprayer.jpg", desc: "Even mist, low oil consumption." },
-      { name: "Fruit Washing Bowl", img: "images/fruit-bowl.jpeg", desc: "Drain-and-rinse ergonomic design." }
-    ];
+<script>
+  const products = [
+    { name: "Cheese Grater", img: "images/cheese-grater.jpg", desc: "Stainless steel, fine & coarse blades." },
+    { name: "Thank You Card", img: "images/thank-you-card.jpg", desc: "Premium cardstock, gold foil finishing." },
+    { name: "3-in-1 Sink Drain", img: "images/sink-drain.jpeg", desc: "Multi-filter design, easy clean." },
+    { name: "Cable Organizer Pouch", img: "images/cable-pouch.webp", desc: "Modular pockets, travel-ready." },
+    { name: "Oil Sprayer", img: "images/oil-sprayer.jpg", desc: "Even mist, low oil consumption." },
+    { name: "Fruit Washing Bowl", img: "images/fruit-bowl.jpeg", desc: "Drain-and-rinse ergonomic design." }
+  ];
 
-    const grid = document.getElementById("product-grid");
-    products.forEach(p => {
-      const card = document.createElement("div");
-      card.className = "product-card";
-      card.innerHTML = `
-        <img src="${p.img}" alt="${p.name}" onerror="this.src='images/placeholder.png'">
-        <div class="product-name">${p.name}</div>
-        <div class="price">${p.price}</div>
-        <div class="product-meta">Available: ${p.qty}</div>
-        <div class="product-meta">${p.desc}</div>
-      `;
-      grid.appendChild(card);
-    });
-  </script>
+  const grid = document.getElementById("product-grid");
+  products.forEach(p => {
+    const card = document.createElement("div");
+    card.className = "product-card";
+    card.innerHTML = `
+      <img src="${p.img}" alt="${p.name}" onerror="this.src='images/placeholder.png'">
+      <div class="product-name">${p.name}</div>
+      <div class="product-meta">${p.desc}</div>
+    `;
+    grid.appendChild(card);
+  });
+</script>
+  
 </body>
 </html>
