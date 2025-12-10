@@ -5,330 +5,128 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>🏡 Drophome.delivery — Premium Shopping</title>
   <link rel="icon" href="/images/DH-Black.png" type="image/png" />
-  <link rel="apple-touch-icon" href="/images/DH-Black.png" />
 
-<!-- Embedded CSS -->
-<style>
-  :root {
-    /* Palette optimized for white background */
-    --text: #111111;
-    --muted: #4b5563;
-    --gold: #f1c40f;
-    --gold-strong: #ffd700;
-    --brand-blue: #4169e1;
-    --slate: #2b2d42;
-    --accent-red: #ef233c;
+  <!-- Embedded CSS -->
+  <style>
+    :root {
+      --text: #111111;
+      --muted: #4b5563;
+      --gold: #f1c40f;
+      --gold-strong: #ffd700;
+      --brand-blue: #4169e1;
+      --slate: #2b2d42;
+      --accent-red: #ef233c;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --border: rgba(0,0,0,0.12);
+      --shadow: rgba(0,0,0,0.10);
+      --shadow-strong: rgba(0,0,0,0.18);
+    }
 
-    --surface: #ffffff;
-    --surface-soft: #f8fafc;       /* cards, sections */
-    --border: rgba(0,0,0,0.12);
-    --shadow: rgba(0,0,0,0.10);
-    --shadow-strong: rgba(0,0,0,0.18);
-  }
+    body {
+      background: var(--surface);
+      color: var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+      margin: 0; padding: 0;
+    }
 
-  /* Base */
-  * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; }
-  body {
-    background: var(--surface);
-    color: var(--text);
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
-    line-height: 1.5;
-  }
+    a { color: var(--brand-blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
 
-  a { color: var(--brand-blue); text-decoration: none; }
-  a:hover { text-decoration: underline; }
+    /* Navbar */
+    .navbar {
+      position: sticky; top: 0; z-index: 50;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 16px;
+    }
+    .brand-name { font-weight: 800; color: var(--gold); }
+    .nav-links { display: flex; gap: 16px; }
+    .nav-links a { color: var(--muted); font-weight: 600; }
+    .login-link {
+      padding: 8px 12px; border-radius: 8px;
+      border: 1px solid var(--border); color: var(--muted);
+      background: var(--surface);
+    }
 
-  /* Navbar (light) */
-  .navbar {
-    position: sticky; top: 0; z-index: 50;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-  }
-  .nav-inner {
-    max-width: 1100px; margin: 0 auto;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 16px;
-  }
-  .brand-wrap { display: flex; align-items: center; gap: 10px; }
-  .brand-logo { width: 32px; height: 32px; border-radius: 6px; }
-  .brand-name { font-weight: 800; letter-spacing: 0.6px; color: var(--gold); }
-  .nav-links { display: flex; gap: 16px; }
-  .nav-links a { color: var(--muted); font-weight: 600; }
-  .nav-actions { display: flex; align-items: center; gap: 14px; }
-  .login-link {
-    padding: 8px 12px; border-radius: 8px;
-    border: 1px solid var(--border); color: var(--muted);
-    background: var(--surface);
-  }
-  .cart {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 8px 10px; border-radius: 8px;
-    background: var(--surface-soft); border: 1px solid var(--border);
-  }
-  .cart-count {
-    background: var(--accent-red); color: #fff;
-    padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 700;
-  }
+    /* Hero */
+    .hero {
+      background: linear-gradient(270deg, var(--slate), #8d99ae, var(--brand-blue));
+      color: #fff; text-align: center; padding: 100px 20px;
+    }
+    .hero h1 { font-size: clamp(1.6rem, 4vw, 2.6rem); }
+    .brand { color: var(--gold-strong); font-weight: 800; }
+    .tagline { font-size: 1rem; color: var(--gold-strong); margin-bottom: 18px; }
 
-  /* Hero (dark gradient for contrast on white site) */
-  .hero {
-    position: relative;
-    background: linear-gradient(270deg, var(--slate), #8d99ae, var(--brand-blue));
-    color: #ffffff;
-    text-align: center;
-    padding: 100px 20px;
-    overflow: hidden;
-  }
-  .hero-content { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; }
-  .hero-logo { width: 120px; height: 120px; border-radius: 16px; margin-bottom: 20px; }
-  .hero h1 { margin: 0 0 10px; font-size: clamp(1.6rem, 4vw, 2.6rem); }
-  .brand { color: var(--gold-strong); font-weight: 800; }
-  .tagline { font-size: 1rem; color: var(--gold-strong); margin-bottom: 18px; }
+    /* Sections */
+    section.section { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
 
-  .floating-icons {
-    display: flex; justify-content: center; gap: 14px;
-    font-size: 1.4rem; margin-top: 18px;
-    animation: floatIcons 6s ease-in-out infinite;
-  }
-  @keyframes floatIcons { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    /* Product cards */
+    .product-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px; margin-top: 18px;
+    }
+    .product-card {
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px;
+      box-shadow: 0 4px 8px var(--shadow);
+    }
+    .product-card img {
+      width: 100%; height: 150px; object-fit: cover;
+      border-radius: 10px; margin-bottom: 10px;
+    }
+    .product-name { font-weight: 800; margin: 4px 0; }
+    .product-meta { font-size: 0.95rem; color: var(--muted); }
+    .price { font-weight: 800; color: var(--gold-strong); }
 
-  .hero-ctas { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+    /* Trust badges */
+    .trust-badges {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px; padding: 32px 20px;
+    }
+    .badge {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 16px; text-align: center;
+      box-shadow: 0 4px 8px var(--shadow);
+    }
 
-  /* Buttons */
-  .btn {
-    display: inline-flex; align-items: center; gap: 8px;
-    font-weight: 700; border-radius: 10px; padding: 12px 16px;
-    cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
-  }
-  .btn-primary {
-    background: var(--gold); color: #111;
-    box-shadow: 0 4px 8px var(--shadow);
-  }
-  .btn-primary:hover {
-    background: var(--gold-strong); transform: translateY(-2px);
-    box-shadow: 0 8px 16px var(--shadow-strong);
-  }
-  /* Default outline for light sections */
-  .btn-outline {
-    background: var(--surface); color: var(--text);
-    border: 2px solid var(--text);
-  }
-  .btn-outline:hover { background: var(--text); color: #fff; }
-  /* Hero-specific outline (white text on dark hero) */
-  .hero .btn-outline {
-    background: transparent; color: #fff; border: 2px solid #fff;
-  }
-  .hero .btn-outline:hover { background: #fff; color: #000; }
-
-  /* Sections */
-  section.section { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
-
-  /* Benefits */
-  .benefits h2 { text-align: center; margin-bottom: 10px; }
-  .benefit-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px; margin-top: 18px;
-  }
-  .benefit-card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 12px; padding: 18px; text-align: center;
-    box-shadow: 0 4px 8px var(--shadow);
-  }
-  .benefit-card span { font-size: 1.8rem; display: block; margin-bottom: 10px; }
-  .benefit-card p { margin: 6px 0 0; color: var(--muted); }
-  .benefits .cta-wrap { text-align: center; margin-top: 16px; }
-
-  /* Products */
-  .products h2 { text-align: center; }
-  .product-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px; margin-top: 18px;
-  }
-  .product-card {
-    position: relative;
-    background: var(--surface-soft);
-    border: 1px solid var(--border);
-    border-radius: 12px; color: var(--text); padding: 14px;
-    box-shadow: 0 4px 8px var(--shadow);
-  }
-  .product-card:hover { transform: translateY(-2px); box-shadow: 0 8px 16px var(--shadow-strong); }
-  .product-card img {
-    width: 100%; height: 150px; object-fit: cover;
-    border-radius: 10px; margin-bottom: 10px; box-shadow: 0 4px 8px var(--shadow);
-  }
-  .product-name { font-weight: 800; margin: 4px 0; }
-  .product-meta { display: flex; align-items: center; justify-content: space-between; color: var(--muted); font-size: 0.95rem; }
-  .price { font-weight: 800; color: var(--gold-strong); }
-  .stock { font-size: 0.85rem; }
-  .card-actions { display: flex; gap: 8px; margin-top: 10px; }
-  .btn-cart { background: #111; color: #fff; border: 1px solid #111; }
-  .btn-cart:hover { background: #000; }
-  .btn-buy { background: var(--accent-red); color: #fff; border: 1px solid var(--accent-red); }
-  .btn-buy:hover { filter: brightness(1.05); }
-
-  /* Offers (soft gold tint on white) */
-  .offers {
-    background: #fffbe6; border: 1px solid var(--border);
-    border-radius: 12px; padding: 20px;
-  }
-  .offer-banner {
-    display: grid; grid-template-columns: 1.4fr 1fr; gap: 18px;
-    align-items: center;
-  }
-  .offer-left h3 { margin: 0 0 6px; color: var(--text); }
-  .offer-left p { color: var(--muted); }
-  .countdown { font-weight: 800; color: var(--gold-strong); margin-top: 6px; }
-  .offer-right { text-align: right; }
-  .offer-right .btn { min-width: 160px; }
-
-  /* Slogan (light) */
-  .slogan {
-    text-align: center; padding: 34px 20px; background: var(--surface);
-    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-  }
-  .slogan-text {
-    display: inline-block; font-size: clamp(1.2rem, 4vw, 2rem);
-    font-weight: 800; color: var(--gold-strong);
-    text-shadow: 0 2px 6px rgba(255, 215, 0, 0.35);
-  }
-
-  /* Trust Badges */
-  .trust-badges {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 14px; padding: 32px 20px;
-  }
-  .badge {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 10px; padding: 16px; text-align: center; color: var(--text);
-    box-shadow: 0 4px 8px var(--shadow);
-  }
-
-  /* Footer (light-gray) */
-  .footer {
-    background: #f3f4f6; color: var(--text);
-    border-top: 1px solid var(--border);
-  }
-  .footer-inner {
-    max-width: 1100px; margin: 0 auto; padding: 20px;
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;
-  }
-  .footer h4 { margin: 0 0 8px; }
-  .footer ul { list-style: none; margin: 0; padding: 0; }
-  .footer li { margin: 6px 0; }
-  .newsletter { display: flex; gap: 8px; margin-top: 8px; }
-  .newsletter input {
-    flex: 1; padding: 10px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.2);
-    background: var(--surface); color: var(--text);
-  }
-  .newsletter button {
-    padding: 10px 14px; border-radius: 8px; background: var(--gold); color: #111; font-weight: 800;
-    border: 1px solid var(--gold);
-  }
-
-  /* Responsive */
-  @media (max-width: 640px) {
-    .offer-banner { grid-template-columns: 1fr; text-align: center; }
-    .offer-right { text-align: center; }
-  }
-</style>
-  
+    /* Footer */
+    .footer {
+      background: #f3f4f6; color: var(--text);
+      border-top: 1px solid var(--border);
+      text-align: center; padding: 20px;
+    }
+  </style>
 </head>
 <body>
   <!-- Navbar -->
   <header class="navbar">
     <div class="nav-inner">
-      <div class="brand-wrap">
-        <img src="/images/DH-Black.png" alt="Drophome logo" class="brand-logo" onerror="this.src='images/placeholder.png'">
-        <div class="brand-name">DROPHOME</div>
-      </div>
-      <nav class="nav-links" aria-label="Primary">
-        <a href="#benefits">Benefits</a>
+      <div class="brand-name">DROPHOME</div>
+      <nav class="nav-links">
         <a href="#products">Products</a>
         <a href="#offers">Offers</a>
         <a href="#trust">Trust</a>
       </nav>
-      <div class="nav-actions">
-        <a class="login-link" href="forms/login.html">Login</a>
-        <div class="cart" role="button" aria-label="View cart" onclick="scrollToProducts()">
-          <span>🛒 Cart</span>
-          <span id="cart-count" class="cart-count">0</span>
-        </div>
-      </div>
+      <a class="login-link" href="forms/login.html">Login</a>
     </div>
   </header>
 
   <!-- Hero -->
   <section class="hero">
-    <div class="hero-content">
-      <img src="/images/DH-Black.png" alt="Brand logo" class="hero-logo" onerror="this.src='images/placeholder.png'">
-      <h1>Welcome to <span class="brand">Drophome.delivery</span></h1>
-      <p class="tagline">Delivering essentials with elegance.</p>
-
-      <div class="hero-ctas">
-        <button class="btn btn-primary" onclick="scrollToProducts()">Shop Essentials Now</button>
-        <button class="btn btn-outline" onclick="scrollToCategories()">Browse Categories</button>
-      </div>
-
-      <div class="floating-icons" aria-hidden="true">
-        <span>✨</span><span>📦</span><span>🚚</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- Benefits -->
-  <section id="benefits" class="section benefits">
-    <h2>🌟 Why shop with us?</h2>
-    <div class="benefit-grid">
-      <div class="benefit-card">
-        <span>🛒</span>
-        <p><strong>Curated quality</strong><br>Only products we trust</p>
-      </div>
-      <div class="benefit-card">
-        <span>📊</span>
-        <p><strong>Transparent inventory</strong><br>Real-time stock updates</p>
-      </div>
-      <div class="benefit-card">
-        <span>⚡</span>
-        <p><strong>Fast fulfillment</strong><br>Quick, safe shipping</p>
-      </div>
-      <div class="benefit-card">
-        <span>🤝</span>
-        <p><strong>Customer-centric support</strong><br>Always here for you</p>
-      </div>
-      <div class="benefit-card">
-        <span>🔒</span>
-        <p><strong>Secure checkout</strong><br>Shop with confidence</p>
-      </div>
-    </div>
-    <div class="cta-wrap">
-      <button class="btn btn-outline" onclick="scrollToProducts()">See all products</button>
-    </div>
+    <h1>Welcome to <span class="brand">Drophome.delivery</span></h1>
+    <p class="tagline">Delivering essentials with elegance.</p>
   </section>
 
   <!-- Products -->
   <section id="products" class="section products">
-    <h2>🛍️ Featured products</h2>
+    <h2>🛍️ Featured Products</h2>
     <div id="product-grid" class="product-grid"></div>
-  </section>
-
-  <!-- Offers -->
-  <section id="offers" class="section offers">
-    <div class="offer-banner">
-      <div class="offer-left">
-        <h3>🎁 Holiday sale — up to 30% off</h3>
-        <p class="muted">Bulk discounts, seasonal offers, referral rewards, and early access to new arrivals.</p>
-        <div id="countdown" class="countdown" aria-live="polite">Offer ends in 00d 00h 00m 00s</div>
-      </div>
-      <div class="offer-right">
-        <button class="btn btn-primary" onclick="highlightDeals()">Claim offer</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- Slogan -->
-  <section class="slogan">
-    <span class="slogan-text">Where essentials meet excellence.</span>
   </section>
 
   <!-- Trust badges -->
@@ -336,70 +134,24 @@
     <div class="badge">✅ Trusted by 500+ customers</div>
     <div class="badge">📦 100% delivery success rate</div>
     <div class="badge">🔒 Secure checkout guaranteed</div>
-    <div class="badge">💳 Verified payments</div>
-    <div class="badge">♻️ Easy returns</div>
   </section>
 
   <!-- Footer -->
   <footer class="footer">
-    <div class="footer-inner">
-      <div>
-        <h4>Company</h4>
-        <ul>
-          <li><a href="#">About</a></li>
-          <li><a href="#">Careers</a></li>
-          <li><a href="#">Press</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Support</h4>
-        <ul>
-          <li><a href="#">FAQ</a></li>
-          <li><a href="#">Contact</a></li>
-          <li><a href="#">Returns</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Legal</h4>
-        <ul>
-          <li><a href="#">Privacy Policy</a></li>
-          <li><a href="#">Terms of Service</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Stay in the loop</h4>
-        <p class="muted">Get early access to new arrivals.</p>
-        <div class="newsletter">
-          <input type="email" id="newsletter-email" placeholder="Your email" aria-label="Newsletter email">
-          <button onclick="subscribeNewsletter()">Subscribe</button>
-        </div>
-        <p id="newsletter-status" class="muted" aria-live="polite"></p>
-      </div>
-    </div>
-    <div style="text-align:center;padding:12px;border-top:1px solid rgba(255,255,255,0.1)">
-      © 2025 Drophome.delivery — Where Essentials Meet Excellence.
-    </div>
+    © 2025 Drophome.delivery — Where Essentials Meet Excellence.
   </footer>
 
-  <!-- Inline JavaScript -->
+  <!-- Inline JS -->
   <script>
-    // Starter dataset: extendable via API later
     const products = [
-      { id: "grater", name: "Cheese Grater", qty: 27, price: 299, img: "images/cheese-grater.jpg", desc: "Stainless steel, fine & coarse blades." },
-      { id: "thankyou", name: "Thank You Card", qty: 92, price: 49, img: "images/thank-you-card.jpg", desc: "Premium cardstock, gold foil finishing." },
-      { id: "drain", name: "3-in-1 Sink Drain", qty: 7, price: 449, img: "images/sink-drain.jpeg", desc: "Multi-filter design, easy clean." },
-      { id: "pouch", name: "Cable Organizer Pouch", qty: 15, price: 599, img: "images/cable-pouch.webp", desc: "Modular pockets, travel-ready." },
-      { id: "sprayer", name: "Oil Sprayer", qty: 185, price: 399, img: "images/oil-sprayer.jpg", desc: "Even mist, low oil consumption." },
-      { id: "bowl", name: "Fruit Washing Bowl", qty: 6, price: 349, img: "images/fruit-bowl.jpeg", desc: "Drain-and-rinse ergonomic design." }
+      { name: "Cheese Grater", img: "images/cheese-grater.jpg", desc: "Stainless steel, fine & coarse blades." },
+      { name: "Thank You Card", img: "images/thank-you-card.jpg", desc: "Premium cardstock, gold foil finishing." },
+      { name: "3-in-1 Sink Drain", img: "images/sink-drain.jpeg", desc: "Multi-filter design, easy clean." },
+      { name: "Cable Organizer Pouch", img: "images/cable-pouch.webp", desc: "Modular pockets, travel-ready." },
+      { name: "Oil Sprayer", img: "images/oil-sprayer.jpg", desc: "Even mist, low oil consumption." },
+      { name: "Fruit Washing Bowl", img: "images/fruit-bowl.jpeg", desc: "Drain-and-rinse ergonomic design." }
     ];
 
-    // Cart state with localStorage
-    const CART_KEY = "dh_cart";
-    const cart = JSON.parse(localStorage.getItem(CART_KEY) || "{}");
-    const cartCountEl = document.getElementById("cart-count");
-    updateCartCount();
-
-    // Render products
     const grid = document.getElementById("product-grid");
     products.forEach(p => {
       const card = document.createElement("div");
@@ -407,118 +159,11 @@
       card.innerHTML = `
         <img src="${p.img}" alt="${p.name}" onerror="this.src='images/placeholder.png'">
         <div class="product-name">${p.name}</div>
-        <div class="product-meta">
-          <div class="price">₹ ${p.price}</div>
-          <div class="stock">Available: ${p.qty}</div>
-        </div>
-        <div class="card-actions">
-          <button class="btn btn-cart" aria-label="Add ${p.name} to cart">Add to cart</button>
-          <button class="btn btn-buy" aria-label="Buy ${p.name} now">Buy now</button>
-        </div>
-        <div class="quick-view">
-          <div>
-            <strong>${p.name}</strong><br>
-            <span style="color:#333333">${p.desc}</span>
-          </div>
-        </div>
+        <div class="price">${p.price}</div>
+        <div class="product-meta">Available: ${p.qty}</div>
+        <div class="product-meta">${p.desc}</div>
       `;
-      const [btnCart, btnBuy] = card.querySelectorAll(".btn");
-      btnCart.addEventListener("click", () => addToCart(p));
-      btnBuy.addEventListener("click", () => {
-        addToCart(p);
-        // Placeholder for checkout route
-        alert("Added to cart. Proceeding to checkout soon.");
-      });
       grid.appendChild(card);
-    });
-
-    // Intersection Observer for section fades
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) entry.target.classList.add("visible");
-      });
-    }, { threshold: 0.1 });
-    document.querySelectorAll("section.section").forEach(section => observer.observe(section));
-
-    // Smooth scroll helpers
-    function scrollToProducts() {
-      document.getElementById("products").scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-    function scrollToCategories() {
-      // Placeholder: currently scrolls to products
-      scrollToProducts();
-    }
-
-    // Cart helpers
-    function addToCart(product) {
-      const current = cart[product.id] || { qty: 0, product };
-      if (current.qty < product.qty) {
-        current.qty += 1;
-        cart[product.id] = current;
-        persistCart();
-        updateCartCount();
-        feedbackToast(`${product.name} added to cart`);
-      } else {
-        feedbackToast(`Only ${product.qty} in stock`);
-      }
-    }
-    function updateCartCount() {
-      const total = Object.values(cart).reduce((sum, item) => sum + item.qty, 0);
-      cartCountEl.textContent = total;
-    }
-    function persistCart() {
-      localStorage.setItem(CART_KEY, JSON.stringify(cart));
-    }
-
-    // Lightweight toast
-    function feedbackToast(text) {
-      const toast = document.createElement("div");
-      toast.textContent = text;
-      toast.style.position = "fixed";
-      toast.style.bottom = "16px";
-      toast.style.left = "50%";
-      toast.style.transform = "translateX(-50%)";
-      toast.style.background = "rgba(0,0,0,0.75)";
-      toast.style.color = "#fff";
-      toast.style.padding = "10px 14px";
-      toast.style.borderRadius = "10px";
-      toast.style.boxShadow = "0 6px 12px rgba(0,0,0,0.25)";
-      toast.style.zIndex = "100";
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 1400);
-    }
-
-    // Offers countdown (ends in 5 days from now)
-    const offerEnd = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000);
-    const countdownEl = document.getElementById("countdown");
-    setInterval(() => {
-      const diff = offerEnd.getTime() - Date.now();
-      if (diff <= 0) {
-        countdownEl.textContent = "Offer ended";
-        return;
-      }
-      const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const m = Math.floor((diff / (1000 * 60)) % 60);
-      const s = Math.floor((diff / 1000) % 60);
-      countdownEl.textContent = `Offer ends in ${pad(d)}d ${pad(h)}h ${pad(m)}m ${pad(s)}s`;
-    }, 1000);
-    function pad(n) { return n.toString().padStart(2, "0"); }
-
-    // Highlight deals: simple visual pulse on product cards
-    function highlightDeals() {
-      document.querySelectorAll(".product-card").forEach(card => {
-        card.style.boxShadow = "0 0 0 2px rgba(255,215,0,0.7), 0 12px 24px rgba(0,0,0,0.25)";
-        setTimeout(() => {
-          card.style.boxShadow = "";
-        }, 1200);
-      });
-      scrollToProducts();
-    }
-
-    // Accessibility: announce section arrivals (optional UX polish)
-    document.addEventListener("keydown", (e) => {
-      if (e.key.toLowerCase() === "g") scrollToProducts();
     });
   </script>
 </body>
