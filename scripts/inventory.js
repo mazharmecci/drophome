@@ -13,8 +13,11 @@ import {
 let allRecords = [];
 let hasInitialLoadCompleted = false;
 
+// pagination state
+let currentPage = 1;
+const pageSize = 10;
+
 document.addEventListener("DOMContentLoaded", async () => {
-  // Load master list values into dropdowns
   await loadDropdowns();
 
   // Auto-generate outbound ID (short)
@@ -24,25 +27,33 @@ document.addEventListener("DOMContentLoaded", async () => {
     inboundIdEl.value = `OUT-${shortId}`;
   }
 
-  // Wire form submit
+  // Form submit
   const form = document.getElementById("inboundForm");
   if (form) {
     form.addEventListener("submit", handleFormSubmit);
   }
 
-  // Subtotal calculator
   hookSubtotalCalculator();
 
-  // Initial load of table
+  // Initial load
   await loadAndRenderRecords({ showErrorToast: false });
 
+  // Filters
   document.getElementById("applyFilters")?.addEventListener("click", applyFilters);
   document.getElementById("clearFilters")?.addEventListener("click", clearFilters);
+
+  // Pagination buttons (if present in HTML)
+  document.getElementById("prevPage")?.addEventListener("click", () => {
+    setPage(currentPage - 1);
+  });
+  document.getElementById("nextPage")?.addEventListener("click", () => {
+    setPage(currentPage + 1);
+  });
 
   hasInitialLoadCompleted = true;
 });
 
-// 📝 Handle form submit -> add to Firestore -> refresh table
+// 📝 handle submit
 async function handleFormSubmit(event) {
   event.preventDefault();
 
@@ -68,7 +79,7 @@ async function handleFormSubmit(event) {
       subtotal: data.subtotal,
       trackingNumber: data.trackingNumber,
       receivingNotes: data.receivingNotes,
-      status: data.orderStatus,   // <- no || "OrderPending" here
+      status: data.orderStatus, // use exactly what the user chose
       createdAt: new Date(),
       updatedAt: new Date()
     });
@@ -80,6 +91,8 @@ async function handleFormSubmit(event) {
     const subtotalInput = document.getElementById("subtotal");
     if (subtotalInput) subtotalInput.value = "0.00";
 
+    // reset page to 1 for fresh view
+    currentPage = 1;
     await loadAndRenderRecords({ showErrorToast: true });
   } catch (err) {
     console.error("❌ handleFormSubmit failed:", err);
@@ -87,7 +100,7 @@ async function handleFormSubmit(event) {
   }
 }
 
-// Collect and normalize form data
+// collect form
 function collectFormData() {
   const inboundId = document.getElementById("inboundId")?.value || "";
   const orderedDate = document.getElementById("orderedDate")?.value || "";
@@ -139,7 +152,7 @@ function collectFormData() {
   };
 }
 
-// 🔄 Load and render order records
+// 🔄 load + render
 async function loadAndRenderRecords(options) {
   const { showErrorToast = true } = options || {};
 
@@ -152,11 +165,40 @@ async function loadAndRenderRecords(options) {
     if (showErrorToast && hasInitialLoadCompleted) {
       showToast("⚠️ Failed to load records. Please check your connection or Firestore rules.");
     }
-    renderTable([]);
+    allRecords = [];
+    renderTable(allRecords);
   }
 }
 
-// 📊 Render orders table
+// pagination helpers
+function getTotalPages() {
+  return Math.max(1, Math.ceil(allRecords.length / pageSize));
+}
+
+function setPage(page) {
+  const totalPages = getTotalPages();
+  currentPage = Math.min(Math.max(1, page), totalPages);
+  renderTable(allRecords);
+}
+
+function updatePaginationControls() {
+  const totalPages = getTotalPages();
+  const pageInfo = document.getElementById("pageInfo");
+  const prevBtn = document.getElementById("prevPage");
+  const nextBtn = document.getElementById("nextPage");
+
+  if (pageInfo) {
+    pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+  }
+  if (prevBtn) {
+    prevBtn.disabled = currentPage <= 1;
+  }
+  if (nextBtn) {
+    nextBtn.disabled = currentPage >= totalPages;
+  }
+}
+
+// 📊 render table with pagination
 function renderTable(records) {
   const tbody = document.getElementById("inboundTableBody");
   if (!tbody) return;
@@ -169,10 +211,18 @@ function renderTable(records) {
           🚫 No records found. Try adjusting your filters or check back later.
         </td>
       </tr>`;
+    updatePaginationControls();
     return;
   }
 
-  records.forEach(record => {
+  const totalPages = getTotalPages();
+  if (currentPage > totalPages) currentPage = totalPages;
+
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const pageRecords = records.slice(startIndex, endIndex);
+
+  pageRecords.forEach(record => {
     const price =
       record.price != null
         ? parseFloat(record.price)
@@ -245,7 +295,7 @@ function renderTable(records) {
       </td>
     `;
 
-    // details row: numeric + media + notes
+    // details row
     detailsTr.innerHTML = `
       <td colspan="10">
         <div class="order-details">
@@ -288,9 +338,11 @@ function renderTable(records) {
     tbody.appendChild(tr);
     tbody.appendChild(detailsTr);
   });
+
+  updatePaginationControls();
 }
 
-// Subtotal calculator hook
+// subtotal calculator
 function hookSubtotalCalculator() {
   const quantityInput = document.getElementById("quantityReceived");
   const priceInput = document.getElementById("price");
@@ -313,7 +365,7 @@ function hookSubtotalCalculator() {
   });
 }
 
-// Render status options
+// status options
 function renderStatusOptions(current) {
   const statuses = [
     "OrderPending",
@@ -335,7 +387,7 @@ function renderStatusOptions(current) {
     .join("");
 }
 
-// Filters
+// filters
 function applyFilters() {
   const client = (document.getElementById("filterClient")?.value || "").trim().toLowerCase();
   const fromDate = document.getElementById("filterStart")?.value || "";
@@ -357,6 +409,7 @@ function applyFilters() {
     return matchClient && matchLocation && matchStart && matchEnd && matchStatus;
   });
 
+  currentPage = 1;
   renderTable(filtered);
 }
 
@@ -365,11 +418,12 @@ function clearFilters() {
     const el = document.getElementById(id);
     if (el) el.value = "";
   });
+  currentPage = 1;
   renderTable(allRecords);
   showToast("🔄 Filters cleared. Showing all records.");
 }
 
-// Track edits and save
+// edit + save
 window.updateField = function (recordId, field, value, element) {
   const record = allRecords.find(r => r.id === recordId);
   if (!record) return;
