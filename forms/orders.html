@@ -96,6 +96,19 @@
       <label for="trackingNumber">Tracking Number</label>
       <input type="text" id="trackingNumber" name="trackingNumber" placeholder="Enter tracking number" />
 
+      <label for="orderStatus">Order Status</label>
+      <select id="orderStatus" name="orderStatus" required>
+        <option value="" hidden>Choose order status</option>
+        <option value="OrderPending">Order Pending</option>
+        <option value="WarehouseDelivered">Warehouse Delivered</option>
+        <option value="OrderDelivered">Order Delivered</option>
+        <option value="OrderCompleted">Order Completed</option>
+        <option value="CancelCompleted">Cancel Completed</option>
+        <option value="Refunded">Refunded</option>
+        <option value="Shipped">Shipped</option>
+        <option value="LabelsPrinted">Labels Printed</option>
+      </select>
+
       <label for="receivingNotes">Receiving Notes</label>
       <textarea id="receivingNotes" name="receivingNotes" class="textarea-large"></textarea>
 
