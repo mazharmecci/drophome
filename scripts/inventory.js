@@ -164,7 +164,7 @@ function renderTable(records) {
   if (!Array.isArray(records) || records.length === 0) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="9" style="text-align:center; padding:20px; color:#888;">
+        <td colspan="10" style="text-align:center; padding:20px; color:#888;">
           🚫 No records found. Try adjusting your filters or check back later.
         </td>
       </tr>`;
@@ -172,10 +172,20 @@ function renderTable(records) {
   }
 
   records.forEach(record => {
-    const price = record.price != null ? parseFloat(record.price) : 0;
-    const quantity = record.quantityReceived != null
-      ? parseFloat(record.quantityReceived)
-      : 0;
+    const price =
+      record.price != null
+        ? parseFloat(record.price)
+        : record.unitPrice != null
+          ? parseFloat(record.unitPrice)
+          : 0;
+
+    const quantity =
+      record.quantityReceived != null
+        ? parseFloat(record.quantityReceived)
+        : record.quantity != null
+          ? parseFloat(record.quantity)
+          : 0;
+
     const tax = record.tax != null ? parseFloat(record.tax) : 0;
     const shipping = record.shipping != null ? parseFloat(record.shipping) : 0;
 
@@ -189,16 +199,36 @@ function renderTable(records) {
     const shippingDisplay = shipping ? `$${shipping.toFixed(2)}` : "$0.00";
     const subtotalDisplay = `$${subtotalValue.toFixed(2)}`;
 
-    const mainTr = document.createElement("tr");
+    const outboundId =
+      record.outboundId || record.inboundId || record.orderId || "";
+
+    const orderDate =
+      record.ordDate ||
+      record.orderedDate ||
+      record.orderDate ||
+      record.date ||
+      "";
+
+    const deliveredDate =
+      record.delDate ||
+      record.deliveryDate ||
+      record.deliveredDate ||
+      record.dateDelivered ||
+      "";
+
+    const clientName = record.clientName || record.accountName || "";
+
+    const tr = document.createElement("tr");
     const detailsTr = document.createElement("tr");
     detailsTr.classList.add("details-row");
     detailsTr.style.display = "none";
 
-    // Summary row (compact)
-    mainTr.innerHTML = `
-      <td>${record.outboundId || record.inboundId || ""}</td>
-      <td>${record.ordDate || record.orderedDate || record.orderDate || record.date || ""}</td>
-      <td>${record.clientName || record.accountName || ""}</td>
+    // summary row
+    tr.innerHTML = `
+      <td>${outboundId}</td>
+      <td>${orderDate}</td>
+      <td>${deliveredDate}</td>
+      <td>${clientName}</td>
       <td>${record.dispatchLocation || ""}</td>
       <td>${record.productName || ""}</td>
       <td>${quantity || 0}</td>
@@ -214,13 +244,13 @@ function renderTable(records) {
       </td>
     `;
 
-    // Details row (full-width)
+    // details row (unchanged from previous pattern)
     detailsTr.innerHTML = `
-      <td colspan="9">
+      <td colspan="10">
         <div class="order-details">
-          <div><strong>Outbound ID:</strong> ${record.outboundId || record.inboundId || ""}</div>
-          <div><strong>Ordered Date:</strong> ${record.ordDate || record.orderedDate || ""}</div>
-          <div><strong>Delivery Date:</strong> ${record.delDate || record.deliveryDate || ""}</div>
+          <div><strong>Outbound ID:</strong> ${outboundId}</div>
+          <div><strong>Ordered Date:</strong> ${orderDate}</div>
+          <div><strong>Delivery Date:</strong> ${deliveredDate}</div>
           <div><strong>Tracking #:</strong> ${record.trackingNumber || ""}</div>
           <div><strong>Unit Price:</strong> ${priceDisplay}</div>
           <div><strong>Tax:</strong> ${taxDisplay}</div>
@@ -247,15 +277,16 @@ function renderTable(records) {
       </td>
     `;
 
-    // Wire toggle
-    mainTr.querySelector(".details-toggle").addEventListener("click", () => {
-      detailsTr.style.display = detailsTr.style.display === "none" ? "table-row" : "none";
+    tr.querySelector(".details-toggle").addEventListener("click", () => {
+      detailsTr.style.display =
+        detailsTr.style.display === "none" ? "table-row" : "none";
     });
 
-    tbody.appendChild(mainTr);
+    tbody.appendChild(tr);
     tbody.appendChild(detailsTr);
   });
 }
+
 
 // Subtotal calculator hook
 function hookSubtotalCalculator() {
