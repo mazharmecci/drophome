@@ -12,17 +12,14 @@
       position: relative;
       margin-bottom: 18px;
       width: 100%;
-      max-width: 100%;
     }
     .input-wrapper input {
       width: 100%;
-      box-sizing: border-box;
-      padding: 10px 14px 10px 44px; /* space for icon */
+      padding: 10px 14px 10px 44px;
       border: 1px solid #ccc;
       border-radius: 8px;
       font-size: 1rem;
       background-color: #fff;
-      line-height: 1.4;
       transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
     .input-wrapper input:focus {
@@ -35,17 +32,13 @@
       top: 50%;
       left: 12px;
       transform: translateY(-50%);
-      height: 100%;
       display: flex;
       align-items: center;
-      justify-content: center;
       pointer-events: none;
     }
     .icon-img {
       width: 22px;
       height: 22px;
-      object-fit: contain;
-      display: block;
     }
     .forgot-password {
       text-align: right;
@@ -60,13 +53,18 @@
     .forgot-password a:hover {
       text-decoration: underline;
     }
+    #loginMessage {
+      margin-top: 12px;
+      font-size: 0.95rem;
+    }
   </style>
 </head>
 <body>
-  <!-- Injected Navbar -->
+  <!-- Navbar -->
   <div id="navbar-placeholder"></div>
   <script src="/scripts/navbar.js" defer></script>
 
+  <!-- Login Card -->
   <div class="login-card">
     <header>
       <img src="/images/DH-white.png" alt="Drophome Logo" class="logo-img" />
@@ -78,14 +76,14 @@
         <span class="input-icon">
           <img src="/images/user-icon.png" alt="User Icon" class="icon-img" />
         </span>
-        <input type="email" id="username" name="username" placeholder="Email" autocomplete="off" required />
+        <input type="email" id="username" placeholder="Email" autocomplete="off" required />
       </div>
       
       <div class="input-wrapper">
         <span class="input-icon">
           <img src="/images/password.png" alt="Password Icon" class="icon-img" />
         </span>
-        <input type="password" id="password" name="password" placeholder="Password" autocomplete="current-password" required />
+        <input type="password" id="password" placeholder="Password" autocomplete="current-password" required />
       </div>
 
       <p class="forgot-password">
@@ -98,6 +96,7 @@
     <div id="loginMessage" class="hidden"></div>
   </div>
 
+  <!-- Firebase Auth Logic -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { 
@@ -108,6 +107,7 @@
       sendPasswordResetEmail
     } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
+    // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyDqFJ85euyPb4QV863AmBF9zHv34WIdmrg",
       authDomain: "drophome-1cb76.firebaseapp.com",
@@ -120,43 +120,52 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
+    // Utility Functions
     function showMessage(text, color = "black") {
-      const messageBox = document.getElementById("loginMessage");
-      if (!messageBox) return;
-      messageBox.textContent = text;
-      messageBox.classList.remove("hidden");
-      messageBox.style.color = color;
+      const box = document.getElementById("loginMessage");
+      if (!box) return;
+      box.textContent = text;
+      box.classList.remove("hidden");
+      box.style.color = color;
     }
 
     function redirectTo(path) {
-      window.location.href = `/forms/${path}`;
+      window.location.href = `/${path}`;
     }
 
-    function setupLoginForm() {
-      const loginForm = document.getElementById("loginForm");
-      if (!loginForm) return;
-
-    loginForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = username.value.trim();
-      const password = passwordInput.value.trim();
-    
-      try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        sessionStorage.setItem("drophome-auth", user.uid);
-        showMessage("✅ Login successful!", "green");
-        redirectTo("index.html");
-      } catch (error) {
-        showMessage(`❌ ${getFriendlyError(error.code)}`, "red");
+    function getFriendlyError(code) {
+      switch (code) {
+        case "auth/wrong-password": return "Incorrect password. Please try again.";
+        case "auth/user-not-found": return "No account found with this email.";
+        case "auth/invalid-email": return "Invalid email format.";
+        default: return "Login failed. Please try again.";
       }
-    });
+    }
 
+    // Login Form
+    function setupLoginForm() {
+      const form = document.getElementById("loginForm");
+      form?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value.trim();
+
+        try {
+          const userCredential = await signInWithEmailAndPassword(auth, email, password);
+          const user = userCredential.user;
+          sessionStorage.setItem("drophome-auth", user.uid);
+          showMessage("✅ Login successful!", "green");
+          redirectTo("index.html");
+        } catch (error) {
+          showMessage(`❌ ${getFriendlyError(error.code)}`, "red");
+        }
+      });
+    }
+
+    // Forgot Password
     function setupForgotPassword() {
       const link = document.getElementById("forgotPasswordLink");
-      if (!link) return;
-
-      link.addEventListener("click", async (e) => {
+      link?.addEventListener("click", async (e) => {
         e.preventDefault();
         const email = document.getElementById("username").value.trim();
         if (!email) {
@@ -166,38 +175,39 @@
         try {
           await sendPasswordResetEmail(auth, email);
           showMessage("✅ Password reset link sent to your email.", "green");
-        } catch (err) {
-          showMessage(`❌ ${err.message}`, "red");
+        } catch (error) {
+          showMessage(`❌ ${getFriendlyError(error.code)}`, "red");
         }
       });
     }
 
+    // Auth Listener
     function setupAuthListener() {
       onAuthStateChanged(auth, (user) => {
         if (!user) {
           sessionStorage.removeItem("drophome-auth");
           if (!window.location.pathname.includes("login.html")) {
-            window.location.href = "/forms/login.html";
+            redirectTo("forms/login.html");
           }
         }
       });
     }
 
+    // Logout Button (if present)
     function setupLogoutButton() {
       const logoutBtn = document.getElementById("logoutBtn");
-      if (!logoutBtn) return;
-
-      logoutBtn.addEventListener("click", async () => {
+      logoutBtn?.addEventListener("click", async () => {
         try {
           await signOut(auth);
           sessionStorage.removeItem("drophome-auth");
-          window.location.href = "/forms/login.html";
+          redirectTo("forms/login.html");
         } catch (error) {
-          showMessage(`❌ Logout failed: ${error.message}`, "red");
+          showMessage(`❌ Logout failed: ${getFriendlyError(error.code)}`, "red");
         }
       });
     }
 
+    // Init
     setupLoginForm();
     setupForgotPassword();
     setupAuthListener();
