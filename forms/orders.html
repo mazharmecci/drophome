@@ -2,31 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>📥 Outbound Form</title>
+  <title>📥 Outbound Orders</title>
   <link rel="stylesheet" href="/style.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- Local styles for preview boxes -->
-  <style>
-    .preview-box {
-      margin-top: 8px;
-      padding: 6px;
-      background-color: #f9f9f9;
-      border: 1px dashed #ccc;
-      border-radius: 6px;
-      font-size: 0.9rem;
-      word-break: break-word;
-    }
-    .preview-box img {
-      max-width: 100%;
-      height: auto;
-      display: block;
-      margin-top: 6px;
-    }
-  </style>
 </head>
 <body>
-  <!-- Injected Navbar -->
+  <!-- Navbar -->
   <div id="navbar-placeholder"></div>
   <script src="/scripts/navbar.js" defer></script>
 
@@ -34,22 +15,21 @@
     <!-- Breadcrumb -->
     <nav class="breadcrumb-nav" aria-label="Breadcrumb">
       <ol class="breadcrumb-list">
-        <li class="breadcrumb-item">
-          <span>Orders</span>
-        </li>
+        <li class="breadcrumb-item"><span>Orders</span></li>
       </ol>
     </nav>
 
+    <!-- Outbound form -->
     <form id="inboundForm">
       <label for="inboundId">Outbound ID (Auto-generated)</label>
       <input type="text" id="inboundId" name="inboundId" readonly class="input-readonly-error" />
-      
+
       <label for="orderedDate">Ordered Date</label>
       <input type="date" id="orderedDate" name="orderedDate" required />
-      
+
       <label for="deliveryDate">Delivery Date</label>
       <input type="date" id="deliveryDate" name="deliveryDate" required />
-      
+
       <label for="clientName">Client Name</label>
       <select id="clientName" name="clientName" required>
         <option value="" hidden>Client name</option>
@@ -71,7 +51,6 @@
       </label>
       <input type="text" id="price" name="price" readonly class="input-readonly" />
 
-      <!-- SKU with info icon -->
       <label for="sku">
         SKU (Auto-filled)
         <span class="hint-icon" data-tooltip="This SKU is auto-filled when you select a product from the list.">ℹ️</span>
@@ -81,52 +60,71 @@
       <label for="prodpic">Product Picture URL</label>
       <input type="text" id="prodpic" name="prodpic" class="input-highlight" />
       <div id="prodpicPreview" class="preview-box"></div>
-      
+
       <label for="labellink">Label Link URL</label>
       <input type="text" id="labellink" name="labellink" class="input-highlight" />
       <div id="labellinkPreview" class="preview-box"></div>
-      
+
       <label for="quantityReceived">Quantity</label>
       <input type="number" id="quantityReceived" name="quantityReceived" required />
-      
+
       <label for="tax">Tax ($)</label>
       <input type="number" id="tax" name="tax" step="0.01" value="0" />
-      
+
       <label for="shipping">Shipping ($)</label>
       <input type="number" id="shipping" name="shipping" step="0.01" value="0" />
-      
+
       <label for="subtotal">Subtotal ($)</label>
       <input type="text" id="subtotal" name="subtotal" readonly class="input-readonly" />
-      
+
       <label for="trackingNumber">Tracking Number</label>
       <input type="text" id="trackingNumber" name="trackingNumber" placeholder="Enter tracking number" />
-      
+
       <label for="receivingNotes">Receiving Notes</label>
-      <textarea
-        id="receivingNotes"
-        name="receivingNotes"
-        placeholder="Optional notes or remarks..."
-        class="textarea-large"
-      ></textarea>
-    
+      <textarea id="receivingNotes" name="receivingNotes" class="textarea-large"></textarea>
+
       <div class="form-actions">
         <button type="submit" class="btn-primary">Submit</button>
-        <button
-          type="button"
-          class="btn-orange"
-          onclick="window.location.href='/master.html?origin=inbound'"
-        >
+        <button type="button" class="btn-orange" onclick="window.location.href='/master.html?origin=outbound'">
           ⚙️ Master List
         </button>
       </div>
     </form>
   </div>
 
-  <!-- Shared Success Popup -->
+  <!-- Summary table on same page -->
+  <div class="table-scroll-wrapper">
+    <table class="summary-table">
+      <thead>
+        <tr>
+          <th>Outbnd-<br>ID</th>
+          <th>Ord-<br>Date</th>
+          <th>Delivd-<br>Date</th>
+          <th>Cust-<br>Name</th>
+          <th>Delivd-<br>WHouse</th>
+          <th>Prod-<br>Name</th>
+          <th>SKU</th>
+          <th>Prod-<br>Picture</th>
+          <th>Label-<br>Link</th>
+          <th>Unit-<br>Price ($)</th>
+          <th>Qty</th>
+          <th>Tax ($)</th>
+          <th>Shipping ($)</th>
+          <th>Sub-<br>Total ($)</th>
+          <th>Tracking #</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="inboundTableBody"></tbody>
+    </table>
+  </div>
+
+  <!-- Success popup (shared) -->
   <div id="successPopup" class="popup hidden">
     <div class="popup-content">
       <h3>✅ Success</h3>
-      <p>Your inbound record has been submitted!</p>
+      <p>Your outbound record has been submitted!</p>
       <button id="closePopup">OK</button>
     </div>
   </div>
@@ -138,59 +136,8 @@
     }
   </script>
 
-  <!-- URL preview handlers -->
-  <script>
-    const prodpicInput = document.getElementById("prodpic");
-    const labellinkInput = document.getElementById("labellink");
-    const prodpicPreview = document.getElementById("prodpicPreview");
-    const labellinkPreview = document.getElementById("labellinkPreview");
-  
-    prodpicInput.addEventListener("input", () => {
-      const url = prodpicInput.value.trim();
-      if (url) {
-        prodpicPreview.innerHTML =
-          `<strong>Preview:</strong><br><img src="${url}" alt="Product Image" />`;
-      } else {
-        prodpicPreview.innerHTML = "";
-      }
-    });
-  
-    labellinkInput.addEventListener("input", () => {
-      const url = labellinkInput.value.trim();
-      if (url) {
-        labellinkPreview.innerHTML =
-          `<strong>Preview:</strong><br><a href="${url}" target="_blank">${url}</a>`;
-      } else {
-        labellinkPreview.innerHTML = "";
-      }
-    });
-  </script>
-
-  <!-- Subtotal calculator -->
-  <script>
-    const quantityInput = document.getElementById("quantityReceived");
-    const priceInput = document.getElementById("price"); // already auto-filled from product
-    const taxInput = document.getElementById("tax");
-    const shippingInput = document.getElementById("shipping");
-    const subtotalInput = document.getElementById("subtotal");
-
-    function calculateSubtotal() {
-      const quantity = parseFloat(quantityInput.value) || 0;
-      const price = parseFloat(priceInput.value) || 0;
-      const tax = parseFloat(taxInput.value) || 0;
-      const shipping = parseFloat(shippingInput.value) || 0;
-
-      const subtotal = (quantity * price) + tax + shipping;
-      subtotalInput.value = subtotal.toFixed(2);
-    }
-
-    [quantityInput, priceInput, taxInput, shippingInput].forEach(input => {
-      input.addEventListener("input", calculateSubtotal);
-    });
-  </script>
-
-  <!-- Modules -->
-  <script type="module" src="/scripts/inbound.js"></script>
+  <!-- Behaviour -->
+  <script type="module" src="/scripts/orders-page.js"></script>
   <script type="module" src="/scripts/popupHandler.js"></script>
   <script type="module" src="/scripts/dropdownLoader.js"></script>
 </body>
