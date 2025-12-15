@@ -1,5 +1,5 @@
 // scripts/dropdownLoader.js
-import { db } from './firebase.js';
+import { db } from "./firebase.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 export async function loadDropdowns() {
@@ -17,7 +17,7 @@ export async function loadDropdowns() {
     // Populate client names
     populateDropdown("clientName", data.clients ?? [], "client name");
 
-    // Populate product dropdown with name, and wire SKU auto-fill
+    // Populate product dropdown with name, and wire SKU/price auto-fill
     populateProductDropdown("productName", data.products ?? []);
 
     // Populate dispatch locations
@@ -33,7 +33,6 @@ function populateDropdown(fieldId, options, placeholderLabel) {
   if (!select) return;
   select.innerHTML = "";
 
-  // Add placeholder option
   const placeholder = document.createElement("option");
   placeholder.value = "";
   placeholder.textContent = `Choose ${placeholderLabel}`;
@@ -48,7 +47,7 @@ function populateDropdown(fieldId, options, placeholderLabel) {
   });
 }
 
-// Special handler for products (objects with { sku, name })
+// Special handler for products (objects with { sku, name, price })
 function populateProductDropdown(fieldId, products) {
   const select = document.getElementById(fieldId);
   const skuField = document.getElementById("sku");
@@ -74,7 +73,9 @@ function populateProductDropdown(fieldId, products) {
     const selectedName = select.value;
     const matched = products.find(p => p.name === selectedName);
     if (skuField) skuField.value = matched?.sku || "";
-    if (priceField) priceField.value = matched?.price != null ? `$${matched.price.toFixed(2)}` : "$0.00";
+    if (priceField) {
+      const price = matched?.price != null ? Number(matched.price) : 0;
+      priceField.value = price ? price.toString() : "0";
+    }
   });
 }
-
