@@ -87,6 +87,18 @@
       <label for="quantityReceived">Quantity</label>
       <input type="number" id="quantityReceived" name="quantityReceived" required />
       
+      <label for="tax">Tax ($)</label>
+      <input type="number" id="tax" name="tax" step="0.01" value="0" />
+      
+      <label for="shipping">Shipping ($)</label>
+      <input type="number" id="shipping" name="shipping" step="0.01" value="0" />
+      
+      <label for="subtotal">Subtotal ($)</label>
+      <input type="text" id="subtotal" name="subtotal" readonly class="input-readonly" />
+      
+      <label for="trackingNumber">Tracking Number</label>
+      <input type="text" id="trackingNumber" name="trackingNumber" placeholder="Enter tracking number" />
+      
       <label for="receivingNotes">Receiving Notes</label>
       <textarea id="receivingNotes" name="receivingNotes" placeholder="Optional notes or remarks..." class="textarea-large"></textarea>
     
