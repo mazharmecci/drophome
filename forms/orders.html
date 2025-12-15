@@ -7,19 +7,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
-.details-row .order-details {
-  padding: 8px 12px;
-  background:#f7f9fc;
-  border-top:1px solid #ddd;
-  display:grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap:4px 16px;
-  font-size:12px;
-}
-.btn-secondary.details-toggle {
-  padding:2px 6px;
-  font-size:11px;
-}
+    .details-row .order-details {
+      padding: 8px 12px;
+      background:#f7f9fc;
+      border-top:1px solid #ddd;
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap:4px 16px;
+      font-size:12px;
+    }
+    .btn-secondary.details-toggle {
+      padding:2px 6px;
+      font-size:11px;
+    }
+    
+    .pagination-bar {
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+    }
+    .pagination-bar button[disabled] {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
   </style>
 </head>
 <body>
@@ -111,6 +124,12 @@
 
       <label for="receivingNotes">Receiving Notes</label>
       <textarea id="receivingNotes" name="receivingNotes" class="textarea-large"></textarea>
+
+      <div class="pagination-bar">
+  <button id="prevPage" class="btn-secondary">Previous</button>
+  <span id="pageInfo"></span>
+  <button id="nextPage" class="btn-secondary">Next</button>
+</div>
 
       <div class="form-actions">
         <button type="submit" class="btn-primary">Submit</button>
