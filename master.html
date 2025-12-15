@@ -9,7 +9,6 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  
   <!-- Injected Navbar -->
   <div id="navbar-placeholder"></div>
   <script src="scripts/navbar.js" defer></script>
@@ -17,22 +16,22 @@
   <main>
     <section class="form-container">
 
-    <!-- Breadcrumb -->
-    <nav class="breadcrumb-nav" aria-label="Quick Links">
-      <ol class="breadcrumb-list">
-        <li class="breadcrumb-item">
-          <a href="https://mazharmecci.github.io/drophome/">🏠 Home</a>
-        </li>
-        <li class="breadcrumb-item active">
-          <a href="master.html">🧾 Master List</a>
-        </li>
-      </ol>
-    </nav>
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb-nav" aria-label="Quick Links">
+        <ol class="breadcrumb-list">
+          <li class="breadcrumb-item">
+            <a href="https://mazharmecci.github.io/drophome/">🏠 Home</a>
+          </li>
+          <li class="breadcrumb-item active">
+            <a href="master.html">🧾 Master List</a>
+          </li>
+        </ol>
+      </nav>
 
-    <section id="master-sections">
+      <section id="master-sections">
 
-      <!-- Account Names -->
-      <div class="form-block">
+        <!-- Account Names -->
+        <div class="form-block">
           <h4><strong>Account Names:</strong></h4>
           <div class="input-row">
             <span class="emoji">👤</span>
@@ -40,136 +39,112 @@
             <button type="button" id="addAccountBtn">Add Account</button>
           </div>
           <ul id="accountList" class="list-display"></ul>
-      </div>
-
-      <!-- Client Names -->
-      <div class="form-block">
-        <h4><strong>Client Names:</strong></h4>
-        <div class="input-row">
-          <span class="emoji">🏬</span>
-          <input type="text" id="newClient" placeholder="Add new client" />
-          <button type="button" id="addClientBtn">Add Client</button>
         </div>
-        <ul id="clientList" class="list-display"></ul>
-      </div>
 
-      <!-- Dispatch Locations -->
-      <div class="form-block">
-        <h4><strong>Dispatch Locations:</strong></h4>
-        <div class="input-row">
-          <span class="emoji">📦</span>
-          <input type="text" id="newLocation" placeholder="Add dispatch location" />
-          <button type="button" id="addLocationBtn">Add Location</button>
+        <!-- Client Names -->
+        <div class="form-block">
+          <h4><strong>Client Names:</strong></h4>
+          <div class="input-row">
+            <span class="emoji">🏬</span>
+            <input type="text" id="newClient" placeholder="Add new client" />
+            <button type="button" id="addClientBtn">Add Client</button>
+          </div>
+          <ul id="clientList" class="list-display"></ul>
         </div>
-        <ul id="locationList" class="list-display"></ul>
-      </div>
 
-      <!-- Products -->
-      <div class="form-block">
-        <h4><strong>Products:</strong></h4>
-        <div class="input-row">
-          <span class="emoji">📦</span>
-          <input 
-            type="text" 
-            id="newSKU" 
-            placeholder="Enter SKU" 
-            class="input-sku"
-          />
-          <input 
-            type="text" 
-            id="newProductName" 
-            placeholder="Enter Product Name" 
-            class="input-name"
-          />
-          <input 
-            type="number" 
-            id="newProductPrice" 
-            placeholder="Enter Price (USD)" 
-            step="0.01" 
-            min="0" 
-            class="input-price"
-          />
-          <button type="button" id="addProductBtn" class="btn-primary">
-            ➕ Add Product
+        <!-- Dispatch Locations -->
+        <div class="form-block">
+          <h4><strong>Dispatch Locations:</strong></h4>
+          <div class="input-row">
+            <span class="emoji">📦</span>
+            <input type="text" id="newLocation" placeholder="Add dispatch location" />
+            <button type="button" id="addLocationBtn">Add Location</button>
+          </div>
+          <ul id="locationList" class="list-display"></ul>
+        </div>
+
+        <!-- Products -->
+        <div class="form-block">
+          <h4><strong>Products:</strong></h4>
+          <div class="input-row">
+            <span class="emoji">📦</span>
+            <input
+              type="text"
+              id="newSKU"
+              placeholder="Enter SKU"
+              class="input-sku"
+            />
+            <input
+              type="text"
+              id="newProductName"
+              placeholder="Enter Product Name"
+              class="input-name"
+            />
+            <input
+              type="number"
+              id="newProductPrice"
+              placeholder="Enter Price (USD)"
+              step="0.01"
+              min="0"
+              class="input-price"
+            />
+            <button type="button" id="addProductBtn" class="btn-primary">
+              ➕ Add Product
+            </button>
+          </div>
+          <small class="hint-text">Enter SKU, product name, and price in dollars.</small>
+          <ul id="productList" class="list-display"></ul>
+        </div>
+
+        <!-- Actions -->
+        <div class="form-actions">
+          <button type="button" id="backToFormBtn">🔙 Return to Form</button>
+          <button
+            type="button"
+            id="clearUIBtn"
+            onclick="clearUIOnly()"
+            class="btn-clear-ui"
+          >
+            🧹 Clear UI Only
           </button>
         </div>
-        <small class="hint-text">Enter SKU, product name, and price in dollars.</small>
-        <ul id="productList" class="list-display"></ul>
-      </div>
-  
-      <!-- Actions -->
-      <div class="form-actions">
-        <button type="button" id="backToFormBtn">🔙 Return to Form</button>
-        <button type="button" id="clearUIBtn" onclick="clearUIOnly()" class="btn-clear-ui">
-          🧹 Clear UI Only
-        </button>
-      </div>
-    </main>
+      </section>
+    </section>
+  </main>
 
+  <!-- Confirm modal -->
+  <div id="confirmBox" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <h3 id="confirmTitle">Confirm</h3>
+      <p id="confirmMessage">Are you sure?</p>
+      <div class="modal-actions">
+        <button id="confirmYesBtn">Yes</button>
+        <button id="confirmCancelBtn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Master list logic -->
   <script type="module" src="scripts/masterManager.js"></script>
+
+  <!-- Session check -->
   <script>
-    // Build breadcrumb and back link based on ?origin=
+    if (!sessionStorage.getItem("drophome-auth")) {
+      window.location.href = "/forms/login.html";
+    }
+  </script>
+
+  <!-- Return to Form button: go to drophome/forms/orders.html -->
+  <script>
     document.addEventListener("DOMContentLoaded", () => {
-      const params = new URLSearchParams(window.location.search);
-      const origin = params.get("origin") || "inbound";
-
-      const originMap = {
-        inbound: {
-          label: "Inbound Form",
-          href: "forms/inbound.html"
-        },
-        outbound: {
-          label: "Outbound Form",
-          href: "forms/outbound.html"
-        },
-        stock: {
-          label: "Stock Form",
-          href: "forms/stock.html"
-        }
-      };
-
-      const fallback = {
-        label: "Inbound Form",
-        href: "forms/inbound.html"
-      };
-
-      const originConfig = originMap[origin] || fallback;
-
-      // Fill breadcrumb middle item
-      const originLi = document.getElementById("breadcrumb-origin");
-      if (originLi) {
-        originLi.innerHTML = `<a href="${originConfig.href}">${originConfig.label}</a>`;
-      }
-
-      // Wire Return to Form button to same target
       const backBtn = document.getElementById("backToFormBtn");
       if (backBtn) {
         backBtn.addEventListener("click", () => {
-          window.location.href = `${originConfig.href}?updated=true`;
+          // Absolute path to the orders form under drophome/forms
+          window.location.href = "/drophome/forms/orders.html";
         });
       }
     });
   </script>
-
-    <script type="module" src="scripts/masterManager.js"></script>
-    <script src="scripts/navbar.js" defer></script>
-  
-    <div id="confirmBox" class="modal-overlay" style="display: none;">
-      <div class="modal-content">
-        <h3 id="confirmTitle">Confirm</h3>
-        <p id="confirmMessage">Are you sure?</p>
-        <div class="modal-actions">
-          <button id="confirmYesBtn">Yes</button>
-          <button id="confirmCancelBtn">Cancel</button>
-        </div>
-      </div>
-    </div>
-
-    <script>
-  if (!sessionStorage.getItem("drophome-auth")) {
-    window.location.href = "/forms/login.html";
-  }
-  </script>
-      
 </body>
 </html>
