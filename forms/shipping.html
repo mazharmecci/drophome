@@ -73,33 +73,33 @@
         <button id="clearFilters" class="btn-clear">🧹 Clear</button>
       </div>
 
-      <!-- Table Wrapper -->
-      <div class="table-scroll-wrapper">
-        <table class="summary-table">
-          <thead>
-            <tr>
-              <th>Order ID</th>
-              <th>Date</th>
-              <th>Client Name</th>
-              <th>Loca</th>
-              <th>SKU</th>
-              <th>Prod Name</th>
-              <th>Prod Pic</th>             
-              <th>Price</th>              
-              <th>Qty</th>
-              <th>Total Cost</th>                            
-              <th>Total Labels</th>
-              <th>Label Cost</th>
-              <th>3PL Cost</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-         <tbody id="inboundTableBody">
-            <!-- Injected dynamically -->
-          </tbody>
-        </table>
-      </div>
+    <!-- Table Wrapper -->
+    <div class="table-scroll-wrapper">
+      <table class="summary-table">
+        <thead>
+          <tr>
+            <th>Outbound ID</th>        <!-- inboundId -->
+            <th>Date Received</th>      <!-- dateReceived -->
+            <th>Client Name</th>        <!-- clientName -->
+            <th>Delivered Warehouse</th><!-- dispatchLocation -->
+            <th>Product Name</th>       <!-- productName -->
+            <th>SKU</th>                <!-- sku -->
+            <th>Product Picture</th>    <!-- prodpic -->
+            <th>Label Link</th>         <!-- labellink -->
+            <th>Unit Price ($)</th>     <!-- price -->
+            <th>Quantity</th>           <!-- quantityReceived -->
+            <th>Tax ($)</th>            <!-- tax -->
+            <th>Shipping ($)</th>       <!-- shipping -->
+            <th>Subtotal ($)</th>       <!-- subtotal -->
+            <th>Tracking #</th>         <!-- trackingNumber -->
+            <th>Status</th>             <!-- e.g. derived or stored -->
+            <th>Action</th>             <!-- buttons/links -->
+          </tr>
+        </thead>
+        <tbody id="inboundTableBody">
+          <!-- Injected dynamically -->
+        </tbody>
+      </table>
     </div>
 
     <!-- Success Popup -->
