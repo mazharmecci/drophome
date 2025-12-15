@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("applyFilters")?.addEventListener("click", applyFilters);
   document.getElementById("clearFilters")?.addEventListener("click", clearFilters);
 
-  // Pagination buttons (if present in HTML)
+  // Pagination buttons
   document.getElementById("prevPage")?.addEventListener("click", () => {
     setPage(currentPage - 1);
   });
@@ -91,7 +91,6 @@ async function handleFormSubmit(event) {
     const subtotalInput = document.getElementById("subtotal");
     if (subtotalInput) subtotalInput.value = "0.00";
 
-    // reset page to 1 for fresh view
     currentPage = 1;
     await loadAndRenderRecords({ showErrorToast: true });
   } catch (err) {
@@ -387,26 +386,33 @@ function renderStatusOptions(current) {
     .join("");
 }
 
-// filters
+// filters (Ordered Date range, Warehouse, Product Name, Status)
 function applyFilters() {
-  const client = (document.getElementById("filterClient")?.value || "").trim().toLowerCase();
   const fromDate = document.getElementById("filterStart")?.value || "";
   const toDate = document.getElementById("filterEnd")?.value || "";
+  const warehouse = (document.getElementById("filterWarehouse")?.value || "").trim();
+  const product = (document.getElementById("filterProduct")?.value || "").trim().toLowerCase();
   const status = document.getElementById("filterStatus")?.value || "";
-  const location = document.getElementById("filterLocation")?.value || "";
 
   const filtered = allRecords.filter(record => {
-    const recordClient = (record.clientName || record.accountName || "").toLowerCase();
-    const recordLocation = record.dispatchLocation || "";
-    const recordDate = record.ordDate || record.orderedDate || record.dateReceived || record.date || "";
+    const recordDate =
+      record.ordDate ||
+      record.orderedDate ||
+      record.orderDate ||
+      record.date ||
+      "";
 
-    const matchClient = !client || recordClient.includes(client);
-    const matchLocation = !location || recordLocation === location;
-    const matchStart = !fromDate || recordDate >= fromDate;
-    const matchEnd = !toDate || recordDate <= toDate;
-    const matchStatus = !status || record.status === status;
+    const recordWarehouse = (record.dispatchLocation || "").trim();
+    const recordProduct = (record.productName || "").toLowerCase();
+    const recordStatus = record.status || "";
 
-    return matchClient && matchLocation && matchStart && matchEnd && matchStatus;
+    const matchFrom = !fromDate || recordDate >= fromDate;
+    const matchTo = !toDate || recordDate <= toDate;
+    const matchWarehouse = !warehouse || recordWarehouse === warehouse;
+    const matchProduct = !product || recordProduct.includes(product);
+    const matchStatus = !status || recordStatus === status;
+
+    return matchFrom && matchTo && matchWarehouse && matchProduct && matchStatus;
   });
 
   currentPage = 1;
@@ -414,10 +420,12 @@ function applyFilters() {
 }
 
 function clearFilters() {
-  ["filterClient", "filterStart", "filterEnd", "filterStatus", "filterLocation"].forEach(id => {
+  ["filterStart", "filterEnd", "filterWarehouse", "filterProduct", "filterStatus"].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.value = "";
+    if (!el) return;
+    el.value = "";
   });
+
   currentPage = 1;
   renderTable(allRecords);
   showToast("🔄 Filters cleared. Showing all records.");
