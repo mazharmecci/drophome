@@ -164,7 +164,7 @@ function renderTable(records) {
   if (!Array.isArray(records) || records.length === 0) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="16" style="text-align:center; padding:20px; color:#888;">
+        <td colspan="9" style="text-align:center; padding:20px; color:#888;">
           🚫 No records found. Try adjusting your filters or check back later.
         </td>
       </tr>`;
@@ -172,8 +172,6 @@ function renderTable(records) {
   }
 
   records.forEach(record => {
-    const tr = document.createElement("tr");
-
     const price = record.price != null ? parseFloat(record.price) : 0;
     const quantity = record.quantityReceived != null
       ? parseFloat(record.quantityReceived)
@@ -191,45 +189,71 @@ function renderTable(records) {
     const shippingDisplay = shipping ? `$${shipping.toFixed(2)}` : "$0.00";
     const subtotalDisplay = `$${subtotalValue.toFixed(2)}`;
 
-    tr.innerHTML = `
+    const mainTr = document.createElement("tr");
+    const detailsTr = document.createElement("tr");
+    detailsTr.classList.add("details-row");
+    detailsTr.style.display = "none";
+
+    // Summary row (compact)
+    mainTr.innerHTML = `
       <td>${record.outboundId || record.inboundId || ""}</td>
       <td>${record.ordDate || record.orderedDate || record.orderDate || record.date || ""}</td>
-      <td>${record.delDate || record.deliveryDate || record.deliveredDate || record.dateDelivered || ""}</td>
       <td>${record.clientName || record.accountName || ""}</td>
       <td>${record.dispatchLocation || ""}</td>
       <td>${record.productName || ""}</td>
-      <td>${record.sku || ""}</td>
-      <td>
-        ${
-          record.prodpic
-            ? `<img src="${record.prodpic}" alt="Product" style="max-width:60px" />`
-            : ""
-        }
-      </td>
-      <td>
-        ${
-          record.labellink
-            ? `<a href="${record.labellink}" target="_blank">Open</a>`
-            : ""
-        }
-      </td>
-      <td>${priceDisplay}</td>
       <td>${quantity || 0}</td>
-      <td>${taxDisplay}</td>
-      <td>${shippingDisplay}</td>
       <td>${subtotalDisplay}</td>
-      <td>${record.trackingNumber || ""}</td>
       <td>
         <select onchange="updateField('${record.id}','status',this.value,this)">
           ${renderStatusOptions(record.status)}
         </select>
       </td>
       <td>
+        <button class="btn-secondary details-toggle">Details</button>
         <button class="btn-save" onclick="saveRecord('${record.id}')">💾 Save</button>
       </td>
     `;
 
-    tbody.appendChild(tr);
+    // Details row (full-width)
+    detailsTr.innerHTML = `
+      <td colspan="9">
+        <div class="order-details">
+          <div><strong>Outbound ID:</strong> ${record.outboundId || record.inboundId || ""}</div>
+          <div><strong>Ordered Date:</strong> ${record.ordDate || record.orderedDate || ""}</div>
+          <div><strong>Delivery Date:</strong> ${record.delDate || record.deliveryDate || ""}</div>
+          <div><strong>Tracking #:</strong> ${record.trackingNumber || ""}</div>
+          <div><strong>Unit Price:</strong> ${priceDisplay}</div>
+          <div><strong>Tax:</strong> ${taxDisplay}</div>
+          <div><strong>Shipping:</strong> ${shippingDisplay}</div>
+          <div><strong>Subtotal:</strong> ${subtotalDisplay}</div>
+          <div><strong>Notes:</strong> ${record.receivingNotes || ""}</div>
+          <div style="margin-top:6px;">
+            <strong>Product Picture:</strong>
+            ${
+              record.prodpic
+                ? `<br><img src="${record.prodpic}" alt="Product" style="max-width:120px; margin-top:4px;" />`
+                : " N/A"
+            }
+          </div>
+          <div style="margin-top:6px;">
+            <strong>Label Link:</strong>
+            ${
+              record.labellink
+                ? ` <a href="${record.labellink}" target="_blank">${record.labellink}</a>`
+                : " N/A"
+            }
+          </div>
+        </div>
+      </td>
+    `;
+
+    // Wire toggle
+    mainTr.querySelector(".details-toggle").addEventListener("click", () => {
+      detailsTr.style.display = detailsTr.style.display === "none" ? "table-row" : "none";
+    });
+
+    tbody.appendChild(mainTr);
+    tbody.appendChild(detailsTr);
   });
 }
 
