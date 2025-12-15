@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   hasInitialLoadCompleted = true;
 });
 
-// 🔄 Load and render inventory records
+// 🔄 Load and render order records
 async function loadAndRenderRecords(options) {
   const { showErrorToast = true } = options || {};
 
@@ -37,7 +37,7 @@ async function loadAndRenderRecords(options) {
   }
 }
 
-// 📊 Render inventory table
+// 📊 Render orders table (matches form fields)
 function renderTable(records) {
   const tbody = document.getElementById("inboundTableBody");
   if (!tbody) return;
@@ -46,7 +46,7 @@ function renderTable(records) {
   if (!Array.isArray(records) || records.length === 0) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="15" style="text-align:center; padding:20px; color:#888;">
+        <td colspan="16" style="text-align:center; padding:20px; color:#888;">
           🚫 No records found. Try adjusting your filters or check back later.
         </td>
       </tr>`;
@@ -57,97 +57,100 @@ function renderTable(records) {
     const tr = document.createElement("tr");
 
     const price = record.price != null ? parseFloat(record.price) : 0;
-    const quantity = record.quantity != null ? parseInt(record.quantity, 10) : 0;
-    const totalCost = price * quantity;
+    const quantity = record.quantityReceived != null
+      ? parseFloat(record.quantityReceived)
+      : 0;
+    const tax = record.tax != null ? parseFloat(record.tax) : 0;
+    const shipping = record.shipping != null ? parseFloat(record.shipping) : 0;
 
-    const priceDisplay = `$${price.toFixed(2)}`;
-    const totalCostDisplay = `$${totalCost.toFixed(2)}`;
+    // If subtotal not stored, compute like the form
+    const subtotalValue =
+      record.subtotal != null
+        ? parseFloat(record.subtotal)
+        : (quantity * price) + tax + shipping;
+
+    const priceDisplay = price ? `$${price.toFixed(2)}` : "$0.00";
+    const taxDisplay = tax ? `$${tax.toFixed(2)}` : "$0.00";
+    const shippingDisplay = shipping ? `$${shipping.toFixed(2)}` : "$0.00";
+    const subtotalDisplay = `$${subtotalValue.toFixed(2)}`;
 
     tr.innerHTML = `
-      <td>${record.orderId || ""}</td>
-      <td>${record.date || ""}</td>
-      <td>${record.accountName || ""}</td>
+      <!-- Outbound ID -->
+      <td>${record.outboundId || record.inboundId || ""}</td>
+
+      <!-- Date Received -->
+      <td>${record.dateReceived || record.date || ""}</td>
+
+      <!-- Client Name -->
+      <td>${record.clientName || record.accountName || ""}</td>
+
+      <!-- Delivered Warehouse -->
       <td>${record.dispatchLocation || ""}</td>
+
+      <!-- Product Name -->
       <td>${record.productName || ""}</td>
-      <td>${priceDisplay}</td>
+
+      <!-- SKU -->
       <td>${record.sku || ""}</td>
-      <td>${quantity}</td>
-      <td><img src="${record.prodpic || ""}" alt="Product" style="max-width:60px"/></td>
-      <td>${totalCostDisplay}</td> <!-- ✅ NEW TOTAL COST COLUMN -->
 
+      <!-- Product Picture -->
       <td>
-        <input
-          class="compact-input"
-          type="number"
-          value="${record.labelqty != null ? record.labelqty : 0}"
-          onchange="updateField('${record.id}','labelqty',this.value,this)"
-        />
+        ${
+          record.prodpic
+            ? `<img src="${record.prodpic}" alt="Product" style="max-width:60px" />`
+            : ""
+        }
       </td>
 
+      <!-- Label Link -->
       <td>
-        <input
-          class="compact-input"
-          type="text"
-          name="labelcost"
-          value="${formatDollar(record.labelcost)}"
-          placeholder="$0.00"
-          onchange="updateField('${record.id}','labelcost',this.value,this)"
-        />
+        ${
+          record.labellink
+            ? `<a href="${record.labellink}" target="_blank">Open</a>`
+            : ""
+        }
       </td>
 
-      <td>
-        <input
-          class="compact-input"
-          type="text"
-          name="threePLcost"
-          value="${formatDollar(record.threePLcost)}"
-          placeholder="$0.00"
-          onchange="updateField('${record.id}','threePLcost',this.value,this)"
-        />
-      </td>
+      <!-- Unit Price ($) -->
+      <td>${priceDisplay}</td>
 
+      <!-- Quantity -->
+      <td>${quantity || 0}</td>
+
+      <!-- Tax ($) -->
+      <td>${taxDisplay}</td>
+
+      <!-- Shipping ($) -->
+      <td>${shippingDisplay}</td>
+
+      <!-- Subtotal ($) -->
+      <td>${subtotalDisplay}</td>
+
+      <!-- Tracking # -->
+      <td>${record.trackingNumber || ""}</td>
+
+      <!-- Status (editable) -->
       <td>
         <select onchange="updateField('${record.id}','status',this.value,this)">
           ${renderStatusOptions(record.status)}
         </select>
       </td>
 
+      <!-- Action -->
       <td>
         <button class="btn-save" onclick="saveRecord('${record.id}')">💾 Save</button>
       </td>
     `;
+
     tbody.appendChild(tr);
   });
-
-  const costInputs = tbody.querySelectorAll('input[name="labelcost"], input[name="threePLcost"]');
-  costInputs.forEach(setupDollarInput);
 }
 
-// 💲 Format dollar values for display
+// 💲 Format dollar values (if you later make tax/shipping editable as currency)
 function formatDollar(value) {
   const num = parseFloat(value);
   if (isNaN(num) || num === 0) return "$0.00";
   return "$" + num.toFixed(2);
-}
-
-// 💲 Setup dollar input formatting
-function setupDollarInput(input) {
-  if (!input) return;
-
-  input.addEventListener("focus", () => {
-    input.value = input.value.replace(/[^0-9.]/g, "");
-  });
-
-  input.addEventListener("input", () => {
-    const raw = input.value.replace(/[^0-9.]/g, "");
-    const [whole, decimal] = raw.split(".");
-    input.value = decimal ? `${whole}.${decimal.slice(0, 2)}` : whole;
-  });
-
-  input.addEventListener("blur", () => {
-    const num = parseFloat(input.value.replace(/[^0-9.]/g, ""));
-    input.value = isNaN(num) ? "$0.00" : "$" + num.toFixed(2);
-  });
 }
 
 // 🧠 Render status options
@@ -171,7 +174,7 @@ function renderStatusOptions(current) {
     .join("");
 }
 
-// 🔍 Apply filters
+// 🔍 Apply filters (adapted to new field names)
 function applyFilters() {
   const client = (document.getElementById("filterClient")?.value || "").trim().toLowerCase();
   const fromDate = document.getElementById("filterStart")?.value || "";
@@ -180,9 +183,9 @@ function applyFilters() {
   const location = document.getElementById("filterLocation")?.value || "";
 
   const filtered = allRecords.filter(record => {
-    const recordClient = (record.accountName || "").toLowerCase();
+    const recordClient = (record.clientName || record.accountName || "").toLowerCase();
     const recordLocation = record.dispatchLocation || "";
-    const recordDate = record.date || "";
+    const recordDate = record.dateReceived || record.date || "";
 
     const matchClient = !client || recordClient.includes(client);
     const matchLocation = !location || recordLocation === location;
@@ -217,24 +220,19 @@ window.updateField = function (recordId, field, value, element) {
   if (element) element.style.backgroundColor = "#fff3cd";
 };
 
-// 💾 Save record
+// 💾 Save record (status + monetary fields if you decide to store them)
 window.saveRecord = async function (recordId) {
   const record = allRecords.find(r => r.id === recordId);
   if (!record || !record._dirty) return;
 
-  const labelCost = parseFloat(String(record.labelcost || "").replace(/[^0-9.]/g, "")) || 0;
-  const threePLCost = parseFloat(String(record.threePLcost || "").replace(/[^0-9.]/g, "")) || 0;
-
   try {
     await updateDoc(doc(db, "inventory", recordId), {
-      labelqty: Number(record.labelqty) || 0,
-      labelcost: labelCost,
-      threePLcost: threePLCost,
       status: record.status || "OrderPending",
+      // If you later want to persist recalculated subtotal/tax/shipping, add here.
       updatedAt: new Date()
     });
 
-    showToast(`✅ Record updated for ${record.orderId || record.id}`);
+    showToast(`✅ Record updated for ${record.outboundId || record.inboundId || record.id}`);
     showSuccessPopup();
     record._dirty = false;
 
