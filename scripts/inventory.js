@@ -74,77 +74,77 @@ function renderTable(records) {
     const shippingDisplay = shipping ? `$${shipping.toFixed(2)}` : "$0.00";
     const subtotalDisplay = `$${subtotalValue.toFixed(2)}`;
 
-    tr.innerHTML = `
-      <!-- Outbound ID -->
-      <td>${record.outboundId || record.inboundId || ""}</td>
+tr.innerHTML = `
+  <!-- Outbound ID -->
+  <td>${record.outboundId || record.inboundId || ""}</td>
 
-      <!-- Date Received -->
-      <td>${record.dateReceived || record.date || ""}</td>
+  <!-- Order Date -->
+  <td>${record.ordDate || record.orderDate || record.date || ""}</td>
 
-      <!-- Client Name -->
-      <td>${record.clientName || record.accountName || ""}</td>
+  <!-- Delivered Date -->
+  <td>${record.delDate || record.deliveredDate || record.dateDelivered || ""}</td>
 
-      <!-- Delivered Warehouse -->
-      <td>${record.dispatchLocation || ""}</td>
+  <!-- Customer Name -->
+  <td>${record.clientName || record.accountName || ""}</td>
 
-      <!-- Product Name -->
-      <td>${record.productName || ""}</td>
+  <!-- Delivered Warehouse -->
+  <td>${record.dispatchLocation || ""}</td>
 
-      <!-- SKU -->
-      <td>${record.sku || ""}</td>
+  <!-- Product Name -->
+  <td>${record.productName || ""}</td>
 
-      <!-- Product Picture -->
-      <td>
-        ${
-          record.prodpic
-            ? `<img src="${record.prodpic}" alt="Product" style="max-width:60px" />`
-            : ""
-        }
-      </td>
+  <!-- SKU -->
+  <td>${record.sku || ""}</td>
 
-      <!-- Label Link -->
-      <td>
-        ${
-          record.labellink
-            ? `<a href="${record.labellink}" target="_blank">Open</a>`
-            : ""
-        }
-      </td>
+  <!-- Product Picture -->
+  <td>
+    ${
+      record.prodpic
+        ? `<img src="${record.prodpic}" alt="Product" style="max-width:60px" />`
+        : ""
+    }
+  </td>
 
-      <!-- Unit Price ($) -->
-      <td>${priceDisplay}</td>
+  <!-- Label Link -->
+  <td>
+    ${
+      record.labellink
+        ? `<a href="${record.labellink}" target="_blank">Open</a>`
+        : ""
+    }
+  </td>
 
-      <!-- Quantity -->
-      <td>${quantity || 0}</td>
+  <!-- Unit Price ($) -->
+  <td>${priceDisplay}</td>
 
-      <!-- Tax ($) -->
-      <td>${taxDisplay}</td>
+  <!-- Quantity -->
+  <td>${quantity || 0}</td>
 
-      <!-- Shipping ($) -->
-      <td>${shippingDisplay}</td>
+  <!-- Tax ($) -->
+  <td>${taxDisplay}</td>
 
-      <!-- Subtotal ($) -->
-      <td>${subtotalDisplay}</td>
+  <!-- Shipping ($) -->
+  <td>${shippingDisplay}</td>
 
-      <!-- Tracking # -->
-      <td>${record.trackingNumber || ""}</td>
+  <!-- Subtotal ($) -->
+  <td>${subtotalDisplay}</td>
 
-      <!-- Status (editable) -->
-      <td>
-        <select onchange="updateField('${record.id}','status',this.value,this)">
-          ${renderStatusOptions(record.status)}
-        </select>
-      </td>
+  <!-- Tracking # -->
+  <td>${record.trackingNumber || ""}</td>
 
-      <!-- Action -->
-      <td>
-        <button class="btn-save" onclick="saveRecord('${record.id}')">💾 Save</button>
-      </td>
-    `;
+  <!-- Status (editable) -->
+  <td>
+    <select onchange="updateField('${record.id}','status',this.value,this)">
+      ${renderStatusOptions(record.status)}
+    </select>
+  </td>
 
-    tbody.appendChild(tr);
-  });
-}
+  <!-- Action -->
+  <td>
+    <button class="btn-save" onclick="saveRecord('${record.id}')">💾 Save</button>
+  </td>
+`;
+
 
 // 💲 Format dollar values (if you later make tax/shipping editable as currency)
 function formatDollar(value) {
