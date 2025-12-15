@@ -42,20 +42,26 @@
       font-size: 12px;
     }
     
-    /* each filter is a small column */
     .filters-bar > .filter-item {
       display: flex;
       flex-direction: column;
     }
     
-    /* desktop: keep them in one row */
+    /* buttons block */
+    .filters-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px; /* subtle 1-line gap under labels/inputs */
+    }
+    
+    /* desktop: keep everything in one row */
     @media (min-width: 768px) {
       .filters-bar {
         flex-wrap: nowrap;
       }
     }
     
-    /* mobile: full-width stacked blocks */
+    /* mobile: stacked full width */
     @media (max-width: 767px) {
       .filters-bar > .filter-item {
         flex: 1 1 100%;
@@ -207,10 +213,9 @@
     </select>
   </div>
 
-  <div class="filter-item filters-actions">
-    <button type="button" id="btn-primary" class="btn-secondary">Apply</button>
-    <button type="button" id="btn-orange" class="btn-secondary">Clear</button>
-  </div>
+<div class="filter-item filters-actions">
+  <button type="button" id="applyFilters" class="btn-primary">Apply</button>
+  <button type="button" id="clearFilters" class="btn-orange">Clear</button>
 </div>
           
   <!-- Summary table on same page -->
