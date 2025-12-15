@@ -245,37 +245,40 @@ function renderTable(records) {
     `;
 
     // details row (unchanged from previous pattern)
-    detailsTr.innerHTML = `
-      <td colspan="10">
-        <div class="order-details">
-          <div><strong>Outbound ID:</strong> ${outboundId}</div>
-          <div><strong>Ordered Date:</strong> ${orderDate}</div>
-          <div><strong>Delivery Date:</strong> ${deliveredDate}</div>
-          <div><strong>Tracking #:</strong> ${record.trackingNumber || ""}</div>
-          <div><strong>Unit Price:</strong> ${priceDisplay}</div>
-          <div><strong>Tax:</strong> ${taxDisplay}</div>
-          <div><strong>Shipping:</strong> ${shippingDisplay}</div>
-          <div><strong>Subtotal:</strong> ${subtotalDisplay}</div>
-          <div><strong>Notes:</strong> ${record.receivingNotes || ""}</div>
-          <div style="margin-top:6px;">
-            <strong>Product Picture:</strong>
-            ${
-              record.prodpic
-                ? `<br><img src="${record.prodpic}" alt="Product" style="max-width:120px; margin-top:4px;" />`
-                : " N/A"
-            }
-          </div>
-          <div style="margin-top:6px;">
-            <strong>Label Link:</strong>
-            ${
-              record.labellink
-                ? ` <a href="${record.labellink}" target="_blank">${record.labellink}</a>`
-                : " N/A"
-            }
-          </div>
-        </div>
-      </td>
-    `;
+detailsTr.innerHTML = `
+  <td colspan="10">
+    <div class="order-details">
+      <div><strong>Qty:</strong> ${quantity || 0}</div>
+      <div><strong>Unit Price:</strong> ${priceDisplay}</div>
+      <div><strong>Tax:</strong> ${taxDisplay}</div>
+      <div><strong>Shipping:</strong> ${shippingDisplay}</div>
+      <div><strong>Subtotal:</strong> ${subtotalDisplay}</div>
+
+      <div style="margin-top:6px;">
+        <strong>Product Picture:</strong>
+        ${
+          record.prodpic
+            ? `<br><img src="${record.prodpic}" alt="Product" style="max-width:120px; margin-top:4px;" />`
+            : " N/A"
+        }
+      </div>
+
+      <div style="margin-top:6px;">
+        <strong>Label Link:</strong>
+        ${
+          record.labellink
+            ? ` <a href="${record.labellink}" target="_blank">${record.labellink}</a>`
+            : " N/A"
+        }
+      </div>
+
+      <div style="margin-top:6px;">
+        <strong>Notes:</strong> ${record.receivingNotes || "N/A"}
+      </div>
+    </div>
+  </td>
+`;
+
 
     tr.querySelector(".details-toggle").addEventListener("click", () => {
       detailsTr.style.display =
