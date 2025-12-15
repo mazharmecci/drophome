@@ -152,6 +152,29 @@
     });
   </script>
 
+  <script>
+  const quantityInput = document.getElementById("quantityReceived");
+  const priceInput = document.getElementById("price"); // already auto-filled from product
+  const taxInput = document.getElementById("tax");
+  const shippingInput = document.getElementById("shipping");
+  const subtotalInput = document.getElementById("subtotal");
+
+  function calculateSubtotal() {
+    const quantity = parseFloat(quantityInput.value) || 0;
+    const price = parseFloat(priceInput.value) || 0;
+    const tax = parseFloat(taxInput.value) || 0;
+    const shipping = parseFloat(shippingInput.value) || 0;
+
+    const subtotal = (quantity * price) + tax + shipping;
+    subtotalInput.value = subtotal.toFixed(2);
+  }
+
+  // Attach listeners
+  [quantityInput, priceInput, taxInput, shippingInput].forEach(input => {
+    input.addEventListener("input", calculateSubtotal);
+  });
+</script>
+
   <!-- Scripts -->
   <script type="module" src="/scripts/outbound.js"></script>
   <script type="module" src="/scripts/popupHandler.js"></script>
