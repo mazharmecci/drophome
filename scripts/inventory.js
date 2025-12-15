@@ -20,8 +20,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Auto-generate outbound ID (simple timestamp; tweak as needed)
   const inboundIdEl = document.getElementById("inboundId");
   if (inboundIdEl) {
-    const stamp = new Date().toISOString().replace(/[-:.TZ]/g, "").slice(0, 14);
-    inboundIdEl.value = `OUT-${stamp}`;
+    // 5-character random ID, e.g. OUT-3f9kq
+    const shortId = Math.random().toString(36).substring(2, 7);
+    inboundIdEl.value = `OUT-${shortId}`;
   }
 
   // Wire form submit
