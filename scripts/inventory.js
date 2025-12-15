@@ -1,4 +1,6 @@
+// scripts/inventory.js
 import { db } from "./firebase.js";
+import { loadDropdowns } from "./dropdownLoader.js";
 import { showToast, showSuccessPopup } from "./popupHandler.js";
 import {
   collection,
@@ -12,6 +14,9 @@ let allRecords = [];
 let hasInitialLoadCompleted = false;
 
 document.addEventListener("DOMContentLoaded", async () => {
+  // Load master list values into dropdowns
+  await loadDropdowns();
+
   // Auto-generate outbound ID (simple timestamp; tweak as needed)
   const inboundIdEl = document.getElementById("inboundId");
   if (inboundIdEl) {
@@ -71,13 +76,10 @@ async function handleFormSubmit(event) {
     showToast(`✅ Order saved with ID ${docRef.id}`);
     showSuccessPopup();
 
-    // Optional: reset quantity/tax/shipping; keep outboundId if you want
     event.target.reset();
-    // Recompute subtotal to 0.00
     const subtotalInput = document.getElementById("subtotal");
     if (subtotalInput) subtotalInput.value = "0.00";
 
-    // Refresh table so user sees new record
     await loadAndRenderRecords({ showErrorToast: true });
   } catch (err) {
     console.error("❌ handleFormSubmit failed:", err);
@@ -125,7 +127,7 @@ function collectFormData() {
     sku,
     prodpic,
     labellink,
-    price,
+      price,
     quantityReceived,
     tax,
     shipping,
