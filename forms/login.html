@@ -136,21 +136,21 @@
       const loginForm = document.getElementById("loginForm");
       if (!loginForm) return;
 
-      loginForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const email = document.getElementById("username").value.trim();
-        const password = document.getElementById("password").value.trim();
-
-        try {
-          await signInWithEmailAndPassword(auth, email, password);
-          sessionStorage.setItem("drophome-auth", "true");
-          showMessage("✅ Login successful!", "green");
-          window.location.href = "/index.html";
-        } catch (error) {
-          showMessage(`❌ ${error.message}`, "red");
-        }
-      });
-    }
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = username.value.trim();
+      const password = passwordInput.value.trim();
+    
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        sessionStorage.setItem("drophome-auth", user.uid);
+        showMessage("✅ Login successful!", "green");
+        redirectTo("index.html");
+      } catch (error) {
+        showMessage(`❌ ${getFriendlyError(error.code)}`, "red");
+      }
+    });
 
     function setupForgotPassword() {
       const link = document.getElementById("forgotPasswordLink");
