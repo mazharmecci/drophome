@@ -9,18 +9,19 @@
   <style>
     .details-row .order-details {
       padding: 8px 12px;
-      background:#f7f9fc;
-      border-top:1px solid #ddd;
-      display:grid;
+      background: #f7f9fc;
+      border-top: 1px solid #ddd;
+      display: grid;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap:4px 16px;
-      font-size:12px;
+      gap: 4px 16px;
+      font-size: 12px;
     }
+
     .btn-secondary.details-toggle {
-      padding:2px 6px;
-      font-size:11px;
+      padding: 2px 6px;
+      font-size: 11px;
     }
-    
+
     .pagination-bar {
       margin-top: 8px;
       display: flex;
@@ -28,6 +29,7 @@
       gap: 8px;
       font-size: 12px;
     }
+
     .pagination-bar button[disabled] {
       opacity: 0.5;
       cursor: not-allowed;
@@ -41,26 +43,25 @@
       align-items: flex-end;
       font-size: 12px;
     }
-    
+
     .filters-bar > .filter-item {
       display: flex;
       flex-direction: column;
     }
-    
-    /* buttons block */
+
     .filters-actions {
       display: flex;
       gap: 8px;
-      margin-top: 8px; /* subtle 1-line gap under labels/inputs */
+      margin-top: 8px;
     }
-    
+
     /* desktop: keep everything in one row */
     @media (min-width: 768px) {
       .filters-bar {
         flex-wrap: nowrap;
       }
     }
-    
+
     /* mobile: stacked full width */
     @media (max-width: 767px) {
       .filters-bar > .filter-item {
@@ -168,76 +169,78 @@
     </form>
   </div>
 
-<div class="pagination-bar">
-  <button id="prevPage" class="btn-secondary">Previous</button>
-  <span id="pageInfo"></span>
-  <button id="nextPage" class="btn-secondary">Next</button>
-</div>
-  
-<div class="filters-bar">
-  <div class="filter-item">
-    <label for="filterStart">Ordered Date (From)</label>
-    <input type="date" id="filterStart" name="filterStart" />
+  <!-- Pagination under form -->
+  <div class="pagination-bar">
+    <button id="prevPage" class="btn-secondary">Previous</button>
+    <span id="pageInfo"></span>
+    <button id="nextPage" class="btn-secondary">Next</button>
   </div>
 
-  <div class="filter-item">
-    <label for="filterEnd">Ordered Date (To)</label>
-    <input type="date" id="filterEnd" name="filterEnd" />
+  <!-- Filters under pagination -->
+  <div class="filters-bar">
+    <div class="filter-item">
+      <label for="filterStart">Ordered Date (From)</label>
+      <input type="date" id="filterStart" name="filterStart" />
+    </div>
+
+    <div class="filter-item">
+      <label for="filterEnd">Ordered Date (To)</label>
+      <input type="date" id="filterEnd" name="filterEnd" />
+    </div>
+
+    <div class="filter-item">
+      <label for="filterWarehouse">Warehouse</label>
+      <select id="filterWarehouse" name="filterWarehouse">
+        <option value="">All warehouses</option>
+      </select>
+    </div>
+
+    <div class="filter-item">
+      <label for="filterProduct">Product Name</label>
+      <input type="text" id="filterProduct" name="filterProduct" placeholder="Contains..." />
+    </div>
+
+    <div class="filter-item">
+      <label for="filterStatus">Status</label>
+      <select id="filterStatus" name="filterStatus">
+        <option value="">All statuses</option>
+        <option value="OrderPending">Order Pending</option>
+        <option value="WarehouseDelivered">Warehouse Delivered</option>
+        <option value="OrderDelivered">Order Delivered</option>
+        <option value="OrderCompleted">Order Completed</option>
+        <option value="CancelCompleted">Cancel Completed</option>
+        <option value="Refunded">Refunded</option>
+        <option value="Shipped">Shipped</option>
+        <option value="LabelsPrinted">Labels Printed</option>
+      </select>
+    </div>
+
+    <div class="filter-item filters-actions">
+      <button type="button" id="applyFilters" class="btn-primary">Apply</button>
+      <button type="button" id="clearFilters" class="btn-orange">Clear</button>
+    </div>
   </div>
 
-  <div class="filter-item">
-    <label for="filterWarehouse">Warehouse</label>
-    <select id="filterWarehouse" name="filterWarehouse">
-      <option value="">All warehouses</option>
-      <!-- options will be filled from JS -->
-    </select>
+  <!-- Summary table -->
+  <div class="table-scroll-wrapper">
+    <table class="summary-table">
+      <thead>
+        <tr>
+          <th>Outbound&nbsp;ID</th>
+          <th>Order&nbsp;Date</th>
+          <th>Delivered&nbsp;Date</th>
+          <th>Cust&nbsp;Name</th>
+          <th>WareHouse</th>
+          <th>Prod&nbsp;Name</th>
+          <th>Qty</th>
+          <th>Subtotal&nbsp;($)</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="inboundTableBody"></tbody>
+    </table>
   </div>
-
-  <div class="filter-item">
-    <label for="filterProduct">Product Name</label>
-    <input type="text" id="filterProduct" name="filterProduct" placeholder="Contains..." />
-  </div>
-
-  <div class="filter-item">
-    <label for="filterStatus">Status</label>
-    <select id="filterStatus" name="filterStatus">
-      <option value="">All statuses</option>
-      <option value="OrderPending">Order Pending</option>
-      <option value="WarehouseDelivered">Warehouse Delivered</option>
-      <option value="OrderDelivered">Order Delivered</option>
-      <option value="OrderCompleted">Order Completed</option>
-      <option value="CancelCompleted">Cancel Completed</option>
-      <option value="Refunded">Refunded</option>
-      <option value="Shipped">Shipped</option>
-      <option value="LabelsPrinted">Labels Printed</option>
-    </select>
-  </div>
-
-<div class="filter-item filters-actions">
-  <button type="button" id="applyFilters" class="btn-primary">Apply</button>
-  <button type="button" id="clearFilters" class="btn-orange">Clear</button>
-</div>
-          
-  <!-- Summary table on same page -->
-<div class="table-scroll-wrapper">
-  <table class="summary-table">
-    <thead>
-      <tr>
-        <th>Outbound&nbsp;ID</th>
-        <th>Order&nbsp;Date</th>
-        <th>Delivered&nbsp;Date</th>
-        <th>Cust&nbsp;Name</th>
-        <th>WareHouse</th>
-        <th>Prod&nbsp;Name</th>
-        <th>Qty</th>
-        <th>Subtotal&nbsp;($)</th>
-        <th>Status</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody id="inboundTableBody"></tbody>
-  </table>
-</div>
 
   <!-- Success popup (shared) -->
   <div id="successPopup" class="popup hidden">
