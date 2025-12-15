@@ -68,7 +68,7 @@ async function handleFormSubmit(event) {
       subtotal: data.subtotal,
       trackingNumber: data.trackingNumber,
       receivingNotes: data.receivingNotes,
-      status: data.orderStatus || "OrderPending",
+      status: data.orderStatus,   // <- no || "OrderPending" here
       createdAt: new Date(),
       updatedAt: new Date()
     });
