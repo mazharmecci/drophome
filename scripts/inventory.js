@@ -152,12 +152,42 @@ function collectFormData() {
 }
 
 // 🔄 load + render
+
+function populateWarehouseFilter() {
+  const select = document.getElementById("filterWarehouse");
+  if (!select) return;
+
+  // collect distinct non-empty dispatchLocation values
+  const locations = [...new Set(
+    allRecords
+      .map(r => (r.dispatchLocation || "").trim())
+      .filter(v => v)
+  )];
+
+  // reset options
+  select.innerHTML = "";
+  const optAll = document.createElement("option");
+  optAll.value = "";
+  optAll.textContent = "All warehouses";
+  select.appendChild(optAll);
+
+  locations.forEach(loc => {
+    const option = document.createElement("option");
+    option.value = loc;
+    option.textContent = loc;
+    select.appendChild(option);
+  });
+}
+
+
+
 async function loadAndRenderRecords(options) {
   const { showErrorToast = true } = options || {};
 
   try {
     const snapshot = await getDocs(collection(db, "inventory"));
     allRecords = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    populateWarehouseFilter();      // <‑‑ here
     renderTable(allRecords);
   } catch (err) {
     console.error("❌ loadAndRenderRecords failed:", err);
@@ -165,6 +195,7 @@ async function loadAndRenderRecords(options) {
       showToast("⚠️ Failed to load records. Please check your connection or Firestore rules.");
     }
     allRecords = [];
+    populateWarehouseFilter();
     renderTable(allRecords);
   }
 }
