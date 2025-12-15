@@ -140,6 +140,51 @@
   <button id="nextPage" class="btn-secondary">Next</button>
 </div>
 
+<div class="filters-bar">
+  <div>
+    <label for="filterStart">Ordered Date (From)</label>
+    <input type="date" id="filterStart" name="filterStart" />
+  </div>
+
+  <div>
+    <label for="filterEnd">Ordered Date (To)</label>
+    <input type="date" id="filterEnd" name="filterEnd" />
+  </div>
+
+  <div>
+    <label for="filterWarehouse">Warehouse</label>
+    <select id="filterWarehouse" name="filterWarehouse">
+      <option value="">All warehouses</option>
+      <!-- optionally hard‑code or fill from JS -->
+    </select>
+  </div>
+
+  <div>
+    <label for="filterProduct">Product Name</label>
+    <input type="text" id="filterProduct" name="filterProduct" placeholder="Contains..." />
+  </div>
+
+  <div>
+    <label for="filterStatus">Status</label>
+    <select id="filterStatus" name="filterStatus">
+      <option value="">All statuses</option>
+      <option value="OrderPending">Order Pending</option>
+      <option value="WarehouseDelivered">Warehouse Delivered</option>
+      <option value="OrderDelivered">Order Delivered</option>
+      <option value="OrderCompleted">Order Completed</option>
+      <option value="CancelCompleted">Cancel Completed</option>
+      <option value="Refunded">Refunded</option>
+      <option value="Shipped">Shipped</option>
+      <option value="LabelsPrinted">Labels Printed</option>
+    </select>
+  </div>
+
+  <div class="filters-actions">
+    <button type="button" id="applyFilters" class="btn-secondary">Apply</button>
+    <button type="button" id="clearFilters" class="btn-secondary">Clear</button>
+  </div>
+</div>
+
   <!-- Summary table on same page -->
 <div class="table-scroll-wrapper">
   <table class="summary-table">
