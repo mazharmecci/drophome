@@ -17,10 +17,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Load master list values into dropdowns
   await loadDropdowns();
 
-  // Auto-generate outbound ID (simple timestamp; tweak as needed)
+  // Auto-generate outbound ID (short)
   const inboundIdEl = document.getElementById("inboundId");
   if (inboundIdEl) {
-    // 5-character random ID, e.g. OUT-3f9kq
     const shortId = Math.random().toString(36).substring(2, 7);
     inboundIdEl.value = `OUT-${shortId}`;
   }
@@ -69,7 +68,7 @@ async function handleFormSubmit(event) {
       subtotal: data.subtotal,
       trackingNumber: data.trackingNumber,
       receivingNotes: data.receivingNotes,
-      status: "OrderPending",
+      status: data.orderStatus || "OrderPending",
       createdAt: new Date(),
       updatedAt: new Date()
     });
@@ -106,6 +105,7 @@ function collectFormData() {
   const subtotalStr = document.getElementById("subtotal")?.value || "0";
   const trackingNumber = document.getElementById("trackingNumber")?.value || "";
   const receivingNotes = document.getElementById("receivingNotes")?.value || "";
+  const orderStatus = document.getElementById("orderStatus")?.value || "OrderPending";
 
   const price = parseFloat(priceStr) || 0;
   const quantityReceived = parseFloat(qtyStr) || 0;
@@ -128,13 +128,14 @@ function collectFormData() {
     sku,
     prodpic,
     labellink,
-      price,
+    price,
     quantityReceived,
     tax,
     shipping,
     subtotal,
     trackingNumber,
-    receivingNotes
+    receivingNotes,
+    orderStatus
   };
 }
 
@@ -244,41 +245,40 @@ function renderTable(records) {
       </td>
     `;
 
-    // details row (unchanged from previous pattern)
-detailsTr.innerHTML = `
-  <td colspan="10">
-    <div class="order-details">
-      <div><strong>Qty:</strong> ${quantity || 0}</div>
-      <div><strong>Unit Price:</strong> ${priceDisplay}</div>
-      <div><strong>Tax:</strong> ${taxDisplay}</div>
-      <div><strong>Shipping:</strong> ${shippingDisplay}</div>
-      <div><strong>Subtotal:</strong> ${subtotalDisplay}</div>
+    // details row: numeric + media + notes
+    detailsTr.innerHTML = `
+      <td colspan="10">
+        <div class="order-details">
+          <div><strong>Qty:</strong> ${quantity || 0}</div>
+          <div><strong>Unit Price:</strong> ${priceDisplay}</div>
+          <div><strong>Tax:</strong> ${taxDisplay}</div>
+          <div><strong>Shipping:</strong> ${shippingDisplay}</div>
+          <div><strong>Subtotal:</strong> ${subtotalDisplay}</div>
 
-      <div style="margin-top:6px;">
-        <strong>Product Picture:</strong>
-        ${
-          record.prodpic
-            ? `<br><img src="${record.prodpic}" alt="Product" style="max-width:120px; margin-top:4px;" />`
-            : " N/A"
-        }
-      </div>
+          <div style="margin-top:6px;">
+            <strong>Product Picture:</strong>
+            ${
+              record.prodpic
+                ? `<br><img src="${record.prodpic}" alt="Product" style="max-width:120px; margin-top:4px;" />`
+                : " N/A"
+            }
+          </div>
 
-      <div style="margin-top:6px;">
-        <strong>Label Link:</strong>
-        ${
-          record.labellink
-            ? ` <a href="${record.labellink}" target="_blank">${record.labellink}</a>`
-            : " N/A"
-        }
-      </div>
+          <div style="margin-top:6px;">
+            <strong>Label Link:</strong>
+            ${
+              record.labellink
+                ? ` <a href="${record.labellink}" target="_blank">${record.labellink}</a>`
+                : " N/A"
+            }
+          </div>
 
-      <div style="margin-top:6px;">
-        <strong>Notes:</strong> ${record.receivingNotes || "N/A"}
-      </div>
-    </div>
-  </td>
-`;
-
+          <div style="margin-top:6px;">
+            <strong>Notes:</strong> ${record.receivingNotes || "N/A"}
+          </div>
+        </div>
+      </td>
+    `;
 
     tr.querySelector(".details-toggle").addEventListener("click", () => {
       detailsTr.style.display =
@@ -289,7 +289,6 @@ detailsTr.innerHTML = `
     tbody.appendChild(detailsTr);
   });
 }
-
 
 // Subtotal calculator hook
 function hookSubtotalCalculator() {
@@ -318,6 +317,7 @@ function hookSubtotalCalculator() {
 function renderStatusOptions(current) {
   const statuses = [
     "OrderPending",
+    "WarehouseDelivered",
     "OrderDelivered",
     "OrderCompleted",
     "CancelCompleted",
@@ -335,7 +335,7 @@ function renderStatusOptions(current) {
     .join("");
 }
 
-// Filters (optional – same as your previous)
+// Filters
 function applyFilters() {
   const client = (document.getElementById("filterClient")?.value || "").trim().toLowerCase();
   const fromDate = document.getElementById("filterStart")?.value || "";
