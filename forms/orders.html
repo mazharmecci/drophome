@@ -2,14 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>📥 Orders Form</title>
+  <title>📥 Outbound Form</title>
   <link rel="stylesheet" href="/style.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
 
-  <script>
-     .preview-box {
+  <!-- Local styles for preview boxes -->
+  <style>
+    .preview-box {
       margin-top: 8px;
       padding: 6px;
       background-color: #f9f9f9;
@@ -24,14 +23,14 @@
       display: block;
       margin-top: 6px;
     }
-  </script>
-  
+  </style>
+</head>
+<body>
   <!-- Injected Navbar -->
   <div id="navbar-placeholder"></div>
   <script src="/scripts/navbar.js" defer></script>
 
-  <div class="form-container">  
-
+  <div class="form-container">
     <!-- Breadcrumb -->
     <nav class="breadcrumb-nav" aria-label="Breadcrumb">
       <ol class="breadcrumb-list">
@@ -42,7 +41,7 @@
     </nav>
 
     <form id="inboundForm">
-      <label for="inboundId">outbound ID (Auto-generated)</label>
+      <label for="inboundId">Outbound ID (Auto-generated)</label>
       <input type="text" id="inboundId" name="inboundId" readonly class="input-readonly-error" />
       
       <label for="dateReceived">Date Received</label>
@@ -56,7 +55,7 @@
       <label for="dispatchLocation">Order Delivered Warehouse</label>
       <select id="dispatchLocation" name="dispatchLocation" required>
         <option value="" hidden>Select Delivered Warehouse</option>
-      </select>     
+      </select>
 
       <label for="productName">Product Name</label>
       <select id="productName" name="productName" required>
@@ -100,11 +99,20 @@
       <input type="text" id="trackingNumber" name="trackingNumber" placeholder="Enter tracking number" />
       
       <label for="receivingNotes">Receiving Notes</label>
-      <textarea id="receivingNotes" name="receivingNotes" placeholder="Optional notes or remarks..." class="textarea-large"></textarea>
+      <textarea
+        id="receivingNotes"
+        name="receivingNotes"
+        placeholder="Optional notes or remarks..."
+        class="textarea-large"
+      ></textarea>
     
       <div class="form-actions">
         <button type="submit" class="btn-primary">Submit</button>
-        <button type="button" class="btn-orange" onclick="window.location.href='/master.html?origin=inbound'">
+        <button
+          type="button"
+          class="btn-orange"
+          onclick="window.location.href='/master.html?origin=inbound'"
+        >
           ⚙️ Master List
         </button>
       </div>
@@ -127,7 +135,8 @@
     }
   </script>
 
-    <script>
+  <!-- URL preview handlers -->
+  <script>
     const prodpicInput = document.getElementById("prodpic");
     const labellinkInput = document.getElementById("labellink");
     const prodpicPreview = document.getElementById("prodpicPreview");
@@ -136,7 +145,8 @@
     prodpicInput.addEventListener("input", () => {
       const url = prodpicInput.value.trim();
       if (url) {
-        prodpicPreview.innerHTML = `<strong>Preview:</strong><br><img src="${url}" alt="Product Image" />`;
+        prodpicPreview.innerHTML =
+          `<strong>Preview:</strong><br><img src="${url}" alt="Product Image" />`;
       } else {
         prodpicPreview.innerHTML = "";
       }
@@ -145,37 +155,38 @@
     labellinkInput.addEventListener("input", () => {
       const url = labellinkInput.value.trim();
       if (url) {
-        labellinkPreview.innerHTML = `<strong>Preview:</strong><br><a href="${url}" target="_blank">${url}</a>`;
+        labellinkPreview.innerHTML =
+          `<strong>Preview:</strong><br><a href="${url}" target="_blank">${url}</a>`;
       } else {
         labellinkPreview.innerHTML = "";
       }
     });
   </script>
 
+  <!-- Subtotal calculator -->
   <script>
-  const quantityInput = document.getElementById("quantityReceived");
-  const priceInput = document.getElementById("price"); // already auto-filled from product
-  const taxInput = document.getElementById("tax");
-  const shippingInput = document.getElementById("shipping");
-  const subtotalInput = document.getElementById("subtotal");
+    const quantityInput = document.getElementById("quantityReceived");
+    const priceInput = document.getElementById("price"); // already auto-filled from product
+    const taxInput = document.getElementById("tax");
+    const shippingInput = document.getElementById("shipping");
+    const subtotalInput = document.getElementById("subtotal");
 
-  function calculateSubtotal() {
-    const quantity = parseFloat(quantityInput.value) || 0;
-    const price = parseFloat(priceInput.value) || 0;
-    const tax = parseFloat(taxInput.value) || 0;
-    const shipping = parseFloat(shippingInput.value) || 0;
+    function calculateSubtotal() {
+      const quantity = parseFloat(quantityInput.value) || 0;
+      const price = parseFloat(priceInput.value) || 0;
+      const tax = parseFloat(taxInput.value) || 0;
+      const shipping = parseFloat(shippingInput.value) || 0;
 
-    const subtotal = (quantity * price) + tax + shipping;
-    subtotalInput.value = subtotal.toFixed(2);
-  }
+      const subtotal = (quantity * price) + tax + shipping;
+      subtotalInput.value = subtotal.toFixed(2);
+    }
 
-  // Attach listeners
-  [quantityInput, priceInput, taxInput, shippingInput].forEach(input => {
-    input.addEventListener("input", calculateSubtotal);
-  });
-</script>
+    [quantityInput, priceInput, taxInput, shippingInput].forEach(input => {
+      input.addEventListener("input", calculateSubtotal);
+    });
+  </script>
 
-  <!-- Scripts -->
+  <!-- Modules -->
   <script type="module" src="/scripts/inbound.js"></script>
   <script type="module" src="/scripts/popupHandler.js"></script>
   <script type="module" src="/scripts/dropdownLoader.js"></script>
