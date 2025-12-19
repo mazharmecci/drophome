@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   hasInitialLoadCompleted = true;
 });
 
-// 🧾 collect form data (aligned with Firebase schema)
+// 🧾 collect form data
 function collectFormData() {
   const inboundId = document.getElementById("inboundId")?.value || "";
   const ordDate = document.getElementById("orderedDate")?.value || "";
@@ -79,7 +79,6 @@ function collectFormData() {
   const receivingNotes = document.getElementById("receivingNotes")?.value || "";
   const status = document.getElementById("orderStatus")?.value || "OrderPending";
 
-  // numeric fields
   const price = parseFloat(document.getElementById("price")?.value || "0") || 0;
   const quantityReceived = parseInt(
     document.getElementById("quantityReceived")?.value || "0",
@@ -88,7 +87,6 @@ function collectFormData() {
   const tax = parseFloat(document.getElementById("tax")?.value || "0") || 0;
   const shipping = parseFloat(document.getElementById("shipping")?.value || "0") || 0;
 
-  // label-related fields
   const labelqty = parseInt(
     document.getElementById("totalLabels")?.value || "0",
     10
@@ -105,22 +103,20 @@ function collectFormData() {
     10
   ) || 0;
 
-  // derived fields
   const subtotal = price * quantityReceived + tax + shipping;
 
-  // compute 3PL cost as a number
   let threePLCost = 0;
   if (packCount <= 0) threePLCost = 0;
   else if (packCount <= 2) threePLCost = 1.0;
   else threePLCost = packCount * 0.20 + 1.0;
   threePLCost = parseFloat(threePLCost.toFixed(2));
 
-  // prodpic comes from master; stored on record, not a text input
+  // prodpic from preview; ensure string
   const prodpicPreview = document.getElementById("prodpicPreview");
   let prodpic = "";
   if (prodpicPreview) {
     const img = prodpicPreview.querySelector("img");
-    if (img && img.src) {
+    if (img && typeof img.src === "string") {
       prodpic = img.src || "";
     }
   }
@@ -152,8 +148,8 @@ function collectFormData() {
     // Quantities / media
     quantity: quantityReceived,
     quantityReceived,
-    prodpic: prodpic || "",          // ✅ never undefined
-    labellink: labellinkInput || "", // ✅ never undefined
+    prodpic: prodpic || "",          // <- key: never undefined
+    labellink: labellinkInput || "",
 
     // Pricing
     price,
@@ -187,70 +183,61 @@ function collectFormData() {
 async function handleSubmit(e) {
   e.preventDefault();
   const form = e.target;
-  let data = collectFormData();
-  if (!data) return;
+  const rawData = collectFormData();
+  if (!rawData) return;
 
-  // extra safety: normalize prodpic / labellink
-  const safeData = {
-    ...data,
-    prodpic: data.prodpic || "",
-    labellink: data.labellink || ""
+  // final safety to strip undefined
+  const data = {
+    ...rawData,
+    prodpic: rawData.prodpic || "",
+    labellink: rawData.labellink || ""
   };
 
   try {
-    // 1️⃣ Save inbound record
-    await addDoc(collection(db, "inbound"), safeData);
+    // inbound
+    await addDoc(collection(db, "inbound"), data);
 
-    // 2️⃣ Update stock quantity
-    await updateStock(safeData.productName, safeData.quantityReceived);
+    // stock
+    await updateStock(data.productName, data.quantityReceived);
 
-    // 3️⃣ Auto-sync to inventory (same schema as inbound)
+    // inventory mirror
     const inventoryData = {
-      // IDs
-      inboundId: safeData.inboundId,
-      orderId: safeData.inboundId,
+      inboundId: data.inboundId,
+      orderId: data.inboundId,
 
-      // Dates
-      ordDate: safeData.ordDate,
-      delDate: safeData.delDate,
-      date: safeData.ordDate,
+      ordDate: data.ordDate,
+      delDate: data.delDate,
+      date: data.ordDate,
 
-      // Account / product
-      accountName: safeData.accountName,
-      clientName: safeData.clientName,
-      productName: safeData.productName,
-      dispatchLocation: safeData.dispatchLocation,
-      sku: safeData.sku,
+      accountName: data.accountName,
+      clientName: data.clientName,
+      productName: data.productName,
+      dispatchLocation: data.dispatchLocation,
+      sku: data.sku,
 
-      // Quantities / media
-      quantity: safeData.quantityReceived,
-      quantityReceived: safeData.quantityReceived,
-      prodpic: safeData.prodpic,          // ✅ guaranteed string
-      labellink: safeData.labellink,      // ✅ guaranteed string
+      quantity: data.quantityReceived,
+      quantityReceived: data.quantityReceived,
+      prodpic: data.prodpic || "",       // <- key: never undefined
+      labellink: data.labellink || "",   // <- key: never undefined
 
-      // Pricing
-      price: safeData.price,
-      tax: safeData.tax,
-      shipping: safeData.shipping,
-      subtotal: safeData.subtotal,
+      price: data.price,
+      tax: data.tax,
+      shipping: data.shipping,
+      subtotal: data.subtotal,
 
-      // Label / 3PL fields
-      labelqty: safeData.labelqty ?? 0,
-      labelcost: safeData.labelcost ?? 0,
-      totalLabels: safeData.totalLabels ?? safeData.labelqty ?? 0,
-      costPerLabel: safeData.costPerLabel ?? safeData.labelcost ?? 0,
-      packCount: safeData.packCount ?? 0,
-      totalUnits: safeData.totalUnits ?? 0,
-      threePLCost: safeData.threePLCost ?? 0,
+      labelqty: data.labelqty ?? 0,
+      labelcost: data.labelcost ?? 0,
+      totalLabels: data.totalLabels ?? data.labelqty ?? 0,
+      costPerLabel: data.costPerLabel ?? data.labelcost ?? 0,
+      packCount: data.packCount ?? 0,
+      totalUnits: data.totalUnits ?? 0,
+      threePLCost: data.threePLCost ?? 0,
 
-      // Workflow
-      status: safeData.status || "OrderPending",
+      status: data.status || "OrderPending",
 
-      // Tracking / notes
-      trackingNumber: safeData.trackingNumber,
-      receivingNotes: safeData.receivingNotes,
+      trackingNumber: data.trackingNumber,
+      receivingNotes: data.receivingNotes,
 
-      // System
       createdAt: new Date(),
       updatedAt: new Date()
     };
@@ -290,6 +277,7 @@ async function loadAndRenderRecords(options) {
     renderTable(allRecords);
   }
 }
+
 
 // 📄 pagination helpers
 function getTotalPages() {
