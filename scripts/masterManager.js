@@ -142,10 +142,13 @@ async function addProduct() {
   const sku = document.getElementById("newSKU")?.value.trim();
   const name = document.getElementById("newProductName")?.value.trim();
   const priceRaw = document.getElementById("newProductPrice")?.value.trim();
-  const price = parseFloat(priceRaw);
+  const stockRaw = document.getElementById("newProductStock")?.value.trim();
 
-  if (!sku || !name || isNaN(price)) {
-    showToast("⚠️ Please enter SKU, Product Name, and Price in dollars.");
+  const price = parseFloat(priceRaw);
+  const stock = parseInt(stockRaw, 10);
+
+  if (!sku || !name || isNaN(price) || isNaN(stock)) {
+    showToast("⚠️ Please enter SKU, Product Name, Price, and Stock quantity.");
     return;
   }
 
@@ -158,12 +161,21 @@ async function addProduct() {
       return;
     }
 
-    await updateDoc(docRef, { products: [...current, { sku, name, price }] });
+    const newProduct = { sku, name, price, stock }; // ⬅️ stock added
+
+    await updateDoc(docRef, { products: [...current, newProduct] });
+
     document.getElementById("newSKU").value = "";
     document.getElementById("newProductName").value = "";
     document.getElementById("newProductPrice").value = "";
+    document.getElementById("newProductStock").value = "";
+
     await loadMasterList();
-    showToast(`✅ Product "${name}" (${sku}) added at $${price.toFixed(2)}.`);
+    showToast(
+      `✅ Product "${name}" (${sku}) added at $${price.toFixed(
+        2
+      )} with stock ${stock}.`
+    );
   } catch (error) {
     console.error("Error adding product:", error);
     showToast("❌ Failed to add product.");
