@@ -1,12 +1,22 @@
 <nav class="vault-navbar">
-  <!-- Left: Hamburger + Welcome + Avatar + Logout -->
+  <!-- Left: Hamburger + user section -->
   <div class="nav-left">
-    <div class="nav-toggle" id="nav-toggle">☰</div>
+    <!-- Hamburger toggle (mobile) -->
+    <button
+      class="nav-toggle"
+      id="nav-toggle"
+      type="button"
+      aria-label="Toggle navigation"
+      aria-expanded="false"
+    >
+      ☰
+    </button>
 
+    <!-- Auth / user info (filled by app.js) -->
     <div class="logout-wrapper" id="logout-section" style="display:none;">
       <span id="welcome-message" class="welcome-text" style="display:none;"></span>
       <span id="user-avatar" class="user-avatar" style="display:none;"></span>
-      <button id="logoutBtn" class="btn-logout">🚪 Logout</button>
+      <button id="logoutBtn" class="btn-logout" type="button">🚪 Logout</button>
     </div>
   </div>
 
@@ -17,11 +27,11 @@
     </a>
   </div>
 
-  <!-- Right: Navigation Links -->
+  <!-- Right: Navigation links -->
   <ul class="nav-links" id="nav-links">
     <li><a href="/index.html">Home</a></li>
     <li class="protected-link"><a href="/master.html">Master</a></li>
-    <li class="protected-link"><a href="/forms/orders.html">Inbound</a></li>    
-    <li class="protected-link"><a href="/forms/stock.html">Stock</a></li> 
+    <li class="protected-link"><a href="/forms/orders.html">Inbound</a></li>
+    <li class="protected-link"><a href="/forms/stock.html">Stock</a></li>
   </ul>
 </nav>
