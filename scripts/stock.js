@@ -90,16 +90,20 @@ async function updateStock(docId, qty, newPic) {
   let stockUpdated = false;
 
   try {
-    // 🔄 Update stock/{docId} if exists
+    // 1️⃣ Try to update stock/{docId}, but don't treat missing doc as failure
     try {
       const stockRef = doc(db, "stock", docId);
-      await updateDoc(stockRef, { availableQuantity: qty, prodPic: newPic });
+      await updateDoc(stockRef, {
+        availableQuantity: qty,
+        prodPic: newPic
+      });
       stockUpdated = true;
     } catch (e) {
-      console.warn("⚠️ Stock doc not found or failed to update:", e);
+      // Most common: doc doesn't exist → ignore, just log.
+      console.warn("ℹ️ Stock doc not found or failed to update:", e);
     }
 
-    // 🔄 Update masterList.products[]
+    // 2️⃣ Update masterList.products[] (this is what the table reads)
     const snapshot = await getDoc(masterRef);
     if (!snapshot.exists()) {
       showToast("⚠️ Master list not found.");
@@ -107,9 +111,15 @@ async function updateStock(docId, qty, newPic) {
     }
 
     const products = snapshot.data()?.products || [];
+
     const updatedProducts = products.map(p =>
       p.sku === docId || p.name === docId || p.id === docId
-        ? { ...p, stock: qty, availableQuantity: qty, prodPic: newPic }
+        ? {
+            ...p,
+            stock: qty,
+            availableQuantity: qty,
+            prodPic: newPic
+          }
         : p
     );
 
@@ -119,11 +129,11 @@ async function updateStock(docId, qty, newPic) {
     console.error("❌ Error updating stock:", err);
   }
 
-  // 🎯 Feedback
+  // 3️⃣ Feedback – success if masterUpdated, even if stock collection failed
   if (masterUpdated && stockUpdated) {
     showToast("✅ Stock and image updated in both Master List and Stock.");
   } else if (masterUpdated) {
-    showToast("⚠️ Updated Master List, but failed to sync Stock.");
+    showToast("✅ Stock updated in Master List (Stock collection not synced).");
   } else {
     showToast("❌ Failed to update stock.");
   }
