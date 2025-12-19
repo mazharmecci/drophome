@@ -142,10 +142,15 @@ async function addItem(field, inputId) {
 }
 
 async function addProduct() {
-  const sku = document.getElementById("newSKU")?.value.trim();
-  const name = document.getElementById("newProductName")?.value.trim();
-  const priceRaw = document.getElementById("newProductPrice")?.value.trim();
-  const stockRaw = document.getElementById("newProductStock")?.value.trim();
+  const skuEl = document.getElementById("newSKU");
+  const nameEl = document.getElementById("newProductName");
+  const priceEl = document.getElementById("newProductPrice");
+  const stockEl = document.getElementById("newProductStock");
+
+  const sku = skuEl?.value.trim();
+  const name = nameEl?.value.trim();
+  const priceRaw = priceEl?.value.trim();
+  const stockRaw = stockEl?.value.trim();
 
   const price = parseFloat(priceRaw);
   const stock = parseInt(stockRaw, 10);
@@ -164,14 +169,14 @@ async function addProduct() {
       return;
     }
 
-    const newProduct = { sku, name, price, stock }; // ⬅️ stock added
+    const newProduct = { sku, name, price, stock }; // <-- stock now persisted
 
-    await updateDoc(docRef, { products: [...current, newProduct] });
+    await updateDoc(docRef, { products: [...current, newProduct] }); // updateDoc replaces products array with new one. [web:64]
 
-    document.getElementById("newSKU").value = "";
-    document.getElementById("newProductName").value = "";
-    document.getElementById("newProductPrice").value = "";
-    document.getElementById("newProductStock").value = "";
+    skuEl.value = "";
+    nameEl.value = "";
+    priceEl.value = "";
+    stockEl.value = "";
 
     await loadMasterList();
     showToast(
