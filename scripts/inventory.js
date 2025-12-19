@@ -422,6 +422,27 @@ function renderTable(records) {
   updatePaginationControls();
 }
 
+window.updatePackAndThreePL = function (recordId, packValue, element) {
+  const record = allRecords.find(r => r.id === recordId);
+  if (!record) return;
+
+  const packs = parseInt(packValue || "0", 10);
+  let cost = 0;
+
+  if (packs <= 0) cost = 0;
+  else if (packs <= 2) cost = 1.0;
+  else cost = (packs * 0.20) + 1.0;
+
+  record.packCount = packs;
+  record.threePLcost = cost.toFixed(2);
+  record._dirty = true;
+
+  if (element) element.style.backgroundColor = "#fff3cd";
+
+  const costSpan = document.getElementById(`threePL-${recordId}`);
+  if (costSpan) costSpan.textContent = `$${record.threePLcost}`;
+};
+
 // 🧮 subtotal calculator
 function hookSubtotalCalculator() {
   const quantityInput = document.getElementById("quantityReceived");
