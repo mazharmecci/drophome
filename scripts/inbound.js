@@ -153,17 +153,45 @@ async function updateStock(productName, qty) {
   }
 }
 
-// ---------- Init ----------
+function hookThreePLCalculator() {
+  const packInput = document.getElementById("packCount");
+  const threePLField = document.getElementById("threePLCost");
 
+  if (!packInput || !threePLField) return;
+
+  function calculateThreePL() {
+    const packs = parseInt(packInput.value || "0", 10);
+
+    let cost = 0;
+    if (packs <= 0) {
+      cost = 0;
+    } else if (packs <= 2) {
+      cost = 1.0; // flat $1 for 1 or 2 packs
+    } else {
+      cost = (packs * 0.20) + 1.0; // base formula for 3+
+    }
+
+    threePLField.value = cost.toFixed(2);
+  }
+
+  packInput.addEventListener("input", calculateThreePL);
+}
+
+// ---------- Init ----------
 document.addEventListener("DOMContentLoaded", () => {
+  // Auto-generate inbound ID
   setInboundId();
+
+  // Load dropdowns from master list
   loadDropdowns();
 
+  // Show toast if master list was updated
   const params = new URLSearchParams(window.location.search);
   if (params.get("updated") === "true") {
     showToast("Master list updated successfully.");
   }
 
+  // Form submit handler
   const form = document.getElementById("inboundForm");
   if (form) {
     form.addEventListener("submit", handleSubmit);
@@ -188,5 +216,28 @@ document.addEventListener("DOMContentLoaded", () => {
       labellinkPreview.innerHTML =
         `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
     });
+  }
+
+  // 📦 Hook 3PL cost calculator
+  const packInput = document.getElementById("packCount");
+  const threePLField = document.getElementById("threePLCost");
+
+  if (packInput && threePLField) {
+    function calculateThreePL() {
+      const packs = parseInt(packInput.value || "0", 10);
+      let cost = 0;
+
+      if (packs <= 0) {
+        cost = 0;
+      } else if (packs <= 2) {
+        cost = 1.0; // flat $1 for 1 or 2 packs
+      } else {
+        cost = (packs * 0.20) + 1.0; // base formula for 3+
+      }
+
+      threePLField.value = cost.toFixed(2);
+    }
+
+    packInput.addEventListener("input", calculateThreePL);
   }
 });
