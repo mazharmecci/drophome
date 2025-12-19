@@ -55,6 +55,10 @@ function collectFormData() {
   }
   threePLCost = parseFloat(threePLCost.toFixed(2)); // numeric with 2 decimals
 
+  // ✅ SAFE prodpic / labellink: never undefined, always string
+  const prodpic = getValue("prodpic") || "";
+  const labellink = getValue("labellink") || "";
+
   return {
     // IDs
     inboundId: getValue("inboundId"),
@@ -75,8 +79,8 @@ function collectFormData() {
 
     // Quantities / Media
     quantityReceived,
-    prodpic: getValue("prodpic"),
-    labellink: getValue("labellink"),
+    prodpic,           // ✅ always "" or a URL string
+    labellink,         // ✅ always "" or a URL string
 
     // Pricing
     price,
@@ -90,8 +94,8 @@ function collectFormData() {
     // Label / 3PL – aligned to Firestore
     labelqty,
     labelcost,
-    totalLabels: labelqty,   // keep both for compatibility
-    costPerLabel: labelcost, // keep both for compatibility
+    totalLabels: labelqty,
+    costPerLabel: labelcost,
     packCount,
     totalUnits,
     threePLCost,
@@ -111,7 +115,14 @@ function collectFormData() {
 async function handleSubmit(e) {
   e.preventDefault();
   const form = e.target;
-  const data = collectFormData();
+  let data = collectFormData();
+
+  // ✅ Extra safety: strip any accidental undefined that might sneak in
+  data = {
+    ...data,
+    prodpic: data.prodpic || "",
+    labellink: data.labellink || ""
+  };
 
   try {
     // 1️⃣ Save inbound record
