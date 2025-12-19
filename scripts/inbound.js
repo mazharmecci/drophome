@@ -104,6 +104,19 @@ async function handleSubmit(e) {
     form.reset();
     setInboundId();
     loadDropdowns();
+
+    // 🔄 Clear previews
+    const prodpicPreview = document.getElementById("prodpicPreview");
+    if (prodpicPreview) {
+      prodpicPreview.innerHTML = "";
+      prodpicPreview.textContent = "No image";
+    }
+
+    const labellinkPreview = document.getElementById("labellinkPreview");
+    if (labellinkPreview) {
+      labellinkPreview.innerHTML = "";
+      labellinkPreview.textContent = "No label link";
+    }
   } catch (err) {
     console.error("❌ Error submitting inbound or syncing inventory:", err);
     showToast("❌ Failed to submit inbound record.");
@@ -154,5 +167,26 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("inboundForm");
   if (form) {
     form.addEventListener("submit", handleSubmit);
+  }
+
+  // 🔍 Label link live preview
+  const labellinkInput = document.getElementById("labellink");
+  const labellinkPreview = document.getElementById("labellinkPreview");
+
+  if (labellinkInput && labellinkPreview) {
+    labellinkPreview.textContent = "No label link";
+
+    labellinkInput.addEventListener("input", () => {
+      const raw = labellinkInput.value.trim();
+      if (!raw) {
+        labellinkPreview.innerHTML = "";
+        labellinkPreview.textContent = "No label link";
+        return;
+      }
+
+      const url = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+      labellinkPreview.innerHTML =
+        `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+    });
   }
 });
