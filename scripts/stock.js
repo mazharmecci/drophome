@@ -36,43 +36,37 @@ async function renderStockTable() {
       return;
     }
 
-    products.forEach(product => {
-      const sku = product.sku || product.id || "";
-      const name = product.name || product.productName || "";
-      const price = parseFloat(product.price || 0);
-      const stockQty =
-        product.stock ??
-        product.availableQuantity ??
-        product.qty ??
-        product.quantity ??
-        product.initialStock ??
-        0;
-    
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td>${sku}</td>
-        <td>${name}</td>
-        <td>$${price.toFixed(2)}</td>
-        <td>${stockQty}</td>
-        <td>
-          <button
-            type="button"
-            class="btn-small"
-            onclick="window.updateStockPrompt('${sku}', ${stockQty})"
-          >
-            📝 Edit
-          </button>
-          <button
-            type="button"
-            class="btn-small btn-danger"
-            onclick="window.deleteStockItem('${sku}')"
-          >
-            🗑️ Delete
-          </button>
-        </td>
-      `;
-      tbody.appendChild(row);
-    });
+  products.forEach(product => {
+    const sku = product.sku || product.id || "";
+    const name = product.name || product.productName || "";
+    const price = parseFloat(product.price || 0);
+    const stockQty = product.stock ?? 0;
+  
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${sku}</td>
+      <td>${name}</td>
+      <td>$${price.toFixed(2)}</td>
+      <td>${stockQty}</td>
+      <td>
+        <button
+          type="button"
+          class="btn-small"
+          onclick="window.updateStockPrompt('${sku}', ${stockQty})"
+        >
+          📝 Edit
+        </button>
+        <button
+          type="button"
+          class="btn-small btn-danger"
+          onclick="window.deleteStockItem('${sku}')"
+        >
+          🗑️ Delete
+        </button>
+      </td>
+    `;
+    tbody.appendChild(row);
+  });
   } catch (err) {
     console.error("❌ Error loading stock table:", err);
     showToast("❌ Failed to load products.");
