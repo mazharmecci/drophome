@@ -31,8 +31,8 @@ function setInboundId() {
 }
 
 // ---------- Data Collection ----------
-
 function collectFormData() {
+  // Pricing fields
   const priceRaw = (getValue("price") || "").replace(/[^0-9.]/g, "");
   const price = parseFloat(priceRaw) || 0;
   const quantityReceived = parseInt(getValue("quantityReceived") || "0", 10);
@@ -40,9 +40,20 @@ function collectFormData() {
   const shipping = parseFloat(getValue("shipping") || "0") || 0;
   const subtotal = price * quantityReceived + tax + shipping;
 
-  // 3PL fields from form (if present)
+  // Label / 3PL fields
+  const labelqty = parseInt(getValue("totalLabels") || "0", 10);
+  const labelcost = parseFloat(getValue("costPerLabel") || "0") || 0;
   const packCount = parseInt(getValue("packCount") || "0", 10);
-  const threePLCostField = parseFloat(getValue("threePLCost") || "0") || 0;
+  const totalUnits = parseInt(getValue("totalUnits") || "0", 10);
+
+  // Compute 3PL cost if not directly provided
+  let threePLCost = parseFloat(getValue("threePLCost") || "0") || 0;
+  if (!threePLCost) {
+    if (packCount <= 0) threePLCost = 0;
+    else if (packCount <= 2) threePLCost = 1.0;
+    else threePLCost = (packCount * 0.20) + 1.0;
+  }
+  threePLCost = parseFloat(threePLCost.toFixed(2)); // numeric with 2 decimals
 
   return {
     // IDs
@@ -63,7 +74,6 @@ function collectFormData() {
     sku: getValue("sku"),
 
     // Quantities / Media
-    quantity: quantityReceived,
     quantityReceived,
     prodpic: getValue("prodpic"),
     labellink: getValue("labellink"),
@@ -78,13 +88,13 @@ function collectFormData() {
     status: getValue("orderStatus") || "OrderPending",
 
     // Label / 3PL – aligned to Firestore
-    labelqty: 0,
-    labelcost: 0,
-    totalLabels: 0,
-    costPerLabel: 0,
-    packCount: 0,
-    totalUnits: 0,
-    threePLCost: 0,
+    labelqty,
+    labelcost,
+    totalLabels: labelqty,   // keep both for compatibility
+    costPerLabel: labelcost, // keep both for compatibility
+    packCount,
+    totalUnits,
+    threePLCost,
 
     // Tracking / Notes
     trackingNumber: getValue("trackingNumber"),
