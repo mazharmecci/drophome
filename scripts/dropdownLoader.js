@@ -14,23 +14,24 @@ export async function loadDropdowns() {
 
     const data = snapshot.data();
 
-    // Populate client names
+    // Simple string arrays
     populateDropdown("clientName", data.clients ?? [], "client name");
-
-    // Populate product dropdown with name, and wire SKU/price auto-fill
-    populateProductDropdown("productName", data.products ?? []);
-
-    // Populate dispatch locations
     populateDropdown("dispatchLocation", data.locations ?? [], "dispatch location");
+
+    // Products with { name, sku, price, prodpic }
+    populateProductDropdown("productName", data.products ?? []);
   } catch (err) {
     console.error("Error loading master list:", err);
   }
 }
 
-// Generic dropdown population for string arrays
+/**
+ * Generic dropdown population for string arrays
+ */
 function populateDropdown(fieldId, options, placeholderLabel) {
   const select = document.getElementById(fieldId);
   if (!select) return;
+
   select.innerHTML = "";
 
   const placeholder = document.createElement("option");
@@ -39,43 +40,91 @@ function populateDropdown(fieldId, options, placeholderLabel) {
   placeholder.hidden = true;
   select.appendChild(placeholder);
 
-  options.forEach(opt => {
-    const option = document.createElement("option");
-    option.value = opt;
-    option.textContent = opt;
-    select.appendChild(option);
+  options.forEach((value) => {
+    const opt = document.createElement("option");
+    opt.value = value;
+    opt.textContent = value;
+    select.appendChild(opt);
   });
 }
 
-// Special handler for products (objects with { sku, name, price })
+/**
+ * Populate product dropdown and wire:
+ * - SKU auto-fill
+ * - Price auto-fill
+ * - Product image preview from prodpic
+ *
+ * Expected product shape: { name, sku, price, prodpic }
+ */
 function populateProductDropdown(fieldId, products) {
   const select = document.getElementById(fieldId);
   const skuField = document.getElementById("sku");
   const priceField = document.getElementById("price");
+  const prodpicPreview = document.getElementById("prodpicPreview");
+
   if (!select) return;
 
-  select.innerHTML = "";
+  // Build a fast lookup map keyed by product name
+  const productMap = new Map();
+  products.forEach((p) => {
+    if (p && p.name) {
+      productMap.set(p.name, p);
+    }
+  });
 
+  // Options
+  select.innerHTML = "";
   const placeholder = document.createElement("option");
   placeholder.value = "";
   placeholder.textContent = "Choose product name";
   placeholder.hidden = true;
   select.appendChild(placeholder);
 
-  products.forEach(p => {
-    const option = document.createElement("option");
-    option.value = p.name;
-    option.textContent = p.name;
-    select.appendChild(option);
+  products.forEach((p) => {
+    if (!p || !p.name) return;
+    const opt = document.createElement("option");
+    opt.value = p.name;
+    opt.textContent = p.name;
+    select.appendChild(opt);
   });
 
+  // Initial preview text
+  if (prodpicPreview && !prodpicPreview.innerHTML.trim()) {
+    prodpicPreview.textContent = "No image";
+  }
+
+  // Change handler
   select.addEventListener("change", () => {
     const selectedName = select.value;
-    const matched = products.find(p => p.name === selectedName);
-    if (skuField) skuField.value = matched?.sku || "";
+    const product = productMap.get(selectedName);
+
+    if (!product) {
+      if (skuField) skuField.value = "";
+      if (priceField) priceField.value = "";
+      if (prodpicPreview) prodpicPreview.textContent = "No image";
+      return;
+    }
+
+    // SKU
+    if (skuField) {
+      skuField.value = product.sku ?? "";
+    }
+
+    // Price
     if (priceField) {
-      const price = matched?.price != null ? Number(matched.price) : 0;
-      priceField.value = price ? price.toString() : "0";
+      const price = product.price != null ? Number(product.price) : 0;
+      priceField.value = Number.isFinite(price) ? price.toString() : "";
+    }
+
+    // Image preview from prodpic URL
+    if (prodpicPreview) {
+      if (product.prodpic) {
+        prodpicPreview.innerHTML = `
+          <img src="${product.prodpic}" alt="${product.name} preview">
+        `;
+      } else {
+        prodpicPreview.textContent = "No image";
+      }
     }
   });
 }
