@@ -22,9 +22,6 @@ const pageSize = 10;
 async function updateStock(productName, quantity) {
   try {
     console.log(`📦 Stock update for ${productName}: +${quantity}`);
-    // Example pattern if you later add a stock collection:
-    // const stockRef = doc(db, "stock", productName);
-    // await updateDoc(stockRef, { quantity: increment(quantity) });
   } catch (err) {
     console.warn("⚠️ Stock update skipped:", err);
   }
@@ -33,17 +30,16 @@ async function updateStock(productName, quantity) {
 document.addEventListener("DOMContentLoaded", async () => {
   await loadDropdowns();
 
-// Auto-generate inbound ID (e.g., IN-00564)
-const inboundIdEl = document.getElementById("inboundId");
-if (inboundIdEl) {
-  const randomNum = Math.floor(Math.random() * 99999) + 1;
-  const padded = String(randomNum).padStart(5, "0");
-  inboundIdEl.value = `IN-${padded}`;
-}
+  // Auto-generate inbound ID (e.g., IN-00564)
+  const inboundIdEl = document.getElementById("inboundId");
+  if (inboundIdEl) {
+    const randomNum = Math.floor(Math.random() * 99999) + 1;
+    const padded = String(randomNum).padStart(5, "0");
+    inboundIdEl.value = `IN-${padded}`;
+  }
 
   const form = document.getElementById("inboundForm");
   if (form) {
-    // ✅ Correct handler name
     form.addEventListener("submit", handleSubmit);
   }
 
@@ -84,45 +80,39 @@ async function handleSubmit(e) {
 
     // 3️⃣ Auto-sync to inventory (same schema as inbound)
     const inventoryData = {
-      // IDs
       inboundId: data.inboundId,
       orderId: data.inboundId,
 
-      // dates
       ordDate: data.ordDate,
       delDate: data.delDate,
       date: data.ordDate,
 
-      // account / product
       accountName: data.accountName,
       clientName: data.clientName,
       productName: data.productName,
       dispatchLocation: data.dispatchLocation,
       sku: data.sku,
 
-      // quantities / media
       quantity: data.quantityReceived,
       quantityReceived: data.quantityReceived,
       prodpic: data.prodpic,
       labellink: data.labellink,
 
-      // pricing
       price: data.price,
       tax: data.tax,
       shipping: data.shipping,
       subtotal: data.subtotal,
 
-      // workflow
       status: data.status || "OrderPending",
       labelqty: 0,
       labelcost: "",
+      // 3PL fields initialised
+      packCount: 0,
       threePLcost: "",
 
-      // tracking / notes
       trackingNumber: data.trackingNumber,
       receivingNotes: data.receivingNotes,
 
-      // system
       createdAt: new Date(),
       updatedAt: new Date()
     };
@@ -170,7 +160,6 @@ function collectFormData() {
   const shipping = parseFloat(shippingStr) || 0;
   const subtotal = price * quantityReceived + tax + shipping;
 
-  // prodpic comes from master; stored on record, not a text input
   const prodpicPreview = document.getElementById("prodpicPreview");
   let prodpic = "";
   if (prodpicPreview) {
@@ -184,47 +173,39 @@ function collectFormData() {
   }
 
   return {
-    // IDs
     inboundId,
     orderId: inboundId,
 
-    // Dates
     ordDate,
     delDate,
-    date: ordDate, // fallback
+    date: ordDate,
 
-    // Account / Client
     accountName,
     clientName,
 
-    // Product / Warehouse
     productName,
     dispatchLocation,
     sku,
 
-    // Quantities / Media
     quantity: quantityReceived,
     quantityReceived,
     prodpic,
     labellink,
 
-    // Pricing
     price,
     tax,
     shipping,
     subtotal,
 
-    // Workflow
     status,
     labelqty: 0,
     labelcost: "",
+    packCount: 0,
     threePLcost: "",
 
-    // Tracking / Notes
     trackingNumber,
     receivingNotes,
 
-    // System
     createdAt: new Date(),
     updatedAt: new Date()
   };
@@ -276,7 +257,7 @@ function updatePaginationControls() {
   }
 }
 
-// 📊 render table (read-only, no inline editing)
+// 📊 render table (read-only)
 function renderTable(records) {
   const tbody = document.getElementById("inboundTableBody");
   if (!tbody) return;
@@ -322,7 +303,7 @@ function renderTable(records) {
     detailsTr.classList.add("details-row");
     detailsTr.style.display = "none";
 
-    // summary row (no inline editing)
+    // summary row (read-only)
     tr.innerHTML = `
       <td>${inboundId}</td>
       <td>${orderDate}</td>
@@ -338,7 +319,12 @@ function renderTable(records) {
       </td>
     `;
 
-    // details row (read-only values)
+    // details row (read-only values, including 3PL)
+    const threePLDisplay =
+      record.threePLcost != null && record.threePLcost !== ""
+        ? `$${parseFloat(record.threePLcost).toFixed(2)}`
+        : "—";
+
     detailsTr.innerHTML = `
       <td colspan="10">
         <div class="order-details">
@@ -356,7 +342,7 @@ function renderTable(records) {
           <div><strong>Cost per Label ($):</strong> ${record.costPerLabel ?? "—"}</div>
           <div><strong>Pack#s:</strong> ${record.packCount ?? "—"}</div>
           <div><strong>Total Units:</strong> ${record.totalUnits ?? "—"}</div>
-          <div><strong>3PL Cost ($):</strong> ${record.threePLcost ?? "—"}</div>
+          <div><strong>3PL Cost ($):</strong> ${threePLDisplay}</div>
           <div style="margin-top:6px;">
             <strong>Product Picture:</strong>
             ${
@@ -391,27 +377,6 @@ function renderTable(records) {
   updatePaginationControls();
 }
 
-window.updatePackAndThreePL = function (recordId, packValue, element) {
-  const record = allRecords.find(r => r.id === recordId);
-  if (!record) return;
-
-  const packs = parseInt(packValue || "0", 10);
-  let cost = 0;
-
-  if (packs <= 0) cost = 0;
-  else if (packs <= 2) cost = 1.0;
-  else cost = (packs * 0.20) + 1.0;
-
-  record.packCount = packs;
-  record.threePLcost = cost.toFixed(2);
-  record._dirty = true;
-
-  if (element) element.style.backgroundColor = "#fff3cd";
-
-  const costSpan = document.getElementById(`threePL-${recordId}`);
-  if (costSpan) costSpan.textContent = `$${record.threePLcost}`;
-};
-
 // 🧮 subtotal calculator
 function hookSubtotalCalculator() {
   const quantityInput = document.getElementById("quantityReceived");
@@ -433,28 +398,6 @@ function hookSubtotalCalculator() {
   [quantityInput, priceInput, taxInput, shippingInput].forEach(input => {
     input.addEventListener("input", calculateSubtotal);
   });
-}
-
-// 🎛 status options
-function renderStatusOptions(current) {
-  const statuses = [
-    "OrderPending",
-    "WarehouseDelivered",
-    "OrderDelivered",
-    "OrderCompleted",
-    "CancelCompleted",
-    "Refunded",
-    "Shipped",
-    "LabelsPrinted"
-  ];
-
-  return statuses
-    .map(status => {
-      const label = status.replace(/([A-Z])/g, " $1").trim();
-      const selected = current === status ? "selected" : "";
-      return `<option value="${status}" ${selected}>${label}</option>`;
-    })
-    .join("");
 }
 
 // 🔍 filters: order date + status
@@ -496,7 +439,8 @@ function clearFilters() {
   showToast("🔄 Filters cleared. Showing all records.");
 }
 
-// ✏️ edit + save
+// ❗ since you said no inline editing, these remain for status-only save if used elsewhere.
+// If you want 100% read-only, you can remove updateField and saveRecord entirely.
 window.updateField = function (recordId, field, value, element) {
   const record = allRecords.find(r => r.id === recordId);
   if (!record) return;
@@ -512,6 +456,8 @@ window.saveRecord = async function (recordId) {
   try {
     await updateDoc(doc(db, "inventory", recordId), {
       status: record.status || "OrderPending",
+      threePLcost: record.threePLcost ?? "",
+      packCount: record.packCount ?? 0,
       updatedAt: new Date()
     });
 
