@@ -32,6 +32,11 @@
       text-align: left;
       white-space: nowrap;   /* keep cells on one line */
     }
+
+    .summary-table th {
+      background-color: #f5f5f5;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
@@ -40,7 +45,7 @@
   <div id="navbar-placeholder"></div>
   <script src="../scripts/navbar.js" defer></script>
 
-  <div class="history-container">
+  <main class="history-container">
     <!-- Breadcrumb -->
     <nav class="breadcrumb-nav" aria-label="Breadcrumb">
       <ol class="breadcrumb-list">
@@ -51,17 +56,17 @@
     </nav>
 
     <!-- Inner Content Wrapper (filters + pagination only) -->
-    <div class="form-body">
+    <section class="form-body">
 
       <!-- Pagination -->
-      <div class="pagination-bar">
-        <button id="prevPage" class="btn-secondary">Previous</button>
+      <div class="pagination-bar" aria-label="Pagination">
+        <button id="prevPage" class="btn-secondary" type="button">Previous</button>
         <span id="pageInfo"></span>
-        <button id="nextPage" class="btn-secondary">Next</button>
+        <button id="nextPage" class="btn-secondary" type="button">Next</button>
       </div>
 
       <!-- Filters (date range + status only) -->
-      <div class="filters-bar">
+      <form class="filters-bar" id="filtersForm" aria-label="Filters">
         <div class="filter-item">
           <label for="filterStart">Ordered Date (From)</label>
           <input type="date" id="filterStart" name="filterStart" />
@@ -88,43 +93,43 @@
         </div>
 
         <div class="filter-item filters-actions">
-          <button type="button" id="applyFilters" class="btn-primary">Apply</button>
-          <button type="button" id="clearFilters" class="btn-orange">Clear</button>
+          <button type="submit" id="applyFilters" class="btn-primary">Apply</button>
+          <button type="reset" id="clearFilters" class="btn-orange">Clear</button>
         </div>
-      </div>
-    </div> <!-- end .form-body -->
+      </form>
+    </section>
 
     <!-- 🔽 Full-width summary table OUTSIDE form-body -->
-    <div class="inventory-table-section">
+    <section class="inventory-table-section">
       <div class="table-scroll-wrapper">
-        <table class="summary-table">
+        <table class="summary-table" aria-describedby="pageInfo">
           <thead>
             <tr>
-              <th>Inbound&nbsp;ID</th>
-              <th>Order&nbsp;Date</th>
-              <th>Delivered&nbsp;Date</th>
-              <th>Cust&nbsp;Name</th>
-              <th>WareHouse</th>
-              <th>Prod&nbsp;Name</th>
-              <th>Qty</th>
-              <th>Price</th>
-              <th>Status</th>
-              <th>Actions</th>
+              <th scope="col">Inbound&nbsp;ID</th>
+              <th scope="col">Order&nbsp;Date</th>
+              <th scope="col">Delivered&nbsp;Date</th>
+              <th scope="col">Cust&nbsp;Name</th>
+              <th scope="col">Warehouse</th>
+              <th scope="col">Prod&nbsp;Name</th>
+              <th scope="col">Qty</th>
+              <th scope="col">Price</th>
+              <th scope="col">Status</th>
+              <th scope="col">Actions</th>
             </tr>
           </thead>
           <tbody id="inboundTableBody"></tbody>
         </table>
       </div>
-    </div>
-  </div>
+    </section>
+  </main>
 
   <!-- Success Popup -->
-  <div id="successPopup" class="hidden">
+  <div id="successPopup" class="hidden" role="alertdialog" aria-labelledby="popupTitle">
     <div class="popup-content">
       <div class="checkmark-circle"></div>
       <div class="checkmark-check"></div>
-      <p>✅ Saved successfully!</p>
-      <button id="closePopup">Close</button>
+      <p id="popupTitle">✅ Saved successfully!</p>
+      <button id="closePopup" type="button">Close</button>
     </div>
   </div>
 
