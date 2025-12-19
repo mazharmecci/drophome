@@ -33,14 +33,25 @@ function setInboundId() {
 // ---------- Data Collection ----------
 
 function collectFormData() {
+  const priceRaw = (getValue("price") || "").replace(/[^0-9.]/g, "");
+  const price = parseFloat(priceRaw) || 0;
+  const quantityReceived = parseInt(getValue("quantityReceived") || "0", 10);
+  const tax = parseFloat(getValue("tax") || "0") || 0;
+  const shipping = parseFloat(getValue("shipping") || "0") || 0;
+  const subtotal = price * quantityReceived + tax + shipping;
+
+  // 3PL fields from form (if present)
+  const packCount = parseInt(getValue("packCount") || "0", 10);
+  const threePLCostField = parseFloat(getValue("threePLCost") || "0") || 0;
+
   return {
     // IDs
     inboundId: getValue("inboundId"),
 
     // Dates
-    ordDate: getValue("orderedDate"),     // Ordered Date
-    delDate: getValue("deliveryDate"),    // Delivery Date
-    date: getValue("orderedDate"),        // generic fallback
+    ordDate: getValue("orderedDate"),
+    delDate: getValue("deliveryDate"),
+    date: getValue("orderedDate"),
 
     // Account / Client
     accountName: getValue("accountName"),
@@ -52,24 +63,28 @@ function collectFormData() {
     sku: getValue("sku"),
 
     // Quantities / Media
-    quantity: parseInt(getValue("quantityReceived") || "0", 10),
-    quantityReceived: parseInt(getValue("quantityReceived") || "0", 10),
+    quantity: quantityReceived,
+    quantityReceived,
     prodpic: getValue("prodpic"),
     labellink: getValue("labellink"),
 
     // Pricing
-    price: parseFloat((getValue("price") || "").replace(/[^0-9.]/g, "")) || 0,
-    tax: parseFloat(getValue("tax") || "0") || 0,
-    shipping: parseFloat(getValue("shipping") || "0") || 0,
-    subtotal:
-      (parseFloat((getValue("price") || "").replace(/[^0-9.]/g, "")) || 0) *
-      (parseInt(getValue("quantityReceived") || "0", 10)),
+    price,
+    tax,
+    shipping,
+    subtotal,
 
     // Workflow
     status: getValue("orderStatus") || "OrderPending",
+
+    // Label / 3PL – aligned to Firestore
     labelqty: 0,
     labelcost: "",
-    threePLcost: "",
+    totalLabels: 0,
+    costPerLabel: "",
+    packCount: isNaN(packCount) ? 0 : packCount,
+    totalUnits: 0,
+    threePLCost: threePLCostField.toFixed(2),
 
     // Tracking / Notes
     trackingNumber: getValue("trackingNumber"),
@@ -153,6 +168,8 @@ async function updateStock(productName, qty) {
   }
 }
 
+// ---------- 3PL Calculator (packCount -> threePLCost) ----------
+
 function hookThreePLCalculator() {
   const packInput = document.getElementById("packCount");
   const threePLField = document.getElementById("threePLCost");
@@ -161,14 +178,14 @@ function hookThreePLCalculator() {
 
   function calculateThreePL() {
     const packs = parseInt(packInput.value || "0", 10);
-
     let cost = 0;
+
     if (packs <= 0) {
       cost = 0;
     } else if (packs <= 2) {
       cost = 1.0; // flat $1 for 1 or 2 packs
     } else {
-      cost = (packs * 0.20) + 1.0; // base formula for 3+
+      cost = packs * 0.20 + 1.0; // base formula for 3+
     }
 
     threePLField.value = cost.toFixed(2);
@@ -178,6 +195,7 @@ function hookThreePLCalculator() {
 }
 
 // ---------- Init ----------
+
 document.addEventListener("DOMContentLoaded", () => {
   // Auto-generate inbound ID
   setInboundId();
@@ -219,25 +237,5 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // 📦 Hook 3PL cost calculator
-  const packInput = document.getElementById("packCount");
-  const threePLField = document.getElementById("threePLCost");
-
-  if (packInput && threePLField) {
-    function calculateThreePL() {
-      const packs = parseInt(packInput.value || "0", 10);
-      let cost = 0;
-
-      if (packs <= 0) {
-        cost = 0;
-      } else if (packs <= 2) {
-        cost = 1.0; // flat $1 for 1 or 2 packs
-      } else {
-        cost = (packs * 0.20) + 1.0; // base formula for 3+
-      }
-
-      threePLField.value = cost.toFixed(2);
-    }
-
-    packInput.addEventListener("input", calculateThreePL);
-  }
+  hookThreePLCalculator();
 });
