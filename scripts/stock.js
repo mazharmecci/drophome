@@ -40,8 +40,14 @@ async function renderStockTable() {
       const sku = product.sku || product.id || "";
       const name = product.name || product.productName || "";
       const price = parseFloat(product.price || 0);
-      const stockQty = product.stock ?? product.availableQuantity ?? 0;
-
+      const stockQty =
+        product.stock ??
+        product.availableQuantity ??
+        product.qty ??
+        product.quantity ??
+        product.initialStock ??
+        0;
+    
       const row = document.createElement("tr");
       row.innerHTML = `
         <td>${sku}</td>
