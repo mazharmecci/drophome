@@ -1,405 +1,88 @@
-// scripts/inventory.js
-import { db } from "./firebase.js";
-import { loadDropdowns } from "./dropdownLoader.js";
-import { showToast, showSuccessPopup } from "./popupHandler.js";
+import { db } from "../scripts/firebase.js";
+import { showToast } from "../scripts/popupHandler.js";
 import {
   collection,
   getDocs,
+  query,
+  where,
   updateDoc,
-  addDoc,
   doc
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-let allRecords = [];
-let hasInitialLoadCompleted = false;
+// ---------- Render Shipping Table ----------
 
-// pagination state
-let currentPage = 1;
-const pageSize = 10;
+async function renderShippingTable() {
+  const tbody = document.getElementById("inboundTableBody");
+  if (!tbody) return;
 
-document.addEventListener("DOMContentLoaded", async () => {
-  await loadDropdowns();
-
-  // Auto-generate outbound ID (short)
-  const inboundIdEl = document.getElementById("inboundId");
-  if (inboundIdEl) {
-    const shortId = Math.random().toString(36).substring(2, 7);
-    inboundIdEl.value = `OUT-${shortId}`;
-  }
-
-  // Form submit
-  const form = document.getElementById("inboundForm");
-  if (form) {
-    form.addEventListener("submit", handleFormSubmit);
-  }
-
-  hookSubtotalCalculator();
-
-  // Initial load
-  await loadAndRenderRecords({ showErrorToast: false });
-
-  // Filters
-  document.getElementById("applyFilters")?.addEventListener("click", applyFilters);
-  document.getElementById("clearFilters")?.addEventListener("click", clearFilters);
-
-  // Pagination buttons
-  document.getElementById("prevPage")?.addEventListener("click", () => {
-    setPage(currentPage - 1);
-  });
-  document.getElementById("nextPage")?.addEventListener("click", () => {
-    setPage(currentPage + 1);
-  });
-
-  hasInitialLoadCompleted = true;
-});
-
-// 📝 handle submit
-async function handleFormSubmit(event) {
-  event.preventDefault();
-
-  const data = collectFormData();
-  if (!data) return;
-
-  try {
-    const colRef = collection(db, "inventory");
-    const docRef = await addDoc(colRef, {
-      outboundId: data.inboundId,
-      ordDate: data.orderedDate,
-      delDate: data.deliveryDate,
-      clientName: data.clientName,
-      dispatchLocation: data.dispatchLocation,
-      productName: data.productName,
-      sku: data.sku,
-      prodpic: data.prodpic,
-      labellink: data.labellink,
-      price: data.price,
-      quantityReceived: data.quantityReceived,
-      tax: data.tax,
-      shipping: data.shipping,
-      subtotal: data.subtotal,
-      trackingNumber: data.trackingNumber,
-      receivingNotes: data.receivingNotes,
-      status: data.orderStatus, // use exactly what the user chose
-      createdAt: new Date(),
-      updatedAt: new Date()
-    });
-
-    showToast(`✅ Order saved with ID ${docRef.id}`);
-    showSuccessPopup();
-
-    event.target.reset();
-    const subtotalInput = document.getElementById("subtotal");
-    if (subtotalInput) subtotalInput.value = "0.00";
-
-    currentPage = 1;
-    await loadAndRenderRecords({ showErrorToast: true });
-  } catch (err) {
-    console.error("❌ handleFormSubmit failed:", err);
-    showToast("⚠️ Failed to submit order. Please try again.");
-  }
-}
-
-// collect form
-function collectFormData() {
-  const inboundId = document.getElementById("inboundId")?.value || "";
-  const orderedDate = document.getElementById("orderedDate")?.value || "";
-  const deliveryDate = document.getElementById("deliveryDate")?.value || "";
-  const clientName = document.getElementById("clientName")?.value || "";
-  const dispatchLocation = document.getElementById("dispatchLocation")?.value || "";
-  const productName = document.getElementById("productName")?.value || "";
-  const priceStr = document.getElementById("price")?.value || "0";
-  const sku = document.getElementById("sku")?.value || "";
-  const prodpic = document.getElementById("prodpic")?.value || "";
-  const labellink = document.getElementById("labellink")?.value || "";
-  const qtyStr = document.getElementById("quantityReceived")?.value || "0";
-  const taxStr = document.getElementById("tax")?.value || "0";
-  const shippingStr = document.getElementById("shipping")?.value || "0";
-  const subtotalStr = document.getElementById("subtotal")?.value || "0";
-  const trackingNumber = document.getElementById("trackingNumber")?.value || "";
-  const receivingNotes = document.getElementById("receivingNotes")?.value || "";
-  const orderStatus = document.getElementById("orderStatus")?.value || "OrderPending";
-
-  const price = parseFloat(priceStr) || 0;
-  const quantityReceived = parseFloat(qtyStr) || 0;
-  const tax = parseFloat(taxStr) || 0;
-  const shipping = parseFloat(shippingStr) || 0;
-  const subtotal = parseFloat(subtotalStr) || 0;
-
-  if (!orderedDate || !deliveryDate || !clientName || !dispatchLocation || !productName) {
-    showToast("⚠️ Please fill all required fields.");
-    return null;
-  }
-
-  return {
-    inboundId,
-    orderedDate,
-    deliveryDate,
-    clientName,
-    dispatchLocation,
-    productName,
-    sku,
-    prodpic,
-    labellink,
-    price,
-    quantityReceived,
-    tax,
-    shipping,
-    subtotal,
-    trackingNumber,
-    receivingNotes,
-    orderStatus
-  };
-}
-
-// 🔄 load + render
-
-function populateWarehouseFilter() {
-  const select = document.getElementById("filterWarehouse");
-  if (!select) return;
-
-  // collect distinct non-empty dispatchLocation values
-  const locations = [...new Set(
-    allRecords
-      .map(r => (r.dispatchLocation || "").trim())
-      .filter(v => v)
-  )];
-
-  // reset options
-  select.innerHTML = "";
-  const optAll = document.createElement("option");
-  optAll.value = "";
-  optAll.textContent = "All warehouses";
-  select.appendChild(optAll);
-
-  locations.forEach(loc => {
-    const option = document.createElement("option");
-    option.value = loc;
-    option.textContent = loc;
-    select.appendChild(option);
-  });
-}
-
-
-
-async function loadAndRenderRecords(options) {
-  const { showErrorToast = true } = options || {};
+  tbody.innerHTML = "";
 
   try {
     const snapshot = await getDocs(collection(db, "inventory"));
-    allRecords = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-    populateWarehouseFilter();      // <‑‑ here
-    renderTable(allRecords);
-  } catch (err) {
-    console.error("❌ loadAndRenderRecords failed:", err);
-    if (showErrorToast && hasInitialLoadCompleted) {
-      showToast("⚠️ Failed to load records. Please check your connection or Firestore rules.");
-    }
-    allRecords = [];
-    populateWarehouseFilter();
-    renderTable(allRecords);
-  }
-}
+    const filters = getFilters();
 
-// pagination helpers
-function getTotalPages() {
-  return Math.max(1, Math.ceil(allRecords.length / pageSize));
-}
-
-function setPage(page) {
-  const totalPages = getTotalPages();
-  currentPage = Math.min(Math.max(1, page), totalPages);
-  renderTable(allRecords);
-}
-
-function updatePaginationControls() {
-  const totalPages = getTotalPages();
-  const pageInfo = document.getElementById("pageInfo");
-  const prevBtn = document.getElementById("prevPage");
-  const nextBtn = document.getElementById("nextPage");
-
-  if (pageInfo) {
-    pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
-  }
-  if (prevBtn) {
-    prevBtn.disabled = currentPage <= 1;
-  }
-  if (nextBtn) {
-    nextBtn.disabled = currentPage >= totalPages;
-  }
-}
-
-// 📊 render table with pagination
-function renderTable(records) {
-  const tbody = document.getElementById("inboundTableBody");
-  if (!tbody) return;
-  tbody.innerHTML = "";
-
-  if (!Array.isArray(records) || records.length === 0) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="10" style="text-align:center; padding:20px; color:#888;">
-          🚫 No records found. Try adjusting your filters or check back later.
-        </td>
-      </tr>`;
-    updatePaginationControls();
-    return;
-  }
-
-  const totalPages = getTotalPages();
-  if (currentPage > totalPages) currentPage = totalPages;
-
-  const startIndex = (currentPage - 1) * pageSize;
-  const endIndex = startIndex + pageSize;
-  const pageRecords = records.slice(startIndex, endIndex);
-
-  pageRecords.forEach(record => {
-    const price =
-      record.price != null
-        ? parseFloat(record.price)
-        : record.unitPrice != null
-          ? parseFloat(record.unitPrice)
-          : 0;
-
-    const quantity =
-      record.quantityReceived != null
-        ? parseFloat(record.quantityReceived)
-        : record.quantity != null
-          ? parseFloat(record.quantity)
-          : 0;
-
-    const tax = record.tax != null ? parseFloat(record.tax) : 0;
-    const shipping = record.shipping != null ? parseFloat(record.shipping) : 0;
-
-    const subtotalValue =
-      record.subtotal != null
-        ? parseFloat(record.subtotal)
-        : (quantity * price) + tax + shipping;
-
-    const priceDisplay = price ? `$${price.toFixed(2)}` : "$0.00";
-    const taxDisplay = tax ? `$${tax.toFixed(2)}` : "$0.00";
-    const shippingDisplay = shipping ? `$${shipping.toFixed(2)}` : "$0.00";
-    const subtotalDisplay = `$${subtotalValue.toFixed(2)}`;
-
-    const outboundId =
-      record.outboundId || record.inboundId || record.orderId || "";
-
-    const orderDate =
-      record.ordDate ||
-      record.orderedDate ||
-      record.orderDate ||
-      record.date ||
-      "";
-
-    const deliveredDate =
-      record.delDate ||
-      record.deliveryDate ||
-      record.deliveredDate ||
-      record.dateDelivered ||
-      "";
-
-    const clientName = record.clientName || record.accountName || "";
-
-    const tr = document.createElement("tr");
-    const detailsTr = document.createElement("tr");
-    detailsTr.classList.add("details-row");
-    detailsTr.style.display = "none";
-
-    // summary row
-    tr.innerHTML = `
-      <td>${outboundId}</td>
-      <td>${orderDate}</td>
-      <td>${deliveredDate}</td>
-      <td>${clientName}</td>
-      <td>${record.dispatchLocation || ""}</td>
-      <td>${record.productName || ""}</td>
-      <td>${quantity || 0}</td>
-      <td>${subtotalDisplay}</td>
-      <td>
-        <select onchange="updateField('${record.id}','status',this.value,this)">
-          ${renderStatusOptions(record.status)}
-        </select>
-      </td>
-      <td>
-        <button class="btn-secondary details-toggle">Details</button>
-        <button class="btn-save" onclick="saveRecord('${record.id}')">💾 Save</button>
-      </td>
-    `;
-
-    // details row
-    detailsTr.innerHTML = `
-      <td colspan="10">
-        <div class="order-details">
-          <div><strong>Qty:</strong> ${quantity || 0}</div>
-          <div><strong>Unit Price:</strong> ${priceDisplay}</div>
-          <div><strong>Tax:</strong> ${taxDisplay}</div>
-          <div><strong>Shipping:</strong> ${shippingDisplay}</div>
-          <div><strong>Subtotal:</strong> ${subtotalDisplay}</div>
-
-          <div style="margin-top:6px;">
-            <strong>Product Picture:</strong>
-            ${
-              record.prodpic
-                ? `<br><img src="${record.prodpic}" alt="Product" style="max-width:120px; margin-top:4px;" />`
-                : " N/A"
-            }
-          </div>
-
-          <div style="margin-top:6px;">
-            <strong>Label Link:</strong>
-            ${
-              record.labellink
-                ? ` <a href="${record.labellink}" target="_blank">${record.labellink}</a>`
-                : " N/A"
-            }
-          </div>
-
-          <div style="margin-top:6px;">
-            <strong>Notes:</strong> ${record.receivingNotes || "N/A"}
-          </div>
-        </div>
-      </td>
-    `;
-
-    tr.querySelector(".details-toggle").addEventListener("click", () => {
-      detailsTr.style.display =
-        detailsTr.style.display === "none" ? "table-row" : "none";
+    const filtered = snapshot.docs.filter(docSnap => {
+      const data = docSnap.data();
+      return (
+        (!filters.location || data.dispatchLocation === filters.location) &&
+        (!filters.client || data.accountName?.toLowerCase().includes(filters.client.toLowerCase())) &&
+        (!filters.status || data.status === filters.status) &&
+        (!filters.start || new Date(data.date) >= filters.start) &&
+        (!filters.end || new Date(data.date) <= filters.end)
+      );
     });
 
-    tbody.appendChild(tr);
-    tbody.appendChild(detailsTr);
-  });
+    if (!filtered.length) {
+      tbody.innerHTML = `<tr><td colspan="17" style="text-align:center;color:#666;">No matching records found</td></tr>`;
+      return;
+    }
 
-  updatePaginationControls();
-}
+    filtered.forEach(docSnap => {
+      const data = docSnap.data();
+      const row = document.createElement("tr");
 
-// subtotal calculator
-function hookSubtotalCalculator() {
-  const quantityInput = document.getElementById("quantityReceived");
-  const priceInput = document.getElementById("price");
-  const taxInput = document.getElementById("tax");
-  const shippingInput = document.getElementById("shipping");
-  const subtotalInput = document.getElementById("subtotal");
-
-  if (!quantityInput || !priceInput || !taxInput || !shippingInput || !subtotalInput) return;
-
-  function calculateSubtotal() {
-    const quantity = parseFloat(quantityInput.value) || 0;
-    const price = parseFloat(priceInput.value) || 0;
-    const tax = parseFloat(taxInput.value) || 0;
-    const shipping = parseFloat(shippingInput.value) || 0;
-    subtotalInput.value = ((quantity * price) + tax + shipping).toFixed(2);
+      row.innerHTML = `
+        <td>${data.orderId}</td>
+        <td>${data.date || ""}</td>
+        <td>${data.deliveredDate || ""}</td>
+        <td>${data.accountName || ""}</td>
+        <td>${data.dispatchLocation || ""}</td>
+        <td>${data.productName || ""}</td>
+        <td>${data.sku || ""}</td>
+        <td>
+          ${data.prodpic ? `<img src="${data.prodpic}" style="width:50px;height:50px;object-fit:contain;" />` : `<span style="color:#999;">No image</span>`}
+        </td>
+        <td>
+          ${data.labellink ? `<a href="${data.labellink}" target="_blank">Label</a>` : `<span style="color:#999;">—</span>`}
+        </td>
+        <td>$${(data.price || 0).toFixed(2)}</td>
+        <td>${data.quantity || 0}</td>
+        <td>${data.tax || ""}</td>
+        <td>${data.shipping || ""}</td>
+        <td>${data.subtotal || ""}</td>
+        <td>${data.trackingNumber || ""}</td>
+        <td>
+          <select onchange="updateShippingStatus('${docSnap.id}', this.value)">
+            ${renderStatusOptions(data.status)}
+          </select>
+        </td>
+        <td>
+          <button class="btn-small" onclick="showToast('✅ Saved successfully.')">Save</button>
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
+  } catch (err) {
+    console.error("❌ Error loading shipping table:", err);
+    showToast("❌ Failed to load shipping records.");
   }
-
-  [quantityInput, priceInput, taxInput, shippingInput].forEach(input => {
-    input.addEventListener("input", calculateSubtotal);
-  });
 }
 
-// status options
+// ---------- Status Dropdown ----------
+
 function renderStatusOptions(current) {
   const statuses = [
     "OrderPending",
-    "WarehouseDelivered",
     "OrderDelivered",
     "OrderCompleted",
     "CancelCompleted",
@@ -407,86 +90,59 @@ function renderStatusOptions(current) {
     "Shipped",
     "LabelsPrinted"
   ];
-
   return statuses
-    .map(status => {
-      const label = status.replace(/([A-Z])/g, " $1").trim();
-      const selected = current === status ? "selected" : "";
-      return `<option value="${status}" ${selected}>${label}</option>`;
-    })
+    .map(status => `<option value="${status}" ${status === current ? "selected" : ""}>${status}</option>`)
     .join("");
 }
 
-// filters (Ordered Date range, Warehouse, Product Name, Status)
-function applyFilters() {
-  const fromDate = document.getElementById("filterStart")?.value || "";
-  const toDate = document.getElementById("filterEnd")?.value || "";
-  const warehouse = (document.getElementById("filterWarehouse")?.value || "").trim();
-  const product = (document.getElementById("filterProduct")?.value || "").trim().toLowerCase();
-  const status = document.getElementById("filterStatus")?.value || "";
+// ---------- Update Status ----------
 
-  const filtered = allRecords.filter(record => {
-    const recordDate =
-      record.ordDate ||
-      record.orderedDate ||
-      record.orderDate ||
-      record.date ||
-      "";
-
-    const recordWarehouse = (record.dispatchLocation || "").trim();
-    const recordProduct = (record.productName || "").toLowerCase();
-    const recordStatus = record.status || "";
-
-    const matchFrom = !fromDate || recordDate >= fromDate;
-    const matchTo = !toDate || recordDate <= toDate;
-    const matchWarehouse = !warehouse || recordWarehouse === warehouse;
-    const matchProduct = !product || recordProduct.includes(product);
-    const matchStatus = !status || recordStatus === status;
-
-    return matchFrom && matchTo && matchWarehouse && matchProduct && matchStatus;
-  });
-
-  currentPage = 1;
-  renderTable(filtered);
-}
-
-function clearFilters() {
-  ["filterStart", "filterEnd", "filterWarehouse", "filterProduct", "filterStatus"].forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.value = "";
-  });
-
-  currentPage = 1;
-  renderTable(allRecords);
-  showToast("🔄 Filters cleared. Showing all records.");
-}
-
-// edit + save
-window.updateField = function (recordId, field, value, element) {
-  const record = allRecords.find(r => r.id === recordId);
-  if (!record) return;
-  record[field] = value;
-  record._dirty = true;
-  if (element) element.style.backgroundColor = "#fff3cd";
-};
-
-window.saveRecord = async function (recordId) {
-  const record = allRecords.find(r => r.id === recordId);
-  if (!record || !record._dirty) return;
-
+async function updateShippingStatus(docId, newStatus) {
   try {
-    await updateDoc(doc(db, "inventory", recordId), {
-      status: record.status || "OrderPending",
-      updatedAt: new Date()
-    });
-
-    showToast(`✅ Record updated for ${record.outboundId || record.inboundId || record.id}`);
-    showSuccessPopup();
-    record._dirty = false;
-    await loadAndRenderRecords({ showErrorToast: true });
+    const ref = doc(db, "inventory", docId);
+    await updateDoc(ref, { status: newStatus });
+    showToast("✅ Status updated.");
   } catch (err) {
-    console.error("❌ saveRecord failed:", err);
-    showToast("⚠️ Failed to save changes. Please try again.");
+    console.error("❌ Error updating status:", err);
+    showToast("❌ Failed to update status.");
   }
-};
+}
+
+// ---------- Filters ----------
+
+function getFilters() {
+  return {
+    location: document.getElementById("filterLocation")?.value || "",
+    client: document.getElementById("filterClient")?.value || "",
+    status: document.getElementById("filterStatus")?.value || "",
+    start: parseDate(document.getElementById("filterStart")?.value),
+    end: parseDate(document.getElementById("filterEnd")?.value)
+  };
+}
+
+function parseDate(val) {
+  return val ? new Date(val) : null;
+}
+
+// ---------- Init ----------
+
+document.addEventListener("DOMContentLoaded", () => {
+  if (!sessionStorage.getItem("drophome-auth")) {
+    window.location.href = "/forms/login.html";
+    return;
+  }
+
+  renderShippingTable();
+
+  document.getElementById("applyFilters")?.addEventListener("click", renderShippingTable);
+  document.getElementById("clearFilters")?.addEventListener("click", () => {
+    ["filterLocation", "filterClient", "filterStart", "filterEnd", "filterStatus"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = "";
+    });
+    renderShippingTable();
+  });
+});
+
+// Expose globally
+window.updateShippingStatus = updateShippingStatus;
