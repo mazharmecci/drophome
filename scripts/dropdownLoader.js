@@ -116,11 +116,13 @@ function populateProductDropdown(fieldId, products) {
       priceField.value = Number.isFinite(price) ? price.toString() : "";
     }
 
-    // Image preview from prodpic URL
+    // Image preview from prodPic URL
     if (prodpicPreview) {
-      if (product.prodpic) {
+      const imgUrl = product.prodpic || product.prodPic; // <-- add product.prodPic
+      if (imgUrl) {
         prodpicPreview.innerHTML = `
-          <img src="${product.prodpic}" alt="${product.name} preview">
+          <img src="${imgUrl}" alt="${product.name} preview" 
+               style="max-width: 100%; max-height: 150px; object-fit: contain;">
         `;
       } else {
         prodpicPreview.textContent = "No image";
