@@ -59,10 +59,16 @@ async function renderStockTable() {
         <td>${data.sku || "-"}</td>
         <td>${data.productName}</td>
         <td>$${(data.price || 0).toFixed(2)}</td>
-        <td>${balance >= 0 ? balance : 0}</td>
         <td>
-          <button class="update-stock-btn" data-id="${docSnap.id}">
-            ✏️ Update
+          <input type="number" 
+                 class="stock-input" 
+                 value="${balance >= 0 ? balance : 0}" 
+                 min="0" 
+                 style="width:80px;" />
+        </td>
+        <td>
+          <button class="save-stock-btn" data-id="${docSnap.id}">
+            💾 Save
           </button>
         </td>
       `;
@@ -70,11 +76,14 @@ async function renderStockTable() {
       tbody.appendChild(tr);
     });
 
-    // Bind update buttons
-    document.querySelectorAll(".update-stock-btn").forEach(btn => {
+    // Bind save buttons
+    document.querySelectorAll(".save-stock-btn").forEach(btn => {
       btn.addEventListener("click", async e => {
         const id = e.currentTarget.getAttribute("data-id");
-        await promptUpdateStock(id);
+        const row = e.currentTarget.closest("tr");
+        const input = row.querySelector(".stock-input");
+        const newQty = parseInt(input.value, 10);
+        await updateStock(id, newQty);
       });
     });
   } catch (err) {
@@ -83,12 +92,8 @@ async function renderStockTable() {
   }
 }
 
-// ✏️ Prompt and update stock quantity
-async function promptUpdateStock(docId) {
-  const newQty = prompt("Enter new stock quantity:");
-  if (newQty === null) return;
-
-  const qty = parseInt(newQty, 10);
+// 💾 Update stock quantity
+async function updateStock(docId, qty) {
   if (isNaN(qty) || qty < 0) {
     showToast("⚠️ Invalid quantity entered.");
     return;
