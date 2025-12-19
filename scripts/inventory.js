@@ -33,12 +33,13 @@ async function updateStock(productName, quantity) {
 document.addEventListener("DOMContentLoaded", async () => {
   await loadDropdowns();
 
-  // Auto-generate outbound ID (short)
-  const inboundIdEl = document.getElementById("inboundId");
-  if (inboundIdEl) {
-    const shortId = Math.random().toString(36).substring(2, 7);
-    inboundIdEl.value = `OUT-${shortId}`;
-  }
+// Auto-generate inbound ID (e.g., IN-00564)
+const inboundIdEl = document.getElementById("inboundId");
+if (inboundIdEl) {
+  const randomNum = Math.floor(Math.random() * 99999) + 1;
+  const padded = String(randomNum).padStart(5, "0");
+  inboundIdEl.value = `IN-${padded}`;
+}
 
   const form = document.getElementById("inboundForm");
   if (form) {
