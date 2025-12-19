@@ -1261,3 +1261,9 @@ button.btn-clear:hover { background-color: #e6b800; }
   cursor: pointer;
   margin-left: 12px;
 }
+
+.actions-cell {
+  display: inline-flex;
+  gap: 4px;          /* subtle horizontal gap */
+  align-items: center;
+}
