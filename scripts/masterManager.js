@@ -4,7 +4,9 @@ import {
   doc,
   getDoc,
   setDoc,
-  updateDoc
+  updateDoc,
+  collection,
+  addDoc
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 const docRef = doc(db, "masterList", "VwsEuQNJgfo5TXM6A0DA");
@@ -83,7 +85,11 @@ function renderProductList(products = []) {
     const stockDisplay =
       typeof p.stock === "number" ? ` — Stock: ${p.stock}` : "";
 
-    li.textContent = `${p.name} (${p.sku}) — ${priceDisplay}${stockDisplay}`;
+    const picDisplay = p.prodPic
+      ? ` — <img src="${p.prodPic}" alt="Thumbnail" style="width:30px;height:30px;object-fit:contain;border:1px solid #ccc;margin-left:5px;" />`
+      : "";
+
+    li.innerHTML = `${p.name} (${p.sku}) — ${priceDisplay}${stockDisplay}${picDisplay}`;
 
     const removeBtn = document.createElement("button");
     removeBtn.type = "button";
@@ -95,7 +101,6 @@ function renderProductList(products = []) {
     ul.appendChild(li);
   });
 }
-
 
 // ---------- CRUD Operations ----------
 
@@ -172,36 +177,40 @@ async function addProduct() {
       return;
     }
 
-    // Include product picture in the new product object
     const newProduct = { sku, name, price, stock, prodPic };
 
-    // Update Master List
-    await updateDoc(docRef, { products: [...current, newProduct] });
+    // Step 1: Update Master List
+    try {
+      await updateDoc(docRef, { products: [...current, newProduct] });
+    } catch (err) {
+      console.error("❌ Error updating Master List:", err);
+      showToast("❌ Failed to update Master List.");
+      return;
+    }
 
-    // Also insert into Stock collection
-    await addDoc(collection(db, "stock"), {
-      sku,
-      productName: name,
-      price,
-      availableQuantity: stock,
-      prodPic
-    });
+    // Step 2: Insert into Stock collection
+    try {
+      await addDoc(collection(db, "stock"), {
+        sku,
+        productName: name,
+        price,
+        availableQuantity: stock,
+        prodPic
+      });
+    } catch (err) {
+      console.warn("⚠️ Stock insert failed, but Master List was updated:", err);
+      showToast("⚠️ Product added to Master List, but not synced to Stock.");
+    }
 
     // Clear inputs
     [skuEl, nameEl, priceEl, stockEl, picEl].forEach(el => {
       if (el) el.value = "";
     });
 
-    // Clear preview box
     if (previewBox) previewBox.innerHTML = "";
 
-    // Reload list
     await loadMasterList();
-    showToast(
-      `✅ Product "${name}" (${sku}) added at $${price.toFixed(
-        2
-      )} with stock ${stock}.`
-    );
+    showToast(`✅ Product "${name}" (${sku}) added at $${price.toFixed(2)} with stock ${stock}.`);
   } catch (error) {
     console.error("Error adding product:", error);
     showToast("❌ Failed to add product.");
@@ -273,6 +282,12 @@ function goBack() {
 
 // ---------- Init ----------
 document.addEventListener("DOMContentLoaded", () => {
+  // ✅ Session check: redirect if not logged in
+  if (!sessionStorage.getItem("drophome-auth")) {
+    window.location.href = "/forms/login.html";
+    return;
+  }
+
   // Load master list data on page ready
   loadMasterList();
 
