@@ -77,11 +77,13 @@ function renderProductList(products = []) {
   products.forEach((p) => {
     const li = document.createElement("li");
 
-    const priceDisplay = typeof p.price === "number"
-      ? `$${p.price.toFixed(2)}`
-      : "$0.00";
+    const priceDisplay =
+      typeof p.price === "number" ? `$${p.price.toFixed(2)}` : "$0.00";
 
-    li.textContent = `${p.name} (${p.sku}) — ${priceDisplay}`;
+    const stockDisplay =
+      typeof p.stock === "number" ? ` — Stock: ${p.stock}` : "";
+
+    li.textContent = `${p.name} (${p.sku}) — ${priceDisplay}${stockDisplay}`;
 
     const removeBtn = document.createElement("button");
     removeBtn.type = "button";
@@ -93,6 +95,7 @@ function renderProductList(products = []) {
     ul.appendChild(li);
   });
 }
+
 
 // ---------- CRUD Operations ----------
 
