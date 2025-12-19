@@ -25,11 +25,12 @@
     <section class="form-container">
       <div class="logo-brand">
         <h3 class="brand-name">
-          DR<span class="logo-replace"><img src="/images/DH-Black.png" alt="Logo" /></span>PHOME
+          DR<span class="logo-replace"><img src="/images/DH-Black.png" alt="Drophome Logo" /></span>PHOME
         </h3>
       </div>
 
-      <section class="card-container" aria-label="Navigation cards">
+      <!-- Navigation cards -->
+      <nav class="card-container" aria-label="Main navigation">
         <a href="/forms/inbound.html" class="card inbound-card" id="orders-card">
           <div class="emoji">📥</div>
           <h2>Inbound</h2>
@@ -53,14 +54,14 @@
           <h2>Sales</h2>
           <p>View summary metrics and revenue reports.</p>
         </a>
-      </section>
+      </nav>
     </section>
   </main>
 
   <!-- Footer -->
   <footer class="footer-with-logo">
     <img src="/images/DH-Black.png" alt="Drophome Logo" class="footer-logo" />
-    <span>© 2025 Drophome — Leader in E-commerce business</span>
+    <span>© 2025 Drophome — Leader in E‑commerce Business</span>
   </footer>
 
   <!-- Firebase Auth -->
@@ -80,6 +81,7 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
+    // Optional logout button (ensure you add it in navbar if needed)
     const logoutBtn = document.getElementById("logoutBtn");
     logoutBtn?.addEventListener("click", async () => {
       try {
@@ -90,25 +92,20 @@
       }
     });
 
+    // Auth state check
     onAuthStateChanged(auth, (user) => {
       if (!user) {
         window.location.href = "/forms/login.html";
         return;
       }
 
+      // Restrict certain cards for specific user
       if (user.email === "ahmadmanj40@gmail.com") {
         ["shipping-card", "sales-card"].forEach(id => {
           document.getElementById(id)?.classList.add("restricted-card");
         });
       }
     });
-  </script>
-
-  <!-- Session Check -->
-  <script>
-    if (!sessionStorage.getItem("drophome-auth")) {
-      window.location.href = "/forms/login.html";
-    }
   </script>
 </body>
 </html>
