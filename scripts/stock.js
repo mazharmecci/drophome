@@ -12,13 +12,13 @@ const masterRef = doc(db, "masterList", "VwsEuQNJgfo5TXM6A0DA");
 
 async function renderStockTable() {
   try {
-    const snapshot = await getDoc(masterRef); // getDoc reads a single document in v9. [web:66]
+    const snapshot = await getDoc(masterRef);
     if (!snapshot.exists()) {
       console.warn("Master list document not found");
       const tbody = document.querySelector("#stockTable tbody");
       if (tbody) {
         tbody.innerHTML =
-          '<tr><td colspan="5" style="text-align:center;color:#666;">masterList document not found</td></tr>';
+          '<tr><td colspan="6" style="text-align:center;color:#666;">masterList document not found</td></tr>';
       }
       return;
     }
@@ -32,43 +32,51 @@ async function renderStockTable() {
 
     if (!products.length) {
       tbody.innerHTML =
-        '<tr><td colspan="5" style="text-align:center;color:#666;">No products found</td></tr>';
+        '<tr><td colspan="6" style="text-align:center;color:#666;">No products found</td></tr>';
       return;
     }
 
-  products.forEach(product => {
-    const sku = product.sku || product.id || "";
-    const name = product.name || product.productName || "";
-    const price = parseFloat(product.price || 0);
-    const stockQty = product.stock ?? 0;
-  
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${sku}</td>
-      <td>${name}</td>
-      <td>$${price.toFixed(2)}</td>
-      <td>${stockQty}</td>
-      <td>
-        <div class="actions-cell">
-          <button
-            type="button"
-            class="btn-small"
-            onclick="window.updateStockPrompt('${sku}', ${stockQty})"
-          >
-            📝 Edit
-          </button>
-          <button
-            type="button"
-            class="btn-small btn-danger"
-            onclick="window.deleteStockItem('${sku}')"
-          >
-            🗑️ Delete
-          </button>
-        </div>
-      </td>
-    `;
-    tbody.appendChild(row);
-  });
+    products.forEach(product => {
+      const sku = product.sku || product.id || "";
+      const name = product.name || product.productName || "";
+      const price = parseFloat(product.price || 0);
+      const stockQty = product.stock ?? 0;
+      const prodPic = product.prodPic || ""; // new field
+
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${sku}</td>
+        <td>${name}</td>
+        <td>$${price.toFixed(2)}</td>
+        <td>${stockQty}</td>
+        <td>
+          ${
+            prodPic
+              ? `<img src="${prodPic}" alt="Product Image" style="width:50px;height:50px;object-fit:contain;border:1px solid #ccc;" />`
+              : `<span style="color:#999;">No image</span>`
+          }
+        </td>
+        <td>
+          <div class="actions-cell">
+            <button
+              type="button"
+              class="btn-small"
+              onclick="window.updateStockPrompt('${sku}', ${stockQty})"
+            >
+              📝 Edit
+            </button>
+            <button
+              type="button"
+              class="btn-small btn-danger"
+              onclick="window.deleteStockItem('${sku}')"
+            >
+              🗑️ Delete
+            </button>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
   } catch (err) {
     console.error("❌ Error loading stock table:", err);
     showToast("❌ Failed to load products.");
@@ -106,7 +114,7 @@ async function updateStock(docId, qty) {
         : p
     );
 
-    await updateDoc(masterRef, { products: updatedProducts }); // updateDoc updates only the products field. [web:64]
+    await updateDoc(masterRef, { products: updatedProducts });
     showToast("✅ Stock updated and synced with Master List.");
     await renderStockTable();
   } catch (err) {
@@ -136,12 +144,12 @@ async function deleteStockItem(docId) {
       p => !(p.sku === docId || p.name === docId || p.id === docId)
     );
 
-    await updateDoc(masterRef, { products: filteredProducts }); // Rewrites array without the deleted item. [web:44]
+    await updateDoc(masterRef, { products: filteredProducts });
 
     // 2️⃣ Optional: delete stock/{docId} document
     try {
       const stockRef = doc(db, "stock", docId);
-      await deleteDoc(stockRef); // deleteDoc removes the document entirely. [web:42][web:60]
+      await deleteDoc(stockRef);
     } catch (e) {
       console.warn("No stock doc to delete for", docId, e);
     }
@@ -167,8 +175,8 @@ document.addEventListener("DOMContentLoaded", () => {
   renderStockTable();
 });
 
-// Expose functions globally for inline onclick in this module script. [web:49]
+// Expose functions globally
 window.updateStockPrompt = updateStockPrompt;
 window.deleteStockItem = deleteStockItem;
-window.updateStock = updateStock; // optional for debugging
+window.updateStock = updateStock;
 window.renderStockTable = renderStockTable;
