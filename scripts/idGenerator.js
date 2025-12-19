@@ -9,7 +9,7 @@ import {
 
 /**
  * Generates a unique ID based on the latest document in a Firestore collection.
- * @param {string} prefix - Prefix for the ID (e.g., "INB", "OUT").
+ * @param {string} prefix - Prefix for the ID (e.g., "INB", "IN").
  * @param {string} collectionName - Firestore collection to scan.
  * @param {string} fieldId - DOM input field ID to populate.
  * @param {boolean} verbose - Optional: enable console logging.
