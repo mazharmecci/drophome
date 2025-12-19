@@ -8,35 +8,37 @@
   <link rel="apple-touch-icon" href="../images/DH-Black.png" />
   <link rel="stylesheet" href="../style.css" />
   <style>
-    /* Make the table area full width and scrollable */
-    .inventory-table-section {
-      width: 100%;
-      margin-top: 16px;
-    }
-
-    .table-scroll-wrapper {
-      width: 100%;
-      overflow-x: auto;      /* horizontal scroll if needed */
-      overflow-y: hidden;
-    }
-
-    .summary-table {
-      width: 100%;
-      min-width: 900px;      /* adjust so columns don’t compress */
-      border-collapse: collapse;
-    }
-
-    .summary-table th,
-    .summary-table td {
-      padding: 8px 10px;
-      text-align: left;
-      white-space: nowrap;   /* keep cells on one line */
-    }
-
-    .summary-table th {
-      background-color: #f5f5f5;
-      font-weight: 600;
-    }
+/* Make the table area full width and scrollable */
+  .inventory-table-section {
+    width: 100%;
+    margin-top: 16px;
+  }
+  
+  .table-scroll-wrapper {
+    width: 100%;
+    overflow-x: auto;      /* horizontal scroll if needed */
+    overflow-y: hidden;
+  }
+  
+  .summary-table {
+    width: 100%;
+    min-width: 900px;      /* adjust so columns don’t compress */
+    border-collapse: collapse;
+  }
+  
+  .summary-table th,
+  .summary-table td {
+    padding: 8px 10px;
+    text-align: left;
+    white-space: nowrap;   /* keep cells on one line */
+  }
+  
+  /* Dark blue header row */
+  .summary-table th {
+    background-color: #003366; /* deep navy blue */
+    color: #ffffff;            /* white text for contrast */
+    font-weight: 600;
+  }
   </style>
 </head>
 <body>
