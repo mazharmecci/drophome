@@ -1,3 +1,6 @@
+// ------------------------------
+// Navbar Injection + Auth Control
+// ------------------------------
 document.addEventListener("DOMContentLoaded", async () => {
   // Skip navbar injection on login page
   if (window.location.pathname.includes("login.html")) return;
@@ -47,8 +50,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 🔒 Listen for auth state changes
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        if (logoutSection) logoutSection.style.display = "flex";
+        // Show logout section
+        logoutSection?.classList.add("active");
 
+        // Show avatar + welcome
         if (welcomeTag && avatarTag) {
           const email = user.email || "User";
           const initials = email.substring(0, 2).toUpperCase();
@@ -61,8 +66,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Restrict Ahmad’s nav links
         if (user.email === "ahmadmanj40@gmail.com") {
           protectedLinks.forEach(link => {
-            const anchor = link.querySelector("a");
-            const href = anchor ? anchor.getAttribute("href") : "";
+            const href = link.querySelector("a")?.getAttribute("href") || "";
             if (href.includes("orders.html") || href.includes("order-history.html")) {
               link.style.display = "list-item";
             } else {
@@ -84,7 +88,9 @@ document.addEventListener("DOMContentLoaded", async () => {
           protectedLinks.forEach(link => link.style.display = "list-item");
         }
 
-        if (logoutBtn) {
+        // Bind logout button safely
+        if (logoutBtn && !logoutBtn.dataset.bound) {
+          logoutBtn.dataset.bound = "true";
           logoutBtn.addEventListener("click", async () => {
             try {
               await signOut(auth);
