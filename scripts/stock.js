@@ -1,11 +1,12 @@
-// /scripts/stock.js
 import { db } from "./firebase.js";
 import { showToast } from "./popupHandler.js";
 import {
   doc,
   getDoc,
   updateDoc,
-  deleteDoc
+  deleteDoc,
+  collection,
+  addDoc
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 const masterRef = doc(db, "masterList", "VwsEuQNJgfo5TXM6A0DA");
@@ -14,7 +15,6 @@ async function renderStockTable() {
   try {
     const snapshot = await getDoc(masterRef);
     if (!snapshot.exists()) {
-      console.warn("Master list document not found");
       const tbody = document.querySelector("#stockTable tbody");
       if (tbody) {
         tbody.innerHTML =
@@ -28,7 +28,7 @@ async function renderStockTable() {
     const tbody = document.querySelector("#stockTable tbody");
 
     if (!tbody) return;
-    tbody.innerHTML = ""; // Clear existing rows
+    tbody.innerHTML = "";
 
     if (!products.length) {
       tbody.innerHTML =
@@ -41,7 +41,7 @@ async function renderStockTable() {
       const name = product.name || product.productName || "";
       const price = parseFloat(product.price || 0);
       const stockQty = product.stock ?? 0;
-      const prodPic = product.prodPic || ""; // ensure consistent field
+      const prodPic = product.prodPic || "";
 
       const row = document.createElement("tr");
       row.innerHTML = `
@@ -62,7 +62,7 @@ async function renderStockTable() {
             <button
               type="button"
               class="btn-small"
-              onclick="window.updateStockPrompt('${sku}', ${stockQty})"
+              onclick="window.updateStockPrompt('${sku}', ${stockQty}, '${prodPic}')"
             >
               📝 Edit
             </button>
@@ -84,22 +84,22 @@ async function renderStockTable() {
   }
 }
 
-async function updateStock(docId, qty) {
+async function updateStock(docId, qty, newPic) {
   if (isNaN(qty) || qty < 0) {
     showToast("⚠️ Invalid quantity entered.");
     return;
   }
 
   try {
-    // 1️⃣ Update stock/{docId} doc if it exists
+    // Update stock/{docId} doc if it exists
     try {
       const stockRef = doc(db, "stock", docId);
-      await updateDoc(stockRef, { availableQuantity: qty });
+      await updateDoc(stockRef, { availableQuantity: qty, prodPic: newPic });
     } catch (e) {
       console.warn("Stock doc not found or cannot update, skipping:", e);
     }
 
-    // 2️⃣ Update products[] inside masterList
+    // Update products[] inside masterList
     const snapshot = await getDoc(masterRef);
     if (!snapshot.exists()) {
       showToast("⚠️ Master list not found.");
@@ -111,7 +111,7 @@ async function updateStock(docId, qty) {
 
     const updatedProducts = products.map(p =>
       p.sku === docId || p.name === docId || p.id === docId
-        ? { ...p, stock: qty, availableQuantity: qty }
+        ? { ...p, stock: qty, availableQuantity: qty, prodPic: newPic }
         : p
     );
 
@@ -131,7 +131,6 @@ async function deleteStockItem(docId) {
   if (!ok) return;
 
   try {
-    // 1️⃣ Remove from masterList.products
     const snapshot = await getDoc(masterRef);
     if (!snapshot.exists()) {
       showToast("⚠️ Master list not found.");
@@ -147,7 +146,6 @@ async function deleteStockItem(docId) {
 
     await updateDoc(masterRef, { products: filteredProducts });
 
-    // 2️⃣ Delete stock/{docId} document if exists
     try {
       const stockRef = doc(db, "stock", docId);
       await deleteDoc(stockRef);
@@ -163,20 +161,23 @@ async function deleteStockItem(docId) {
   }
 }
 
-// Simple prompt wrapper for Edit button
-function updateStockPrompt(sku, currentQty) {
+// Prompt wrapper for Edit button
+function updateStockPrompt(sku, currentQty, currentPic) {
   const val = prompt("New stock quantity:", currentQty);
   if (val === null) return;
   const num = Number(val);
-  updateStock(sku, num);
+
+  const newPic = prompt("New product picture URL:", currentPic) || currentPic;
+
+  updateStock(sku, num, newPic);
 }
 
-// Auto-load table on page load
+// Auto-load table
 document.addEventListener("DOMContentLoaded", () => {
   renderStockTable();
 });
 
-// Expose functions globally
+// Expose globally
 window.updateStockPrompt = updateStockPrompt;
 window.deleteStockItem = deleteStockItem;
 window.updateStock = updateStock;
