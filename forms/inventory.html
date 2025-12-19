@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>📦 Shipping – Drophome</title>
+  <title>📦 Inventory – Drophome</title>
   <link rel="icon" href="../images/DH-Black.png" type="image/png" />
   <link rel="apple-touch-icon" href="../images/DH-Black.png" />
   <link rel="stylesheet" href="../style.css" />
@@ -19,7 +19,7 @@
     <nav class="breadcrumb-nav" aria-label="Breadcrumb">
       <ol class="breadcrumb-list">
         <li class="breadcrumb-item">
-          <span>Shipping</span>
+          <span>Inventory</span>
         </li>
       </ol>
     </nav>
@@ -34,7 +34,7 @@
         <button id="nextPage" class="btn-secondary">Next</button>
       </div>
 
-      <!-- Filters -->
+      <!-- Filters (date range + status only) -->
       <div class="filters-bar">
         <div class="filter-item">
           <label for="filterStart">Ordered Date (From)</label>
@@ -44,13 +44,6 @@
         <div class="filter-item">
           <label for="filterEnd">Ordered Date (To)</label>
           <input type="date" id="filterEnd" name="filterEnd" />
-        </div>
-
-        <div class="filter-item">
-          <label for="filterWarehouse">Warehouse</label>
-          <select id="filterWarehouse" name="filterWarehouse">
-            <option value="">All warehouses</option>
-          </select>
         </div>
 
         <div class="filter-item">
@@ -74,19 +67,17 @@
         </div>
       </div>
 
-      <!-- Summary Table -->
+      <!-- Summary Table (stripped-down columns) -->
       <div class="table-scroll-wrapper">
         <table class="summary-table">
           <thead>
             <tr>
-              <th>Inbound&nbsp;ID</th>
               <th>Order&nbsp;Date</th>
-              <th>Delivered&nbsp;Date</th>
-              <th>Cust&nbsp;Name</th>
-              <th>WareHouse</th>
+              <th>Account&nbsp;Name</th>
+              <th>SKU</th>
               <th>Prod&nbsp;Name</th>
               <th>Qty</th>
-              <th>Subtotal&nbsp;($)</th>
+              <th>Label&nbsp;Link</th>
               <th>Status</th>
               <th>Actions</th>
             </tr>
@@ -116,8 +107,8 @@
     });
   </script>
 
-  <!-- Shipping workflow script -->
-  <script type="module" src="../scripts/shipping.js"></script>
+  <!-- Inventory workflow script -->
+  <script type="module" src="../scripts/inventory.js"></script>
 
   <!-- Login check -->
   <script>
