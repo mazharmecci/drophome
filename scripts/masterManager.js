@@ -81,11 +81,7 @@ function renderProductList(products = []) {
       ? `$${p.price.toFixed(2)}`
       : "$0.00";
 
-    const stockDisplay = typeof p.stock === "number"
-      ? `Stock: ${p.stock}`
-      : "Stock: 0";
-
-    li.textContent = `${p.name} (${p.sku}) — ${priceDisplay} — ${stockDisplay}`;
+    li.textContent = `${p.name} (${p.sku}) — ${priceDisplay}`;
 
     const removeBtn = document.createElement("button");
     removeBtn.type = "button";
@@ -146,13 +142,10 @@ async function addProduct() {
   const sku = document.getElementById("newSKU")?.value.trim();
   const name = document.getElementById("newProductName")?.value.trim();
   const priceRaw = document.getElementById("newProductPrice")?.value.trim();
-  const stockRaw = document.getElementById("newProductStock")?.value.trim();
-
   const price = parseFloat(priceRaw);
-  const stock = parseInt(stockRaw, 10);
 
-  if (!sku || !name || isNaN(price) || isNaN(stock)) {
-    showToast("⚠️ Please enter SKU, Product Name, Price, and Stock quantity.");
+  if (!sku || !name || isNaN(price)) {
+    showToast("⚠️ Please enter SKU, Product Name, and Price in dollars.");
     return;
   }
 
@@ -165,13 +158,12 @@ async function addProduct() {
       return;
     }
 
-    await updateDoc(docRef, { products: [...current, { sku, name, price, stock }] });
+    await updateDoc(docRef, { products: [...current, { sku, name, price }] });
     document.getElementById("newSKU").value = "";
     document.getElementById("newProductName").value = "";
     document.getElementById("newProductPrice").value = "";
-    document.getElementById("newProductStock").value = "";
     await loadMasterList();
-    showToast(`✅ Product "${name}" (${sku}) added at $${price.toFixed(2)} with stock ${stock}.`);
+    showToast(`✅ Product "${name}" (${sku}) added at $${price.toFixed(2)}.`);
   } catch (error) {
     console.error("Error adding product:", error);
     showToast("❌ Failed to add product.");
@@ -227,12 +219,6 @@ function clearUIOnly() {
     const el = document.getElementById(id);
     if (el) el.innerHTML = "";
   });
-
-  ["newAccount", "newClient", "newLocation", "newSKU", "newProductName", "newProductPrice", "newProductStock"].forEach(id => {
-    const input = document.getElementById(id);
-    if (input) input.value = "";
-  });
-
   showToast("🧹 UI cleared — backend data untouched.");
 }
 
@@ -250,24 +236,19 @@ function goBack() {
 // ---------- Init ----------
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Load master list data on page ready
   loadMasterList();
 
-  // Button bindings map
-  const bindings = {
-    addAccountBtn: () => addItem("accounts", "newAccount"),
-    addProductBtn: addProduct,
-    addClientBtn: () => addItem("clients", "newClient"),
-    addLocationBtn: () => addItem("locations", "newLocation"),
-    backToFormBtn: goBack,
-    clearUIBtn: clearUIOnly
-  };
+  const bindings = [
+    { id: "addAccountBtn", handler: () => addItem("accounts", "newAccount") },
+    { id: "addProductBtn", handler: addProduct },
+    { id: "addClientBtn", handler: () => addItem("clients", "newClient") },
+    { id: "addLocationBtn", handler: () => addItem("locations", "newLocation") },
+    { id: "backToFormBtn", handler: goBack },
+    { id: "clearUIBtn", handler: clearUIOnly }
+  ];
 
-  // Attach event listeners
-  Object.entries(bindings).forEach(([id, handler]) => {
+  bindings.forEach(({ id, handler }) => {
     const el = document.getElementById(id);
-    if (el) {
-      el.addEventListener("click", handler);
-    }
+    if (el) el.addEventListener("click", handler);
   });
 });
