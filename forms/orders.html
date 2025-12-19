@@ -121,9 +121,11 @@
       </label>
       <input type="text" id="sku" name="sku" readonly class="input-readonly" />
 
-      <label for="prodpic">Product Picture URL</label>
-      <input type="text" id="prodpic" name="prodpic" class="input-highlight" />
-      <div id="prodpicPreview" class="preview-box"></div>
+      <label>
+        Product Image (from master)
+        <span class="hint-icon" data-tooltip="Automatically pulled from the product master when you choose a product.">ℹ️</span>
+      </label>
+      <div id="prodpicPreview" class="preview-box auto-preview"></div>
 
       <label for="labellink">Label Link URL</label>
       <input type="text" id="labellink" name="labellink" class="input-highlight" />
