@@ -147,7 +147,7 @@ async function handleSubmit(e) {
   }
 }
 
-// 🧾 collect form data
+// 🧾 collect form data (aligned with Firebase schema)
 function collectFormData() {
   const inboundId = document.getElementById("inboundId")?.value || "";
   const ordDate = document.getElementById("orderedDate")?.value || "";
@@ -156,21 +156,57 @@ function collectFormData() {
   const accountName = document.getElementById("accountName")?.value || "";
   const dispatchLocation = document.getElementById("dispatchLocation")?.value || "";
   const productName = document.getElementById("productName")?.value || "";
-  const priceStr = document.getElementById("price")?.value || "0";
   const sku = document.getElementById("sku")?.value || "";
   const labellink = document.getElementById("labellink")?.value || "";
-  const qtyStr = document.getElementById("quantityReceived")?.value || "0";
-  const taxStr = document.getElementById("tax")?.value || "0";
-  const shippingStr = document.getElementById("shipping")?.value || "0";
   const trackingNumber = document.getElementById("trackingNumber")?.value || "";
   const receivingNotes = document.getElementById("receivingNotes")?.value || "";
   const status = document.getElementById("orderStatus")?.value || "OrderPending";
 
-  const price = parseFloat(priceStr) || 0;
-  const quantityReceived = parseInt(qtyStr, 10) || 0;
-  const tax = parseFloat(taxStr) || 0;
-  const shipping = parseFloat(shippingStr) || 0;
+  // numeric fields
+  const price = parseFloat(document.getElementById("price")?.value || "0");
+  const quantityReceived = parseInt(document.getElementById("quantityReceived")?.value || "0", 10);
+  const tax = parseFloat(document.getElementById("tax")?.value || "0");
+  const shipping = parseFloat(document.getElementById("shipping")?.value || "0");
+
+  // label-related fields (Firebase schema)
+  const labelqty = parseInt(document.getElementById("totalLabels")?.value || "0", 10);
+  const labelcost = parseFloat(document.getElementById("costPerLabel")?.value || "0");
+  const packCount = parseInt(document.getElementById("packCount")?.value || "0", 10);
+  const totalUnits = parseInt(document.getElementById("totalUnits")?.value || "0", 10);
+
+  // derived fields
   const subtotal = price * quantityReceived + tax + shipping;
+
+  // compute 3PL cost as a number
+  let threePLCost = 0;
+  if (packCount <= 0) threePLCost = 0;
+  else if (packCount <= 2) threePLCost = 1.0;
+  else threePLCost = (packCount * 0.20) + 1.0;
+
+  return {
+    inboundId,
+    ordDate,
+    delDate,
+    clientName,
+    accountName,
+    dispatchLocation,
+    productName,
+    price,
+    sku,
+    labellink,
+    quantityReceived,
+    tax,
+    shipping,
+    subtotal,
+    trackingNumber,
+    receivingNotes,
+    status,
+    labelqty,
+    labelcost,
+    packCount,
+    totalUnits,
+    threePLCost: parseFloat(threePLCost.toFixed(2)) // numeric with 2 decimals  };
+  }
 
   // prodpic comes from master; stored on record, not a text input
   const prodpicPreview = document.getElementById("prodpicPreview");
