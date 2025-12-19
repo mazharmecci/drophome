@@ -133,8 +133,7 @@
       <div id="prodpicPreview" class="preview-box auto-preview"></div>
 
       <label for="labellink">Label Link URL - (mandatory)</label>
-      <input type="text" id="labellink" name="labellink" class="input-highlight" />
-      <div id="labellinkPreview" class="preview-box"></div>
+      <input type="text" id="labellink" name="labellink" class="input-highlight" />      
 
       <label for="quantityReceived">Quantity</label>
       <input type="number" id="quantityReceived" name="quantityReceived" required />
@@ -166,6 +165,25 @@
 
       <label for="receivingNotes">Receiving Notes</label>
       <textarea id="receivingNotes" name="receivingNotes" class="textarea-large"></textarea>
+      
+      <!-- subtle divider line -->
+      <hr style="border:0; border-top:1px solid #ddd; margin:12px 0;">
+      
+      <!-- New fields -->
+      <label for="totalLabels">Total Labels</label>
+      <input type="number" id="totalLabels" name="totalLabels" min="0" />
+      
+      <label for="costPerLabel">Cost per Label ($)</label>
+      <input type="number" id="costPerLabel" name="costPerLabel" step="0.01" min="0" />
+      
+      <label for="packCount">Pack#s</label>
+      <input type="number" id="packCount" name="packCount" min="0" />
+      
+      <label for="totalUnits">Total Units</label>
+      <input type="number" id="totalUnits" name="totalUnits" min="0" />
+      
+      <label for="threePLCost">3PL Cost ($)</label>
+      <input type="text" id="threePLCost" name="threePLCost" readonly class="input-readonly" />
 
       <div class="form-actions">
         <button type="submit" class="btn-primary">Submit</button>
