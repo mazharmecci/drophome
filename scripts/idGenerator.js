@@ -1,27 +1,19 @@
 // scripts/idGenerator.js
 
 /**
- * Generates a random ID with a given prefix.
- * Example: OUT-04567, STK-98231
+ * Generates a random ID with a given prefix and writes it into a DOM field.
+ * Example: IN-04567, OUT-98231, STK-12345
  *
- * @param {string} prefix - Prefix for the ID (e.g., "OUT", "STK").
+ * @param {string} prefix - Prefix for the ID (e.g., "IN", "OUT", "STK").
  * @param {string} fieldId - DOM input field ID to populate.
- * @param {boolean} verbose - Optional: enable console logging.
  */
-export function generateRandomId(prefix, fieldId, verbose = false) {
-  // random number between 1 and 99999
+export function generateId(prefix, fieldId) {
+  const el = document.getElementById(fieldId);
+  if (!el) return;
+
+  // Generate a 5-digit padded number
   const randomNum = Math.floor(Math.random() * 99999) + 1;
-  // pad with leading zeros to 5 digits
   const padded = String(randomNum).padStart(5, "0");
-  const newId = `${prefix}-${padded}`;
 
-  // populate the input field if present
-  const input = document.getElementById(fieldId);
-  if (input) input.value = newId;
-
-  if (verbose) {
-    console.log(`✅ Generated random ID: ${newId}`);
-  }
-
-  return newId;
+  el.value = `${prefix}-${padded}`;
 }
