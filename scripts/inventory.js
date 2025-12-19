@@ -81,14 +81,28 @@ function collectFormData() {
 
   // numeric fields
   const price = parseFloat(document.getElementById("price")?.value || "0") || 0;
-  const quantityReceived = parseInt(document.getElementById("quantityReceived")?.value || "0", 10) || 0;
+  const quantityReceived = parseInt(
+    document.getElementById("quantityReceived")?.value || "0",
+    10
+  ) || 0;
   const tax = parseFloat(document.getElementById("tax")?.value || "0") || 0;
   const shipping = parseFloat(document.getElementById("shipping")?.value || "0") || 0;
 
-  const labelqty = parseInt(document.getElementById("totalLabels")?.value || "0", 10) || 0;
-  const labelcost = parseFloat(document.getElementById("costPerLabel")?.value || "0") || 0;
-  const packCount = parseInt(document.getElementById("packCount")?.value || "0", 10) || 0;
-  const totalUnits = parseInt(document.getElementById("totalUnits")?.value || "0", 10) || 0;
+  const labelqty = parseInt(
+    document.getElementById("totalLabels")?.value || "0",
+    10
+  ) || 0;
+  const labelcost = parseFloat(
+    document.getElementById("costPerLabel")?.value || "0"
+  ) || 0;
+  const packCount = parseInt(
+    document.getElementById("packCount")?.value || "0",
+    10
+  ) || 0;
+  const totalUnits = parseInt(
+    document.getElementById("totalUnits")?.value || "0",
+    10
+  ) || 0;
 
   const subtotal = price * quantityReceived + tax + shipping;
 
@@ -96,8 +110,8 @@ function collectFormData() {
   let threePLCost = 0;
   if (packCount <= 0) threePLCost = 0;
   else if (packCount <= 2) threePLCost = 1.0;
-  else threePLCost = (packCount * 0.20) + 1.0;
-  threePLCost = parseFloat(threePLCost.toFixed(2)); // numeric with 2 decimals
+  else threePLCost = packCount * 0.20 + 1.0;
+  threePLCost = parseFloat(threePLCost.toFixed(2));
 
   // prodpic from preview; ensure string
   let prodpic = "";
@@ -136,7 +150,7 @@ function collectFormData() {
 
     // Quantities / media
     quantityReceived,
-    prodpic: prodpic || "",        // ✅ never undefined
+    prodpic: prodpic || "",
     labellink: labellinkInput || "",
 
     // Pricing
@@ -235,7 +249,6 @@ async function loadAndRenderRecords(options) {
   }
 }
 
-
 // 📄 pagination helpers
 function getTotalPages() {
   return Math.max(1, Math.ceil(allRecords.length / pageSize));
@@ -264,7 +277,7 @@ function updatePaginationControls() {
   }
 }
 
-// 📊 render table (read-only)
+// 📊 render table (status inline editable)
 function renderTable(records) {
   const tbody = document.getElementById("inboundTableBody");
   if (!tbody) return;
@@ -310,7 +323,7 @@ function renderTable(records) {
     detailsTr.classList.add("details-row");
     detailsTr.style.display = "none";
 
-    // summary row (read-only)
+    // summary row – status as editable select
     tr.innerHTML = `
       <td>${inboundId}</td>
       <td>${orderDate}</td>
@@ -320,11 +333,29 @@ function renderTable(records) {
       <td>${productName}</td>
       <td>${qty || 0}</td>
       <td>$${subtotal.toFixed(2)}</td>
-      <td>${record.status || "—"}</td>
+      <td>
+        <select class="status-select" data-id="${record.id}">
+          <option value="OrderPending" ${record.status === "OrderPending" ? "selected" : ""}>OrderPending</option>
+          <option value="Received" ${record.status === "Received" ? "selected" : ""}>Received</option>
+          <option value="InProgress" ${record.status === "InProgress" ? "selected" : ""}>InProgress</option>
+          <option value="Completed" ${record.status === "Completed" ? "selected" : ""}>Completed</option>
+          <option value="Cancelled" ${record.status === "Cancelled" ? "selected" : ""}>Cancelled</option>
+        </select>
+      </td>
       <td>
         <button class="btn-secondary details-toggle">Details</button>
       </td>
     `;
+
+    // wire status change -> updateField + saveRecord
+    const statusSelect = tr.querySelector(".status-select");
+    if (statusSelect) {
+      statusSelect.addEventListener("change", (ev) => {
+        const newStatus = ev.target.value;
+        updateField(record.id, "status", newStatus, ev.target);
+        saveRecord(record.id);
+      });
+    }
 
     const threePLDisplay =
       record.threePLCost != null && record.threePLCost !== ""
@@ -447,7 +478,7 @@ function clearFilters() {
   showToast("🔄 Filters cleared. Showing all records.");
 }
 
-// 🔧 optional helpers for future inline editing
+// 🔧 helpers for inline editing (status only)
 window.updateField = function (recordId, field, value, element) {
   const record = allRecords.find(r => r.id === recordId);
   if (!record) return;
