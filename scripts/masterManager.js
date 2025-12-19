@@ -11,7 +11,7 @@ import {
 
 const docRef = doc(db, "masterList", "VwsEuQNJgfo5TXM6A0DA");
 
-// ... keep helpers/rendering as before ...
+// ... helpers and rendering unchanged ...
 
 async function addProduct() {
   const sku = document.getElementById("newSKU")?.value.trim();
