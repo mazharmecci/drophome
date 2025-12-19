@@ -64,12 +64,138 @@ document.addEventListener("DOMContentLoaded", async () => {
   hasInitialLoadCompleted = true;
 });
 
+// 🧾 collect form data (aligned with Firebase schema)
+function collectFormData() {
+  const inboundId = document.getElementById("inboundId")?.value || "";
+  const ordDate = document.getElementById("orderedDate")?.value || "";
+  const delDate = document.getElementById("deliveryDate")?.value || "";
+  const clientName = document.getElementById("clientName")?.value || "";
+  const accountName = document.getElementById("accountName")?.value || "";
+  const dispatchLocation = document.getElementById("dispatchLocation")?.value || "";
+  const productName = document.getElementById("productName")?.value || "";
+  const sku = document.getElementById("sku")?.value || "";
+  const labellink = document.getElementById("labellink")?.value || "";
+  const trackingNumber = document.getElementById("trackingNumber")?.value || "";
+  const receivingNotes = document.getElementById("receivingNotes")?.value || "";
+  const status = document.getElementById("orderStatus")?.value || "OrderPending";
+
+  // numeric fields
+  const price = parseFloat(document.getElementById("price")?.value || "0") || 0;
+  const quantityReceived = parseInt(
+    document.getElementById("quantityReceived")?.value || "0",
+    10
+  ) || 0;
+  const tax = parseFloat(document.getElementById("tax")?.value || "0") || 0;
+  const shipping = parseFloat(document.getElementById("shipping")?.value || "0") || 0;
+
+  // label-related fields (Firebase schema)
+  const labelqty = parseInt(
+    document.getElementById("totalLabels")?.value || "0",
+    10
+  ) || 0;
+  const labelcost = parseFloat(
+    document.getElementById("costPerLabel")?.value || "0"
+  ) || 0;
+  const packCount = parseInt(
+    document.getElementById("packCount")?.value || "0",
+    10
+  ) || 0;
+  const totalUnits = parseInt(
+    document.getElementById("totalUnits")?.value || "0",
+    10
+  ) || 0;
+
+  // derived fields
+  const subtotal = price * quantityReceived + tax + shipping;
+
+  // compute 3PL cost as a number
+  let threePLCost = 0;
+  if (packCount <= 0) threePLCost = 0;
+  else if (packCount <= 2) threePLCost = 1.0;
+  else threePLCost = packCount * 0.20 + 1.0;
+  threePLCost = parseFloat(threePLCost.toFixed(2));
+
+  // prodpic comes from master; stored on record, not a text input
+  const prodpicPreview = document.getElementById("prodpicPreview");
+  let prodpic = "";
+  if (prodpicPreview) {
+    const img = prodpicPreview.querySelector("img");
+    if (img && img.src) {
+      prodpic = img.src || "";
+    }
+  }
+
+  if (!ordDate || !delDate || !clientName || !dispatchLocation || !productName) {
+    showToast("⚠️ Please fill all required fields.");
+    return null;
+  }
+
+  return {
+    // IDs
+    inboundId,
+    orderId: inboundId,
+
+    // Dates
+    ordDate,
+    delDate,
+    date: ordDate,
+
+    // Account / client
+    accountName,
+    clientName,
+
+    // Product / warehouse
+    productName,
+    dispatchLocation,
+    sku,
+
+    // Quantities / media
+    quantity: quantityReceived,
+    quantityReceived,
+    prodpic: prodpic || "",         // ✅ never undefined
+    labellink: labellink || "",     // ✅ never undefined
+
+    // Pricing
+    price,
+    tax,
+    shipping,
+    subtotal,
+
+    // Workflow
+    status,
+
+    // Label / 3PL
+    labelqty,
+    labelcost,
+    totalLabels: labelqty,
+    costPerLabel: labelcost,
+    packCount,
+    totalUnits,
+    threePLCost,
+
+    // Tracking / notes
+    trackingNumber,
+    receivingNotes,
+
+    // System
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+}
+
 // 📝 handle submit
 async function handleSubmit(e) {
   e.preventDefault();
   const form = e.target;
-  const data = collectFormData();
+  let data = collectFormData();
   if (!data) return;
+
+  // extra safety: normalize prodpic / labellink
+  data = {
+    ...data,
+    prodpic: data.prodpic || "",
+    labellink: data.labellink || ""
+  };
 
   try {
     // 1️⃣ Save inbound record
@@ -99,8 +225,8 @@ async function handleSubmit(e) {
       // Quantities / media
       quantity: data.quantityReceived,
       quantityReceived: data.quantityReceived,
-      prodpic: data.prodpic,
-      labellink: data.labellink,
+      prodpic: data.prodpic || "",          // ✅ never undefined
+      labellink: data.labellink || "",      // ✅ never undefined
 
       // Pricing
       price: data.price,
@@ -108,11 +234,11 @@ async function handleSubmit(e) {
       shipping: data.shipping,
       subtotal: data.subtotal,
 
-      // Label / 3PL fields (initial defaults)
+      // Label / 3PL fields
       labelqty: data.labelqty ?? 0,
       labelcost: data.labelcost ?? 0,
-      totalLabels: data.totalLabels ?? 0,
-      costPerLabel: data.costPerLabel ?? 0,
+      totalLabels: data.totalLabels ?? data.labelqty ?? 0,
+      costPerLabel: data.costPerLabel ?? data.labelcost ?? 0,
       packCount: data.packCount ?? 0,
       totalUnits: data.totalUnits ?? 0,
       threePLCost: data.threePLCost ?? 0,
@@ -145,133 +271,6 @@ async function handleSubmit(e) {
     console.error("❌ handleSubmit failed:", err);
     showToast("⚠️ Failed to submit order. Please try again.");
   }
-}
-
-// 🧾 collect form data (aligned with Firebase schema)
-function collectFormData() {
-  const inboundId = document.getElementById("inboundId")?.value || "";
-  const ordDate = document.getElementById("orderedDate")?.value || "";
-  const delDate = document.getElementById("deliveryDate")?.value || "";
-  const clientName = document.getElementById("clientName")?.value || "";
-  const accountName = document.getElementById("accountName")?.value || "";
-  const dispatchLocation = document.getElementById("dispatchLocation")?.value || "";
-  const productName = document.getElementById("productName")?.value || "";
-  const sku = document.getElementById("sku")?.value || "";
-  const labellink = document.getElementById("labellink")?.value || "";
-  const trackingNumber = document.getElementById("trackingNumber")?.value || "";
-  const receivingNotes = document.getElementById("receivingNotes")?.value || "";
-  const status = document.getElementById("orderStatus")?.value || "OrderPending";
-
-  // numeric fields
-  const price = parseFloat(document.getElementById("price")?.value || "0");
-  const quantityReceived = parseInt(document.getElementById("quantityReceived")?.value || "0", 10);
-  const tax = parseFloat(document.getElementById("tax")?.value || "0");
-  const shipping = parseFloat(document.getElementById("shipping")?.value || "0");
-
-  // label-related fields (Firebase schema)
-  const labelqty = parseInt(document.getElementById("totalLabels")?.value || "0", 10);
-  const labelcost = parseFloat(document.getElementById("costPerLabel")?.value || "0");
-  const packCount = parseInt(document.getElementById("packCount")?.value || "0", 10);
-  const totalUnits = parseInt(document.getElementById("totalUnits")?.value || "0", 10);
-
-  // derived fields
-  const subtotal = price * quantityReceived + tax + shipping;
-
-  // compute 3PL cost as a number
-  let threePLCost = 0;
-  if (packCount <= 0) threePLCost = 0;
-  else if (packCount <= 2) threePLCost = 1.0;
-  else threePLCost = (packCount * 0.20) + 1.0;
-
-  return {
-    inboundId,
-    ordDate,
-    delDate,
-    clientName,
-    accountName,
-    dispatchLocation,
-    productName,
-    price,
-    sku,
-    labellink,
-    quantityReceived,
-    tax,
-    shipping,
-    subtotal,
-    trackingNumber,
-    receivingNotes,
-    status,
-    labelqty,
-    labelcost,
-    packCount,
-    totalUnits,
-    threePLCost: parseFloat(threePLCost.toFixed(2)) // numeric with 2 decimals  };
-  }
-
-  // prodpic comes from master; stored on record, not a text input
-  const prodpicPreview = document.getElementById("prodpicPreview");
-  let prodpic = "";
-  if (prodpicPreview) {
-    const img = prodpicPreview.querySelector("img");
-    if (img && img.src) prodpic = img.src;
-  }
-
-  if (!ordDate || !delDate || !clientName || !dispatchLocation || !productName) {
-    showToast("⚠️ Please fill all required fields.");
-    return null;
-  }
-
-  return {
-    // IDs
-    inboundId,
-    orderId: inboundId,
-
-    // Dates
-    ordDate,
-    delDate,
-    date: ordDate,
-
-    // Account / client
-    accountName,
-    clientName,
-
-    // Product / warehouse
-    productName,
-    dispatchLocation,
-    sku,
-
-    // Quantities / media
-    quantity: quantityReceived,
-    quantityReceived,
-    prodpic,
-    labellink,
-
-    // Pricing
-    price,
-    tax,
-    shipping,
-    subtotal,
-
-    // Workflow
-    status,
-
-    // Label / 3PL defaults
-    labelqty: 0,
-    labelcost: 0,
-    totalLabels: 0,
-    costPerLabel: 0,
-    packCount: 0,
-    totalUnits: 0,
-    threePLCost: 0,
-
-    // Tracking / notes
-    trackingNumber,
-    receivingNotes,
-
-    // System
-    createdAt: new Date(),
-    updatedAt: new Date()
-  };
 }
 
 // 🔄 load + render from Firestore
@@ -382,7 +381,6 @@ function renderTable(records) {
       </td>
     `;
 
-    // details row (read-only, including label / 3PL fields)
     const threePLDisplay =
       record.threePLCost != null && record.threePLCost !== ""
         ? `$${parseFloat(record.threePLCost).toFixed(2)}`
@@ -504,7 +502,7 @@ function clearFilters() {
   showToast("🔄 Filters cleared. Showing all records.");
 }
 
-// 🔧 optional helpers for future inline editing (currently you said read-only)
+// 🔧 optional helpers for future inline editing
 window.updateField = function (recordId, field, value, element) {
   const record = allRecords.find(r => r.id === recordId);
   if (!record) return;
@@ -520,10 +518,10 @@ window.saveRecord = async function (recordId) {
   try {
     await updateDoc(doc(db, "inventory", recordId), {
       status: record.status || "OrderPending",
-      threePLCost: record.threePLCost ?? "",
+      threePLCost: record.threePLCost ?? 0,
       packCount: record.packCount ?? 0,
       totalLabels: record.totalLabels ?? record.labelqty ?? 0,
-      costPerLabel: record.costPerLabel ?? record.labelcost ?? "",
+      costPerLabel: record.costPerLabel ?? record.labelcost ?? 0,
       totalUnits: record.totalUnits ?? 0,
       updatedAt: new Date()
     });
