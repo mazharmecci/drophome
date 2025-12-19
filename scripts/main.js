@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Load metadata from /drophome/meta.json
+  // Existing meta.json logic
   fetch("/drophome/meta.json")
     .then(response => {
       if (!response.ok) {
@@ -12,7 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log(`Name: ${meta.name}`);
       console.log(`Version: ${meta.version}`);
 
-      // Optional: inject version into footer or header
       const footer = document.querySelector("footer");
       if (footer && meta.version) {
         const versionTag = document.createElement("span");
@@ -24,4 +23,15 @@ document.addEventListener("DOMContentLoaded", () => {
     .catch(error => {
       console.warn("⚠️ meta.json not found or invalid:", error.message);
     });
+
+  // 🔻 Navbar hamburger toggle (runs after navbar.html is in the DOM)
+  const navToggle = document.getElementById("nav-toggle");
+  const navLinks  = document.getElementById("nav-links");
+
+  if (navToggle && navLinks) {
+    navToggle.addEventListener("click", () => {
+      const isOpen = navLinks.classList.toggle("is-open");
+      navToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    });
+  }
 });
