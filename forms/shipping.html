@@ -15,8 +15,6 @@
   <script src="../scripts/navbar.js" defer></script>
 
   <div class="history-container">
-    <!-- we're using history container as standard for shipping, sales and order-history because of css settings-->
-
     <!-- Breadcrumb -->
     <nav class="breadcrumb-nav" aria-label="Breadcrumb">
       <ol class="breadcrumb-list">
@@ -28,38 +26,39 @@
 
     <!-- Inner Content Wrapper -->
     <div class="form-body">
-      <!-- Filter Bar -->
 
-      <div class="filter-group">
-        <label for="filterLocation">Location:</label>
-        <select id="filterLocation">
-          <option value="">All Locations</option>
-          <option value="Dallas Epic Mosque">Dallas Epic Mosque</option>
-          <option value="Round Rock HQ">Round Rock HQ</option>
-        </select>
+      <!-- Pagination -->
+      <div class="pagination-bar">
+        <button id="prevPage" class="btn-secondary">Previous</button>
+        <span id="pageInfo"></span>
+        <button id="nextPage" class="btn-secondary">Next</button>
       </div>
 
-      <div class="filter-bar">
-        <div class="filter-group">
-          <label for="filterClient">Client:</label>
-          <input type="text" id="filterClient" placeholder="Enter client name" />
+      <!-- Filters -->
+      <div class="filters-bar">
+        <div class="filter-item">
+          <label for="filterStart">Ordered Date (From)</label>
+          <input type="date" id="filterStart" name="filterStart" />
         </div>
 
-        <div class="filter-group">
-          <label for="filterStart">From:</label>
-          <input type="date" id="filterStart" />
+        <div class="filter-item">
+          <label for="filterEnd">Ordered Date (To)</label>
+          <input type="date" id="filterEnd" name="filterEnd" />
         </div>
 
-        <div class="filter-group">
-          <label for="filterEnd">To:</label>
-          <input type="date" id="filterEnd" />
+        <div class="filter-item">
+          <label for="filterWarehouse">Warehouse</label>
+          <select id="filterWarehouse" name="filterWarehouse">
+            <option value="">All warehouses</option>
+          </select>
         </div>
 
-        <div class="filter-group">
-          <label for="filterStatus">Status:</label>
-          <select id="filterStatus">
-            <option value="">All Statuses</option>
+        <div class="filter-item">
+          <label for="filterStatus">Status</label>
+          <select id="filterStatus" name="filterStatus">
+            <option value="">All statuses</option>
             <option value="OrderPending">Order Pending</option>
+            <option value="WarehouseDelivered">Warehouse Delivered</option>
             <option value="OrderDelivered">Order Delivered</option>
             <option value="OrderCompleted">Order Completed</option>
             <option value="CancelCompleted">Cancel Completed</option>
@@ -69,50 +68,45 @@
           </select>
         </div>
 
-        <button id="applyFilters" class="btn-primary">🔍 Apply Filters</button>
-        <button id="clearFilters" class="btn-clear">🧹 Clear</button>
+        <div class="filter-item filters-actions">
+          <button type="button" id="applyFilters" class="btn-primary">Apply</button>
+          <button type="button" id="clearFilters" class="btn-orange">Clear</button>
+        </div>
       </div>
 
-<!-- Table Wrapper -->
-<div class="table-scroll-wrapper">
-  <table class="summary-table">
-    <thead>
-      <tr>
-        <th>Outbnd-<br>ID</th>           <!-- inboundId -->
-        <th>Ord-<br>Date</th>            <!-- Orddate -->
-        <th>Delivd-<br>Date</th>         <!-- Deldate -->
-        <th>Cust-<br>Name</th>           <!-- clientName -->
-        <th>Delivd-<br>WHouse</th>       <!-- dispatchLocation -->
-        <th>Prod-<br>Name</th>           <!-- productName -->
-        <th>SKU</th>                     <!-- sku -->
-        <th>Prod-<br>Picture</th>        <!-- prodpic -->
-        <th>Label-<br>Link</th>          <!-- labellink -->
-        <th>Unit-<br>Price ($)</th>      <!-- price -->
-        <th>Qty</th>                     <!-- quantityReceived -->
-        <th>Tax ($)</th>                 <!-- tax -->
-        <th>Shipping ($)</th>            <!-- shipping -->
-        <th>Sub-<br>Total ($)</th>       <!-- subtotal -->
-        <th>Tracking #</th>              <!-- trackingNumber -->
-        <th>Status</th>                  <!-- e.g. derived or stored -->
-        <th>Action</th>                  <!-- buttons/links -->
-      </tr>
-    </thead>
-    <tbody id="inboundTableBody">
-      <!-- Injected dynamically -->
-    </tbody>
-  </table>
-</div>
-
-    <!-- Success Popup -->
-    <div id="successPopup" class="hidden">
-      <div class="popup-content">
-        <div class="checkmark-circle"></div>
-        <div class="checkmark-check"></div>
-        <p>✅ Saved successfully!</p>
-        <button id="closePopup">Close</button>
+      <!-- Summary Table -->
+      <div class="table-scroll-wrapper">
+        <table class="summary-table">
+          <thead>
+            <tr>
+              <th>Inbound&nbsp;ID</th>
+              <th>Order&nbsp;Date</th>
+              <th>Delivered&nbsp;Date</th>
+              <th>Cust&nbsp;Name</th>
+              <th>WareHouse</th>
+              <th>Prod&nbsp;Name</th>
+              <th>Qty</th>
+              <th>Subtotal&nbsp;($)</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="inboundTableBody"></tbody>
+        </table>
       </div>
+
     </div>
-  </main>
+  </div>
+
+  <!-- Success Popup -->
+  <div id="successPopup" class="hidden">
+    <div class="popup-content">
+      <div class="checkmark-circle"></div>
+      <div class="checkmark-check"></div>
+      <p>✅ Saved successfully!</p>
+      <button id="closePopup">Close</button>
+    </div>
+  </div>
 
   <!-- Modules -->
   <script type="module">
@@ -121,13 +115,16 @@
       initPopupClose();
     });
   </script>
-    
-  <script type="module" src="../scripts/inventory.js"></script>
+
+  <!-- Shipping workflow script -->
+  <script type="module" src="../scripts/shipping.js"></script>
+
+  <!-- Login check -->
   <script>
-  if (!sessionStorage.getItem("drophome-auth")) {
-    window.location.href = "/forms/login.html";
-  }
+    if (!sessionStorage.getItem("drophome-auth")) {
+      window.location.href = "/forms/login.html";
+    }
   </script>
-    
+
 </body>
 </html>
