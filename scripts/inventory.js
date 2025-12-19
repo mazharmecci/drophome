@@ -74,7 +74,7 @@ function collectFormData() {
   const dispatchLocation = document.getElementById("dispatchLocation")?.value || "";
   const productName = document.getElementById("productName")?.value || "";
   const sku = document.getElementById("sku")?.value || "";
-  const labellink = document.getElementById("labellink")?.value || "";
+  const labellinkInput = document.getElementById("labellink")?.value || "";
   const trackingNumber = document.getElementById("trackingNumber")?.value || "";
   const receivingNotes = document.getElementById("receivingNotes")?.value || "";
   const status = document.getElementById("orderStatus")?.value || "OrderPending";
@@ -88,7 +88,7 @@ function collectFormData() {
   const tax = parseFloat(document.getElementById("tax")?.value || "0") || 0;
   const shipping = parseFloat(document.getElementById("shipping")?.value || "0") || 0;
 
-  // label-related fields (Firebase schema)
+  // label-related fields
   const labelqty = parseInt(
     document.getElementById("totalLabels")?.value || "0",
     10
@@ -152,8 +152,8 @@ function collectFormData() {
     // Quantities / media
     quantity: quantityReceived,
     quantityReceived,
-    prodpic: prodpic || "",         // ✅ never undefined
-    labellink: labellink || "",     // ✅ never undefined
+    prodpic: prodpic || "",          // ✅ never undefined
+    labellink: labellinkInput || "", // ✅ never undefined
 
     // Pricing
     price,
@@ -191,7 +191,7 @@ async function handleSubmit(e) {
   if (!data) return;
 
   // extra safety: normalize prodpic / labellink
-  data = {
+  const safeData = {
     ...data,
     prodpic: data.prodpic || "",
     labellink: data.labellink || ""
@@ -199,56 +199,56 @@ async function handleSubmit(e) {
 
   try {
     // 1️⃣ Save inbound record
-    await addDoc(collection(db, "inbound"), data);
+    await addDoc(collection(db, "inbound"), safeData);
 
     // 2️⃣ Update stock quantity
-    await updateStock(data.productName, data.quantityReceived);
+    await updateStock(safeData.productName, safeData.quantityReceived);
 
     // 3️⃣ Auto-sync to inventory (same schema as inbound)
     const inventoryData = {
       // IDs
-      inboundId: data.inboundId,
-      orderId: data.inboundId,
+      inboundId: safeData.inboundId,
+      orderId: safeData.inboundId,
 
       // Dates
-      ordDate: data.ordDate,
-      delDate: data.delDate,
-      date: data.ordDate,
+      ordDate: safeData.ordDate,
+      delDate: safeData.delDate,
+      date: safeData.ordDate,
 
       // Account / product
-      accountName: data.accountName,
-      clientName: data.clientName,
-      productName: data.productName,
-      dispatchLocation: data.dispatchLocation,
-      sku: data.sku,
+      accountName: safeData.accountName,
+      clientName: safeData.clientName,
+      productName: safeData.productName,
+      dispatchLocation: safeData.dispatchLocation,
+      sku: safeData.sku,
 
       // Quantities / media
-      quantity: data.quantityReceived,
-      quantityReceived: data.quantityReceived,
-      prodpic: data.prodpic || "",          // ✅ never undefined
-      labellink: data.labellink || "",      // ✅ never undefined
+      quantity: safeData.quantityReceived,
+      quantityReceived: safeData.quantityReceived,
+      prodpic: safeData.prodpic,          // ✅ guaranteed string
+      labellink: safeData.labellink,      // ✅ guaranteed string
 
       // Pricing
-      price: data.price,
-      tax: data.tax,
-      shipping: data.shipping,
-      subtotal: data.subtotal,
+      price: safeData.price,
+      tax: safeData.tax,
+      shipping: safeData.shipping,
+      subtotal: safeData.subtotal,
 
       // Label / 3PL fields
-      labelqty: data.labelqty ?? 0,
-      labelcost: data.labelcost ?? 0,
-      totalLabels: data.totalLabels ?? data.labelqty ?? 0,
-      costPerLabel: data.costPerLabel ?? data.labelcost ?? 0,
-      packCount: data.packCount ?? 0,
-      totalUnits: data.totalUnits ?? 0,
-      threePLCost: data.threePLCost ?? 0,
+      labelqty: safeData.labelqty ?? 0,
+      labelcost: safeData.labelcost ?? 0,
+      totalLabels: safeData.totalLabels ?? safeData.labelqty ?? 0,
+      costPerLabel: safeData.costPerLabel ?? safeData.labelcost ?? 0,
+      packCount: safeData.packCount ?? 0,
+      totalUnits: safeData.totalUnits ?? 0,
+      threePLCost: safeData.threePLCost ?? 0,
 
       // Workflow
-      status: data.status || "OrderPending",
+      status: safeData.status || "OrderPending",
 
       // Tracking / notes
-      trackingNumber: data.trackingNumber,
-      receivingNotes: data.receivingNotes,
+      trackingNumber: safeData.trackingNumber,
+      receivingNotes: safeData.receivingNotes,
 
       // System
       createdAt: new Date(),
