@@ -14,14 +14,15 @@ export async function loadDropdowns() {
 
     const data = snapshot.data();
 
-    // Simple string arrays
+    // Populate simple string arrays
     populateDropdown("clientName", data.clients ?? [], "client name");
+    populateDropdown("accountName", data.accounts ?? [], "account name");   // ✅ NEW
     populateDropdown("dispatchLocation", data.locations ?? [], "dispatch location");
 
-    // Products with { name, sku, price, prodpic }
+    // Populate products with auto-fill logic
     populateProductDropdown("productName", data.products ?? []);
   } catch (err) {
-    console.error("Error loading master list:", err);
+    console.error("❌ Error loading master list:", err);
   }
 }
 
@@ -41,6 +42,7 @@ function populateDropdown(fieldId, options, placeholderLabel) {
   select.appendChild(placeholder);
 
   options.forEach((value) => {
+    if (!value) return;
     const opt = document.createElement("option");
     opt.value = value;
     opt.textContent = value;
@@ -105,20 +107,20 @@ function populateProductDropdown(fieldId, products) {
       return;
     }
 
-    // SKU
+    // SKU auto-fill
     if (skuField) {
       skuField.value = product.sku ?? "";
     }
 
-    // Price
+    // Price auto-fill
     if (priceField) {
       const price = product.price != null ? Number(product.price) : 0;
       priceField.value = Number.isFinite(price) ? price.toString() : "";
     }
 
-    // Image preview from prodPic URL
+    // Image preview
     if (prodpicPreview) {
-      const imgUrl = product.prodpic || product.prodPic; // <-- add product.prodPic
+      const imgUrl = product.prodpic || product.prodPic;
       if (imgUrl) {
         prodpicPreview.innerHTML = `
           <img src="${imgUrl}" alt="${product.name} preview" 
