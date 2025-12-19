@@ -94,35 +94,35 @@
       <label for="deliveryDate">Delivery Date</label>
       <input type="date" id="deliveryDate" name="deliveryDate" required />
 
-      <label for="clientName">Client Name</label>
+      <label for="clientName">Client Name (from master)</label>
       <select id="clientName" name="clientName" required>
         <option value="" hidden>Client name</option>
       </select>
 
-      <label for="dispatchLocation">Order Delivered Warehouse</label>
+      <label for="dispatchLocation">Order Delivered Warehouse (from master)</label>
       <select id="dispatchLocation" name="dispatchLocation" required>
         <option value="" hidden>Select Warehouse</option>
       </select>
 
-      <label for="productName">Product Name</label>
+      <label for="productName">Product Name (from master)</label>
       <select id="productName" name="productName" required>
         <option value="" hidden>Choose product name</option>
       </select>
 
       <label for="price">
-        Price (Auto-filled in dollars)
+        Price (Auto-filled in dollars - (from master))
         <span class="hint-icon" data-tooltip="This price is pulled from the master list when you select a product.">ℹ️</span>
       </label>
       <input type="text" id="price" name="price" readonly class="input-readonly" />
 
       <label for="sku">
-        SKU (Auto-filled)
+        SKU (Auto-filled - (from master))
         <span class="hint-icon" data-tooltip="This SKU is auto-filled when you select a product from the list.">ℹ️</span>
       </label>
       <input type="text" id="sku" name="sku" readonly class="input-readonly" />
 
       <label>
-        Product Image (from master)
+        Product Image (Auto-filled - (from master))
         <span class="hint-icon" data-tooltip="Automatically pulled from the product master when you choose a product.">ℹ️</span>
       </label>
       <div id="prodpicPreview" class="preview-box auto-preview"></div>
