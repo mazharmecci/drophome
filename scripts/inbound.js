@@ -1,8 +1,7 @@
 // scripts/inbound.js
-import { generateId } from './idGenerator.js';
-import { db } from './firebase.js';
-import { loadDropdowns } from './dropdownLoader.js';
-import { showToast } from './popupHandler.js';
+import { db } from "./firebase.js";
+import { loadDropdowns } from "./dropdownLoader.js";
+import { showToast } from "./popupHandler.js";
 import {
   collection,
   addDoc,
@@ -13,22 +12,20 @@ import {
   doc
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-document.addEventListener("DOMContentLoaded", () => {
-  generateId('INB', 'inbound', 'inboundId');
-  loadDropdowns();
+// ---------- Helpers ----------
 
-  const params = new URLSearchParams(window.location.search);
-  if (params.get("updated") === "true") {
-    showToast("Master list updated successfully.");
-  }
+// Generate inbound ID like IN-00564
+function generateInboundId() {
+  const randomNum = Math.floor(Math.random() * 99999) + 1;
+  const padded = String(randomNum).padStart(5, "0");
+  return `IN-${padded}`;
+}
 
-  const form = document.getElementById('inboundForm');
-  if (form) {
-    form.addEventListener('submit', handleSubmit);
-  }
-});
+function getValue(id) {
+  return document.getElementById(id)?.value || "";
+}
 
-// 🔄 Collect form data from inbound form
+// Collect form data
 function collectFormData() {
   return {
     inboundId: getValue("inboundId"),
@@ -41,28 +38,26 @@ function collectFormData() {
     labellink: getValue("labellink"),
     quantityReceived: parseInt(getValue("quantityReceived") || "0", 10),
     receivingNotes: getValue("receivingNotes"),
-    price: parseFloat(
-      (getValue("price") || "").replace(/[^0-9.]/g, "")
-    ) || 0 // ✅ NEW: ensure numeric price
+    price:
+      parseFloat((getValue("price") || "").replace(/[^0-9.]/g, "")) || 0
   };
 }
 
-function getValue(id) {
-  return document.getElementById(id)?.value || "";
-}
+// ---------- Submit Handler ----------
 
-// ✅ Submit handler
 async function handleSubmit(e) {
   e.preventDefault();
   const form = e.target;
   const data = collectFormData();
 
   try {
-    // 🔄 Submit to inbound
-    await addDoc(collection(db, 'inbound'), data);
+    // 1️⃣ Save inbound record
+    await addDoc(collection(db, "inbound"), data);
+
+    // 2️⃣ Update stock quantity
     await updateStock(data.productName, data.quantityReceived);
 
-    // 📦 Auto-sync to inventory
+    // 3️⃣ Auto-sync to inventory
     const inventoryData = {
       orderId: data.inboundId,
       date: data.dateReceived,
@@ -73,7 +68,7 @@ async function handleSubmit(e) {
       quantity: data.quantityReceived,
       prodpic: data.prodpic,
       labellink: data.labellink,
-      price: data.price, // ✅ NEW
+      price: data.price,
       status: "OrderPending",
       labelqty: 0,
       labelcost: "",
@@ -85,8 +80,11 @@ async function handleSubmit(e) {
     // ✅ Feedback and reset
     showToast("✅ Inbound record submitted and synced to inventory.");
     form.reset();
-    document.getElementById('inboundId').value = "";
-    generateId('INB', 'inbound', 'inboundId');
+
+    // regenerate inbound ID
+    const inboundIdEl = document.getElementById("inboundId");
+    if (inboundIdEl) inboundIdEl.value = generateInboundId();
+
     loadDropdowns();
   } catch (err) {
     console.error("❌ Error submitting inbound or syncing inventory:", err);
@@ -94,7 +92,8 @@ async function handleSubmit(e) {
   }
 }
 
-// 📦 Update stock quantity
+// ---------- Stock Update ----------
+
 async function updateStock(productName, qty) {
   try {
     const stockQuery = query(
@@ -122,3 +121,23 @@ async function updateStock(productName, qty) {
     showToast("❌ Failed to update stock.");
   }
 }
+
+// ---------- Init ----------
+
+document.addEventListener("DOMContentLoaded", () => {
+  // set inboundId field with random ID
+  const inboundIdEl = document.getElementById("inboundId");
+  if (inboundIdEl) inboundIdEl.value = generateInboundId();
+
+  loadDropdowns();
+
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("updated") === "true") {
+    showToast("Master list updated successfully.");
+  }
+
+  const form = document.getElementById("inboundForm");
+  if (form) {
+    form.addEventListener("submit", handleSubmit);
+  }
+});
