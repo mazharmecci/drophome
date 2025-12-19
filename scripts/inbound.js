@@ -25,7 +25,13 @@ function getValue(id) {
   return document.getElementById(id)?.value || "";
 }
 
-// Collect form data
+function setInboundId() {
+  const inboundIdEl = document.getElementById("inboundId");
+  if (inboundIdEl) inboundIdEl.value = generateInboundId();
+}
+
+// ---------- Data Collection ----------
+
 function collectFormData() {
   return {
     inboundId: getValue("inboundId"),
@@ -38,8 +44,7 @@ function collectFormData() {
     labellink: getValue("labellink"),
     quantityReceived: parseInt(getValue("quantityReceived") || "0", 10),
     receivingNotes: getValue("receivingNotes"),
-    price:
-      parseFloat((getValue("price") || "").replace(/[^0-9.]/g, "")) || 0
+    price: parseFloat((getValue("price") || "").replace(/[^0-9.]/g, "")) || 0
   };
 }
 
@@ -80,11 +85,7 @@ async function handleSubmit(e) {
     // ✅ Feedback and reset
     showToast("✅ Inbound record submitted and synced to inventory.");
     form.reset();
-
-    // regenerate inbound ID
-    const inboundIdEl = document.getElementById("inboundId");
-    if (inboundIdEl) inboundIdEl.value = generateInboundId();
-
+    setInboundId();
     loadDropdowns();
   } catch (err) {
     console.error("❌ Error submitting inbound or syncing inventory:", err);
@@ -125,10 +126,7 @@ async function updateStock(productName, qty) {
 // ---------- Init ----------
 
 document.addEventListener("DOMContentLoaded", () => {
-  // set inboundId field with random ID
-  const inboundIdEl = document.getElementById("inboundId");
-  if (inboundIdEl) inboundIdEl.value = generateInboundId();
-
+  setInboundId();
   loadDropdowns();
 
   const params = new URLSearchParams(window.location.search);
