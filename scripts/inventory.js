@@ -276,7 +276,7 @@ function updatePaginationControls() {
   }
 }
 
-// 📊 render table (stripped-down fields)
+// 📊 render table
 function renderTable(records) {
   const tbody = document.getElementById("inboundTableBody");
   if (!tbody) return;
@@ -308,14 +308,14 @@ function renderTable(records) {
     const accountName = record.accountName || "";
     const warehouse = record.dispatchLocation || "";
     const productName = record.productName || "";
-    const qty =
-      record.quantityReceived != null
-        ? parseFloat(record.quantityReceived)
-        : record.quantity != null
+    const qty = record.quantityReceived != null
+      ? parseFloat(record.quantityReceived)
+      : record.quantity != null
         ? parseFloat(record.quantity)
         : 0;
-    const subtotal =
-      record.subtotal != null ? parseFloat(record.subtotal) : (record.price || 0) * qty;
+    const subtotal = record.subtotal != null
+      ? parseFloat(record.subtotal)
+      : (record.price || 0) * qty;
 
     const tr = document.createElement("tr");
     const detailsTr = document.createElement("tr");
@@ -343,7 +343,7 @@ function renderTable(records) {
       </td>
     `;
 
-    // details row
+    // details row with extended fields
     detailsTr.innerHTML = `
       <td colspan="10">
         <div class="order-details">
@@ -357,6 +357,12 @@ function renderTable(records) {
           <div><strong>SKU:</strong> ${record.sku || ""}</div>
           <div><strong>Qty:</strong> ${qty || 0}</div>
           <div><strong>Subtotal:</strong> $${subtotal.toFixed(2)}</div>
+
+          <div><strong>Total Labels:</strong> ${record.totalLabels ?? "—"}</div>
+          <div><strong>Cost per Label:</strong> $${record.costPerLabel ?? "—"}</div>
+          <div><strong>Pack#s:</strong> ${record.packCount ?? "—"}</div>
+          <div><strong>Total Units:</strong> ${record.totalUnits ?? "—"}</div>
+          <div><strong>3PL Cost:</strong> $${record.threePLcost ?? "—"}</div>
 
           <div style="margin-top:6px;">
             <strong>Product Picture:</strong>
