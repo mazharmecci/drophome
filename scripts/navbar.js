@@ -6,19 +6,26 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (!placeholder) return;
 
   try {
-    // ✅ Root-relative fetch (works with custom domain)
+    // Reserve space + hide until ready
+    placeholder.style.minHeight = "60px"; // adjust to your navbar height
+    placeholder.style.opacity = "0";
+    placeholder.style.transition = "opacity 0.3s ease";
+
+    // ✅ Root-relative fetch
     const res = await fetch("/navbar.html");
     const html = await res.text();
     placeholder.innerHTML = html;
 
-    const toggle = document.getElementById("nav-toggle");
-    const links = document.getElementById("nav-links");
+    // Smooth reveal
+    requestAnimationFrame(() => {
+      placeholder.style.opacity = "1";
+    });
+
+    // Grab elements
     const logoutSection = document.getElementById("logout-section");
     const welcomeTag = document.getElementById("welcome-message");
     const avatarTag = document.getElementById("user-avatar");
     const logoutBtn = document.getElementById("logoutBtn");
-
-    // All protected links
     const protectedLinks = document.querySelectorAll(".protected-link");
 
     // Firebase imports
@@ -40,33 +47,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 🔒 Listen for auth state changes
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        // Show logout section
         if (logoutSection) logoutSection.style.display = "flex";
 
-        // Show avatar + welcome message
         if (welcomeTag && avatarTag) {
           const email = user.email || "User";
-          const initials = email.substring(0, 2).toUpperCase(); // first two letters
+          const initials = email.substring(0, 2).toUpperCase();
           avatarTag.textContent = initials;
           avatarTag.style.display = "inline-flex";
           welcomeTag.textContent = email;
           welcomeTag.style.display = "inline";
         }
 
-        // Restrict Ahmad's nav links
+        // Restrict Ahmad’s nav links
         if (user.email === "ahmadmanj40@gmail.com") {
           protectedLinks.forEach(link => {
             const anchor = link.querySelector("a");
             const href = anchor ? anchor.getAttribute("href") : "";
-
             if (href.includes("orders.html") || href.includes("order-history.html")) {
-              link.style.display = "list-item"; // ✅ Only show Orders + Order History
+              link.style.display = "list-item";
             } else {
-              link.style.display = "none"; // Hide all other links
+              link.style.display = "none";
             }
           });
 
-          // ✅ Extra page-level guard (root-relative paths only)
           const restrictedPages = [
             "/forms/shipping.html",
             "/forms/sales.html",
@@ -78,17 +81,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             window.location.href = "/forms/orders.html";
           }
         } else {
-          // Default: show all protected links
           protectedLinks.forEach(link => link.style.display = "list-item");
         }
 
-        // Logout button
         if (logoutBtn) {
           logoutBtn.addEventListener("click", async () => {
             try {
               await signOut(auth);
               sessionStorage.removeItem("drophome-auth");
-              // ✅ Redirect to root-relative login page
               window.location.href = "/forms/login.html";
             } catch (err) {
               console.error("❌ Logout failed:", err);
@@ -96,7 +96,6 @@ document.addEventListener("DOMContentLoaded", async () => {
           });
         }
       } else {
-        // Not logged in → redirect to login
         window.location.href = "/forms/login.html";
       }
     });
