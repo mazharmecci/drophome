@@ -254,12 +254,11 @@ function goBack() {
 }
 
 // ---------- Init ----------
-
 document.addEventListener("DOMContentLoaded", () => {
-  // Load master list data
+  // Load master list data on page ready
   loadMasterList();
 
-  // Button bindings
+  // Bind buttons to their handlers
   const bindings = [
     { id: "addAccountBtn", handler: () => addItem("accounts", "newAccount") },
     { id: "addProductBtn", handler: addProduct },
@@ -271,10 +270,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   bindings.forEach(({ id, handler }) => {
     const el = document.getElementById(id);
-    if (el) el.addEventListener("click", handler);
+    if (el) {
+      el.addEventListener("click", handler);
+    }
   });
 
-  // Product Picture URL preview logic
+  // Product Picture URL live preview
   const prodpicInput = document.getElementById("prodpic");
   const previewBox = document.getElementById("prodpicPreview");
 
@@ -282,9 +283,11 @@ document.addEventListener("DOMContentLoaded", () => {
     prodpicInput.addEventListener("input", () => {
       const url = prodpicInput.value.trim();
       previewBox.innerHTML = url
-        ? `<img src="${url}" alt="Product Preview" style="max-width:100%; max-height:100%; object-fit:contain;" />`
+        ? `<img src="${url}" alt="Product Preview"
+               style="width:100%; height:100%; object-fit:contain;" />`
         : "";
     });
   }
 });
+
 
