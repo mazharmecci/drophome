@@ -7,6 +7,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
+    /* ------------------------------
+       Inbound Workflow Styling
+    ------------------------------ */
+    
+    /* Details row styling */
     .details-row .order-details {
       padding: 8px 12px;
       background: #f7f9fc;
@@ -16,12 +21,14 @@
       gap: 4px 16px;
       font-size: 12px;
     }
-
+    
+    /* Toggle button */
     .btn-secondary.details-toggle {
       padding: 2px 6px;
       font-size: 11px;
     }
-
+    
+    /* Pagination bar */
     .pagination-bar {
       margin-top: 8px;
       display: flex;
@@ -29,12 +36,12 @@
       gap: 8px;
       font-size: 12px;
     }
-
     .pagination-bar button[disabled] {
       opacity: 0.5;
       cursor: not-allowed;
     }
-
+    
+    /* Filters bar */
     .filters-bar {
       margin: 12px 0;
       display: flex;
@@ -43,26 +50,42 @@
       align-items: flex-end;
       font-size: 12px;
     }
-
     .filters-bar > .filter-item {
       display: flex;
       flex-direction: column;
     }
-
     .filters-actions {
       display: flex;
       gap: 8px;
       margin-top: 8px;
     }
-
-    /* desktop: keep everything in one row */
+    
+    /* Table consistency with inventory */
+    .inbound-table {
+      width: 100%;
+      min-width: 900px;
+      border-collapse: collapse;
+    }
+    .inbound-table th,
+    .inbound-table td {
+      padding: 8px 10px;
+      text-align: left;
+      white-space: nowrap;
+    }
+    .inbound-table th {
+      background-color: #003366; /* dark blue for consistency */
+      color: #ffffff;            /* white text for contrast */
+      font-weight: 600;
+    }
+    
+    /* Desktop: keep everything in one row */
     @media (min-width: 768px) {
       .filters-bar {
         flex-wrap: nowrap;
       }
     }
-
-    /* mobile: stacked full width */
+    
+    /* Mobile: stacked full width */
     @media (max-width: 767px) {
       .filters-bar > .filter-item {
         flex: 1 1 100%;
