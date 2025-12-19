@@ -14,7 +14,7 @@ import {
 let allRecords = [];
 let hasInitialLoadCompleted = false;
 
-// pagination state
+// Pagination state
 let currentPage = 1;
 const pageSize = 10;
 
@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     form.addEventListener("submit", handleSubmit);
   }
 
-  // subtotal live calculator
+  // Subtotal live calculator
   hookSubtotalCalculator();
 
   // Initial load
@@ -73,46 +73,58 @@ async function handleSubmit(e) {
 
   try {
     // 1️⃣ Save inbound record
-    const inboundRef = await addDoc(collection(db, "inbound"), data);
+    await addDoc(collection(db, "inbound"), data);
 
     // 2️⃣ Update stock quantity
     await updateStock(data.productName, data.quantityReceived);
 
     // 3️⃣ Auto-sync to inventory (same schema as inbound)
     const inventoryData = {
+      // IDs
       inboundId: data.inboundId,
       orderId: data.inboundId,
 
+      // Dates
       ordDate: data.ordDate,
       delDate: data.delDate,
       date: data.ordDate,
 
+      // Account / product
       accountName: data.accountName,
       clientName: data.clientName,
       productName: data.productName,
       dispatchLocation: data.dispatchLocation,
       sku: data.sku,
 
+      // Quantities / media
       quantity: data.quantityReceived,
       quantityReceived: data.quantityReceived,
       prodpic: data.prodpic,
       labellink: data.labellink,
 
+      // Pricing
       price: data.price,
       tax: data.tax,
       shipping: data.shipping,
       subtotal: data.subtotal,
 
-      status: data.status || "OrderPending",
-      labelqty: 0,
-      labelcost: "",
-      // 3PL fields initialised
-      packCount: 0,
-      threePLcost: "",
+      // Label / 3PL fields (initial defaults)
+      labelqty: data.labelqty ?? 0,
+      labelcost: data.labelcost ?? "",
+      totalLabels: data.totalLabels ?? 0,
+      costPerLabel: data.costPerLabel ?? "",
+      packCount: data.packCount ?? 0,
+      totalUnits: data.totalUnits ?? 0,
+      threePLCost: data.threePLCost ?? "",
 
+      // Workflow
+      status: data.status || "OrderPending",
+
+      // Tracking / notes
       trackingNumber: data.trackingNumber,
       receivingNotes: data.receivingNotes,
 
+      // System
       createdAt: new Date(),
       updatedAt: new Date()
     };
@@ -160,6 +172,7 @@ function collectFormData() {
   const shipping = parseFloat(shippingStr) || 0;
   const subtotal = price * quantityReceived + tax + shipping;
 
+  // prodpic comes from master; stored on record, not a text input
   const prodpicPreview = document.getElementById("prodpicPreview");
   let prodpic = "";
   if (prodpicPreview) {
@@ -173,39 +186,53 @@ function collectFormData() {
   }
 
   return {
+    // IDs
     inboundId,
     orderId: inboundId,
 
+    // Dates
     ordDate,
     delDate,
     date: ordDate,
 
+    // Account / client
     accountName,
     clientName,
 
+    // Product / warehouse
     productName,
     dispatchLocation,
     sku,
 
+    // Quantities / media
     quantity: quantityReceived,
     quantityReceived,
     prodpic,
     labellink,
 
+    // Pricing
     price,
     tax,
     shipping,
     subtotal,
 
+    // Workflow
     status,
+
+    // Label / 3PL defaults
     labelqty: 0,
     labelcost: "",
+    totalLabels: 0,
+    costPerLabel: "",
     packCount: 0,
-    threePLcost: "",
+    totalUnits: 0,
+    threePLCost: "",
 
+    // Tracking / notes
     trackingNumber,
     receivingNotes,
 
+    // System
     createdAt: new Date(),
     updatedAt: new Date()
   };
@@ -319,10 +346,10 @@ function renderTable(records) {
       </td>
     `;
 
-    // details row (read-only values, including 3PL)
+    // details row (read-only, including label / 3PL fields)
     const threePLDisplay =
-      record.threePLcost != null && record.threePLcost !== ""
-        ? `$${parseFloat(record.threePLcost).toFixed(2)}`
+      record.threePLCost != null && record.threePLCost !== ""
+        ? `$${parseFloat(record.threePLCost).toFixed(2)}`
         : "—";
 
     detailsTr.innerHTML = `
@@ -338,11 +365,13 @@ function renderTable(records) {
           <div><strong>SKU:</strong> ${record.sku || ""}</div>
           <div><strong>Qty:</strong> ${qty || 0}</div>
           <div><strong>Subtotal:</strong> $${subtotal.toFixed(2)}</div>
-          <div><strong>Total Labels:</strong> ${record.totalLabels ?? "—"}</div>
-          <div><strong>Cost per Label ($):</strong> ${record.costPerLabel ?? "—"}</div>
+
+          <div><strong>Total Labels:</strong> ${record.totalLabels ?? record.labelqty ?? "—"}</div>
+          <div><strong>Cost per Label ($):</strong> ${record.costPerLabel ?? record.labelcost ?? "—"}</div>
           <div><strong>Pack#s:</strong> ${record.packCount ?? "—"}</div>
           <div><strong>Total Units:</strong> ${record.totalUnits ?? "—"}</div>
           <div><strong>3PL Cost ($):</strong> ${threePLDisplay}</div>
+
           <div style="margin-top:6px;">
             <strong>Product Picture:</strong>
             ${
@@ -439,8 +468,7 @@ function clearFilters() {
   showToast("🔄 Filters cleared. Showing all records.");
 }
 
-// ❗ since you said no inline editing, these remain for status-only save if used elsewhere.
-// If you want 100% read-only, you can remove updateField and saveRecord entirely.
+// 🔧 optional helpers for future inline editing (currently you said read-only)
 window.updateField = function (recordId, field, value, element) {
   const record = allRecords.find(r => r.id === recordId);
   if (!record) return;
@@ -456,8 +484,11 @@ window.saveRecord = async function (recordId) {
   try {
     await updateDoc(doc(db, "inventory", recordId), {
       status: record.status || "OrderPending",
-      threePLcost: record.threePLcost ?? "",
+      threePLCost: record.threePLCost ?? "",
       packCount: record.packCount ?? 0,
+      totalLabels: record.totalLabels ?? record.labelqty ?? 0,
+      costPerLabel: record.costPerLabel ?? record.labelcost ?? "",
+      totalUnits: record.totalUnits ?? 0,
       updatedAt: new Date()
     });
 
