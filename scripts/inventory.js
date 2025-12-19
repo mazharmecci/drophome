@@ -79,41 +79,29 @@ function collectFormData() {
   const receivingNotes = document.getElementById("receivingNotes")?.value || "";
   const status = document.getElementById("orderStatus")?.value || "OrderPending";
 
+  // numeric fields
   const price = parseFloat(document.getElementById("price")?.value || "0") || 0;
-  const quantityReceived = parseInt(
-    document.getElementById("quantityReceived")?.value || "0",
-    10
-  ) || 0;
+  const quantityReceived = parseInt(document.getElementById("quantityReceived")?.value || "0", 10) || 0;
   const tax = parseFloat(document.getElementById("tax")?.value || "0") || 0;
   const shipping = parseFloat(document.getElementById("shipping")?.value || "0") || 0;
 
-  const labelqty = parseInt(
-    document.getElementById("totalLabels")?.value || "0",
-    10
-  ) || 0;
-  const labelcost = parseFloat(
-    document.getElementById("costPerLabel")?.value || "0"
-  ) || 0;
-  const packCount = parseInt(
-    document.getElementById("packCount")?.value || "0",
-    10
-  ) || 0;
-  const totalUnits = parseInt(
-    document.getElementById("totalUnits")?.value || "0",
-    10
-  ) || 0;
+  const labelqty = parseInt(document.getElementById("totalLabels")?.value || "0", 10) || 0;
+  const labelcost = parseFloat(document.getElementById("costPerLabel")?.value || "0") || 0;
+  const packCount = parseInt(document.getElementById("packCount")?.value || "0", 10) || 0;
+  const totalUnits = parseInt(document.getElementById("totalUnits")?.value || "0", 10) || 0;
 
   const subtotal = price * quantityReceived + tax + shipping;
 
+  // compute 3PL cost
   let threePLCost = 0;
   if (packCount <= 0) threePLCost = 0;
   else if (packCount <= 2) threePLCost = 1.0;
-  else threePLCost = packCount * 0.20 + 1.0;
-  threePLCost = parseFloat(threePLCost.toFixed(2));
+  else threePLCost = (packCount * 0.20) + 1.0;
+  threePLCost = parseFloat(threePLCost.toFixed(2)); // numeric with 2 decimals
 
   // prodpic from preview; ensure string
-  const prodpicPreview = document.getElementById("prodpicPreview");
   let prodpic = "";
+  const prodpicPreview = document.getElementById("prodpicPreview");
   if (prodpicPreview) {
     const img = prodpicPreview.querySelector("img");
     if (img && typeof img.src === "string") {
@@ -121,6 +109,7 @@ function collectFormData() {
     }
   }
 
+  // required field validation
   if (!ordDate || !delDate || !clientName || !dispatchLocation || !productName) {
     showToast("⚠️ Please fill all required fields.");
     return null;
@@ -146,9 +135,8 @@ function collectFormData() {
     sku,
 
     // Quantities / media
-    quantity: quantityReceived,
     quantityReceived,
-    prodpic: prodpic || "",          // <- key: never undefined
+    prodpic: prodpic || "",        // ✅ never undefined
     labellink: labellinkInput || "",
 
     // Pricing
@@ -186,7 +174,7 @@ async function handleSubmit(e) {
   const rawData = collectFormData();
   if (!rawData) return;
 
-  // final safety to strip undefined
+  // sanitize undefined
   const data = {
     ...rawData,
     prodpic: rawData.prodpic || "",
@@ -202,42 +190,11 @@ async function handleSubmit(e) {
 
     // inventory mirror
     const inventoryData = {
-      inboundId: data.inboundId,
-      orderId: data.inboundId,
-
-      ordDate: data.ordDate,
-      delDate: data.delDate,
-      date: data.ordDate,
-
-      accountName: data.accountName,
-      clientName: data.clientName,
-      productName: data.productName,
-      dispatchLocation: data.dispatchLocation,
-      sku: data.sku,
-
-      quantity: data.quantityReceived,
-      quantityReceived: data.quantityReceived,
-      prodpic: data.prodpic || "",       // <- key: never undefined
-      labellink: data.labellink || "",   // <- key: never undefined
-
-      price: data.price,
-      tax: data.tax,
-      shipping: data.shipping,
-      subtotal: data.subtotal,
-
-      labelqty: data.labelqty ?? 0,
-      labelcost: data.labelcost ?? 0,
+      ...data,
       totalLabels: data.totalLabels ?? data.labelqty ?? 0,
       costPerLabel: data.costPerLabel ?? data.labelcost ?? 0,
-      packCount: data.packCount ?? 0,
-      totalUnits: data.totalUnits ?? 0,
       threePLCost: data.threePLCost ?? 0,
-
       status: data.status || "OrderPending",
-
-      trackingNumber: data.trackingNumber,
-      receivingNotes: data.receivingNotes,
-
       createdAt: new Date(),
       updatedAt: new Date()
     };
