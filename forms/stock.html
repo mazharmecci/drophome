@@ -13,8 +13,6 @@
   <script src="../scripts/navbar.js" defer></script>   
 
   <div class="form-container">
-    <!-- Header -->
-    
     <!-- Breadcrumb -->
     <nav class="breadcrumb-nav" aria-label="Breadcrumb">
       <ol class="breadcrumb-list">
@@ -24,17 +22,24 @@
       </ol>
     </nav>
 
-      <!-- Product Name Dropdown -->
-      <label for="productName">Product Name</label>
-      <select id="productName" name="productName" required>
-        <option value="" disabled selected>Choose your product</option>
-        <!-- Populate dynamically -->
-      </select>
-
-      <!-- Available Quantity (readonly) -->
-      <label for="availableQuantity">Available Quantity</label>
-      <input type="number" id="availableQuantity" name="availableQuantity" readonly style="background-color: #ffe6e6;" placeholder="Auto-calculated" />
-    </form>
+    <!-- Products Summary Table -->
+    <section class="form-block">
+      <h4><strong>Products Stock Summary:</strong></h4>
+      <table id="stockTable" class="summary-table">
+        <thead>
+          <tr>
+            <th>SKU</th>
+            <th>Product Name</th>
+            <th>Price (USD)</th>
+            <th>Stock Quantity</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Rows populated dynamically from master list -->
+        </tbody>
+      </table>
+    </section>
   </div>
 
   <!-- Success Popup -->
@@ -46,17 +51,14 @@
     </div>
   </div>
 
-    <script>
-  if (!sessionStorage.getItem("drophome-auth")) {
-    window.location.href = "/forms/login.html";
-  }
+  <script>
+    if (!sessionStorage.getItem("drophome-auth")) {
+      window.location.href = "/forms/login.html";
+    }
   </script>
   
   <script type="module" src="../scripts/stock.js"></script>
   <script type="module" src="../scripts/popupHandler.js"></script>
-
-  <!-- Stock Cards -->
-<div id="stockCardsContainer" class="card-container"></div>
 
 </body>
 </html>
