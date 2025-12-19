@@ -256,8 +256,10 @@ function goBack() {
 // ---------- Init ----------
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Load master list data
   loadMasterList();
 
+  // Button bindings
   const bindings = [
     { id: "addAccountBtn", handler: () => addItem("accounts", "newAccount") },
     { id: "addProductBtn", handler: addProduct },
@@ -271,4 +273,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const el = document.getElementById(id);
     if (el) el.addEventListener("click", handler);
   });
+
+  // Product Picture URL preview logic
+  const prodpicInput = document.getElementById("prodpic");
+  const previewBox = document.getElementById("prodpicPreview");
+
+  if (prodpicInput && previewBox) {
+    prodpicInput.addEventListener("input", () => {
+      const url = prodpicInput.value.trim();
+      previewBox.innerHTML = url
+        ? `<img src="${url}" alt="Product Preview" style="max-width:100%; max-height:100%; object-fit:contain;" />`
+        : "";
+    });
+  }
 });
+
