@@ -134,16 +134,16 @@
       <label for="quantityReceived">Quantity</label>
       <input type="number" id="quantityReceived" name="quantityReceived" required />
 
-      <label for="tax">Tax ($) - (Not mandatory)</label>
+      <label for="tax">Tax ($)</label>
       <input type="number" id="tax" name="tax" step="0.01" value="0" />
 
-      <label for="shipping">Shipping ($) - (Not mandatory)</label>
+      <label for="shipping">Shipping ($)</label>
       <input type="number" id="shipping" name="shipping" step="0.01" value="0" />
 
       <label for="subtotal">Subtotal ($)</label>
       <input type="text" id="subtotal" name="subtotal" readonly class="input-readonly" />
 
-      <label for="trackingNumber">Tracking Number - (Not mandatory)</label>
+      <label for="trackingNumber">Tracking Number</label>
       <input type="text" id="trackingNumber" name="trackingNumber" placeholder="Enter tracking number" />
 
       <label for="orderStatus">Order Status</label>
@@ -164,7 +164,7 @@
 
       <div class="form-actions">
         <button type="submit" class="btn-primary">Submit</button>
-        <button type="button" class="btn-orange" onclick="window.location.href='/master.html?origin=inbound'">
+        <button type="button" class="btn-orange" onclick="window.location.href='/master.html?origin=outbound'">
           ⚙️ Master List
         </button>
       </div>
@@ -223,7 +223,7 @@
     <table class="summary-table">
       <thead>
         <tr>
-          <th>Inbound&nbsp;ID</th>
+          <th>Outbound&nbsp;ID</th>
           <th>Order&nbsp;Date</th>
           <th>Delivered&nbsp;Date</th>
           <th>Cust&nbsp;Name</th>
@@ -243,7 +243,7 @@
   <div id="successPopup" class="popup hidden">
     <div class="popup-content">
       <h3>✅ Success</h3>
-      <p>Your inbound record has been submitted!</p>
+      <p>Your outbound record has been submitted!</p>
       <button id="closePopup">OK</button>
     </div>
   </div>
@@ -256,7 +256,7 @@
   </script>
 
   <!-- Behaviour -->
-  <script type="module" src="/scripts/shipping.js"></script>
+  <script type="module" src="/scripts/inventory.js"></script>
   <script type="module" src="/scripts/popupHandler.js"></script>
   <script type="module" src="/scripts/dropdownLoader.js"></script>
 </body>
