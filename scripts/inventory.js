@@ -53,6 +53,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 // 📝 handle submit
+// 📝 handle submit
 async function handleFormSubmit(event) {
   event.preventDefault();
 
@@ -65,7 +66,11 @@ async function handleFormSubmit(event) {
       outboundId: data.inboundId,
       ordDate: data.orderedDate,
       delDate: data.deliveryDate,
+
+      // store both clientName and accountName for consistency
       clientName: data.clientName,
+      accountName: data.clientName,
+
       dispatchLocation: data.dispatchLocation,
       productName: data.productName,
       sku: data.sku,
