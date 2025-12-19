@@ -14,8 +14,8 @@ const masterRef = doc(db, "masterList", "VwsEuQNJgfo5TXM6A0DA");
 async function renderStockTable() {
   try {
     const snapshot = await getDoc(masterRef);
-    if (!snapshot.exists()) {
-      const tbody = document.querySelector("#stockTable tbody");
+    const tbody = document.querySelector("#stockTable tbody");
+    if (!snapshot.exists() || !tbody) {
       if (tbody) {
         tbody.innerHTML =
           '<tr><td colspan="6" style="text-align:center;color:#666;">masterList document not found</td></tr>';
@@ -23,11 +23,7 @@ async function renderStockTable() {
       return;
     }
 
-    const data = snapshot.data();
-    const products = data?.products || [];
-    const tbody = document.querySelector("#stockTable tbody");
-
-    if (!tbody) return;
+    const products = snapshot.data()?.products || [];
     tbody.innerHTML = "";
 
     if (!products.length) {
@@ -90,25 +86,27 @@ async function updateStock(docId, qty, newPic) {
     return;
   }
 
+  let masterUpdated = false;
+  let stockUpdated = false;
+
   try {
-    // Update stock/{docId} doc if it exists
+    // 🔄 Update stock/{docId} if exists
     try {
       const stockRef = doc(db, "stock", docId);
       await updateDoc(stockRef, { availableQuantity: qty, prodPic: newPic });
+      stockUpdated = true;
     } catch (e) {
-      console.warn("Stock doc not found or cannot update, skipping:", e);
+      console.warn("⚠️ Stock doc not found or failed to update:", e);
     }
 
-    // Update products[] inside masterList
+    // 🔄 Update masterList.products[]
     const snapshot = await getDoc(masterRef);
     if (!snapshot.exists()) {
       showToast("⚠️ Master list not found.");
       return;
     }
 
-    const data = snapshot.data();
-    const products = data?.products || [];
-
+    const products = snapshot.data()?.products || [];
     const updatedProducts = products.map(p =>
       p.sku === docId || p.name === docId || p.id === docId
         ? { ...p, stock: qty, availableQuantity: qty, prodPic: newPic }
@@ -116,18 +114,25 @@ async function updateStock(docId, qty, newPic) {
     );
 
     await updateDoc(masterRef, { products: updatedProducts });
-    showToast("✅ Stock updated and synced with Master List.");
-    await renderStockTable();
+    masterUpdated = true;
   } catch (err) {
     console.error("❌ Error updating stock:", err);
+  }
+
+  // 🎯 Feedback
+  if (masterUpdated && stockUpdated) {
+    showToast("✅ Stock and image updated in both Master List and Stock.");
+  } else if (masterUpdated) {
+    showToast("⚠️ Updated Master List, but failed to sync Stock.");
+  } else {
     showToast("❌ Failed to update stock.");
   }
+
+  await renderStockTable();
 }
 
 async function deleteStockItem(docId) {
-  const ok = confirm(
-    `Are you sure you want to delete product "${docId}" from stock?`
-  );
+  const ok = confirm(`Are you sure you want to delete product "${docId}" from stock?`);
   if (!ok) return;
 
   try {
@@ -137,9 +142,7 @@ async function deleteStockItem(docId) {
       return;
     }
 
-    const data = snapshot.data();
-    const products = data?.products || [];
-
+    const products = snapshot.data()?.products || [];
     const filteredProducts = products.filter(
       p => !(p.sku === docId || p.name === docId || p.id === docId)
     );
@@ -150,7 +153,7 @@ async function deleteStockItem(docId) {
       const stockRef = doc(db, "stock", docId);
       await deleteDoc(stockRef);
     } catch (e) {
-      console.warn("No stock doc to delete for", docId, e);
+      console.warn("⚠️ No stock doc to delete for", docId, e);
     }
 
     showToast("🗑️ Product removed from stock.");
@@ -161,7 +164,7 @@ async function deleteStockItem(docId) {
   }
 }
 
-// Prompt wrapper for Edit button
+// 📝 Prompt wrapper for Edit button
 function updateStockPrompt(sku, currentQty, currentPic) {
   const val = prompt("New stock quantity:", currentQty);
   if (val === null) return;
@@ -172,12 +175,12 @@ function updateStockPrompt(sku, currentQty, currentPic) {
   updateStock(sku, num, newPic);
 }
 
-// Auto-load table
+// 🚀 Auto-load table
 document.addEventListener("DOMContentLoaded", () => {
   renderStockTable();
 });
 
-// Expose globally
+// 🌐 Expose globally
 window.updateStockPrompt = updateStockPrompt;
 window.deleteStockItem = deleteStockItem;
 window.updateStock = updateStock;
