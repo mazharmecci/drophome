@@ -49,20 +49,22 @@ async function renderStockTable() {
       <td>$${price.toFixed(2)}</td>
       <td>${stockQty}</td>
       <td>
-        <button
-          type="button"
-          class="btn-small"
-          onclick="window.updateStockPrompt('${sku}', ${stockQty})"
-        >
-          📝 Edit
-        </button>
-        <button
-          type="button"
-          class="btn-small btn-danger"
-          onclick="window.deleteStockItem('${sku}')"
-        >
-          🗑️ Delete
-        </button>
+        <div class="actions-cell">
+          <button
+            type="button"
+            class="btn-small"
+            onclick="window.updateStockPrompt('${sku}', ${stockQty})"
+          >
+            📝 Edit
+          </button>
+          <button
+            type="button"
+            class="btn-small btn-danger"
+            onclick="window.deleteStockItem('${sku}')"
+          >
+            🗑️ Delete
+          </button>
+        </div>
       </td>
     `;
     tbody.appendChild(row);
