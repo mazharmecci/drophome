@@ -20,14 +20,13 @@ const pageSize = 10;
 document.addEventListener("DOMContentLoaded", async () => {
   await loadDropdowns();
 
-  // Auto-generate outbound ID (short)
+  // Auto-generate inbound ID (short)
   const inboundIdEl = document.getElementById("inboundId");
   if (inboundIdEl) {
     const shortId = Math.random().toString(36).substring(2, 7);
     inboundIdEl.value = `OUT-${shortId}`;
   }
 
-  // Form submit
   const form = document.getElementById("inboundForm");
   if (form) {
     form.addEventListener("submit", handleFormSubmit);
@@ -79,7 +78,7 @@ async function handleFormSubmit(event) {
       subtotal: data.subtotal,
       trackingNumber: data.trackingNumber,
       receivingNotes: data.receivingNotes,
-      status: data.orderStatus, // use exactly what the user chose
+      status: data.orderStatus,
       createdAt: new Date(),
       updatedAt: new Date()
     });
@@ -109,7 +108,6 @@ function collectFormData() {
   const productName = document.getElementById("productName")?.value || "";
   const priceStr = document.getElementById("price")?.value || "0";
   const sku = document.getElementById("sku")?.value || "";
-  const prodpic = document.getElementById("prodpic")?.value || "";
   const labellink = document.getElementById("labellink")?.value || "";
   const qtyStr = document.getElementById("quantityReceived")?.value || "0";
   const taxStr = document.getElementById("tax")?.value || "0";
@@ -124,6 +122,14 @@ function collectFormData() {
   const tax = parseFloat(taxStr) || 0;
   const shipping = parseFloat(shippingStr) || 0;
   const subtotal = parseFloat(subtotalStr) || 0;
+
+  // prodpic comes from master; stored on record, not a text input
+  const prodpicPreview = document.getElementById("prodpicPreview");
+  let prodpic = "";
+  if (prodpicPreview) {
+    const img = prodpicPreview.querySelector("img");
+    if (img && img.src) prodpic = img.src;
+  }
 
   if (!orderedDate || !deliveryDate || !clientName || !dispatchLocation || !productName) {
     showToast("⚠️ Please fill all required fields.");
@@ -152,42 +158,12 @@ function collectFormData() {
 }
 
 // 🔄 load + render
-
-function populateWarehouseFilter() {
-  const select = document.getElementById("filterWarehouse");
-  if (!select) return;
-
-  // collect distinct non-empty dispatchLocation values
-  const locations = [...new Set(
-    allRecords
-      .map(r => (r.dispatchLocation || "").trim())
-      .filter(v => v)
-  )];
-
-  // reset options
-  select.innerHTML = "";
-  const optAll = document.createElement("option");
-  optAll.value = "";
-  optAll.textContent = "All warehouses";
-  select.appendChild(optAll);
-
-  locations.forEach(loc => {
-    const option = document.createElement("option");
-    option.value = loc;
-    option.textContent = loc;
-    select.appendChild(option);
-  });
-}
-
-
-
 async function loadAndRenderRecords(options) {
   const { showErrorToast = true } = options || {};
 
   try {
     const snapshot = await getDocs(collection(db, "inventory"));
     allRecords = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-    populateWarehouseFilter();      // <‑‑ here
     renderTable(allRecords);
   } catch (err) {
     console.error("❌ loadAndRenderRecords failed:", err);
@@ -195,7 +171,6 @@ async function loadAndRenderRecords(options) {
       showToast("⚠️ Failed to load records. Please check your connection or Firestore rules.");
     }
     allRecords = [];
-    populateWarehouseFilter();
     renderTable(allRecords);
   }
 }
@@ -228,7 +203,7 @@ function updatePaginationControls() {
   }
 }
 
-// 📊 render table with pagination
+// 📊 render table (stripped-down fields)
 function renderTable(records) {
   const tbody = document.getElementById("inboundTableBody");
   if (!tbody) return;
@@ -237,8 +212,8 @@ function renderTable(records) {
   if (!Array.isArray(records) || records.length === 0) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="10" style="text-align:center; padding:20px; color:#888;">
-          🚫 No records found. Try adjusting your filters or check back later.
+        <td colspan="8" style="text-align:center; padding:20px; color:#888;">
+          🚫 No records found.
         </td>
       </tr>`;
     updatePaginationControls();
@@ -253,36 +228,6 @@ function renderTable(records) {
   const pageRecords = records.slice(startIndex, endIndex);
 
   pageRecords.forEach(record => {
-    const price =
-      record.price != null
-        ? parseFloat(record.price)
-        : record.unitPrice != null
-          ? parseFloat(record.unitPrice)
-          : 0;
-
-    const quantity =
-      record.quantityReceived != null
-        ? parseFloat(record.quantityReceived)
-        : record.quantity != null
-          ? parseFloat(record.quantity)
-          : 0;
-
-    const tax = record.tax != null ? parseFloat(record.tax) : 0;
-    const shipping = record.shipping != null ? parseFloat(record.shipping) : 0;
-
-    const subtotalValue =
-      record.subtotal != null
-        ? parseFloat(record.subtotal)
-        : (quantity * price) + tax + shipping;
-
-    const priceDisplay = price ? `$${price.toFixed(2)}` : "$0.00";
-    const taxDisplay = tax ? `$${tax.toFixed(2)}` : "$0.00";
-    const shippingDisplay = shipping ? `$${shipping.toFixed(2)}` : "$0.00";
-    const subtotalDisplay = `$${subtotalValue.toFixed(2)}`;
-
-    const outboundId =
-      record.outboundId || record.inboundId || record.orderId || "";
-
     const orderDate =
       record.ordDate ||
       record.orderedDate ||
@@ -290,30 +235,35 @@ function renderTable(records) {
       record.date ||
       "";
 
-    const deliveredDate =
-      record.delDate ||
-      record.deliveryDate ||
-      record.deliveredDate ||
-      record.dateDelivered ||
-      "";
-
     const clientName = record.clientName || record.accountName || "";
+    const sku = record.sku || "";
+    const productName = record.productName || "";
+    const qty =
+      record.quantityReceived != null
+        ? parseFloat(record.quantityReceived)
+        : record.quantity != null
+          ? parseFloat(record.quantity)
+          : 0;
 
     const tr = document.createElement("tr");
     const detailsTr = document.createElement("tr");
     detailsTr.classList.add("details-row");
     detailsTr.style.display = "none";
 
-    // summary row
+    // summary row (one line)
     tr.innerHTML = `
-      <td>${outboundId}</td>
       <td>${orderDate}</td>
-      <td>${deliveredDate}</td>
       <td>${clientName}</td>
-      <td>${record.dispatchLocation || ""}</td>
-      <td>${record.productName || ""}</td>
-      <td>${quantity || 0}</td>
-      <td>${subtotalDisplay}</td>
+      <td>${sku}</td>
+      <td>${productName}</td>
+      <td>${qty || 0}</td>
+      <td>
+        ${
+          record.labellink
+            ? `<a href="${record.labellink}" target="_blank">Open</a>`
+            : "N/A"
+        }
+      </td>
       <td>
         <select onchange="updateField('${record.id}','status',this.value,this)">
           ${renderStatusOptions(record.status)}
@@ -325,15 +275,13 @@ function renderTable(records) {
       </td>
     `;
 
-    // details row
+    // details row (only prod pic + label link, minimal notes)
     detailsTr.innerHTML = `
-      <td colspan="10">
+      <td colspan="8">
         <div class="order-details">
-          <div><strong>Qty:</strong> ${quantity || 0}</div>
-          <div><strong>Unit Price:</strong> ${priceDisplay}</div>
-          <div><strong>Tax:</strong> ${taxDisplay}</div>
-          <div><strong>Shipping:</strong> ${shippingDisplay}</div>
-          <div><strong>Subtotal:</strong> ${subtotalDisplay}</div>
+          <div><strong>Prod Name:</strong> ${productName}</div>
+          <div><strong>SKU:</strong> ${sku}</div>
+          <div><strong>Qty:</strong> ${qty || 0}</div>
 
           <div style="margin-top:6px;">
             <strong>Product Picture:</strong>
@@ -352,10 +300,6 @@ function renderTable(records) {
                 : " N/A"
             }
           </div>
-
-          <div style="margin-top:6px;">
-            <strong>Notes:</strong> ${record.receivingNotes || "N/A"}
-          </div>
         </div>
       </td>
     `;
@@ -372,7 +316,7 @@ function renderTable(records) {
   updatePaginationControls();
 }
 
-// subtotal calculator
+// subtotal calculator (unchanged)
 function hookSubtotalCalculator() {
   const quantityInput = document.getElementById("quantityReceived");
   const priceInput = document.getElementById("price");
@@ -417,12 +361,10 @@ function renderStatusOptions(current) {
     .join("");
 }
 
-// filters (Ordered Date range, Warehouse, Product Name, Status)
+// filters: order date, account name, status only
 function applyFilters() {
   const fromDate = document.getElementById("filterStart")?.value || "";
   const toDate = document.getElementById("filterEnd")?.value || "";
-  const warehouse = (document.getElementById("filterWarehouse")?.value || "").trim();
-  const product = (document.getElementById("filterProduct")?.value || "").trim().toLowerCase();
   const status = document.getElementById("filterStatus")?.value || "";
 
   const filtered = allRecords.filter(record => {
@@ -433,17 +375,13 @@ function applyFilters() {
       record.date ||
       "";
 
-    const recordWarehouse = (record.dispatchLocation || "").trim();
-    const recordProduct = (record.productName || "").toLowerCase();
     const recordStatus = record.status || "";
 
     const matchFrom = !fromDate || recordDate >= fromDate;
     const matchTo = !toDate || recordDate <= toDate;
-    const matchWarehouse = !warehouse || recordWarehouse === warehouse;
-    const matchProduct = !product || recordProduct.includes(product);
     const matchStatus = !status || recordStatus === status;
 
-    return matchFrom && matchTo && matchWarehouse && matchProduct && matchStatus;
+    return matchFrom && matchTo && matchStatus;
   });
 
   currentPage = 1;
@@ -451,7 +389,7 @@ function applyFilters() {
 }
 
 function clearFilters() {
-  ["filterStart", "filterEnd", "filterWarehouse", "filterProduct", "filterStatus"].forEach(id => {
+  ["filterStart", "filterEnd", "filterStatus"].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
     el.value = "";
