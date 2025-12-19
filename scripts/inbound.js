@@ -33,9 +33,18 @@ function setInboundId() {
 // ---------- Data Collection ----------
 
 function collectFormData() {
+  // dateReceived is the main date the user enters
+  const dateReceived = getValue("dateReceived");
+
   return {
     inboundId: getValue("inboundId"),
-    dateReceived: getValue("dateReceived"),
+    // keep original field for backward compat
+    dateReceived,
+
+    // normalized names for table logic
+    ordDate: dateReceived,       // Order Date
+    delDate: dateReceived,       // Delivered Date (or change to another input if you have it)
+
     clientName: getValue("clientName"),
     productName: getValue("productName"),
     dispatchLocation: getValue("dispatchLocation"),
@@ -56,29 +65,50 @@ async function handleSubmit(e) {
   const data = collectFormData();
 
   try {
-    // 1️⃣ Save inbound record
+    // 1️⃣ Save inbound record (with normalized field names)
     await addDoc(collection(db, "inbound"), data);
 
     // 2️⃣ Update stock quantity
     await updateStock(data.productName, data.quantityReceived);
 
-    // 3️⃣ Auto-sync to inventory
+    // 3️⃣ Auto-sync to inventory with same key names used by summary tables
     const inventoryData = {
+      // IDs
+      inboundId: data.inboundId,
       orderId: data.inboundId,
-      date: data.dateReceived,
+
+      // dates
+      ordDate: data.ordDate,
+      delDate: data.delDate,
+      date: data.ordDate, // generic fallback date
+
+      // account / product
       accountName: data.clientName,
+      clientName: data.clientName,
       productName: data.productName,
       dispatchLocation: data.dispatchLocation,
       sku: data.sku,
+
+      // quantities / media
       quantity: data.quantityReceived,
+      quantityReceived: data.quantityReceived,
       prodpic: data.prodpic,
       labellink: data.labellink,
+
+      // pricing
       price: data.price,
+      subtotal: data.price * data.quantityReceived,
+
+      // workflow
       status: "OrderPending",
       labelqty: 0,
       labelcost: "",
-      threePLcost: ""
+      threePLcost: "",
+
+      createdAt: new Date(),
+      updatedAt: new Date()
     };
+
     await addDoc(collection(db, "inventory"), inventoryData);
     console.log("📦 Auto-synced to inventory:", inventoryData);
 
