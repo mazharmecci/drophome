@@ -30,60 +30,63 @@
 
       <section id="master-sections">
 
-        <!-- Products -->
-        <div class="form-block">
-          <h4><strong>Products:</strong></h4>
-          <div class="input-row">
-            <span class="emoji">📦</span>
-            <input
-              type="text"
-              id="newSKU"
-              placeholder="Enter SKU"
-              class="input-sku"
-            />
-            <input
-              type="text"
-              id="newProductName"
-              placeholder="Enter Product Name"
-              class="input-name"
-            />
-            <input
-              type="number"
-              id="newProductPrice"
-              placeholder="Enter Price (USD)"
-              step="0.01"
-              min="0"
-              class="input-price"
-            />
-            <input
-              type="number"
-              id="newProductStock"
-              placeholder="Enter Stock Quantity"
-              min="0"
-              class="input-stock"
-            />
-        
-          <!-- Product Picture URL field -->
-          <label for="prodpic">Product Picture URL</label>
-          <input 
-            type="text" 
-            id="prodpic" 
-            name="prodpic" 
-            class="input-highlight" 
-            placeholder="Enter Product Picture URL"
+      <!-- Products -->
+      <div class="form-block">
+        <h4><strong>Products:</strong></h4>
+        <div class="input-row">
+          <span class="emoji">📦</span>
+          <input
+            type="text"
+            id="newSKU"
+            placeholder="Enter SKU"
+            class="input-sku"
           />
-          <div id="prodpicPreview" class="preview-box"></div>
-        
-            <button type="button" id="addProductBtn" class="btn-primary">
-              ➕ Add Product
-            </button>
-          </div>
-          <small class="hint-text">
-            Enter SKU, product name, price in dollars, stock quantity, and product picture URL.
-          </small>
-          <ul id="productList" class="list-display"></ul>
+          <input
+            type="text"
+            id="newProductName"
+            placeholder="Enter Product Name"
+            class="input-name"
+          />
+          <input
+            type="number"
+            id="newProductPrice"
+            placeholder="Enter Price (USD)"
+            step="0.01"
+            min="0"
+            class="input-price"
+          />
+          <input
+            type="number"
+            id="newProductStock"
+            placeholder="Enter Stock Quantity"
+            min="0"
+            class="input-stock"
+          />
         </div>
-
+      
+        <!-- Product Picture block -->
+        <div class="input-row">
+          <label for="prodpic" style="margin-right: 10px;">Product Picture URL</label>
+          <input
+            type="text"
+            id="prodpic"
+            name="prodpic"
+            class="input-highlight"
+            placeholder="Enter Product Picture URL"
+            style="flex: 1;"
+          />
+          <button type="button" id="addProductBtn" class="btn-primary" style="margin-left: 10px;">
+            ➕ Add Product
+          </button>
+        </div>
+      
+        <div id="prodpicPreview" class="preview-box" style="margin-top: 10px;"></div>
+      
+        <small class="hint-text">
+          Enter SKU, product name, price in dollars, stock quantity, and product picture URL.
+        </small>
+        <ul id="productList" class="list-display"></ul>
+      </div>
 
         <!-- Account Names -->
         <div class="form-block">
