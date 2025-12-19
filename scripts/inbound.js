@@ -33,27 +33,51 @@ function setInboundId() {
 // ---------- Data Collection ----------
 
 function collectFormData() {
-  // dateReceived is the main date the user enters
-  const dateReceived = getValue("dateReceived");
-
   return {
+    // IDs
     inboundId: getValue("inboundId"),
-    // keep original field for backward compat
-    dateReceived,
 
-    // normalized names for table logic
-    ordDate: dateReceived,       // Order Date
-    delDate: dateReceived,       // Delivered Date (or change to another input if you have it)
+    // Dates
+    ordDate: getValue("orderedDate"),     // Ordered Date
+    delDate: getValue("deliveryDate"),    // Delivery Date
+    date: getValue("orderedDate"),        // generic fallback
 
+    // Account / Client
+    accountName: getValue("accountName"),
     clientName: getValue("clientName"),
+
+    // Product / Warehouse
     productName: getValue("productName"),
     dispatchLocation: getValue("dispatchLocation"),
     sku: getValue("sku"),
+
+    // Quantities / Media
+    quantity: parseInt(getValue("quantityReceived") || "0", 10),
+    quantityReceived: parseInt(getValue("quantityReceived") || "0", 10),
     prodpic: getValue("prodpic"),
     labellink: getValue("labellink"),
-    quantityReceived: parseInt(getValue("quantityReceived") || "0", 10),
+
+    // Pricing
+    price: parseFloat((getValue("price") || "").replace(/[^0-9.]/g, "")) || 0,
+    tax: parseFloat(getValue("tax") || "0") || 0,
+    shipping: parseFloat(getValue("shipping") || "0") || 0,
+    subtotal:
+      (parseFloat((getValue("price") || "").replace(/[^0-9.]/g, "")) || 0) *
+      (parseInt(getValue("quantityReceived") || "0", 10)),
+
+    // Workflow
+    status: getValue("orderStatus") || "OrderPending",
+    labelqty: 0,
+    labelcost: "",
+    threePLcost: "",
+
+    // Tracking / Notes
+    trackingNumber: getValue("trackingNumber"),
     receivingNotes: getValue("receivingNotes"),
-    price: parseFloat((getValue("price") || "").replace(/[^0-9.]/g, "")) || 0
+
+    // System
+    createdAt: new Date(),
+    updatedAt: new Date()
   };
 }
 
@@ -65,52 +89,15 @@ async function handleSubmit(e) {
   const data = collectFormData();
 
   try {
-    // 1️⃣ Save inbound record (with normalized field names)
+    // 1️⃣ Save inbound record
     await addDoc(collection(db, "inbound"), data);
 
     // 2️⃣ Update stock quantity
     await updateStock(data.productName, data.quantityReceived);
 
-    // 3️⃣ Auto-sync to inventory with same key names used by summary tables
-    const inventoryData = {
-      // IDs
-      inboundId: data.inboundId,
-      orderId: data.inboundId,
-
-      // dates
-      ordDate: data.ordDate,
-      delDate: data.delDate,
-      date: data.ordDate, // generic fallback date
-
-      // account / product
-      accountName: data.clientName,
-      clientName: data.clientName,
-      productName: data.productName,
-      dispatchLocation: data.dispatchLocation,
-      sku: data.sku,
-
-      // quantities / media
-      quantity: data.quantityReceived,
-      quantityReceived: data.quantityReceived,
-      prodpic: data.prodpic,
-      labellink: data.labellink,
-
-      // pricing
-      price: data.price,
-      subtotal: data.price * data.quantityReceived,
-
-      // workflow
-      status: "OrderPending",
-      labelqty: 0,
-      labelcost: "",
-      threePLcost: "",
-
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-
-    await addDoc(collection(db, "inventory"), inventoryData);
-    console.log("📦 Auto-synced to inventory:", inventoryData);
+    // 3️⃣ Auto-sync to inventory (same schema)
+    await addDoc(collection(db, "inventory"), data);
+    console.log("📦 Auto-synced to inventory:", data);
 
     // ✅ Feedback and reset
     showToast("✅ Inbound record submitted and synced to inventory.");
