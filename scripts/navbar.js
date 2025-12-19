@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (user.email === "ahmadmanj40@gmail.com") {
           protectedLinks.forEach(link => {
             const href = link.querySelector("a")?.getAttribute("href") || "";
-            if (href.includes("orders.html") || href.includes("order-history.html")) {
+            if (href.includes("inbound.html") || href.includes("stock.html")) {
               link.style.display = "list-item";
             } else {
               link.style.display = "none";
@@ -75,14 +75,13 @@ document.addEventListener("DOMContentLoaded", async () => {
           });
 
           const restrictedPages = [
-            "/forms/shipping.html",
+            "/forms/outbound.html",
             "/forms/sales.html",
             "/forms/stock.html",
-            "/revenue.html",
-            "/dashboard.html"
+            "/revenue.html"            
           ];
           if (restrictedPages.includes(window.location.pathname)) {
-            window.location.href = "/forms/orders.html";
+            window.location.href = "/forms/inbound.html";
           }
         } else {
           protectedLinks.forEach(link => link.style.display = "list-item");
