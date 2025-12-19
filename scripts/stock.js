@@ -41,7 +41,7 @@ async function renderStockTable() {
       const name = product.name || product.productName || "";
       const price = parseFloat(product.price || 0);
       const stockQty = product.stock ?? 0;
-      const prodPic = product.prodPic || ""; // new field
+      const prodPic = product.prodPic || ""; // ensure consistent field
 
       const row = document.createElement("tr");
       row.innerHTML = `
@@ -52,7 +52,8 @@ async function renderStockTable() {
         <td>
           ${
             prodPic
-              ? `<img src="${prodPic}" alt="Product Image" style="width:50px;height:50px;object-fit:contain;border:1px solid #ccc;" />`
+              ? `<img src="${prodPic}" alt="Product Image"
+                     style="width:50px;height:50px;object-fit:contain;border:1px solid #ccc;" />`
               : `<span style="color:#999;">No image</span>`
           }
         </td>
@@ -90,7 +91,7 @@ async function updateStock(docId, qty) {
   }
 
   try {
-    // 1️⃣ Optional: update stock/{docId} doc if it exists
+    // 1️⃣ Update stock/{docId} doc if it exists
     try {
       const stockRef = doc(db, "stock", docId);
       await updateDoc(stockRef, { availableQuantity: qty });
@@ -146,7 +147,7 @@ async function deleteStockItem(docId) {
 
     await updateDoc(masterRef, { products: filteredProducts });
 
-    // 2️⃣ Optional: delete stock/{docId} document
+    // 2️⃣ Delete stock/{docId} document if exists
     try {
       const stockRef = doc(db, "stock", docId);
       await deleteDoc(stockRef);
