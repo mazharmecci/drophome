@@ -1267,3 +1267,21 @@ button.btn-clear:hover { background-color: #e6b800; }
   gap: 4px;          /* subtle horizontal gap */
   align-items: center;
 }
+
+.preview-box {
+  width: 2in;
+  height: 3in;
+  border: 1px solid #ccc;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: #f9f9f9;
+}
+
+.preview-box img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
