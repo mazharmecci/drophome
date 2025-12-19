@@ -357,13 +357,31 @@ function renderTable(records) {
           <div><strong>SKU:</strong> ${record.sku || ""}</div>
           <div><strong>Qty:</strong> ${qty || 0}</div>
           <div><strong>Subtotal:</strong> $${subtotal.toFixed(2)}</div>
-
-          <div><strong>Total Labels:</strong> ${record.totalLabels ?? "—"}</div>
-          <div><strong>Cost per Label:</strong> $${record.costPerLabel ?? "—"}</div>
-          <div><strong>Pack#s:</strong> ${record.packCount ?? "—"}</div>
-          <div><strong>Total Units:</strong> ${record.totalUnits ?? "—"}</div>
-          <div><strong>3PL Cost:</strong> $${record.threePLcost ?? "—"}</div>
-
+    
+          <div><strong>Total Labels:</strong>
+            <input type="number" value="${record.totalLabels ?? ""}" 
+                   onchange="updateField('${record.id}','totalLabels',this.value,this)" />
+          </div>
+    
+          <div><strong>Cost per Label ($):</strong>
+            <input type="number" step="0.01" value="${record.costPerLabel ?? ""}" 
+                   onchange="updateField('${record.id}','costPerLabel',this.value,this)" />
+          </div>
+    
+          <div><strong>Pack#s:</strong>
+            <input type="number" value="${record.packCount ?? ""}" 
+                   onchange="updatePackAndThreePL('${record.id}',this.value,this)" />
+          </div>
+    
+          <div><strong>Total Units:</strong>
+            <input type="number" value="${record.totalUnits ?? ""}" 
+                   onchange="updateField('${record.id}','totalUnits',this.value,this)" />
+          </div>
+    
+          <div><strong>3PL Cost ($):</strong>
+            <span id="threePL-${record.id}">$${record.threePLcost ?? "—"}</span>
+          </div>
+    
           <div style="margin-top:6px;">
             <strong>Product Picture:</strong>
             ${
@@ -372,7 +390,7 @@ function renderTable(records) {
                 : " N/A"
             }
           </div>
-
+    
           <div style="margin-top:6px;">
             <strong>Label Link:</strong>
             ${
@@ -381,7 +399,7 @@ function renderTable(records) {
                 : " N/A"
             }
           </div>
-
+    
           <div style="margin-top:6px;">
             <strong>Tracking #:</strong> ${record.trackingNumber || ""}
           </div>
