@@ -7,7 +7,8 @@ import {
   getDocs,
   updateDoc,
   addDoc,
-  doc
+  doc,
+  getDoc
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 // In‑memory state
@@ -18,12 +19,56 @@ let hasInitialLoadCompleted = false;
 let currentPage = 1;
 const pageSize = 10;
 
-// 🔧 simple stock updater (replace with your own logic if needed)
+// masterList ref for stock adjustment
+const masterRef = doc(db, "masterList", "VwsEuQNJgfo5TXM6A0DA");
+
+// 🔧 simple stock updater (used on inbound create – adds stock)
 async function updateStock(productName, quantity) {
   try {
     console.log(`📦 Stock update for ${productName}: +${quantity}`);
   } catch (err) {
     console.warn("⚠️ Stock update skipped:", err);
+  }
+}
+
+// 🔧 adjust stock when status becomes Completed (delta can be negative)
+async function adjustStockForProduct(productName, deltaQty) {
+  if (!deltaQty || deltaQty === 0 || !productName) return;
+
+  try {
+    // 1️⃣ adjust stock/{productName} if exists
+    try {
+      const stockRef = doc(db, "stock", productName);
+      const stockSnap = await getDoc(stockRef);
+      if (stockSnap.exists()) {
+        const current = stockSnap.data().availableQuantity || 0;
+        await updateDoc(stockRef, {
+          availableQuantity: current + deltaQty
+        });
+      }
+    } catch (e) {
+      console.warn("ℹ️ stock doc adjust skipped:", e);
+    }
+
+    // 2️⃣ adjust masterList.products[].stock / availableQuantity
+    const snapshot = await getDoc(masterRef);
+    if (!snapshot.exists()) return;
+
+    const products = snapshot.data()?.products || [];
+    const updatedProducts = products.map(p =>
+      p.name === productName || p.productName === productName
+        ? {
+            ...p,
+            stock: (p.stock ?? 0) + deltaQty,
+            availableQuantity: (p.availableQuantity ?? p.stock ?? 0) + deltaQty
+          }
+        : p
+    );
+
+    await updateDoc(masterRef, { products: updatedProducts });
+  } catch (err) {
+    console.error("❌ adjustStockForProduct failed:", err);
+    showToast("⚠️ Failed to adjust stock for completed order.");
   }
 }
 
@@ -199,7 +244,7 @@ async function handleSubmit(e) {
     // inbound
     await addDoc(collection(db, "inbound"), data);
 
-    // stock
+    // stock (add)
     await updateStock(data.productName, data.quantityReceived);
 
     // inventory mirror
@@ -492,8 +537,30 @@ window.saveRecord = async function (recordId) {
   if (!record || !record._dirty) return;
 
   try {
-    await updateDoc(doc(db, "inventory", recordId), {
-      status: record.status || "OrderPending",
+    // fetch latest doc to know previous status and qty
+    const docRef = doc(db, "inventory", recordId);
+    const snap = await getDoc(docRef);
+    const before = snap.exists() ? snap.data() : {};
+
+    const prevStatus = before.status || "OrderPending";
+    const prevQty =
+      before.quantityReceived != null
+        ? Number(before.quantityReceived)
+        : before.quantity != null
+        ? Number(before.quantity)
+        : 0;
+
+    const newStatus = record.status || "OrderPending";
+    const newQty =
+      record.quantityReceived != null
+        ? Number(record.quantityReceived)
+        : record.quantity != null
+        ? Number(record.quantity)
+        : 0;
+
+    // 1️⃣ update inventory document
+    await updateDoc(docRef, {
+      status: newStatus,
       threePLCost: record.threePLCost ?? 0,
       packCount: record.packCount ?? 0,
       totalLabels: record.totalLabels ?? record.labelqty ?? 0,
@@ -501,6 +568,14 @@ window.saveRecord = async function (recordId) {
       totalUnits: record.totalUnits ?? 0,
       updatedAt: new Date()
     });
+
+    // 2️⃣ if status changed to Completed, reduce stock
+    if (prevStatus !== "Completed" && newStatus === "Completed" && newQty > 0) {
+      const productName = record.productName || before.productName || "";
+      if (productName) {
+        await adjustStockForProduct(productName, -newQty);
+      }
+    }
 
     showToast(`✅ Record updated for ${record.inboundId || record.id}`);
     showSuccessPopup();
