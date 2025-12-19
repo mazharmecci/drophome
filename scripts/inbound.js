@@ -79,12 +79,12 @@ function collectFormData() {
 
     // Label / 3PL – aligned to Firestore
     labelqty: 0,
-    labelcost: "",
+    labelcost: 0,
     totalLabels: 0,
-    costPerLabel: "",
-    packCount: isNaN(packCount) ? 0 : packCount,
+    costPerLabel: 0,
+    packCount: 0,
     totalUnits: 0,
-    threePLCost: threePLCostField.toFixed(2),
+    threePLCost: 0,
 
     // Tracking / Notes
     trackingNumber: getValue("trackingNumber"),
