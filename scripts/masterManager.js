@@ -146,11 +146,14 @@ async function addProduct() {
   const nameEl = document.getElementById("newProductName");
   const priceEl = document.getElementById("newProductPrice");
   const stockEl = document.getElementById("newProductStock");
+  const picEl = document.getElementById("prodpic");
+  const previewBox = document.getElementById("prodpicPreview");
 
   const sku = skuEl?.value.trim();
   const name = nameEl?.value.trim();
   const priceRaw = priceEl?.value.trim();
   const stockRaw = stockEl?.value.trim();
+  const prodPic = picEl?.value.trim();
 
   const price = parseFloat(priceRaw);
   const stock = parseInt(stockRaw, 10);
@@ -169,15 +172,30 @@ async function addProduct() {
       return;
     }
 
-    const newProduct = { sku, name, price, stock }; // <-- stock now persisted
+    // Include product picture in the new product object
+    const newProduct = { sku, name, price, stock, prodPic };
 
-    await updateDoc(docRef, { products: [...current, newProduct] }); // updateDoc replaces products array with new one. [web:64]
+    // Update Master List
+    await updateDoc(docRef, { products: [...current, newProduct] });
 
-    skuEl.value = "";
-    nameEl.value = "";
-    priceEl.value = "";
-    stockEl.value = "";
+    // Also insert into Stock collection
+    await addDoc(collection(db, "stock"), {
+      sku,
+      productName: name,
+      price,
+      availableQuantity: stock,
+      prodPic
+    });
 
+    // Clear inputs
+    [skuEl, nameEl, priceEl, stockEl, picEl].forEach(el => {
+      if (el) el.value = "";
+    });
+
+    // Clear preview box
+    if (previewBox) previewBox.innerHTML = "";
+
+    // Reload list
     await loadMasterList();
     showToast(
       `✅ Product "${name}" (${sku}) added at $${price.toFixed(
