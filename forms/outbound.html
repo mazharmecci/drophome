@@ -7,6 +7,32 @@
   <link rel="icon" href="../images/DH-Black.png" type="image/png" />
   <link rel="apple-touch-icon" href="../images/DH-Black.png" />
   <link rel="stylesheet" href="../style.css" />
+  <style>
+    /* Make the table area full width and scrollable */
+    .inventory-table-section {
+      width: 100%;
+      margin-top: 16px;
+    }
+
+    .table-scroll-wrapper {
+      width: 100%;
+      overflow-x: auto;      /* horizontal scroll if needed */
+      overflow-y: hidden;
+    }
+
+    .summary-table {
+      width: 100%;
+      min-width: 900px;      /* adjust so columns don’t compress */
+      border-collapse: collapse;
+    }
+
+    .summary-table th,
+    .summary-table td {
+      padding: 8px 10px;
+      text-align: left;
+      white-space: nowrap;   /* keep cells on one line */
+    }
+  </style>
 </head>
 <body>
 
@@ -24,7 +50,7 @@
       </ol>
     </nav>
 
-    <!-- Inner Content Wrapper -->
+    <!-- Inner Content Wrapper (filters + pagination only) -->
     <div class="form-body">
 
       <!-- Pagination -->
@@ -66,27 +92,28 @@
           <button type="button" id="clearFilters" class="btn-orange">Clear</button>
         </div>
       </div>
+    </div> <!-- end .form-body -->
 
-      <!-- Summary Table (stripped-down columns) -->
+    <!-- 🔽 Full-width summary table OUTSIDE form-body -->
+    <div class="inventory-table-section">
       <div class="table-scroll-wrapper">
         <table class="summary-table">
           <thead>
             <tr>
-            <th>Inbound&nbsp;ID</th>
-            <th>Order&nbsp;Date</th>
-            <th>Delivered&nbsp;Date</th>
-            <th>Cust&nbsp;Name</th>
-            <th>WareHouse</th>
-            <th>Prod&nbsp;Name</th>
-            <th>Qty</th>            
-            <th>Status</th>
-            <th>Actions</th>
+              <th>Inbound&nbsp;ID</th>
+              <th>Order&nbsp;Date</th>
+              <th>Delivered&nbsp;Date</th>
+              <th>Cust&nbsp;Name</th>
+              <th>WareHouse</th>
+              <th>Prod&nbsp;Name</th>
+              <th>Qty</th>
+              <th>Status</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody id="inboundTableBody"></tbody>
         </table>
       </div>
-
     </div>
   </div>
 
