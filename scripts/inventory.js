@@ -110,12 +110,12 @@ async function handleSubmit(e) {
 
       // Label / 3PL fields (initial defaults)
       labelqty: data.labelqty ?? 0,
-      labelcost: data.labelcost ?? "",
+      labelcost: data.labelcost ?? 0,
       totalLabels: data.totalLabels ?? 0,
-      costPerLabel: data.costPerLabel ?? "",
+      costPerLabel: data.costPerLabel ?? 0,
       packCount: data.packCount ?? 0,
       totalUnits: data.totalUnits ?? 0,
-      threePLCost: data.threePLCost ?? "",
+      threePLCost: data.threePLCost ?? 0,
 
       // Workflow
       status: data.status || "OrderPending",
