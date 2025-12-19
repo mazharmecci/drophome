@@ -221,12 +221,12 @@ function collectFormData() {
 
     // Label / 3PL defaults
     labelqty: 0,
-    labelcost: "",
+    labelcost: 0,
     totalLabels: 0,
-    costPerLabel: "",
+    costPerLabel: 0,
     packCount: 0,
     totalUnits: 0,
-    threePLCost: "",
+    threePLCost: 0,
 
     // Tracking / notes
     trackingNumber,
