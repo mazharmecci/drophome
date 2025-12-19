@@ -1286,3 +1286,13 @@ button.btn-clear:hover { background-color: #e6b800; }
   object-fit: contain;
 }
 
+/* Stock table specific overrides */
+#stockTable {
+  table-layout: auto; /* allow flexible column widths */
+}
+
+#stockTable th:last-child,
+#stockTable td:last-child {
+  width: 160px; /* enough room for Edit/Delete buttons */
+  text-align: center;
+}
